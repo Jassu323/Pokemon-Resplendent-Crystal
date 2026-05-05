@@ -19,7 +19,7 @@ DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
 DEF TYPE_ICON_TILES EQU 8
 
 TypeIconGFXPointers:
-	; Physical-ish block
+	; Physical block
 	dba NormalTypeIconGFX      ; NORMAL       = 0
 	dba FightingTypeIconGFX    ; FIGHTING     = 1
 	dba FlyingTypeIconGFX      ; FLYING       = 2
@@ -44,7 +44,7 @@ TypeIconGFXPointers:
 
 	dba GhostTypeIconGFX       ; CURSE_TYPE   = 19 ; fallback
 
-	; Special-ish block
+	; Special block
 	dba FireTypeIconGFX        ; FIRE         = 20
 	dba WaterTypeIconGFX       ; WATER        = 21
 	dba GrassTypeIconGFX       ; GRASS        = 22
