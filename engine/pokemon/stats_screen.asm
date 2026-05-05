@@ -10,6 +10,54 @@ DEF STAT_PAGE_MASK EQU %00000011
 	const STATS_SCREEN_ANIMATE_MON    ; 5
 	const STATS_SCREEN_ANIMATE_EGG    ; 6
 
+DEF TYPE_ICON_SLOT_1_TILE EQU $68 ; uses $68-$6f
+DEF TYPE_ICON_SLOT_2_TILE EQU $70 ; uses $70-$77
+
+DEF TYPE_ICON_SLOT_1_ATTR EQU $0e ; VRAM bank 1, BG palette 6
+DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+
+DEF TYPE_ICON_TILES EQU 8
+
+TypeIconGFXPointers:
+	; Physical block
+	dba NormalTypeIconGFX      ; NORMAL       = 0
+	dba FightingTypeIconGFX    ; FIGHTING     = 1
+	dba FlyingTypeIconGFX      ; FLYING       = 2
+	dba PoisonTypeIconGFX      ; POISON       = 3
+	dba GroundTypeIconGFX      ; GROUND       = 4
+	dba RockTypeIconGFX        ; ROCK         = 5
+	dba NormalTypeIconGFX      ; BIRD         = 6 ; unused/fallback
+	dba BugTypeIconGFX         ; BUG          = 7
+	dba GhostTypeIconGFX       ; GHOST        = 8
+	dba SteelTypeIconGFX       ; STEEL        = 9
+
+	; Unused type slots 10-18
+	dba NormalTypeIconGFX      ; unused 10
+	dba NormalTypeIconGFX      ; unused 11
+	dba NormalTypeIconGFX      ; unused 12
+	dba NormalTypeIconGFX      ; unused 13
+	dba NormalTypeIconGFX      ; unused 14
+	dba NormalTypeIconGFX      ; unused 15
+	dba NormalTypeIconGFX      ; unused 16
+	dba NormalTypeIconGFX      ; unused 17
+	dba NormalTypeIconGFX      ; unused 18
+
+	dba GhostTypeIconGFX       ; CURSE_TYPE   = 19 ; fallback
+
+	; Special block
+	dba FireTypeIconGFX        ; FIRE         = 20
+	dba WaterTypeIconGFX       ; WATER        = 21
+	dba GrassTypeIconGFX       ; GRASS        = 22
+	dba ElectricTypeIconGFX    ; ELECTRIC     = 23
+	dba PsychicTypeIconGFX     ; PSYCHIC_TYPE = 24
+	dba IceTypeIconGFX         ; ICE          = 25
+	dba DragonTypeIconGFX      ; DRAGON       = 26
+	dba DarkTypeIconGFX        ; DARK         = 27
+	dba FairyTypeIconGFX       ; FAIRY        = 28
+.end
+	ASSERT .end - TypeIconGFXPointers == TYPES_END * 3
+
+
 BattleStatsScreenInit:
 	ld a, [wLinkMode]
 	cp LINK_MOBILE
@@ -537,19 +585,36 @@ StatsScreen_LoadGFX:
 	ld a, [wBaseSpecies]
 	ld [wTempSpecies], a
 	ld [wCurSpecies], a
+	call GetBaseData
+
+	ld a, [wBaseType1]
+	ld [wStatsScreenType1], a
+	ld a, [wBaseType2]
+	ld [wStatsScreenType2], a
+
 	xor a
 	ldh [hBGMapMode], a
+
 	call .ClearBox
 	call .PageTilemap
 	call .LoadPals
+
 	ld hl, wStatsScreenFlags
 	bit STATS_SCREEN_PLACE_FRONTPIC, [hl]
 	jr nz, .place_frontpic
+
 	call SetDefaultBGPAndOBP
+	call StatsScreen_FinalizeTypeIconArea
+	; Type icons use CGB attrmap bits for VRAM bank 1 and BG palettes 6/7.
+	; Transfer both tilemap and attrmap here; tilemap-only backup causes stale
+	; icon attrs/tiles to appear during page transitions and mon animation.
+	call HDMATransferTilemapAndAttrmap_Menu
 	ret
 
 .place_frontpic
 	call StatsScreen_PlaceFrontpic
+	call StatsScreen_FinalizeTypeIconArea
+	call HDMATransferTilemapAndAttrmap_Menu
 	ret
 
 .ClearBox:
@@ -567,7 +632,6 @@ StatsScreen_LoadGFX:
 	maskbits NUM_STAT_PAGES
 	ld c, a
 	farcall LoadStatsScreenPals
-	call DelayFrame
 	ld hl, wStatsScreenFlags
 	set STATS_SCREEN_ANIMATE_MON, [hl]
 	ret
@@ -626,8 +690,6 @@ LoadPinkPage:
 	ld de, .OK_str
 	call PlaceString
 .done_status
-	hlcoord 1, 15
-	predef PrintMonTypes
 	hlcoord 9, 8
 	ld de, SCREEN_WIDTH
 	ld b, 10
@@ -1011,6 +1073,193 @@ StatsScreen_LoadTextboxSpaceGFX:
 	pop de
 	pop hl
 	ret
+
+StatsScreen_LoadTypeIconGFX:
+; Load one type icon into VRAM bank 1.
+; input:
+;   a  = type constant
+;   hl = destination tile address, e.g. vTiles2 tile TYPE_ICON_SLOT_1_TILE
+	push hl
+
+	; de = a * 3, because TypeIconGFXPointers entries are dba: bank + word
+	ld e, a
+	ld d, 0
+	ld hl, TypeIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	; b = bank, de = pointer
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, TYPE_ICON_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+StatsScreen_LoadCurrentMonTypeIconGFX:
+	ld a, [wStatsScreenType1]
+	ld hl, vTiles2 tile TYPE_ICON_SLOT_1_TILE
+	call StatsScreen_LoadTypeIconGFX
+
+	ld a, [wStatsScreenType1]
+	ld b, a
+	ld a, [wStatsScreenType2]
+	cp b
+	ret z
+
+	ld hl, vTiles2 tile TYPE_ICON_SLOT_2_TILE
+	call StatsScreen_LoadTypeIconGFX
+	ret
+
+StatsScreen_DrawTypeIcon:
+; Draws one 4x2 type icon.
+; input:
+;   hl = upper-left tilemap destination
+;   a  = first tile id
+	push bc
+	ld b, a
+
+	; top row
+	ld a, b
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+
+	; move hl down one row and back four columns
+	ld bc, SCREEN_WIDTH - 4
+	add hl, bc
+
+	; bottom row
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+
+	pop bc
+	ret
+
+StatsScreen_DrawCurrentMonTypeIcons:
+	ld a, [wStatsScreenType1]
+	ld b, a
+	ld a, [wStatsScreenType2]
+	cp b
+	jr nz, .dual
+
+.mono
+	hlcoord 2, 15
+	ld a, TYPE_ICON_SLOT_1_TILE
+	call StatsScreen_DrawTypeIcon
+	ret
+
+.dual
+	hlcoord 0, 15
+	ld a, TYPE_ICON_SLOT_1_TILE
+	call StatsScreen_DrawTypeIcon
+
+	hlcoord 4, 15
+	ld a, TYPE_ICON_SLOT_2_TILE
+	call StatsScreen_DrawTypeIcon
+	ret
+
+StatsScreen_SetTypeIconAttrs:
+; Sets one 4x2 type icon attr block.
+; input:
+;   hl = upper-left attrmap destination
+;   a  = attr byte
+	push bc
+	ld b, a
+
+	; top row
+	ld a, b
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+
+	; move hl down one row and back four columns
+	ld bc, SCREEN_WIDTH - 4
+	add hl, bc
+
+	; bottom row
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+
+	pop bc
+	ret
+
+StatsScreen_SetCurrentMonTypeIconAttrs:
+	ld a, [wStatsScreenType1]
+	ld b, a
+	ld a, [wStatsScreenType2]
+	cp b
+	jr nz, .dual
+
+.mono
+	hlcoord 2, 15, wAttrmap
+	ld a, TYPE_ICON_SLOT_1_ATTR
+	call StatsScreen_SetTypeIconAttrs
+	ret
+
+.dual
+	hlcoord 0, 15, wAttrmap
+	ld a, TYPE_ICON_SLOT_1_ATTR
+	call StatsScreen_SetTypeIconAttrs
+
+	hlcoord 4, 15, wAttrmap
+	ld a, TYPE_ICON_SLOT_2_ATTR
+	call StatsScreen_SetTypeIconAttrs
+	ret
+
+StatsScreen_ClearTypeIconAttrs:
+	hlcoord 0, 15, wAttrmap
+	xor a
+	call StatsScreen_SetTypeIconAttrs
+
+	hlcoord 4, 15, wAttrmap
+	xor a
+	call StatsScreen_SetTypeIconAttrs
+	ret
+
+StatsScreen_FinalizeTypeIconArea:
+	ld a, [wStatsScreenFlags]
+	maskbits NUM_STAT_PAGES
+	cp PINK_PAGE
+	jr z, .pink_page
+
+	call StatsScreen_ClearTypeIconAttrs
+	ret
+
+.pink_page
+	call StatsScreen_LoadCurrentMonTypeIconGFX
+	call StatsScreen_DrawCurrentMonTypeIcons
+	call StatsScreen_SetCurrentMonTypeIconAttrs
+	ret
+
 
 StatsScreenSpaceGFX: ; unreferenced
 INCBIN "gfx/font/space.2bpp"

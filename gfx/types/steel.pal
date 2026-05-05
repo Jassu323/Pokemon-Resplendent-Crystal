@@ -1,0 +1,5 @@
+; gfx/types/steel.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 23, 23, 26
+	RGB  0,  0,  0

@@ -1,0 +1,5 @@
+; gfx/types/psychic.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 31, 11, 17
+	RGB  0,  0,  0

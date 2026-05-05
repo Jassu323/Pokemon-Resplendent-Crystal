@@ -55,3 +55,5 @@ SECTION "Pokégear GFX", ROMX
 
 PokegearGFX::
 INCBIN "gfx/pokegear/pokegear.2bpp.lz"
+
+INCLUDE "gfx/types/icons.asm"

@@ -5,6 +5,76 @@ DEF SHINY_DEF_DV EQU 10
 DEF SHINY_SPD_DV EQU 10
 DEF SHINY_SPC_DV EQU 10
 
+; Palette data for the type icons
+INCLUDE "data/types/palettes.asm"
+
+LoadTypeIconPalette:
+; Load one type icon palette.
+; input:
+;   a  = type constant
+;   de = destination palette address, e.g. wBGPals1 palette 6
+
+	push de
+
+	; de = a * 2, because TypeIconPalettePointers entries are dw
+	ld e, a
+	ld d, 0
+	ld hl, TypeIconPalettePointers
+	add hl, de
+	add hl, de
+
+	; hl = palette pointer
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	pop de
+	ld bc, 1 palettes
+	call CopyBytes
+	ret
+
+LoadStatsScreenTypeIconPalettes:
+; Load type icon palettes for the current mon.
+; input:
+;   de = current stats page background color
+;        e = low byte
+;        d = high byte
+;
+; Uses:
+;   BG palette 6 = slot 1 type icon
+;   BG palette 7 = slot 2 type icon, if dual-type
+
+	push de
+	ld a, [wStatsScreenType1]
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+	pop de
+
+	; Replace palette 6 color 1 with current page background.
+	ld a, e
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, d
+	ld [wBGPals1 palette 6 + 3], a
+
+	ld a, [wStatsScreenType1]
+	ld b, a
+	ld a, [wStatsScreenType2]
+	cp b
+	ret z
+
+	push de
+	ld a, [wStatsScreenType2]
+	ld de, wBGPals1 palette 7
+	call LoadTypeIconPalette
+	pop de
+
+	; Replace palette 7 color 1 with current page background.
+	ld a, e
+	ld [wBGPals1 palette 7 + 2], a
+	ld a, d
+	ld [wBGPals1 palette 7 + 3], a
+	ret
+
 CheckShininess:
 ; Check if a mon is shiny by DVs at bc.
 ; Return carry if shiny.
@@ -373,21 +443,39 @@ ApplyHPBarPals:
 LoadStatsScreenPals:
 	call CheckCGB
 	ret z
+
 	ld hl, StatsScreenPals
 	ld b, 0
 	dec c
 	add hl, bc
 	add hl, bc
+
 	ldh a, [rWBK]
 	push af
 	ld a, BANK(wBGPals1)
 	ldh [rWBK], a
+
+	; Load the current stats page background color into
+	; BG palette 0 color 0 and BG palette 2 color 0.
 	ld a, [hli]
 	ld [wBGPals1 palette 0], a
 	ld [wBGPals1 palette 2], a
+	ld e, a ; low byte of current page background color
+
 	ld a, [hl]
 	ld [wBGPals1 palette 0 + 1], a
 	ld [wBGPals1 palette 2 + 1], a
+	ld d, a ; high byte of current page background color
+
+	; Load type icon palettes for the current mon.
+	; BG palette 6 = type icon slot 1
+	; BG palette 7 = type icon slot 2, if dual-typed
+	;
+	; The icon conversion pipeline maps the fake cyan background
+	; to runtime palette color 1. LoadStatsScreenTypeIconPalettes
+	; replaces color 1 with the current stats page background color.
+	call LoadStatsScreenTypeIconPalettes
+
 	pop af
 	ldh [rWBK], a
 	call ApplyPals

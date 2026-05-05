@@ -1,0 +1,5 @@
+; gfx/types/bug.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 21, 23,  4
+	RGB  0,  0,  0
