@@ -1,0 +1,5 @@
+; gfx/types/ice.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 19, 27, 27
+	RGB  0,  0,  0

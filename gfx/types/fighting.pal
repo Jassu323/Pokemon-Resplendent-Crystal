@@ -1,0 +1,5 @@
+; gfx/types/fighting.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 29,  6,  0
+	RGB  0,  0,  0

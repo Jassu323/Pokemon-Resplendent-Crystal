@@ -292,7 +292,15 @@ gfx/mobile/stadium2_n64.2bpp: tools/gfx += --trim-whitespace
 ### Type icon graphics
 
 type_icon_pngs := $(wildcard gfx/types/*.png)
+type_icon_pals := $(type_icon_pngs:.png=.pal)
+type_icon_gbcpals := $(type_icon_pngs:.png=.gbcpal)
 type_icon_2bpp := $(type_icon_pngs:.png=.2bpp)
+
+gfx/types/%.gbcpal: gfx/types/%.pal
+	printf 'SECTION "Type Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $*.pal.asm
+	$(RGBASM) $(RGBASMFLAGS) -o $*.pal.o $*.pal.asm
+	$(RGBLINK) -x -o $@ $*.pal.o
+	$(RM) $*.pal.o $*.pal.asm
 
 $(type_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<

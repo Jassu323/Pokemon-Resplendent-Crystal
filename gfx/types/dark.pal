@@ -1,0 +1,5 @@
+; gfx/types/dark.pal
+	RGB 31, 31, 31
+	RGB  0, 31, 31
+	RGB 14, 11,  9
+	RGB  0,  0,  0
