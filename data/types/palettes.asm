@@ -66,7 +66,7 @@ TypeIconPalettePointers:
 	dw RockTypeIconPalette        ; ROCK         = 5
 	dw NormalTypeIconPalette      ; BIRD         = 6 ; unused/fallback
 	dw BugTypeIconPalette         ; BUG          = 7
-	dw GhostTypeIconPalette       ; GHOST        = 8
+	dw DarkTypeIconPalette        ; DARK         = 8
 	dw SteelTypeIconPalette       ; STEEL        = 9
 
 	; Unused type slots 10-18
@@ -90,7 +90,7 @@ TypeIconPalettePointers:
 	dw PsychicTypeIconPalette     ; PSYCHIC_TYPE = 24
 	dw IceTypeIconPalette         ; ICE          = 25
 	dw DragonTypeIconPalette      ; DRAGON       = 26
-	dw DarkTypeIconPalette        ; DARK         = 27
+	dw GhostTypeIconPalette       ; GHOST        = 27
 	dw FairyTypeIconPalette       ; FAIRY        = 28
 .end
 	ASSERT .end - TypeIconPalettePointers == TYPES_END * 2
