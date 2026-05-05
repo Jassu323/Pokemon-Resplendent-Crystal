@@ -28,7 +28,7 @@ TypeIconGFXPointers:
 	dba RockTypeIconGFX        ; ROCK         = 5
 	dba NormalTypeIconGFX      ; BIRD         = 6 ; unused/fallback
 	dba BugTypeIconGFX         ; BUG          = 7
-	dba GhostTypeIconGFX       ; GHOST        = 8
+	dba DarkTypeIconGFX        ; DARK         = 8
 	dba SteelTypeIconGFX       ; STEEL        = 9
 
 	; Unused type slots 10-18
@@ -52,7 +52,7 @@ TypeIconGFXPointers:
 	dba PsychicTypeIconGFX     ; PSYCHIC_TYPE = 24
 	dba IceTypeIconGFX         ; ICE          = 25
 	dba DragonTypeIconGFX      ; DRAGON       = 26
-	dba DarkTypeIconGFX        ; DARK         = 27
+	dba GhostTypeIconGFX       ; GHOST        = 27
 	dba FairyTypeIconGFX       ; FAIRY        = 28
 .end
 	ASSERT .end - TypeIconGFXPointers == TYPES_END * 3
