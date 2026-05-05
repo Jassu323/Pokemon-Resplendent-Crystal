@@ -289,6 +289,13 @@ gfx/mobile/phone_tiles.2bpp: tools/gfx += --remove-whitespace
 gfx/mobile/pichu_animated.2bpp: tools/gfx += --trim-whitespace
 gfx/mobile/stadium2_n64.2bpp: tools/gfx += --trim-whitespace
 
+### Type icon graphics
+
+type_icon_pngs := $(wildcard gfx/types/*.png)
+type_icon_2bpp := $(type_icon_pngs:.png=.2bpp)
+
+$(type_icon_2bpp): %.2bpp: %.png %.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
 ### Catch-all graphics rules
 

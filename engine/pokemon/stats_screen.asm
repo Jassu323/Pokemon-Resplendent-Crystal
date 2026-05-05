@@ -10,6 +10,12 @@ DEF STAT_PAGE_MASK EQU %00000011
 	const STATS_SCREEN_ANIMATE_MON    ; 5
 	const STATS_SCREEN_ANIMATE_EGG    ; 6
 
+DEF TYPE_ICON_GRASS_TILE  EQU $68 ; uses $68-$6f
+DEF TYPE_ICON_FLYING_TILE EQU $70 ; uses $70-$77
+
+DEF TYPE_ICON_GRASS_ATTR  EQU $0e ; VRAM bank 1, BG palette 6
+DEF TYPE_ICON_FLYING_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+
 BattleStatsScreenInit:
 	ld a, [wLinkMode]
 	cp LINK_MOBILE
@@ -539,17 +545,27 @@ StatsScreen_LoadGFX:
 	ld [wCurSpecies], a
 	xor a
 	ldh [hBGMapMode], a
+
 	call .ClearBox
 	call .PageTilemap
 	call .LoadPals
+
 	ld hl, wStatsScreenFlags
 	bit STATS_SCREEN_PLACE_FRONTPIC, [hl]
 	jr nz, .place_frontpic
+
 	call SetDefaultBGPAndOBP
+	call StatsScreen_FinalizeTypeIconArea
+	/* 	Type icons use CGB attrmap bits for VRAM bank 1 and BG palettes 6/7.
+	Transfer both tilemap and attrmap here; tilemap-only backup causes stale
+	icon attrs/tiles to appear during page transitions and mon animation. */
+	call HDMATransferTilemapAndAttrmap_Menu
 	ret
 
 .place_frontpic
 	call StatsScreen_PlaceFrontpic
+	call StatsScreen_FinalizeTypeIconArea
+	call HDMATransferTilemapAndAttrmap_Menu
 	ret
 
 .ClearBox:
@@ -567,7 +583,6 @@ StatsScreen_LoadGFX:
 	maskbits NUM_STAT_PAGES
 	ld c, a
 	farcall LoadStatsScreenPals
-	call DelayFrame
 	ld hl, wStatsScreenFlags
 	set STATS_SCREEN_ANIMATE_MON, [hl]
 	ret
@@ -626,8 +641,6 @@ LoadPinkPage:
 	ld de, .OK_str
 	call PlaceString
 .done_status
-	hlcoord 1, 15
-	predef PrintMonTypes
 	hlcoord 9, 8
 	ld de, SCREEN_WIDTH
 	ld b, 10
@@ -1011,6 +1024,151 @@ StatsScreen_LoadTextboxSpaceGFX:
 	pop de
 	pop hl
 	ret
+
+StatsScreen_LoadTypeIconGFX:
+	push hl
+	push de
+	push bc
+	push af
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	; Load Grass icon into VRAM bank 1.
+	ld de, GrassTypeIconGFX
+	lb bc, BANK(GrassTypeIconGFX), 8
+	ld hl, vTiles2 tile TYPE_ICON_GRASS_TILE
+	call Get2bpp
+
+	; Load Flying icon into VRAM bank 1.
+	ld de, FlyingTypeIconGFX
+	lb bc, BANK(FlyingTypeIconGFX), 8
+	ld hl, vTiles2 tile TYPE_ICON_FLYING_TILE
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+
+	pop af
+	pop bc
+	pop de
+	pop hl
+	ret
+
+StatsScreen_DrawTypeIcon:
+; Draws one 4x2 type icon.
+; input:
+;   hl = upper-left tilemap destination
+;   a  = first tile id
+	push bc
+	ld b, a
+
+	; top row
+	ld a, b
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+
+	; move hl down one row and back four columns
+	ld bc, SCREEN_WIDTH - 4
+	add hl, bc
+
+	; bottom row
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+	inc a
+	ld [hli], a
+
+	pop bc
+	ret
+
+StatsScreen_DrawTypeIcons:
+	; Grass icon at x=0, y=15.
+	hlcoord 0, 15
+	ld a, TYPE_ICON_GRASS_TILE
+	call StatsScreen_DrawTypeIcon
+
+	; Flying icon at x=4, y=15.
+	hlcoord 4, 15
+	ld a, TYPE_ICON_FLYING_TILE
+	call StatsScreen_DrawTypeIcon
+	ret
+
+StatsScreen_SetTypeIconAttrs:
+; Sets one 4x2 type icon attr block.
+; input:
+;   hl = upper-left attrmap destination
+;   a  = attr byte
+	push bc
+	ld b, a
+
+	; top row
+	ld a, b
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+
+	; move hl down one row and back four columns
+	ld bc, SCREEN_WIDTH - 4
+	add hl, bc
+
+	; bottom row
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+
+	pop bc
+	ret
+
+StatsScreen_SetTypeIconAttrs_DualTest:
+	; Grass icon attrs: VRAM bank 1, BG palette 6.
+	hlcoord 0, 15, wAttrmap
+	ld a, TYPE_ICON_GRASS_ATTR
+	call StatsScreen_SetTypeIconAttrs
+
+	; Flying icon attrs: VRAM bank 1, BG palette 7.
+	hlcoord 4, 15, wAttrmap
+	ld a, TYPE_ICON_FLYING_ATTR
+	call StatsScreen_SetTypeIconAttrs
+	ret
+
+StatsScreen_ClearTypeIconAttrs:
+	hlcoord 0, 15, wAttrmap
+	xor a
+	call StatsScreen_SetTypeIconAttrs
+
+	hlcoord 4, 15, wAttrmap
+	xor a
+	call StatsScreen_SetTypeIconAttrs
+	ret
+
+StatsScreen_FinalizeTypeIconArea:
+	ld a, [wStatsScreenFlags]
+	maskbits NUM_STAT_PAGES
+	cp PINK_PAGE
+	jr z, .pink_page
+
+	call StatsScreen_ClearTypeIconAttrs
+	ret
+
+.pink_page
+	call StatsScreen_LoadTypeIconGFX
+	call StatsScreen_DrawTypeIcons
+	call StatsScreen_SetTypeIconAttrs_DualTest
+	ret
+
 
 StatsScreenSpaceGFX: ; unreferenced
 INCBIN "gfx/font/space.2bpp"

@@ -370,7 +370,7 @@ ApplyHPBarPals:
 	call FillBoxCGB
 	ret
 
-LoadStatsScreenPals:
+/* LoadStatsScreenPals:
 	call CheckCGB
 	ret z
 	ld hl, StatsScreenPals
@@ -388,6 +388,75 @@ LoadStatsScreenPals:
 	ld a, [hl]
 	ld [wBGPals1 palette 0 + 1], a
 	ld [wBGPals1 palette 2 + 1], a
+	pop af
+	ldh [rWBK], a
+	call ApplyPals
+	ld a, $1
+	ret */
+
+GrassTypeIconPalette::
+INCBIN "gfx/types/grass.gbcpal"
+
+FlyingTypeIconPalette::
+INCBIN "gfx/types/flying.gbcpal"
+
+LoadStatsScreenPals:
+	call CheckCGB
+	ret z
+
+	ld hl, StatsScreenPals
+	ld b, 0
+	dec c
+	add hl, bc
+	add hl, bc
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	; Load the current stats page background color into
+	; BG palette 0 color 0 and BG palette 2 color 0.
+	ld a, [hli]
+	ld [wBGPals1 palette 0], a
+	ld [wBGPals1 palette 2], a
+	ld e, a ; low byte of current page background color
+
+	ld a, [hl]
+	ld [wBGPals1 palette 0 + 1], a
+	ld [wBGPals1 palette 2 + 1], a
+	ld d, a ; high byte of current page background color
+
+	; Load Grass type icon palette into BG palette 6.
+	ld hl, GrassTypeIconPalette
+	ld bc, 1 palettes
+	push de
+	ld de, wBGPals1 palette 6
+	call CopyBytes
+	pop de
+
+	; Load Flying type icon palette into BG palette 7.
+	ld hl, FlyingTypeIconPalette
+	ld bc, 1 palettes
+	push de
+	ld de, wBGPals1 palette 7
+	call CopyBytes
+	pop de
+
+	; Replace BG palette 6 color 1 with the current stats page
+	; background color. The icon conversion pipeline maps the fake
+	; cyan background to runtime palette color 1.
+	ld a, e
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, d
+	ld [wBGPals1 palette 6 + 3], a
+
+	; Same for BG palette 7 color 1.
+	ld a, e
+	ld [wBGPals1 palette 7 + 2], a
+	ld a, d
+	ld [wBGPals1 palette 7 + 3], a
+
 	pop af
 	ldh [rWBK], a
 	call ApplyPals

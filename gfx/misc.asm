@@ -55,3 +55,11 @@ SECTION "Pokégear GFX", ROMX
 
 PokegearGFX::
 INCBIN "gfx/pokegear/pokegear.2bpp.lz"
+
+SECTION "Type Icons", ROMX
+
+GrassTypeIconGFX::
+INCBIN "gfx/types/grass.2bpp"
+
+FlyingTypeIconGFX::
+INCBIN "gfx/types/flying.2bpp"
