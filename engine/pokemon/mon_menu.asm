@@ -911,10 +911,13 @@ MoveScreenLoop:
 	hlcoord 1, 11
 	ld bc, 5
 	call ByteFill
+	hlcoord 1, 11
+	lb bc, 5, 7
+	call ClearBox
 	hlcoord 1, 12
 	lb bc, 5, SCREEN_WIDTH - 2
 	call ClearBox
-	hlcoord 1, 12
+	hlcoord 2, 13
 	ld de, String_MoveWhere
 	call PlaceString
 	jp .joy_loop
@@ -947,6 +950,8 @@ MoveScreenLoop:
 	ld a, [wCurPartyMon]
 	cp b
 	jp z, .joy_loop
+	ld de, SFX_SWITCH_POCKETS
+	call PlaySFX
 	jp MoveScreenLoop
 
 .d_left
@@ -961,6 +966,8 @@ MoveScreenLoop:
 	ld a, [wCurPartyMon]
 	cp b
 	jp z, .joy_loop
+	ld de, SFX_SWITCH_POCKETS
+	call PlaySFX
 	jp MoveScreenLoop
 
 .cycle_right
@@ -1087,7 +1094,7 @@ MoveScreen2DMenuData:
 	db PAD_CTRL_PAD | PAD_A | PAD_B ; accepted buttons
 
 String_MoveWhere:
-	db "Where?@"
+	db "Select a move<NEXT>to swap places.@"
 
 SetUpMoveScreenBG:
 	call ClearBGPalettes
@@ -1106,8 +1113,8 @@ SetUpMoveScreenBG:
 	ld [wTempIconSpecies], a
 	ld e, MONICON_MOVES
 	farcall LoadMenuMonIcon
-	hlcoord 0, 1
-	ld b, 9
+	hlcoord 0, -1
+	ld b, 1
 	ld c, 18
 	call Textbox
 	hlcoord 0, 11
@@ -1181,24 +1188,116 @@ PrepareToPlaceMoveData:
 PlaceMoveData:
 	xor a
 	ldh [hBGMapMode], a
+	
+; Print UI elements
 	hlcoord 0, 10
 	ld de, String_MoveType_Top
 	call PlaceString
 	hlcoord 0, 11
 	ld de, String_MoveType_Bottom
 	call PlaceString
-	hlcoord 12, 12
+	hlcoord 1, 11
 	ld de, String_MoveAtk
 	call PlaceString
-	ld a, [wCurSpecies]
-	ld b, a
-	hlcoord 2, 12
-	predef PrintMoveType
+	hlcoord 1, 12
+	ld de, String_MoveAcc
+	call PlaceString
+	hlcoord 1, 13
+	ld de, String_MoveEff
+	call PlaceString
+
+; Print move categoryZ
+
+; Verify if it has power
 	ld a, [wCurSpecies]
 	ld l, a
 	ld a, MOVE_POWER
 	call GetMoveAttribute
 	hlcoord 16, 12
+	cp 2
+	jr c, .status_move
+
+; Verify if it's physical or special
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_TYPE
+	call GetMoveAttribute
+	cp SPECIAL
+	jr nc, .special_move
+	jr c, .physical_move
+
+.physical_move
+; if PHYSICAL move
+	hlcoord 11, 13
+	ld de, String_MovePhy
+	call PlaceString
+	jr .printed_category
+
+; if SPECIAL move
+.special_move
+	hlcoord 11, 13
+	ld de, String_MoveSpe
+	call PlaceString
+	jr .printed_category
+
+; if STATUS move
+.status_move
+	hlcoord 11, 13
+	ld de, String_MoveSta
+	call PlaceString
+
+.printed_category
+	hlcoord 10, 13
+	ld [hl], "/"
+	call PlaceString
+	
+; Print move accuracy
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_ACC
+	call GetMoveAttribute
+	call ConvertPercentages
+	ld [wBuffer1], a
+	ld de, wBuffer1
+	lb bc, 1, 3
+	hlcoord 5, 12
+	call PrintNum
+
+; Print move effect chance
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_CHANCE
+	call GetMoveAttribute
+	cp 1
+	jr c, .if_null_chance
+	call ConvertPercentages
+	ld [wBuffer1], a
+	ld de, wBuffer1
+	lb bc, 1, 3
+	hlcoord 5, 13
+	call PrintNum
+	jr .skip_null_chance
+
+.if_null_chance
+	ld de, String_MoveNoPower
+	ld bc, 3
+	hlcoord 5, 13
+	call PlaceString
+
+.skip_null_chance
+	
+; Print move type
+	ld a, [wCurSpecies]
+	ld b, a
+	hlcoord 10, 12
+	predef PrintMoveType
+	
+; Print move power
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	hlcoord 5, 11
 	cp 2
 	jr c, .no_power
 	ld [wTextDecimalByte], a
@@ -1211,21 +1310,49 @@ PlaceMoveData:
 	ld de, String_MoveNoPower
 	call PlaceString
 
+; Print move description
 .description
-	hlcoord 1, 14
+	hlcoord 1, 15
 	predef PrintMoveDescription
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
+	
+; This converts values out of 256 into a value
+; out of 100.
+ConvertPercentages:
+	ldh [hMultiplicand + 2], a
+	xor a
+	ldh [hMultiplicand + 1], a
+	ldh [hMultiplicand], a
+	ld a, 100
+	ldh [hMultiplier], a ; 1 byte only
+	call Multiply
+	ldh a, [hProduct + 2]
+    and a ; check if our result is zero
+    ret z ; if zero, done
+    inc a ; else, add one
+    ret
 
+; UI elements
 String_MoveType_Top:
-	db "┌─────┐@"
+	db "┌───────┐@"
 String_MoveType_Bottom:
-	db "│TYPE/└@"
+	db "│       └@"
 String_MoveAtk:
-	db "ATK/@"
+	db "POW/@"
+String_MoveAcc:
+	db "ACC/@"
+String_MoveEff:
+	db "EFF/@"
 String_MoveNoPower:
 	db "---@"
+String_MovePhy:
+	db "PHYSICAL@"
+String_MoveSpe:
+	db "SPECIAL @"
+String_MoveSta:
+	db "STATUS  @"
 
 PlaceMoveScreenArrows:
 	call PlaceMoveScreenLeftArrow
