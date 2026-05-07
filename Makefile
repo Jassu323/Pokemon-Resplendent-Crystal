@@ -305,6 +305,22 @@ gfx/types/%.gbcpal: gfx/types/%.pal
 $(type_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
+### Move category icon graphics
+
+move_category_icon_pngs := $(wildcard gfx/move_categories/*.png)
+move_category_icon_pals := $(move_category_icon_pngs:.png=.pal)
+move_category_icon_gbcpals := $(move_category_icon_pngs:.png=.gbcpal)
+move_category_icon_2bpp := $(move_category_icon_pngs:.png=.2bpp)
+
+gfx/move_categories/%.gbcpal: gfx/move_categories/%.pal
+	printf 'SECTION "Move Category Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $*.pal.asm
+	$(RGBASM) $(RGBASMFLAGS) -o $*.pal.o $*.pal.asm
+	$(RGBLINK) -x -o $@ $*.pal.o
+	$(RM) $*.pal.o $*.pal.asm
+
+$(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
 ### Catch-all graphics rules
 
 %.2bpp: %.png

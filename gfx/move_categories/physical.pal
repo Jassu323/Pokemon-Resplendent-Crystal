@@ -1,0 +1,8 @@
+; Physical move category icon palette.
+; Source colors:
+; white, red/orange, yellow, black
+
+	RGB 31, 31, 31 ; white/background
+	RGB 31, 10,  6 ; red/orange
+	RGB 31, 25,  6 ; yellow
+	RGB  0,  0,  0 ; black

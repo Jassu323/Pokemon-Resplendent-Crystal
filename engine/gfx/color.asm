@@ -8,6 +8,9 @@ DEF SHINY_SPC_DV EQU 10
 ; Palette data for the type icons
 INCLUDE "data/types/palettes.asm"
 
+;Palette data for the move category icons
+INCLUDE "data/move_categories/palettes.asm"
+
 LoadTypeIconPalette:
 ; Load one type icon palette.
 ; input:
@@ -125,6 +128,79 @@ LoadMoveMenuCurrentTypeIconPalette:
 	ld a, MOVE_TYPE
 	call GetMoveAttribute
 	jp LoadMoveMenuTypeIconPalette
+
+LoadMoveCategoryIconPalette:
+; Load one move category icon palette.
+; input:
+;   a = MOVE_CATEGORY_* constant
+;
+; Uses:
+;   BG palette 7
+
+	ld b, a
+
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	; de = b * 2, because MoveCategoryIconPalettePointers entries are dw
+	ld a, b
+	ld e, a
+	ld d, 0
+	ld hl, MoveCategoryIconPalettePointers
+	add hl, de
+	add hl, de
+
+	; hl = palette pointer
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	ld de, wBGPals1 palette 7
+	ld bc, 1 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rWBK], a
+
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+LoadMoveMenuCurrentCategoryIconPalette::
+; Load selected move's category icon palette into BG palette 7.
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	cp 2
+	jr c, .status
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_TYPE
+	call GetMoveAttribute
+	cp SPECIAL
+	jr nc, .special
+
+.physical
+	ld a, MOVE_CATEGORY_PHYSICAL
+	jp LoadMoveCategoryIconPalette
+
+.special
+	ld a, MOVE_CATEGORY_SPECIAL
+	jp LoadMoveCategoryIconPalette
+
+.status
+	ld a, MOVE_CATEGORY_STATUS
+	jp LoadMoveCategoryIconPalette
 
 CheckShininess:
 ; Check if a mon is shiny by DVs at bc.
