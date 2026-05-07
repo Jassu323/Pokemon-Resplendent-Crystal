@@ -1,3 +1,21 @@
+; Move detail icon constants
+DEF MOVE_MENU_TYPE_ICON_TILE EQU $68 ; uses $68-$6f
+DEF MOVE_MENU_TYPE_ICON_ATTR EQU $0e ; VRAM bank 1, BG palette 6
+DEF MOVE_MENU_CATEGORY_ICON_TILE EQU $70 ; uses $70-$77
+DEF MOVE_MENU_CATEGORY_ICON_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+
+; Move detail icon positions
+DEF MOVE_MENU_TYPE_ICON_X     EQU 11
+DEF MOVE_MENU_CATEGORY_ICON_X EQU 15
+DEF MOVE_MENU_ICON_Y          EQU 12
+
+MoveCategoryIconGFXPointers:
+	table_width 3
+	dba PhysicalMoveCategoryIconGFX
+	dba SpecialMoveCategoryIconGFX
+	dba StatusMoveCategoryIconGFX
+	assert_table_length NUM_MOVE_CATEGORIES
+
 HasNoItems:
 	ld a, [wNumItems]
 	and a
@@ -911,10 +929,13 @@ MoveScreenLoop:
 	hlcoord 1, 11
 	ld bc, 5
 	call ByteFill
+	hlcoord 1, 11
+	lb bc, 5, 7
+	call ClearBox
 	hlcoord 1, 12
 	lb bc, 5, SCREEN_WIDTH - 2
 	call ClearBox
-	hlcoord 1, 12
+	hlcoord 2, 13
 	ld de, String_MoveWhere
 	call PlaceString
 	jp .joy_loop
@@ -947,6 +968,8 @@ MoveScreenLoop:
 	ld a, [wCurPartyMon]
 	cp b
 	jp z, .joy_loop
+	ld de, SFX_SWITCH_POCKETS
+	call PlaySFX
 	jp MoveScreenLoop
 
 .d_left
@@ -961,6 +984,8 @@ MoveScreenLoop:
 	ld a, [wCurPartyMon]
 	cp b
 	jp z, .joy_loop
+	ld de, SFX_SWITCH_POCKETS
+	call PlaySFX
 	jp MoveScreenLoop
 
 .cycle_right
@@ -1087,7 +1112,7 @@ MoveScreen2DMenuData:
 	db PAD_CTRL_PAD | PAD_A | PAD_B ; accepted buttons
 
 String_MoveWhere:
-	db "Where?@"
+	db "Select a move<NEXT>to swap places.@"
 
 SetUpMoveScreenBG:
 	call ClearBGPalettes
@@ -1106,8 +1131,8 @@ SetUpMoveScreenBG:
 	ld [wTempIconSpecies], a
 	ld e, MONICON_MOVES
 	farcall LoadMenuMonIcon
-	hlcoord 0, 1
-	ld b, 9
+	hlcoord 0, -1
+	ld b, 1
 	ld c, 18
 	call Textbox
 	hlcoord 0, 11
@@ -1132,9 +1157,19 @@ SetUpMoveScreenBG:
 	call SetHPPal
 	ld b, SCGB_MOVE_LIST
 	call GetSGBLayout
+
 	hlcoord 16, 0
 	lb bc, 1, 3
-	jp ClearBox
+	call ClearBox
+
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	call MoveMenu_SetMoveTypeIconAttrs
+	call MoveMenu_SetMoveCategoryIconAttrs
+	farcall ApplyAttrmap
+	ret
 
 SetUpMoveList:
 	xor a
@@ -1181,24 +1216,65 @@ PrepareToPlaceMoveData:
 PlaceMoveData:
 	xor a
 	ldh [hBGMapMode], a
+	
+; Print UI elements
 	hlcoord 0, 10
 	ld de, String_MoveType_Top
 	call PlaceString
 	hlcoord 0, 11
 	ld de, String_MoveType_Bottom
 	call PlaceString
-	hlcoord 12, 12
+	hlcoord 1, 11
 	ld de, String_MoveAtk
 	call PlaceString
+	hlcoord 1, 12
+	ld de, String_MoveAcc
+	call PlaceString
+	hlcoord 1, 13
+	ld de, String_MoveEff
+	call PlaceString
+	
+; Print move accuracy
 	ld a, [wCurSpecies]
-	ld b, a
-	hlcoord 2, 12
-	predef PrintMoveType
+	ld l, a
+	ld a, MOVE_ACC
+	call GetMoveAttribute
+	call ConvertPercentages
+	ld [wBuffer1], a
+	ld de, wBuffer1
+	lb bc, 1, 3
+	hlcoord 5, 12
+	call PrintNum
+
+; Print move effect chance
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_CHANCE
+	call GetMoveAttribute
+	cp 1
+	jr c, .if_null_chance
+	call ConvertPercentages
+	ld [wBuffer1], a
+	ld de, wBuffer1
+	lb bc, 1, 3
+	hlcoord 5, 13
+	call PrintNum
+	jr .skip_null_chance
+
+.if_null_chance
+	ld de, String_MoveNoPower
+	ld bc, 3
+	hlcoord 5, 13
+	call PlaceString
+
+.skip_null_chance
+	
+; Print move power
 	ld a, [wCurSpecies]
 	ld l, a
 	ld a, MOVE_POWER
 	call GetMoveAttribute
-	hlcoord 16, 12
+	hlcoord 5, 11
 	cp 2
 	jr c, .no_power
 	ld [wTextDecimalByte], a
@@ -1211,19 +1287,211 @@ PlaceMoveData:
 	ld de, String_MoveNoPower
 	call PlaceString
 
+; Print move description
 .description
-	hlcoord 1, 14
+	hlcoord 1, 15
 	predef PrintMoveDescription
+
+; Print move type icon
+	call MoveMenu_LoadMoveTypeIconGFX
+	hlcoord MOVE_MENU_TYPE_ICON_X, MOVE_MENU_ICON_Y
+	ld a, MOVE_MENU_TYPE_ICON_TILE
+	call MoveMenu_Draw4x2Icon
+
+; Print move category icon
+	call MoveMenu_LoadMoveCategoryIcon
+	hlcoord MOVE_MENU_CATEGORY_ICON_X, MOVE_MENU_ICON_Y
+	ld a, MOVE_MENU_CATEGORY_ICON_TILE
+	call MoveMenu_Draw4x2Icon
+
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
+	
+; This converts values out of 256 into a value
+; out of 100.
+ConvertPercentages:
+	ldh [hMultiplicand + 2], a
+	xor a
+	ldh [hMultiplicand + 1], a
+	ldh [hMultiplicand], a
+	ld a, 100
+	ldh [hMultiplier], a ; 1 byte only
+	call Multiply
+	ldh a, [hProduct + 2]
+    and a ; check if our result is zero
+    ret z ; if zero, done
+    inc a ; else, add one
+    ret
 
+MoveMenu_LoadMoveTypeIconGFX:
+; Queue selected move's type icon graphics and load its palette.
+
+	farcall StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1
+	farcall LoadMoveMenuCurrentTypeIconPalette
+	ret
+
+MoveMenu_LoadMoveCategoryIcon:
+	call MoveMenu_LoadMoveCategoryIconGFX
+	farcall LoadMoveMenuCurrentCategoryIconPalette
+	ret
+
+
+MoveMenu_Draw4x2Icon:
+; Draw one 4x2 icon at hl.
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+
+	ld c, 4
+.top
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .bottom
+	ret
+
+MoveMenu_SetMoveTypeIconAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord MOVE_MENU_TYPE_ICON_X, MOVE_MENU_ICON_Y, wAttrmap
+	ld a, MOVE_MENU_TYPE_ICON_ATTR
+	call MoveMenu_Set4x2IconAttrs
+	ret
+
+
+MoveMenu_Set4x2IconAttrs:
+; Set attrs for one 4x2 icon at hl.
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+
+	push bc
+	push de
+
+	ld c, 4
+.top
+	ld [hli], a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	dec c
+	jr nz, .bottom
+
+	pop de
+	pop bc
+	ret
+
+MoveMenu_GetCurrentMoveCategory:
+; Return selected move's category in a.
+; Uses wCurSpecies as selected move ID.
+;
+; returns:
+;   MOVE_CATEGORY_PHYSICAL
+;   MOVE_CATEGORY_SPECIAL
+;   MOVE_CATEGORY_STATUS
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	cp 2
+	jr c, .status
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_TYPE
+	call GetMoveAttribute
+	cp SPECIAL
+	jr nc, .special
+
+.physical
+	ld a, MOVE_CATEGORY_PHYSICAL
+	ret
+
+.special
+	ld a, MOVE_CATEGORY_SPECIAL
+	ret
+
+.status
+	ld a, MOVE_CATEGORY_STATUS
+	ret
+
+MoveMenu_LoadMoveCategoryIconGFX:
+; Load selected move's category icon graphics into VRAM bank 1.
+
+	call MoveMenu_GetCurrentMoveCategory
+
+	; de = a * 3, because MoveCategoryIconGFXPointers entries are dba: bank + word
+	ld e, a
+	ld d, 0
+	ld hl, MoveCategoryIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	; b = bank, de = source pointer
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	ld hl, vTiles2 tile MOVE_MENU_CATEGORY_ICON_TILE
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, 8
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+MoveMenu_SetMoveCategoryIconAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord MOVE_MENU_CATEGORY_ICON_X, MOVE_MENU_ICON_Y, wAttrmap
+	ld a, MOVE_MENU_CATEGORY_ICON_ATTR
+	call MoveMenu_Set4x2IconAttrs
+	ret
+
+
+; UI elements
 String_MoveType_Top:
-	db "┌─────┐@"
+	db "┌───────┐@"
 String_MoveType_Bottom:
-	db "│TYPE/└@"
+	db "│       └@"
 String_MoveAtk:
-	db "ATK/@"
+	db "POW/@"
+String_MoveAcc:
+	db "ACC/@"
+String_MoveEff:
+	db "EFF/@"
 String_MoveNoPower:
 	db "---@"
 

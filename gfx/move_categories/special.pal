@@ -1,0 +1,8 @@
+; Special move category icon palette.
+; Source colors:
+; white, blue, light blue, black
+
+	RGB 31, 31, 31 ; white/background
+	RGB 10, 14, 22 ; blue
+	RGB 19, 23, 28 ; light blue
+	RGB  0,  0,  0 ; black

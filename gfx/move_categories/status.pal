@@ -1,0 +1,8 @@
+; Status move category icon palette.
+; Source colors:
+; white, tan/gray, off-white, black
+
+	RGB 31, 31, 31 ; white/background
+	RGB 22, 21, 19 ; tan/gray
+	RGB 30, 30, 29 ; off-white highlight
+	RGB  0,  0,  0 ; black

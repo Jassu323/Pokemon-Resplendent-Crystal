@@ -1126,6 +1126,21 @@ StatsScreen_LoadCurrentMonTypeIconGFX:
 	call StatsScreen_LoadTypeIconGFX
 	ret
 
+
+StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1:
+; Load selected move's type icon graphics into VRAM bank 1.
+; Uses wCurSpecies as selected move ID, matching the move menu convention.
+; Destination:
+;   vTiles2 tile $68-$6f, VRAM bank 1
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_TYPE
+	call GetMoveAttribute
+
+	ld hl, vTiles2 tile $68
+	jp StatsScreen_LoadTypeIconGFX
+
 StatsScreen_DrawTypeIcon:
 ; Draws one 4x2 type icon.
 ; input:
