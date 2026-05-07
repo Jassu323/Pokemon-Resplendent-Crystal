@@ -1,3 +1,7 @@
+DEF MOVE_MENU_TYPE_ICON_TILE EQU $68 ; uses $68-$6f
+DEF MOVE_MENU_TYPE_ICON_ATTR EQU $0e ; VRAM bank 1, BG palette 6
+
+
 HasNoItems:
 	ld a, [wNumItems]
 	and a
@@ -1139,9 +1143,18 @@ SetUpMoveScreenBG:
 	call SetHPPal
 	ld b, SCGB_MOVE_LIST
 	call GetSGBLayout
+
 	hlcoord 16, 0
 	lb bc, 1, 3
-	jp ClearBox
+	call ClearBox
+
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	call MoveMenu_SetMoveTypeIconAttrs
+	farcall ApplyAttrmap
+	ret
 
 SetUpMoveList:
 	xor a
@@ -1206,7 +1219,7 @@ PlaceMoveData:
 	ld de, String_MoveEff
 	call PlaceString
 
-; Print move categoryZ
+; Print move category
 
 ; Verify if it has power
 	ld a, [wCurSpecies]
@@ -1227,29 +1240,9 @@ PlaceMoveData:
 	jr c, .physical_move
 
 .physical_move
-; if PHYSICAL move
-	hlcoord 11, 13
-	ld de, String_MovePhy
-	call PlaceString
-	jr .printed_category
-
-; if SPECIAL move
 .special_move
-	hlcoord 11, 13
-	ld de, String_MoveSpe
-	call PlaceString
-	jr .printed_category
-
-; if STATUS move
 .status_move
-	hlcoord 11, 13
-	ld de, String_MoveSta
-	call PlaceString
-
 .printed_category
-	hlcoord 10, 13
-	ld [hl], "/"
-	call PlaceString
 	
 ; Print move accuracy
 	ld a, [wCurSpecies]
@@ -1286,12 +1279,6 @@ PlaceMoveData:
 
 .skip_null_chance
 	
-; Print move type
-	ld a, [wCurSpecies]
-	ld b, a
-	hlcoord 10, 12
-	predef PrintMoveType
-	
 ; Print move power
 	ld a, [wCurSpecies]
 	ld l, a
@@ -1314,6 +1301,13 @@ PlaceMoveData:
 .description
 	hlcoord 1, 15
 	predef PrintMoveDescription
+
+; Print move type icon
+	call MoveMenu_LoadMoveTypeIconGFX
+	hlcoord 11, 12
+	ld a, MOVE_MENU_TYPE_ICON_TILE
+	call MoveMenu_DrawMoveTypeIcon
+
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
@@ -1334,6 +1328,78 @@ ConvertPercentages:
     inc a ; else, add one
     ret
 
+MoveMenu_LoadMoveTypeIconGFX:
+; Queue selected move's type icon graphics and load its palette.
+
+	farcall StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1
+	farcall LoadMoveMenuCurrentTypeIconPalette
+	ret
+
+
+MoveMenu_DrawMoveTypeIcon:
+; Draw one 4x2 icon at hl.
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+
+	ld c, 4
+.top
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .bottom
+	ret
+
+MoveMenu_SetMoveTypeIconAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord 11, 12, wAttrmap
+	ld a, MOVE_MENU_TYPE_ICON_ATTR
+	call MoveMenu_SetTypeIconAttrs
+	ret
+
+
+MoveMenu_SetTypeIconAttrs:
+; Set attrs for one 4x2 icon at hl.
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+
+	push bc
+	push de
+
+	ld c, 4
+.top
+	ld [hli], a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	dec c
+	jr nz, .bottom
+
+	pop de
+	pop bc
+	ret
+
+
 ; UI elements
 String_MoveType_Top:
 	db "┌───────┐@"
@@ -1347,12 +1413,6 @@ String_MoveEff:
 	db "EFF/@"
 String_MoveNoPower:
 	db "---@"
-String_MovePhy:
-	db "PHYSICAL@"
-String_MoveSpe:
-	db "SPECIAL @"
-String_MoveSta:
-	db "STATUS  @"
 
 PlaceMoveScreenArrows:
 	call PlaceMoveScreenLeftArrow

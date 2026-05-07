@@ -75,6 +75,57 @@ LoadStatsScreenTypeIconPalettes:
 	ld [wBGPals1 palette 7 + 3], a
 	ret
 
+LoadMoveMenuTypeIconPalette:
+; Load one type icon palette for the move detail screen.
+; input:
+;   a = type constant
+;
+; Uses:
+;   BG palette 6
+;   color 1 fake cyan is replaced with white.
+
+	ld b, a
+
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	; Load selected type palette into BG palette 6.
+	ld a, b
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+
+	; Replace palette 6 color 1 with palette 6 color 0.
+	; color 0 is white in every type icon palette.
+	ld a, [wBGPals1 palette 6]
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, [wBGPals1 palette 6 + 1]
+	ld [wBGPals1 palette 6 + 3], a
+
+	pop af
+	ldh [rWBK], a
+
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+LoadMoveMenuCurrentTypeIconPalette:
+; Farcall-safe.
+; Uses wCurSpecies as the selected move ID.
+; Loads selected move's type icon palette into BG palette 6.
+
+	ld a, [wCurSpecies]
+	ld l, a
+	ld a, MOVE_TYPE
+	call GetMoveAttribute
+	jp LoadMoveMenuTypeIconPalette
+
 CheckShininess:
 ; Check if a mon is shiny by DVs at bc.
 ; Return carry if shiny.
