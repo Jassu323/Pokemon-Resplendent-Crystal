@@ -16,48 +16,6 @@ DEF TYPE_ICON_SLOT_2_TILE EQU $70 ; uses $70-$77
 DEF TYPE_ICON_SLOT_1_ATTR EQU $0e ; VRAM bank 1, BG palette 6
 DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
 
-DEF TYPE_ICON_TILES EQU 8
-
-TypeIconGFXPointers:
-	; Physical block
-	dba NormalTypeIconGFX      ; NORMAL       = 0
-	dba FightingTypeIconGFX    ; FIGHTING     = 1
-	dba FlyingTypeIconGFX      ; FLYING       = 2
-	dba PoisonTypeIconGFX      ; POISON       = 3
-	dba GroundTypeIconGFX      ; GROUND       = 4
-	dba RockTypeIconGFX        ; ROCK         = 5
-	dba NormalTypeIconGFX      ; BIRD         = 6 ; unused/fallback
-	dba BugTypeIconGFX         ; BUG          = 7
-	dba DarkTypeIconGFX        ; DARK         = 8
-	dba SteelTypeIconGFX       ; STEEL        = 9
-
-	; Unused type slots 10-18
-	dba NormalTypeIconGFX      ; unused 10
-	dba NormalTypeIconGFX      ; unused 11
-	dba NormalTypeIconGFX      ; unused 12
-	dba NormalTypeIconGFX      ; unused 13
-	dba NormalTypeIconGFX      ; unused 14
-	dba NormalTypeIconGFX      ; unused 15
-	dba NormalTypeIconGFX      ; unused 16
-	dba NormalTypeIconGFX      ; unused 17
-	dba NormalTypeIconGFX      ; unused 18
-
-	dba GhostTypeIconGFX       ; CURSE_TYPE   = 19 ; fallback
-
-	; Special block
-	dba FireTypeIconGFX        ; FIRE         = 20
-	dba WaterTypeIconGFX       ; WATER        = 21
-	dba GrassTypeIconGFX       ; GRASS        = 22
-	dba ElectricTypeIconGFX    ; ELECTRIC     = 23
-	dba PsychicTypeIconGFX     ; PSYCHIC_TYPE = 24
-	dba IceTypeIconGFX         ; ICE          = 25
-	dba DragonTypeIconGFX      ; DRAGON       = 26
-	dba GhostTypeIconGFX       ; GHOST        = 27
-	dba FairyTypeIconGFX       ; FAIRY        = 28
-.end
-	ASSERT .end - TypeIconGFXPointers == TYPES_END * 3
-
-
 BattleStatsScreenInit:
 	ld a, [wLinkMode]
 	cp LINK_MOBILE
@@ -1074,43 +1032,6 @@ StatsScreen_LoadTextboxSpaceGFX:
 	pop hl
 	ret
 
-StatsScreen_LoadTypeIconGFX:
-; Load one type icon into VRAM bank 1.
-; input:
-;   a  = type constant
-;   hl = destination tile address, e.g. vTiles2 tile TYPE_ICON_SLOT_1_TILE
-	push hl
-
-	; de = a * 3, because TypeIconGFXPointers entries are dba: bank + word
-	ld e, a
-	ld d, 0
-	ld hl, TypeIconGFXPointers
-	add hl, de
-	add hl, de
-	add hl, de
-
-	; b = bank, de = pointer
-	ld a, [hli]
-	ld b, a
-	ld a, [hli]
-	ld e, a
-	ld a, [hl]
-	ld d, a
-
-	pop hl
-
-	ldh a, [rVBK]
-	push af
-	ld a, $1
-	ldh [rVBK], a
-
-	ld c, TYPE_ICON_TILES
-	call Get2bpp
-
-	pop af
-	ldh [rVBK], a
-	ret
-
 StatsScreen_LoadCurrentMonTypeIconGFX:
 	ld a, [wStatsScreenType1]
 	ld hl, vTiles2 tile TYPE_ICON_SLOT_1_TILE
@@ -1126,56 +1047,6 @@ StatsScreen_LoadCurrentMonTypeIconGFX:
 	call StatsScreen_LoadTypeIconGFX
 	ret
 
-
-StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1:
-; Load selected move's type icon graphics into VRAM bank 1.
-; Uses wCurSpecies as selected move ID, matching the move menu convention.
-; Destination:
-;   vTiles2 tile $68-$6f, VRAM bank 1
-
-	ld a, [wCurSpecies]
-	ld l, a
-	ld a, MOVE_TYPE
-	call GetMoveAttribute
-
-	ld hl, vTiles2 tile $68
-	jp StatsScreen_LoadTypeIconGFX
-
-StatsScreen_DrawTypeIcon:
-; Draws one 4x2 type icon.
-; input:
-;   hl = upper-left tilemap destination
-;   a  = first tile id
-	push bc
-	ld b, a
-
-	; top row
-	ld a, b
-	ld [hli], a
-	inc a
-	ld [hli], a
-	inc a
-	ld [hli], a
-	inc a
-	ld [hli], a
-
-	; move hl down one row and back four columns
-	ld bc, SCREEN_WIDTH - 4
-	add hl, bc
-
-	; bottom row
-	inc a
-	ld [hli], a
-	inc a
-	ld [hli], a
-	inc a
-	ld [hli], a
-	inc a
-	ld [hli], a
-
-	pop bc
-	ret
-
 StatsScreen_DrawCurrentMonTypeIcons:
 	ld a, [wStatsScreenType1]
 	ld b, a
@@ -1186,45 +1057,17 @@ StatsScreen_DrawCurrentMonTypeIcons:
 .mono
 	hlcoord 2, 15
 	ld a, TYPE_ICON_SLOT_1_TILE
-	call StatsScreen_DrawTypeIcon
+	call Icon_Draw4x2
 	ret
 
 .dual
 	hlcoord 0, 15
 	ld a, TYPE_ICON_SLOT_1_TILE
-	call StatsScreen_DrawTypeIcon
+	call Icon_Draw4x2
 
 	hlcoord 4, 15
 	ld a, TYPE_ICON_SLOT_2_TILE
-	call StatsScreen_DrawTypeIcon
-	ret
-
-StatsScreen_SetTypeIconAttrs:
-; Sets one 4x2 type icon attr block.
-; input:
-;   hl = upper-left attrmap destination
-;   a  = attr byte
-	push bc
-	ld b, a
-
-	; top row
-	ld a, b
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-
-	; move hl down one row and back four columns
-	ld bc, SCREEN_WIDTH - 4
-	add hl, bc
-
-	; bottom row
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-	ld [hli], a
-
-	pop bc
+	call Icon_Draw4x2
 	ret
 
 StatsScreen_SetCurrentMonTypeIconAttrs:
@@ -1237,27 +1080,27 @@ StatsScreen_SetCurrentMonTypeIconAttrs:
 .mono
 	hlcoord 2, 15, wAttrmap
 	ld a, TYPE_ICON_SLOT_1_ATTR
-	call StatsScreen_SetTypeIconAttrs
+	call Icon_Set4x2Attrs
 	ret
 
 .dual
 	hlcoord 0, 15, wAttrmap
 	ld a, TYPE_ICON_SLOT_1_ATTR
-	call StatsScreen_SetTypeIconAttrs
+	call Icon_Set4x2Attrs
 
 	hlcoord 4, 15, wAttrmap
 	ld a, TYPE_ICON_SLOT_2_ATTR
-	call StatsScreen_SetTypeIconAttrs
+	call Icon_Set4x2Attrs
 	ret
 
 StatsScreen_ClearTypeIconAttrs:
 	hlcoord 0, 15, wAttrmap
 	xor a
-	call StatsScreen_SetTypeIconAttrs
+	call Icon_Set4x2Attrs
 
 	hlcoord 4, 15, wAttrmap
 	xor a
-	call StatsScreen_SetTypeIconAttrs
+	call Icon_Set4x2Attrs
 	ret
 
 StatsScreen_FinalizeTypeIconArea:

@@ -1,23 +1,11 @@
 ; Core components of the battle engine.
 
-; Battle move-info icon constants.
-; These reuse the move-detail screen's VRAM-bank-1 icon slots.
-DEF BATTLE_MOVE_INFO_TYPE_ICON_TILE     EQU $68 ; uses $68-$6f
-DEF BATTLE_MOVE_INFO_CATEGORY_ICON_TILE EQU $70 ; uses $70-$77
-
 DEF BATTLE_MOVE_INFO_TYPE_ICON_ATTR     EQU $0e ; VRAM bank 1, BG palette 6
 DEF BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR EQU $0f ; VRAM bank 1, BG palette 7
 
 DEF BATTLE_MOVE_INFO_TYPE_ICON_X        EQU 1
 DEF BATTLE_MOVE_INFO_CATEGORY_ICON_X    EQU 5
 DEF BATTLE_MOVE_INFO_ICON_Y             EQU 9
-
-BattleMoveInfoCategoryIconGFXPointers:
-	table_width 3
-	dba PhysicalMoveCategoryIconGFX
-	dba SpecialMoveCategoryIconGFX
-	dba StatusMoveCategoryIconGFX
-	assert_table_length NUM_MOVE_CATEGORIES
 
 DoBattle:
 	xor a
@@ -5778,18 +5766,7 @@ MoveInfoBox:
 	and a
 	jr z, .print_type_text
 
-	call BattleMoveInfo_LoadTypeIcon
-	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y
-	ld a, BATTLE_MOVE_INFO_TYPE_ICON_TILE
-	call BattleMoveInfo_Draw4x2Icon
-
-	call BattleMoveInfo_LoadCategoryIcon
-	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y
-	ld a, BATTLE_MOVE_INFO_CATEGORY_ICON_TILE
-	call BattleMoveInfo_Draw4x2Icon
-
-	call BattleMoveInfo_SetTypeIconAttrs
-	call BattleMoveInfo_SetCategoryIconAttrs
+	farcall BattleMoveInfo_LoadAndDrawIcons
 
 	pop af
 	and a
@@ -5840,128 +5817,6 @@ MoveInfoBox:
 	call PrintNum
 	ret
 
-BattleMoveInfo_LoadTypeIcon:
-	farcall StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1
-	farcall LoadMoveMenuCurrentTypeIconPalette
-	ret
-
-BattleMoveInfo_LoadCategoryIcon:
-	call BattleMoveInfo_LoadCategoryIconGFX
-	farcall LoadMoveMenuCurrentCategoryIconPalette
-	ret
-
-BattleMoveInfo_GetCurrentMoveCategory:
-	ld a, [wPlayerMoveStruct + MOVE_POWER]
-	cp 2
-	jr c, .status
-
-	ld a, [wPlayerMoveStruct + MOVE_TYPE]
-	cp SPECIAL
-	jr nc, .special
-
-.physical
-	ld a, MOVE_CATEGORY_PHYSICAL
-	ret
-
-.special
-	ld a, MOVE_CATEGORY_SPECIAL
-	ret
-
-.status
-	ld a, MOVE_CATEGORY_STATUS
-	ret
-
-BattleMoveInfo_LoadCategoryIconGFX:
-	call BattleMoveInfo_GetCurrentMoveCategory
-
-	ld e, a
-	ld d, 0
-	ld hl, BattleMoveInfoCategoryIconGFXPointers
-	add hl, de
-	add hl, de
-	add hl, de
-
-	ld a, [hli]
-	ld b, a
-	ld a, [hli]
-	ld e, a
-	ld a, [hl]
-	ld d, a
-
-	ld hl, vTiles2 tile BATTLE_MOVE_INFO_CATEGORY_ICON_TILE
-
-	ldh a, [rVBK]
-	push af
-	ld a, $1
-	ldh [rVBK], a
-
-	ld c, 8
-	call Get2bpp
-
-	pop af
-	ldh [rVBK], a
-	ret
-
-BattleMoveInfo_Draw4x2Icon:
-; input:
-;   hl = tilemap destination
-;   a  = starting tile ID
-
-	ld c, 4
-.top
-	ld [hli], a
-	inc a
-	dec c
-	jr nz, .top
-
-	ld de, SCREEN_WIDTH - 4
-	add hl, de
-
-	ld c, 4
-.bottom
-	ld [hli], a
-	inc a
-	dec c
-	jr nz, .bottom
-	ret
-
-BattleMoveInfo_SetTypeIconAttrs:
-	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
-	ld a, BATTLE_MOVE_INFO_TYPE_ICON_ATTR
-	jr BattleMoveInfo_Set4x2IconAttrs
-
-BattleMoveInfo_SetCategoryIconAttrs:
-	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
-	ld a, BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR
-	; fallthrough
-
-BattleMoveInfo_Set4x2IconAttrs:
-; input:
-;   hl = attrmap destination
-;   a  = attr byte
-
-	push bc
-	push de
-
-	ld c, 4
-.top
-	ld [hli], a
-	dec c
-	jr nz, .top
-
-	ld de, SCREEN_WIDTH - 4
-	add hl, de
-
-	ld c, 4
-.bottom
-	ld [hli], a
-	dec c
-	jr nz, .bottom
-
-	pop de
-	pop bc
-	ret
-
 BattleMoveInfo_HadIconAttrs:
 	ldh a, [hCGB]
 	and a
@@ -5988,6 +5843,13 @@ BattleMoveInfo_UpdateTilemapAndAttrmap:
 	ldh a, [hCGB]
 	and a
 	ret z
+.wait
+	ldh a, [rLY]
+	cp LY_VBLANK
+	jr c, .wait
+	cp LY_VBLANK + 2
+	jr nc, .wait
+	call UpdateCGBPals
 	call CGBOnly_CopyTilemapAtOnce
 	ret
 

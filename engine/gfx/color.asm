@@ -78,103 +78,18 @@ LoadStatsScreenTypeIconPalettes:
 	ld [wBGPals1 palette 7 + 3], a
 	ret
 
-LoadMoveMenuTypeIconPalette:
-; Load one type icon palette for the move detail screen.
-; input:
-;   a = type constant
+LoadMoveMenuCurrentIconPalettes::
+; Farcall-safe. Load selected move's type and category icon palettes.
+; Uses wCurSpecies as the selected move ID.
 ;
 ; Uses:
-;   BG palette 6
-;   color 1 fake cyan is replaced with white.
-
-	ld b, a
-
-	ldh a, [hCGB]
-	and a
-	ret z
-
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wBGPals1)
-	ldh [rWBK], a
-
-	; Load selected type palette into BG palette 6.
-	ld a, b
-	ld de, wBGPals1 palette 6
-	call LoadTypeIconPalette
-
-	; Replace palette 6 color 1 with palette 6 color 0.
-	; color 0 is white in every type icon palette.
-	ld a, [wBGPals1 palette 6]
-	ld [wBGPals1 palette 6 + 2], a
-	ld a, [wBGPals1 palette 6 + 1]
-	ld [wBGPals1 palette 6 + 3], a
-
-	pop af
-	ldh [rWBK], a
-
-	call ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ret
-
-LoadMoveMenuCurrentTypeIconPalette:
-; Farcall-safe.
-; Uses wCurSpecies as the selected move ID.
-; Loads selected move's type icon palette into BG palette 6.
-
+;   BG palette 6 = type icon
+;   BG palette 7 = category icon
 	ld a, [wCurSpecies]
 	ld l, a
 	ld a, MOVE_TYPE
 	call GetMoveAttribute
-	jp LoadMoveMenuTypeIconPalette
-
-LoadMoveCategoryIconPalette:
-; Load one move category icon palette.
-; input:
-;   a = MOVE_CATEGORY_* constant
-;
-; Uses:
-;   BG palette 7
-
 	ld b, a
-
-	ldh a, [hCGB]
-	and a
-	ret z
-
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wBGPals1)
-	ldh [rWBK], a
-
-	; de = b * 2, because MoveCategoryIconPalettePointers entries are dw
-	ld a, b
-	ld e, a
-	ld d, 0
-	ld hl, MoveCategoryIconPalettePointers
-	add hl, de
-	add hl, de
-
-	; hl = palette pointer
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-
-	ld de, wBGPals1 palette 7
-	ld bc, 1 palettes
-	call CopyBytes
-
-	pop af
-	ldh [rWBK], a
-
-	call ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ret
-
-LoadMoveMenuCurrentCategoryIconPalette::
-; Load selected move's category icon palette into BG palette 7.
 
 	ld a, [wCurSpecies]
 	ld l, a
@@ -191,16 +106,102 @@ LoadMoveMenuCurrentCategoryIconPalette::
 	jr nc, .special
 
 .physical
-	ld a, MOVE_CATEGORY_PHYSICAL
-	jp LoadMoveCategoryIconPalette
+	ld c, MOVE_CATEGORY_PHYSICAL
+	jr .got_category
 
 .special
-	ld a, MOVE_CATEGORY_SPECIAL
-	jp LoadMoveCategoryIconPalette
+	ld c, MOVE_CATEGORY_SPECIAL
+	jr .got_category
 
 .status
-	ld a, MOVE_CATEGORY_STATUS
-	jp LoadMoveCategoryIconPalette
+	ld c, MOVE_CATEGORY_STATUS
+
+.got_category
+	ld de, wBGPals1 palette 7
+	jp LoadMoveIconPalettes
+
+LoadBattleMoveInfoIconPalettes::
+; Farcall-safe. Load battle move-info type and category icon palettes.
+; Uses wPlayerMoveStruct, which UpdateMoveData fills immediately before draw.
+;
+; Uses:
+;   BG palette 6 = type icon
+;   BG palette 7 = category icon
+	ld a, [wPlayerMoveStruct + MOVE_TYPE]
+	ld b, a
+
+	ld a, [wPlayerMoveStruct + MOVE_POWER]
+	cp 2
+	jr c, .status
+
+	ld a, [wPlayerMoveStruct + MOVE_TYPE]
+	cp SPECIAL
+	jr nc, .special
+
+.physical
+	ld c, MOVE_CATEGORY_PHYSICAL
+	jr .got_category
+
+.special
+	ld c, MOVE_CATEGORY_SPECIAL
+	jr .got_category
+
+.status
+	ld c, MOVE_CATEGORY_STATUS
+
+.got_category
+	ld de, wBGPals1 palette 7
+	jp LoadMoveIconPalettes
+
+LoadMoveIconPalettes:
+; input:
+;   b = type constant
+;   c = MOVE_CATEGORY_* constant
+;   de = category icon palette destination
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	push de
+	push bc
+	ld a, b
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+
+	; Replace palette 6 color 1 with palette 6 color 0.
+	; color 0 is white in every type icon palette.
+	ld a, [wBGPals1 palette 6]
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, [wBGPals1 palette 6 + 1]
+	ld [wBGPals1 palette 6 + 3], a
+	pop bc
+
+	ld e, c
+	ld d, 0
+	ld hl, MoveCategoryIconPalettePointers
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	pop de
+	ld bc, 1 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rWBK], a
+
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
 
 CheckShininess:
 ; Check if a mon is shiny by DVs at bc.
