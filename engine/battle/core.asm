@@ -1,5 +1,24 @@
 ; Core components of the battle engine.
 
+; Battle move-info icon constants.
+; These reuse the move-detail screen's VRAM-bank-1 icon slots.
+DEF BATTLE_MOVE_INFO_TYPE_ICON_TILE     EQU $68 ; uses $68-$6f
+DEF BATTLE_MOVE_INFO_CATEGORY_ICON_TILE EQU $70 ; uses $70-$77
+
+DEF BATTLE_MOVE_INFO_TYPE_ICON_ATTR     EQU $0e ; VRAM bank 1, BG palette 6
+DEF BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+
+DEF BATTLE_MOVE_INFO_TYPE_ICON_X        EQU 1
+DEF BATTLE_MOVE_INFO_CATEGORY_ICON_X    EQU 5
+DEF BATTLE_MOVE_INFO_ICON_Y             EQU 9
+
+BattleMoveInfoCategoryIconGFXPointers:
+	table_width 3
+	dba PhysicalMoveCategoryIconGFX
+	dba SpecialMoveCategoryIconGFX
+	dba StatusMoveCategoryIconGFX
+	assert_table_length NUM_MOVE_CATEGORIES
+
 DoBattle:
 	xor a
 	ld [wBattleParticipantsNotFainted], a
@@ -637,6 +656,10 @@ ParsePlayerAction:
 	call MoveSelectionScreen
 	push af
 	call SafeLoadTempTilemapToTilemap
+	call BattleMoveInfo_RestoreBattleAttrs
+	call BattleMoveInfo_UpdateTilemapAndAttrmap
+	ld b, SCGB_BATTLE_COLORS
+	call GetSGBLayout
 	call UpdateBattleHuds
 	ld a, [wCurPlayerMove]
 	call GetMoveIndexFromID
@@ -5692,6 +5715,8 @@ MoveSelectionScreen:
 MoveInfoBox:
 	xor a
 	ldh [hBGMapMode], a
+	call BattleMoveInfo_HadIconAttrs
+	push af
 
 	hlcoord 0, 8
 	ld b, 3
@@ -5713,7 +5738,10 @@ MoveInfoBox:
 	hlcoord 1, 10
 	ld de, .Disabled
 	call PlaceString
-	jr .done
+	pop af
+	and a
+	call nz, BattleMoveInfo_UpdateTilemapAndAttrmap
+	jp .done
 
 .not_disabled
 	ld hl, wMenuCursorY
@@ -5744,6 +5772,31 @@ MoveInfoBox:
 	ld [wStringBuffer1], a
 	call .PrintPP
 
+	callfar UpdateMoveData
+
+	ldh a, [hCGB]
+	and a
+	jr z, .print_type_text
+
+	call BattleMoveInfo_LoadTypeIcon
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y
+	ld a, BATTLE_MOVE_INFO_TYPE_ICON_TILE
+	call BattleMoveInfo_Draw4x2Icon
+
+	call BattleMoveInfo_LoadCategoryIcon
+	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y
+	ld a, BATTLE_MOVE_INFO_CATEGORY_ICON_TILE
+	call BattleMoveInfo_Draw4x2Icon
+
+	call BattleMoveInfo_SetTypeIconAttrs
+	call BattleMoveInfo_SetCategoryIconAttrs
+
+	pop af
+	and a
+	call z, BattleMoveInfo_UpdateTilemapAndAttrmap
+	jr .done
+
+.print_type_text
 	hlcoord 1, 9
 	ld de, .Type
 	call PlaceString
@@ -5751,11 +5804,12 @@ MoveInfoBox:
 	hlcoord 7, 11
 	ld [hl], '/'
 
-	callfar UpdateMoveData
 	ld a, [wPlayerMoveStruct + MOVE_ANIM]
 	ld b, a
 	hlcoord 2, 10
 	predef PrintMoveType
+
+	pop af
 
 .done
 	ret
@@ -5764,14 +5818,14 @@ MoveInfoBox:
 	db "Disabled!@"
 .Type:
 	db "TYPE/@"
+.PP:
+	db "PP @"
 
 .PrintPP:
-	hlcoord 5, 11
-	ld a, [wLinkMode] ; What's the point of this check?
-	cp LINK_MOBILE
-	jr c, .ok
-	hlcoord 5, 11
-.ok
+	hlcoord 1, 11
+	ld de, .PP
+	call PlaceString
+	hlcoord 4, 11
 	push hl
 	ld de, wStringBuffer1
 	lb bc, 1, 2
@@ -5784,6 +5838,173 @@ MoveInfoBox:
 	ld de, wNamedObjectIndex
 	lb bc, 1, 2
 	call PrintNum
+	ret
+
+BattleMoveInfo_LoadTypeIcon:
+	farcall StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1
+	farcall LoadMoveMenuCurrentTypeIconPalette
+	ret
+
+BattleMoveInfo_LoadCategoryIcon:
+	call BattleMoveInfo_LoadCategoryIconGFX
+	farcall LoadMoveMenuCurrentCategoryIconPalette
+	ret
+
+BattleMoveInfo_GetCurrentMoveCategory:
+	ld a, [wPlayerMoveStruct + MOVE_POWER]
+	cp 2
+	jr c, .status
+
+	ld a, [wPlayerMoveStruct + MOVE_TYPE]
+	cp SPECIAL
+	jr nc, .special
+
+.physical
+	ld a, MOVE_CATEGORY_PHYSICAL
+	ret
+
+.special
+	ld a, MOVE_CATEGORY_SPECIAL
+	ret
+
+.status
+	ld a, MOVE_CATEGORY_STATUS
+	ret
+
+BattleMoveInfo_LoadCategoryIconGFX:
+	call BattleMoveInfo_GetCurrentMoveCategory
+
+	ld e, a
+	ld d, 0
+	ld hl, BattleMoveInfoCategoryIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	ld hl, vTiles2 tile BATTLE_MOVE_INFO_CATEGORY_ICON_TILE
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, 8
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+BattleMoveInfo_Draw4x2Icon:
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+
+	ld c, 4
+.top
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .bottom
+	ret
+
+BattleMoveInfo_SetTypeIconAttrs:
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_TYPE_ICON_ATTR
+	jr BattleMoveInfo_Set4x2IconAttrs
+
+BattleMoveInfo_SetCategoryIconAttrs:
+	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR
+	; fallthrough
+
+BattleMoveInfo_Set4x2IconAttrs:
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+
+	push bc
+	push de
+
+	ld c, 4
+.top
+	ld [hli], a
+	dec c
+	jr nz, .top
+
+	ld de, SCREEN_WIDTH - 4
+	add hl, de
+
+	ld c, 4
+.bottom
+	ld [hli], a
+	dec c
+	jr nz, .bottom
+
+	pop de
+	pop bc
+	ret
+
+BattleMoveInfo_HadIconAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	ld a, [hl]
+	cp BATTLE_MOVE_INFO_TYPE_ICON_ATTR
+	jr nz, .no
+
+	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	ld a, [hl]
+	cp BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR
+	jr nz, .no
+
+	ld a, TRUE
+	ret
+
+.no
+	xor a
+	ret
+
+BattleMoveInfo_UpdateTilemapAndAttrmap:
+	ldh a, [hCGB]
+	and a
+	ret z
+	call CGBOnly_CopyTilemapAtOnce
+	ret
+
+BattleMoveInfo_RestoreBattleAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord 0, 8, wAttrmap
+	lb bc, 4, 10
+	ld a, PAL_BATTLE_BG_PLAYER
+	call FillBoxWithByte
+
+	hlcoord 10, 8, wAttrmap
+	lb bc, 4, 1
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
 	ret
 
 CheckPlayerHasUsableMoves:
