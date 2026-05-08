@@ -643,7 +643,9 @@ ParsePlayerAction:
 	ld [wFXAnimID], a
 	call MoveSelectionScreen
 	push af
-	call SafeLoadTempTilemapToTilemap
+	xor a
+	ldh [hBGMapMode], a
+	call LoadTempTilemapToTilemap
 	call BattleMoveInfo_RestoreBattleAttrs
 	call BattleMoveInfo_UpdateTilemapAndAttrmap
 	ld b, SCGB_BATTLE_COLORS
