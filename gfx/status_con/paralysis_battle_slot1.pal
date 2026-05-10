@@ -1,0 +1,5 @@
+; gfx/status_con/paralysis_battle_slot1.pal
+	RGB 31, 31, 31 ; white
+	RGB 31, 26,  6 ; paralysis yellow
+	RGB  1,  0,  1 ; unused
+	RGB  0,  0,  0 ; black

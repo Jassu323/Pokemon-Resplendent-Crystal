@@ -193,6 +193,176 @@ LoadStatsScreenStatusIconPaletteInWRAM:
 	pop af
 	ret
 
+LoadBattleStatusIconPalette::
+; Farcall-safe. Load the packed battle status icon palette.
+; input:
+;   b = player STATUS_ICON_* constant, or $ff for no icon
+;   c = enemy STATUS_ICON_* constant, or $ff for no icon
+;
+; Uses:
+;   BG palette 5 color 1 = player status icon color
+;   BG palette 5 color 2 = enemy status icon color
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	call LoadBattleStatusIconPaletteInWRAM
+
+	pop af
+	ldh [rWBK], a
+
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+LoadBattleStatusIconPaletteForBattleLayout:
+	ld a, [wBattleMonStatus]
+	ld hl, wPlayerSubStatus5
+	call BattleStatus_GetIconForPalette
+	jr nc, .no_player
+	ld d, a
+	jr .enemy
+
+.no_player
+	ld d, STATUS_ICON_NONE
+
+.enemy
+	ld a, [wEnemyMonStatus]
+	ld hl, wEnemySubStatus5
+	call BattleStatus_GetIconForPalette
+	jr nc, .no_enemy
+	ld c, a
+	jr .load
+
+.no_enemy
+	ld c, STATUS_ICON_NONE
+
+.load
+	ld b, d
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+	call LoadBattleStatusIconPaletteInWRAM
+	pop af
+	ldh [rWBK], a
+	ret
+
+LoadBattleStatusIconPaletteInWRAM:
+; input:
+;   b = player STATUS_ICON_* constant, or $ff for no icon
+;   c = enemy STATUS_ICON_* constant, or $ff for no icon
+	ld de, wBGPals1 palette PAL_BATTLE_BG_5
+	call LoadBattleStatusIconPaletteToDE
+	ld de, wBGPals2 palette PAL_BATTLE_BG_5
+
+LoadBattleStatusIconPaletteToDE:
+; input:
+;   b = player STATUS_ICON_* constant, or $ff for no icon
+;   c = enemy STATUS_ICON_* constant, or $ff for no icon
+;   de = destination palette
+	ld a, LOW(PALRGB_WHITE)
+	ld [de], a
+	inc de
+	ld a, HIGH(PALRGB_WHITE)
+	ld [de], a
+	inc de
+
+	ld a, b
+	call .load_status_color
+	ld a, c
+	call .load_status_color
+
+	xor a
+	ld [de], a
+	inc de
+	ld [de], a
+	ret
+
+.load_status_color
+	cp NUM_STATUS_ICONS
+	jr nc, .white
+
+	push de
+	ld e, a
+	ld d, 0
+	ld hl, BattleStatusIconMainColors
+	add hl, de
+	add hl, de
+	pop de
+
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	ld [de], a
+	inc de
+	ret
+
+.white
+	ld a, LOW(PALRGB_WHITE)
+	ld [de], a
+	inc de
+	ld a, HIGH(PALRGB_WHITE)
+	ld [de], a
+	inc de
+	ret
+
+BattleStatus_GetIconForPalette:
+	ld b, a
+	bit PSN, b
+	jr nz, .poison
+	bit BRN, b
+	jr nz, .burn
+	bit FRZ, b
+	jr nz, .freeze
+	bit PAR, b
+	jr nz, .paralysis
+	ld a, b
+	and SLP_MASK
+	jr nz, .sleep
+
+	and a
+	ret
+
+.poison
+	ld a, [hl]
+	bit SUBSTATUS_TOXIC, a
+	jr z, .regular_poison
+	ld a, STATUS_ICON_TOXIC
+	scf
+	ret
+
+.regular_poison
+	ld a, STATUS_ICON_POISON
+	scf
+	ret
+
+.burn
+	ld a, STATUS_ICON_BURN
+	scf
+	ret
+
+.freeze
+	ld a, STATUS_ICON_FREEZE
+	scf
+	ret
+
+.paralysis
+	ld a, STATUS_ICON_PARALYSIS
+	scf
+	ret
+
+.sleep
+	ld a, STATUS_ICON_SLEEP
+	scf
+	ret
+
 LoadMoveMenuCurrentIconPalettes::
 ; Farcall-safe. Load selected move's type and category icon palettes.
 ; Uses wCurSpecies as the selected move ID.

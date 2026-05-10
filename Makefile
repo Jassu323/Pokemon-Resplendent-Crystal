@@ -324,12 +324,16 @@ $(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
 ### Status condition icon graphics
 
 status_icon_names := burn fainted freeze paralysis poisoned sleep toxic
+status_icon_battle_slot1_names := paralysis sleep
+status_icon_battle_slot2_names := burn freeze poisoned toxic
 status_icon_pngs := $(addprefix gfx/status_con/,$(addsuffix .png,$(status_icon_names)))
 stats_status_icon_pngs := $(addprefix gfx/status_con/,$(addsuffix _stats_menu.png,$(status_icon_names)))
 status_icon_gbcpals := $(status_icon_pngs:.png=.gbcpal)
 status_icon_2bpp := $(status_icon_pngs:.png=.2bpp)
 stats_status_icon_gbcpals := $(stats_status_icon_pngs:.png=.gbcpal)
 stats_status_icon_2bpp := $(stats_status_icon_pngs:.png=.2bpp)
+status_icon_battle_slot1_2bpp := $(addprefix gfx/status_con/,$(addsuffix _battle_slot1.2bpp,$(status_icon_battle_slot1_names)))
+status_icon_battle_slot2_2bpp := $(addprefix gfx/status_con/,$(addsuffix _battle_slot2.2bpp,$(status_icon_battle_slot2_names)))
 
 gfx/status_con/%.gbcpal: gfx/status_con/%.pal
 	printf 'SECTION "Status Condition Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $*.pal.asm
@@ -342,6 +346,12 @@ $(status_icon_2bpp): %.2bpp: %.png %.gbcpal
 
 $(stats_status_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
+$(status_icon_battle_slot1_2bpp): gfx/status_con/%_battle_slot1.2bpp: gfx/status_con/%.png gfx/status_con/%_battle_slot1.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/status_con/$*_battle_slot1.gbcpal -o $@ $<
+
+$(status_icon_battle_slot2_2bpp): gfx/status_con/%_battle_slot2.2bpp: gfx/status_con/%.png gfx/status_con/%_battle_slot2.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/status_con/$*_battle_slot2.gbcpal -o $@ $<
 
 ### Catch-all graphics rules
 

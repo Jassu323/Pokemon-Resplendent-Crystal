@@ -18,6 +18,17 @@ PartyStatusIconPalettePointers:
 	dw PoisonSleepStatusIconPalette
 	assert_table_length NUM_STATUS_ICONS
 
+BattleStatusIconMainColors:
+	table_width 2
+	dw palred 30 + palgreen 16 + palblue  6 ; burn
+	dw palred 31 + palgreen  0 + palblue  0 ; fainted, unused in battle
+	dw palred  6 + palgreen 27 + palblue 26 ; freeze
+	dw palred 31 + palgreen 26 + palblue  6 ; paralysis
+	dw palred 20 + palgreen  8 + palblue 20 ; poison
+	dw palred 21 + palgreen 21 + palblue 15 ; sleep
+	dw palred 20 + palgreen  8 + palblue 20 ; toxic
+	assert_table_length NUM_STATUS_ICONS
+
 StatsBurnStatusIconPalette:
 INCLUDE "gfx/status_con/burn_stats_menu.pal"
 

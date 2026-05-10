@@ -1,0 +1,5 @@
+; gfx/status_con/freeze_battle_slot2.pal
+	RGB 31, 31, 31 ; white
+	RGB  1,  0,  1 ; unused
+	RGB  6, 27, 26 ; freeze cyan
+	RGB  0,  0,  0 ; black

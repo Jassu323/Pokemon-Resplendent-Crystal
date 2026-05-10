@@ -105,6 +105,7 @@ _CGB_BattleColors:
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_BG_PLAYER_HP
 	ld hl, ExpBarPalette
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_BG_EXP
+	call LoadBattleStatusIconPaletteForBattleLayout
 	ld de, wOBPals1
 	pop hl
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_OB_ENEMY
@@ -143,6 +144,7 @@ _CGB_FinishBattleScreenLayout:
 	ld bc, 6 * SCREEN_WIDTH
 	ld a, PAL_BATTLE_BG_TEXT
 	call ByteFill
+	call CGB_BattleStatusIconAttrs
 	ld hl, BattleObjectPals
 	ld de, wOBPals1 palette PAL_BATTLE_OB_GRAY
 	ld bc, 6 palettes
@@ -150,6 +152,22 @@ _CGB_FinishBattleScreenLayout:
 	call FarCopyWRAM
 	call ApplyAttrmap
 	ret
+
+CGB_BattleStatusIconAttrs:
+	ld a, [wBattleMonStatus]
+	and ALL_STATUS
+	jr z, .enemy
+	hlcoord BATTLE_STATUS_ICON_PLAYER_X, BATTLE_STATUS_ICON_PLAYER_Y, wAttrmap
+	ld a, BATTLE_STATUS_ICON_ATTR
+	call CGB_SetStatusIconAttrs
+
+.enemy
+	ld a, [wEnemyMonStatus]
+	and ALL_STATUS
+	ret z
+	hlcoord BATTLE_STATUS_ICON_ENEMY_X, BATTLE_STATUS_ICON_ENEMY_Y, wAttrmap
+	ld a, BATTLE_STATUS_ICON_ATTR
+	jp CGB_SetStatusIconAttrs
 
 InitPartyMenuBGPal7:
 	farcall Function100dc0

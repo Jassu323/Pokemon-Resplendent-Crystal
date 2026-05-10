@@ -25,6 +25,28 @@ StatsStatusIconGFXPointers::
 	dba StatsToxicStatusIconGFX
 	assert_table_length NUM_STATUS_ICONS
 
+BattlePlayerStatusIconGFXPointers:
+	table_width 3
+	dba BurnStatusIconGFX
+	dba BurnStatusIconGFX ; fainted is not shown in battle
+	dba FreezeStatusIconGFX
+	dba BattleParalysisStatusIconSlot1GFX
+	dba PoisonStatusIconGFX
+	dba BattleSleepStatusIconSlot1GFX
+	dba ToxicStatusIconGFX
+	assert_table_length NUM_STATUS_ICONS
+
+BattleEnemyStatusIconGFXPointers:
+	table_width 3
+	dba BattleBurnStatusIconSlot2GFX
+	dba BattleBurnStatusIconSlot2GFX ; fainted is not shown in battle
+	dba BattleFreezeStatusIconSlot2GFX
+	dba ParalysisStatusIconGFX
+	dba BattlePoisonStatusIconSlot2GFX
+	dba SleepStatusIconGFX
+	dba BattleToxicStatusIconSlot2GFX
+	assert_table_length NUM_STATUS_ICONS
+
 TypeIconGFXPointers:
 	; Physical block
 	dba NormalTypeIconGFX      ; NORMAL       = 0
@@ -191,6 +213,219 @@ Icon_LoadStatsStatusIconGFX::
 
 	pop af
 	ldh [rVBK], a
+	ret
+
+Icon_LoadBattlePlayerStatusIconGFX:
+	ld de, BattlePlayerStatusIconGFXPointers
+	jr Icon_LoadBattleStatusIconGFX
+
+Icon_LoadBattleEnemyStatusIconGFX:
+	ld de, BattleEnemyStatusIconGFXPointers
+
+Icon_LoadBattleStatusIconGFX:
+; Load one battle status icon into VRAM bank 1.
+; input:
+;   a  = STATUS_ICON_* constant
+;   hl = destination tile address
+;   de = battle status GFX pointer table
+	push hl
+
+	ld c, a
+	ld b, 0
+	ld h, b
+	ld l, c
+	add hl, hl
+	add hl, bc
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, STATUS_ICON_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+BattleStatus_GetPlayerIcon:
+	ld a, [wBattleMonStatus]
+	ld hl, wPlayerSubStatus5
+	jr BattleStatus_GetIcon
+
+BattleStatus_GetEnemyIcon:
+	ld a, [wEnemyMonStatus]
+	ld hl, wEnemySubStatus5
+
+BattleStatus_GetIcon:
+	ld b, a
+	bit PSN, b
+	jr nz, .poison
+	bit BRN, b
+	jr nz, .burn
+	bit FRZ, b
+	jr nz, .freeze
+	bit PAR, b
+	jr nz, .paralysis
+	ld a, b
+	and SLP_MASK
+	jr nz, .sleep
+
+	and a
+	ret
+
+.poison
+	ld a, [hl]
+	bit SUBSTATUS_TOXIC, a
+	jr z, .regular_poison
+	ld a, STATUS_ICON_TOXIC
+	scf
+	ret
+
+.regular_poison
+	ld a, STATUS_ICON_POISON
+	scf
+	ret
+
+.burn
+	ld a, STATUS_ICON_BURN
+	scf
+	ret
+
+.freeze
+	ld a, STATUS_ICON_FREEZE
+	scf
+	ret
+
+.paralysis
+	ld a, STATUS_ICON_PARALYSIS
+	scf
+	ret
+
+.sleep
+	ld a, STATUS_ICON_SLEEP
+	scf
+	ret
+
+BattleStatus_LoadIconPalette:
+	call BattleStatus_GetPlayerIcon
+	jr nc, .no_player
+	ld d, a
+	jr .enemy
+
+.no_player
+	ld d, STATUS_ICON_NONE
+
+.enemy
+	call BattleStatus_GetEnemyIcon
+	jr nc, .no_enemy
+	ld c, a
+	jr .load
+
+.no_enemy
+	ld c, STATUS_ICON_NONE
+
+.load
+	ld b, d
+	farcall LoadBattleStatusIconPalette
+	ret
+
+BattleStatus_LoadHUDIconGFX::
+; Farcall-safe. Refresh status icon graphics used by the battle HUD.
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	call BattleStatus_GetPlayerIcon
+	jr nc, .enemy
+	push af
+	ld hl, vTiles2 tile BATTLE_STATUS_ICON_PLAYER_TILE
+	pop af
+	call Icon_LoadBattlePlayerStatusIconGFX
+
+.enemy
+	call BattleStatus_GetEnemyIcon
+	ret nc
+	push af
+	ld hl, vTiles2 tile BATTLE_STATUS_ICON_ENEMY_TILE
+	pop af
+	jp Icon_LoadBattleEnemyStatusIconGFX
+
+BattleStatus_DrawPlayerHUDIcon::
+; Farcall-safe. Draw the player's active battle status icon on CGB.
+; Returns carry if an icon was drawn.
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	call BattleStatus_LoadIconPalette
+	call BattleStatus_GetPlayerIcon
+	jr nc, .no_icon
+
+	push af
+	ld hl, vTiles2 tile BATTLE_STATUS_ICON_PLAYER_TILE
+	pop af
+	call Icon_LoadBattlePlayerStatusIconGFX
+
+	hlcoord BATTLE_STATUS_ICON_PLAYER_X, BATTLE_STATUS_ICON_PLAYER_Y
+	ld a, BATTLE_STATUS_ICON_PLAYER_TILE
+	call Icon_Draw3x1
+
+	hlcoord BATTLE_STATUS_ICON_PLAYER_X, BATTLE_STATUS_ICON_PLAYER_Y, wAttrmap
+	ld a, BATTLE_STATUS_ICON_ATTR
+	call Icon_Set3x1Attrs
+	scf
+	ret
+
+.no_icon
+	hlcoord BATTLE_STATUS_ICON_PLAYER_X, BATTLE_STATUS_ICON_PLAYER_Y, wAttrmap
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call Icon_Set3x1Attrs
+	and a
+	ret
+
+BattleStatus_DrawEnemyHUDIcon::
+; Farcall-safe. Draw the enemy's active battle status icon on CGB.
+; Returns carry if an icon was drawn.
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	call BattleStatus_LoadIconPalette
+	call BattleStatus_GetEnemyIcon
+	jr nc, .no_icon
+
+	push af
+	ld hl, vTiles2 tile BATTLE_STATUS_ICON_ENEMY_TILE
+	pop af
+	call Icon_LoadBattleEnemyStatusIconGFX
+
+	hlcoord BATTLE_STATUS_ICON_ENEMY_X, BATTLE_STATUS_ICON_ENEMY_Y
+	ld a, BATTLE_STATUS_ICON_ENEMY_TILE
+	call Icon_Draw3x1
+
+	hlcoord BATTLE_STATUS_ICON_ENEMY_X, BATTLE_STATUS_ICON_ENEMY_Y, wAttrmap
+	ld a, BATTLE_STATUS_ICON_ATTR
+	call Icon_Set3x1Attrs
+	scf
+	ret
+
+.no_icon
+	hlcoord BATTLE_STATUS_ICON_ENEMY_X, BATTLE_STATUS_ICON_ENEMY_Y, wAttrmap
+	ld a, PAL_BATTLE_BG_ENEMY_HP
+	call Icon_Set3x1Attrs
+	and a
 	ret
 
 Icon_LoadCurrentMoveIconsGFX_Bank1::

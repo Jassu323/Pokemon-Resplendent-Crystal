@@ -21,6 +21,24 @@ INCBIN "gfx/status_con/sleep.2bpp"
 ToxicStatusIconGFX::
 INCBIN "gfx/status_con/toxic.2bpp"
 
+BattleParalysisStatusIconSlot1GFX::
+INCBIN "gfx/status_con/paralysis_battle_slot1.2bpp"
+
+BattleSleepStatusIconSlot1GFX::
+INCBIN "gfx/status_con/sleep_battle_slot1.2bpp"
+
+BattleBurnStatusIconSlot2GFX::
+INCBIN "gfx/status_con/burn_battle_slot2.2bpp"
+
+BattleFreezeStatusIconSlot2GFX::
+INCBIN "gfx/status_con/freeze_battle_slot2.2bpp"
+
+BattlePoisonStatusIconSlot2GFX::
+INCBIN "gfx/status_con/poisoned_battle_slot2.2bpp"
+
+BattleToxicStatusIconSlot2GFX::
+INCBIN "gfx/status_con/toxic_battle_slot2.2bpp"
+
 StatsBurnStatusIconGFX::
 INCBIN "gfx/status_con/burn_stats_menu.2bpp"
 
