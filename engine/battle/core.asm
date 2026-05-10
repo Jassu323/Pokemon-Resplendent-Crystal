@@ -4688,6 +4688,9 @@ DrawPlayerHUD:
 	ld b, a
 	call FillInExpBar
 	pop de
+	push de
+	call BattleMoveInfo_UpdateTilemapAndAttrmap
+	pop de
 	ret
 
 UpdatePlayerHPPal:
@@ -4762,6 +4765,18 @@ PrintPlayerHUD:
 .got_gender_char
 	hlcoord 17, 8
 	ld [hl], a
+	ld b, a
+	ldh a, [hCGB]
+	and a
+	jr z, .place_text_status
+	farcall BattleStatus_DrawPlayerHUDIcon
+	ret c
+	ld a, b
+	hlcoord 14, 8
+	jr .check_level_position
+
+.place_text_status
+	ld a, b
 	hlcoord 14, 8
 	push af ; back up gender
 	push hl
@@ -4771,6 +4786,8 @@ PrintPlayerHUD:
 	pop bc
 	ret nz
 	ld a, b
+
+.check_level_position
 	cp ' '
 	jr nz, .copy_level ; male or female
 	dec hl ; genderless
@@ -4838,7 +4855,18 @@ DrawEnemyHUD:
 .got_gender
 	hlcoord 9, 1
 	ld [hl], a
+	ld b, a
+	ldh a, [hCGB]
+	and a
+	jr z, .place_text_status
+	farcall BattleStatus_DrawEnemyHUDIcon
+	jr c, .skip_level
+	ld a, b
+	hlcoord 6, 1
+	jr .check_level_position
 
+.place_text_status
+	ld a, b
 	hlcoord 6, 1
 	push af
 	push hl
@@ -4848,6 +4876,8 @@ DrawEnemyHUD:
 	pop bc
 	jr nz, .skip_level
 	ld a, b
+
+.check_level_position
 	cp ' '
 	jr nz, .print_level
 	dec hl
@@ -4921,6 +4951,9 @@ DrawEnemyHUD:
 	hlcoord 2, 2
 	ld b, 0
 	call DrawBattleHPBar
+	push de
+	call BattleMoveInfo_UpdateTilemapAndAttrmap
+	pop de
 	ret
 
 UpdateEnemyHPPal:
@@ -5164,8 +5197,7 @@ BattleMenuPKMN_Loop:
 	call _LoadHPBar
 	call CloseWindow
 	call LoadTilemapToTempTilemap
-	call GetMemSGBLayout
-	call SetDefaultBGPAndOBP
+	call FinishBattleAnim
 	jp BattleMenu
 
 .GetMenu:
@@ -5183,11 +5215,11 @@ Battle_StatsScreen:
 
 	ld hl, vTiles2 tile $31
 	ld de, vTiles0
-	ld bc, $11 tiles
+	ld bc, $19 tiles
 	call CopyBytes
 
 	ld hl, vTiles2
-	ld de, vTiles0 tile $11
+	ld de, vTiles0 tile $19
 	ld bc, $31 tiles
 	call CopyBytes
 
@@ -5204,10 +5236,10 @@ Battle_StatsScreen:
 
 	ld hl, vTiles0
 	ld de, vTiles2 tile $31
-	ld bc, $11 tiles
+	ld bc, $19 tiles
 	call CopyBytes
 
-	ld hl, vTiles0 tile $11
+	ld hl, vTiles0 tile $19
 	ld de, vTiles2
 	ld bc, $31 tiles
 	call CopyBytes
@@ -5250,8 +5282,7 @@ TryPlayerSwitch:
 	call ClearSprites
 	call _LoadHPBar
 	call CloseWindow
-	call GetMemSGBLayout
-	call SetDefaultBGPAndOBP
+	call FinishBattleAnim
 	ld a, [wCurPartyMon]
 	ld [wCurBattleMon], a
 PlayerSwitch:
@@ -7131,6 +7162,7 @@ FinishBattleAnim:
 	push bc
 	push de
 	push hl
+	farcall BattleStatus_LoadHUDIconGFX
 	ld b, SCGB_BATTLE_COLORS
 	call GetSGBLayout
 	call SetDefaultBGPAndOBP

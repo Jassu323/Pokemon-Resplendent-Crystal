@@ -1,0 +1,5 @@
+; gfx/status_con/paralysis.pal
+	RGB 31, 31, 31 ; white
+	RGB  6, 27, 26 ; freeze cyan
+	RGB 31, 26,  6 ; paralysis yellow
+	RGB  0,  0,  0 ; black

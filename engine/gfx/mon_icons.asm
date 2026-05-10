@@ -112,12 +112,19 @@ GetMenuMonIconPalette::
 GetMenuMonIconPalette_PredeterminedShininess:
 	push af
 	ld a, [wCurPartySpecies]
-	dec a
-	ld c, a
-	ld b, 0
-	ld hl, MonMenuIconPals
+	cp EGG
+	jr z, .egg
+	call GetPokemonIndexFromID
+	ld bc, MonMenuIconPals - 1
 	add hl, bc
 	ld e, [hl]
+	jr .got_palette
+
+.egg
+	ld a, [MonMenuIconPals_Egg]
+	ld e, a
+
+.got_palette
 	pop af
 	ld a, e
 	jr c, .shiny
