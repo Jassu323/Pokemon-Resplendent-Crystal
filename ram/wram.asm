@@ -1601,10 +1601,10 @@ wDebugTilesetRGBJumptableIndex:: db
 wDebugTilesetCurColor:: db
 
 NEXTU
-; stats screen
+; stats screen and cached mon types
 wStatsScreenFlags:: db
-wStatsScreenType1:: db
-wStatsScreenType2:: db
+wCachedMonType1:: db
+wCachedMonType2:: db
 
 
 NEXTU

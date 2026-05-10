@@ -551,9 +551,9 @@ StatsScreen_LoadGFX:
 	call GetBaseData
 
 	ld a, [wBaseType1]
-	ld [wStatsScreenType1], a
+	ld [wCachedMonType1], a
 	ld a, [wBaseType2]
-	ld [wStatsScreenType2], a
+	ld [wCachedMonType2], a
 
 	xor a
 	ldh [hBGMapMode], a
@@ -1152,13 +1152,13 @@ StatsScreen_ClearStatusIconAttrs:
 	jp Icon_Set3x1Attrs
 
 StatsScreen_LoadCurrentMonTypeIconGFX:
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld hl, vTiles2 tile TYPE_ICON_SLOT_1_TILE
 	call StatsScreen_LoadTypeIconGFX
 
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld b, a
-	ld a, [wStatsScreenType2]
+	ld a, [wCachedMonType2]
 	cp b
 	ret z
 
@@ -1167,9 +1167,9 @@ StatsScreen_LoadCurrentMonTypeIconGFX:
 	ret
 
 StatsScreen_DrawCurrentMonTypeIcons:
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld b, a
-	ld a, [wStatsScreenType2]
+	ld a, [wCachedMonType2]
 	cp b
 	jr nz, .dual
 
@@ -1190,9 +1190,9 @@ StatsScreen_DrawCurrentMonTypeIcons:
 	ret
 
 StatsScreen_SetCurrentMonTypeIconAttrs:
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld b, a
-	ld a, [wStatsScreenType2]
+	ld a, [wCachedMonType2]
 	cp b
 	jr nz, .dual
 
@@ -1207,7 +1207,7 @@ StatsScreen_SetCurrentMonTypeIconAttrs:
 	ld a, TYPE_ICON_SLOT_1_ATTR
 	call Icon_Set4x2Attrs
 
-	hlcoord 4, 15, wAttrmap
+	hlcoord 5, 15, wAttrmap
 	ld a, TYPE_ICON_SLOT_2_ATTR
 	call Icon_Set4x2Attrs
 	ret
@@ -1217,7 +1217,7 @@ StatsScreen_ClearTypeIconAttrs:
 	xor a
 	call Icon_Set4x2Attrs
 
-	hlcoord 4, 15, wAttrmap
+	hlcoord 5, 15, wAttrmap
 	xor a
 	call Icon_Set4x2Attrs
 	ret

@@ -294,6 +294,7 @@ _CGB_Pokedex:
 	lb bc, 7, 7
 	ld a, $1 ; green question mark palette
 	call FillBoxCGB
+	call CGB_PokedexTypeIconAttrs
 	call InitPartyMenuOBPals
 	ld hl, PokedexCursorPalette
 	ld de, wOBPals1 palette 7 ; green cursor palette
@@ -305,6 +306,35 @@ _CGB_Pokedex:
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+CGB_PokedexTypeIconAttrs:
+	ld a, [wCurPartySpecies]
+	cp $ff
+	ret z
+	ld a, [wTempSpecies]
+	call CheckCaughtMon
+	ret z
+
+	ld a, [wCachedMonType1]
+	ld b, a
+	ld a, [wCachedMonType2]
+	cp b
+	jr z, .single_type
+
+	hlcoord POKEDEX_TYPE_ICON_SLOT_1_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	lb bc, 2, 4
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
+	call FillBoxCGB
+	hlcoord POKEDEX_TYPE_ICON_SLOT_2_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	lb bc, 2, 4
+	ld a, POKEDEX_TYPE_ICON_SLOT_2_ATTR
+	jp FillBoxCGB
+
+.single_type
+	hlcoord POKEDEX_TYPE_ICON_SINGLE_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	lb bc, 2, 4
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
+	jp FillBoxCGB
 
 PokedexQuestionMarkPalette:
 INCLUDE "gfx/pokedex/question_mark.pal"

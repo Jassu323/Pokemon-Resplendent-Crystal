@@ -115,6 +115,18 @@ DisplayDexEntry:
 	pop hl
 	pop bc
 	ret z
+	push hl
+	push bc
+	ld a, [wTempSpecies]
+	ld [wCurSpecies], a
+	call GetBaseData
+	ld a, [wBaseType1]
+	ld [wCachedMonType1], a
+	ld a, [wBaseType2]
+	ld [wCachedMonType2], a
+	farcall Pokedex_LoadAndDrawDexEntryTypeIcons
+	pop bc
+	pop hl
 ; Get the height of the Pokemon.
 	ld a, [wCurPartySpecies]
 	ld [wCurSpecies], a

@@ -405,7 +405,7 @@ Pokedex_InitDexEntryScreen:
 	ld [wPrevDexEntry + 1], a
 	farcall DisplayDexEntry
 	call Pokedex_DrawFootprint
-	call WaitBGMap
+	call WaitBGMap2
 	ld a, $a7
 	ldh [hWX], a
 	call Pokedex_GetSelectedMon
@@ -462,7 +462,7 @@ Pokedex_Page:
 	ld a, h
 	ld [wPrevDexEntry + 1], a
 	farcall DisplayDexEntry
-	call WaitBGMap
+	call WaitBGMap2
 	ret
 
 Pokedex_ReinitDexEntryScreen:
@@ -483,7 +483,7 @@ Pokedex_ReinitDexEntryScreen:
 	farcall DisplayDexEntry
 	call Pokedex_DrawFootprint
 	call Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
+	call WaitBGMap2
 	call Pokedex_GetSelectedMon
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
@@ -531,7 +531,7 @@ DexEntryScreen_MenuActionJumptable:
 	call DelayFrame
 	call Pokedex_RedisplayDexEntry
 	call Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
+	call WaitBGMap2
 	call Pokedex_GetSelectedMon
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
@@ -576,7 +576,7 @@ DexEntryScreen_MenuActionJumptable:
 	call Pokedex_LoadInvertedFont
 	call Pokedex_RedisplayDexEntry
 	call EnableLCD
-	call WaitBGMap
+	call WaitBGMap2
 	ld a, POKEDEX_SCX
 	ldh [hSCX], a
 	call Pokedex_ApplyUsualPals
@@ -2673,6 +2673,20 @@ Pokedex_ApplyUsualPals:
 	call DmgToCgbBGPals
 	ld a, $e0
 	call DmgToCgbObjPal0
+	ld a, [wCurPartySpecies]
+	cp $ff
+	ret z
+	ld a, [wTempSpecies]
+	call CheckCaughtMon
+	ret z
+	ld a, [wCurSpecies]
+	push af
+	ld a, [wTempSpecies]
+	ld [wCurSpecies], a
+	call GetBaseData
+	farcall LoadPokedexTypeIconPalettes
+	pop af
+	ld [wCurSpecies], a
 	ret
 
 Pokedex_LoadPointer:
@@ -2856,7 +2870,7 @@ _NewPokedexEntry:
 	call ByteFill
 	farcall DisplayDexEntry
 	call EnableLCD
-	call WaitBGMap
+	call WaitBGMap2
 	call GetBaseData
 	ld de, vTiles2
 	predef GetMonFrontpic

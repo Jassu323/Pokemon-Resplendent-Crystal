@@ -96,7 +96,7 @@ LoadStatsScreenTypeIconPalettes:
 ;   BG palette 7 = slot 2 type icon, if dual-type
 
 	push de
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld de, wBGPals1 palette 6
 	call LoadTypeIconPalette
 	pop de
@@ -107,14 +107,14 @@ LoadStatsScreenTypeIconPalettes:
 	ld a, d
 	ld [wBGPals1 palette 6 + 3], a
 
-	ld a, [wStatsScreenType1]
+	ld a, [wCachedMonType1]
 	ld b, a
-	ld a, [wStatsScreenType2]
+	ld a, [wCachedMonType2]
 	cp b
 	ret z
 
 	push de
-	ld a, [wStatsScreenType2]
+	ld a, [wCachedMonType2]
 	ld de, wBGPals1 palette 7
 	call LoadTypeIconPalette
 	pop de
@@ -124,6 +124,55 @@ LoadStatsScreenTypeIconPalettes:
 	ld [wBGPals1 palette 7 + 2], a
 	ld a, d
 	ld [wBGPals1 palette 7 + 3], a
+	ret
+
+LoadPokedexTypeIconPalettes::
+; Load Pokédex entry type icon palettes for the current mon.
+; Uses:
+;   BG palette 6 = slot 1 type icon
+;   BG palette 7 = slot 2 type icon, if dual-type
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	ld a, [wCachedMonType1]
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+
+	; Replace palette 6 color 1 with palette 6 color 3.
+	; color 3 is black in every type icon palette.
+	ld a, [wBGPals1 palette 6 + 6]
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, [wBGPals1 palette 6 + 7]
+	ld [wBGPals1 palette 6 + 3], a
+
+	ld a, [wCachedMonType1]
+	ld b, a
+	ld a, [wCachedMonType2]
+	cp b
+	jr z, .done
+
+	ld de, wBGPals1 palette 7
+	call LoadTypeIconPalette
+
+	; Replace palette 7 color 1 with palette 7 color 3.
+	; color 3 is black in every type icon palette.
+	ld a, [wBGPals1 palette 7 + 6]
+	ld [wBGPals1 palette 7 + 2], a
+	ld a, [wBGPals1 palette 7 + 7]
+	ld [wBGPals1 palette 7 + 3], a
+
+.done
+	pop af
+	ldh [rWBK], a
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
 	ret
 
 LoadStatsScreenStatusIconPalette::

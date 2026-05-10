@@ -138,6 +138,55 @@ StatsScreen_LoadCurrentMoveTypeIconGFX_Bank1::
 	ld hl, vTiles2 tile ICON_MOVE_TYPE_TILE
 	jp Icon_LoadTypeIconGFX
 
+Pokedex_LoadAndDrawDexEntryTypeIcons::
+; Farcall-safe. Load and draw the selected Pokédex entry's type icons on CGB.
+; Uses wCachedMonType1/wCachedMonType2, which DisplayDexEntry prepares for the selected mon.
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ld a, [wCachedMonType1]
+	ld hl, vTiles2 tile POKEDEX_TYPE_ICON_SLOT_1_TILE
+	call Icon_LoadTypeIconGFX
+
+	ld a, [wCachedMonType1]
+	ld b, a
+	ld a, [wCachedMonType2]
+	cp b
+	jr z, .single_type
+
+	push af
+	ld hl, vTiles2 tile POKEDEX_TYPE_ICON_SLOT_2_TILE
+	pop af
+	call Icon_LoadTypeIconGFX
+	farcall LoadPokedexTypeIconPalettes
+
+	hlcoord POKEDEX_TYPE_ICON_SLOT_1_X, POKEDEX_TYPE_ICON_Y
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_TILE
+	call Icon_Draw4x2
+
+	hlcoord POKEDEX_TYPE_ICON_SLOT_2_X, POKEDEX_TYPE_ICON_Y
+	ld a, POKEDEX_TYPE_ICON_SLOT_2_TILE
+	call Icon_Draw4x2
+
+	hlcoord POKEDEX_TYPE_ICON_SLOT_1_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
+	call Icon_Set4x2Attrs
+
+	hlcoord POKEDEX_TYPE_ICON_SLOT_2_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	ld a, POKEDEX_TYPE_ICON_SLOT_2_ATTR
+	jp Icon_Set4x2Attrs
+
+.single_type
+	farcall LoadPokedexTypeIconPalettes
+	hlcoord POKEDEX_TYPE_ICON_SINGLE_X, POKEDEX_TYPE_ICON_Y
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_TILE
+	call Icon_Draw4x2
+
+	hlcoord POKEDEX_TYPE_ICON_SINGLE_X, POKEDEX_TYPE_ICON_Y, wAttrmap
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
+	jp Icon_Set4x2Attrs
+
 Icon_LoadCurrentMoveCategoryIconGFX_Bank1::
 	call Icon_GetCurrentMoveCategory
 	ld hl, vTiles2 tile ICON_MOVE_CATEGORY_TILE
