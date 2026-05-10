@@ -20,3 +20,24 @@ INCBIN "gfx/status_con/sleep.2bpp"
 
 ToxicStatusIconGFX::
 INCBIN "gfx/status_con/toxic.2bpp"
+
+StatsBurnStatusIconGFX::
+INCBIN "gfx/status_con/burn_stats_menu.2bpp"
+
+StatsFaintedStatusIconGFX::
+INCBIN "gfx/status_con/fainted_stats_menu.2bpp"
+
+StatsFreezeStatusIconGFX::
+INCBIN "gfx/status_con/freeze_stats_menu.2bpp"
+
+StatsParalysisStatusIconGFX::
+INCBIN "gfx/status_con/paralysis_stats_menu.2bpp"
+
+StatsPoisonStatusIconGFX::
+INCBIN "gfx/status_con/poisoned_stats_menu.2bpp"
+
+StatsSleepStatusIconGFX::
+INCBIN "gfx/status_con/sleep_stats_menu.2bpp"
+
+StatsToxicStatusIconGFX::
+INCBIN "gfx/status_con/toxic_stats_menu.2bpp"

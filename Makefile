@@ -325,8 +325,11 @@ $(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
 
 status_icon_names := burn fainted freeze paralysis poisoned sleep toxic
 status_icon_pngs := $(addprefix gfx/status_con/,$(addsuffix .png,$(status_icon_names)))
+stats_status_icon_pngs := $(addprefix gfx/status_con/,$(addsuffix _stats_menu.png,$(status_icon_names)))
 status_icon_gbcpals := $(status_icon_pngs:.png=.gbcpal)
 status_icon_2bpp := $(status_icon_pngs:.png=.2bpp)
+stats_status_icon_gbcpals := $(stats_status_icon_pngs:.png=.gbcpal)
+stats_status_icon_2bpp := $(stats_status_icon_pngs:.png=.2bpp)
 
 gfx/status_con/%.gbcpal: gfx/status_con/%.pal
 	printf 'SECTION "Status Condition Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $*.pal.asm
@@ -335,6 +338,9 @@ gfx/status_con/%.gbcpal: gfx/status_con/%.pal
 	$(RM) $*.pal.o $*.pal.asm
 
 $(status_icon_2bpp): %.2bpp: %.png %.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
+$(stats_status_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
 ### Catch-all graphics rules

@@ -14,6 +14,17 @@ MoveCategoryIconGFXPointers::
 	dba StatusMoveCategoryIconGFX
 	assert_table_length NUM_MOVE_CATEGORIES
 
+StatsStatusIconGFXPointers::
+	table_width 3
+	dba StatsBurnStatusIconGFX
+	dba StatsFaintedStatusIconGFX
+	dba StatsFreezeStatusIconGFX
+	dba StatsParalysisStatusIconGFX
+	dba StatsPoisonStatusIconGFX
+	dba StatsSleepStatusIconGFX
+	dba StatsToxicStatusIconGFX
+	assert_table_length NUM_STATUS_ICONS
+
 TypeIconGFXPointers:
 	; Physical block
 	dba NormalTypeIconGFX      ; NORMAL       = 0
@@ -147,6 +158,41 @@ Icon_LoadMoveCategoryIconGFX::
 	ldh [rVBK], a
 	ret
 
+Icon_LoadStatsStatusIconGFX::
+; Load one stats-page status icon into VRAM bank 1.
+; input:
+;   a  = STATUS_ICON_* constant
+;   hl = destination tile address
+	push hl
+
+	ld e, a
+	ld d, 0
+	ld hl, StatsStatusIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, STATUS_ICON_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
 Icon_LoadCurrentMoveIconsGFX_Bank1::
 ; Farcall-safe. Loads selected move type and category graphics to the shared
 ; move icon slots in VRAM bank 1.
@@ -271,6 +317,29 @@ Icon_Set4x2Attrs::
 
 	pop de
 	pop bc
+	ret
+
+Icon_Draw3x1::
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+	ld c, 3
+.loop
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .loop
+	ret
+
+Icon_Set3x1Attrs::
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+	ld c, 3
+.loop
+	ld [hli], a
+	dec c
+	jr nz, .loop
 	ret
 
 BattleMoveInfo_LoadAndDrawIcons::

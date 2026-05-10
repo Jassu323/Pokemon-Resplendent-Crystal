@@ -126,6 +126,73 @@ LoadStatsScreenTypeIconPalettes:
 	ld [wBGPals1 palette 7 + 3], a
 	ret
 
+LoadStatsScreenStatusIconPalette::
+; Farcall-safe. Load one stats-screen status icon palette.
+; input:
+;   c  = STATUS_ICON_* constant
+;   de = current stats page background color
+;        e = low byte
+;        d = high byte
+;
+; Uses:
+;   BG palette 5 = status icon
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	ld a, c
+	call LoadStatsScreenStatusIconPaletteInWRAM
+
+	pop af
+	ldh [rWBK], a
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+LoadStatsScreenStatusIconPaletteInWRAM:
+; Load one stats-screen status icon palette.
+; input:
+;   a  = STATUS_ICON_* constant
+;   de = current stats page background color
+;        e = low byte
+;        d = high byte
+;
+; Assumes:
+;   WRAM bank = BANK(wBGPals1)
+	push af
+	push de
+
+	ld e, a
+	ld d, 0
+	ld hl, StatsStatusIconPalettePointers
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	ld de, wBGPals1 palette 5
+	ld bc, 1 palettes
+	call CopyBytes
+
+	pop de
+
+	; Replace palette 5 color 1 with the current page background.
+	ld a, e
+	ld [wBGPals1 palette 5 + 2], a
+	ld a, d
+	ld [wBGPals1 palette 5 + 3], a
+
+	pop af
+	ret
+
 LoadMoveMenuCurrentIconPalettes::
 ; Farcall-safe. Load selected move's type and category icon palettes.
 ; Uses wCurSpecies as the selected move ID.

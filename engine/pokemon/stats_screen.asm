@@ -5,6 +5,7 @@
 DEF NUM_STAT_PAGES EQU const_value - 1
 
 DEF STAT_PAGE_MASK EQU %00000011
+DEF STATS_SCREEN_STATUS_ICON_LOADED EQU 3
 	const_def 4
 	const STATS_SCREEN_PLACE_FRONTPIC ; 4
 	const STATS_SCREEN_ANIMATE_MON    ; 5
@@ -12,9 +13,12 @@ DEF STAT_PAGE_MASK EQU %00000011
 
 DEF TYPE_ICON_SLOT_1_TILE EQU $68 ; uses $68-$6f
 DEF TYPE_ICON_SLOT_2_TILE EQU $70 ; uses $70-$77
+DEF STATUS_ICON_STATS_TILE EQU $78 ; uses $78-$7a
 
 DEF TYPE_ICON_SLOT_1_ATTR EQU $0e ; VRAM bank 1, BG palette 6
 DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+DEF STATUS_ICON_STATS_ATTR EQU $0d ; VRAM bank 1, BG palette 5
+DEF STATS_SCREEN_PINK_BG_COLOR EQU palred 31 + palgreen 19 + palblue 31
 
 BattleStatsScreenInit:
 	ld a, [wLinkMode]
@@ -160,6 +164,7 @@ StatsScreen_Exit:
 
 MonStatsInit:
 	ld hl, wStatsScreenFlags
+	res STATS_SCREEN_STATUS_ICON_LOADED, [hl]
 	res STATS_SCREEN_ANIMATE_EGG, [hl]
 	call ClearBGPalettes
 	call ClearTilemap
@@ -619,6 +624,7 @@ LoadPinkPage:
 	ld de, .Status_Type
 	hlcoord 0, 12
 	call PlaceString
+	call StatsScreen_ClearStatusIconAttrs
 	ld a, [wTempMonPokerusStatus]
 	ld b, a
 	and $f
@@ -632,6 +638,8 @@ LoadPinkPage:
 	ld a, [wMonType]
 	cp BOXMON
 	jr z, .StatusOK
+	call StatsScreen_TryPlaceStatusIcon
+	jr c, .done_status
 	hlcoord 6, 13
 	push hl
 	ld de, wTempMonStatus
@@ -1032,6 +1040,117 @@ StatsScreen_LoadTextboxSpaceGFX:
 	pop hl
 	ret
 
+StatsScreen_LoadCurrentStatusIconGFX:
+	call StatsScreen_GetStatusIcon
+	ret nc
+
+	push af
+	ld c, a
+	ld de, STATS_SCREEN_PINK_BG_COLOR
+	farcall LoadStatsScreenStatusIconPalette
+	pop af
+
+	push af
+	ld hl, wStatsScreenFlags
+	bit STATS_SCREEN_STATUS_ICON_LOADED, [hl]
+	jr nz, .loaded
+	set STATS_SCREEN_STATUS_ICON_LOADED, [hl]
+	pop af
+
+	ld hl, vTiles2 tile STATUS_ICON_STATS_TILE
+	jp Icon_LoadStatsStatusIconGFX
+
+.loaded
+	pop af
+	ret
+
+StatsScreen_TryPlaceStatusIcon:
+	call StatsScreen_GetStatusIcon
+	ret nc
+
+	hlcoord 6, 13
+	ld a, STATUS_ICON_STATS_TILE
+	call Icon_Draw3x1
+
+	hlcoord 6, 13, wAttrmap
+	ld a, STATUS_ICON_STATS_ATTR
+	call Icon_Set3x1Attrs
+	scf
+	ret
+
+StatsScreen_GetStatusIcon:
+	ld a, [wTempMonHP]
+	ld b, a
+	ld a, [wTempMonHP + 1]
+	or b
+	jr nz, .check_status
+	ld a, STATUS_ICON_FAINTED
+	scf
+	ret
+
+.check_status
+	ld a, [wTempMonStatus]
+	bit PSN, a
+	jr nz, .poison
+	bit BRN, a
+	jr nz, .burn
+	bit FRZ, a
+	jr nz, .freeze
+	bit PAR, a
+	jr nz, .paralysis
+	and SLP_MASK
+	jr nz, .sleep
+
+.no_icon
+	and a
+	ret
+
+.poison
+	ld a, [wBattleMode]
+	and a
+	jr z, .regular_poison
+	ld a, [wCurBattleMon]
+	ld b, a
+	ld a, [wCurPartyMon]
+	cp b
+	jr nz, .regular_poison
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_TOXIC, a
+	jr z, .regular_poison
+	ld a, STATUS_ICON_TOXIC
+	scf
+	ret
+
+.regular_poison
+	ld a, STATUS_ICON_POISON
+	scf
+	ret
+
+.burn
+	ld a, STATUS_ICON_BURN
+	scf
+	ret
+
+.freeze
+	ld a, STATUS_ICON_FREEZE
+	scf
+	ret
+
+.paralysis
+	ld a, STATUS_ICON_PARALYSIS
+	scf
+	ret
+
+.sleep
+	ld a, STATUS_ICON_SLEEP
+	scf
+	ret
+
+StatsScreen_ClearStatusIconAttrs:
+	hlcoord 6, 13, wAttrmap
+	xor a
+	jp Icon_Set3x1Attrs
+
 StatsScreen_LoadCurrentMonTypeIconGFX:
 	ld a, [wStatsScreenType1]
 	ld hl, vTiles2 tile TYPE_ICON_SLOT_1_TILE
@@ -1110,9 +1229,11 @@ StatsScreen_FinalizeTypeIconArea:
 	jr z, .pink_page
 
 	call StatsScreen_ClearTypeIconAttrs
+	call StatsScreen_ClearStatusIconAttrs
 	ret
 
 .pink_page
+	call StatsScreen_LoadCurrentStatusIconGFX
 	call StatsScreen_LoadCurrentMonTypeIconGFX
 	call StatsScreen_DrawCurrentMonTypeIcons
 	call StatsScreen_SetCurrentMonTypeIconAttrs
@@ -1245,18 +1366,21 @@ StatsScreen_LoadPageIndicators:
 	ld a, $36 ; first of 4 small square tiles
 	call .load_square
 	hlcoord 15, 5
-	ld a, $36 ; " " " "
+	ld a, $42 ; green small square tiles
 	call .load_square
 	hlcoord 17, 5
-	ld a, $36 ; " " " "
+	ld a, $36 ; first of 4 small square tiles
 	call .load_square
 	ld a, c
 	cp GREEN_PAGE
 	ld a, $3a ; first of 4 large square tiles
 	hlcoord 13, 5 ; PINK_PAGE (< GREEN_PAGE)
 	jr c, .load_square
+	jr nz, .blue_page
+	ld a, $46 ; green large square tiles
 	hlcoord 15, 5 ; GREEN_PAGE (= GREEN_PAGE)
-	jr z, .load_square
+	jr .load_square
+.blue_page
 	hlcoord 17, 5 ; BLUE_PAGE (> GREEN_PAGE)
 .load_square
 	push bc
