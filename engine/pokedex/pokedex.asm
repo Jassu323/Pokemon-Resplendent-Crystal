@@ -700,13 +700,13 @@ Pokedex_InitSearchScreen:
 	ld [wDexSearchMonType1], a
 	xor a
 	ld [wDexSearchMonType2], a
-	call Pokedex_PlaceSearchScreenTypeStrings
 	xor a
 	ld [wDexSearchSlowpokeFrame], a
 	farcall DoDexSearchSlowpokeFrame
 	call WaitBGMap
 	ld a, SCGB_POKEDEX_SEARCH_OPTION
 	call Pokedex_GetSGBLayout
+	call Pokedex_PlaceSearchScreenTypes
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -714,7 +714,7 @@ Pokedex_UpdateSearchScreen:
 	ld de, .ArrowCursorData
 	call Pokedex_MoveArrowCursor
 	call Pokedex_UpdateSearchMonType
-	call c, Pokedex_PlaceSearchScreenTypeStrings
+	call c, Pokedex_PlaceSearchScreenTypes
 	ld hl, hJoyPressed
 	ld a, [hl]
 	and PAD_START | PAD_B
@@ -751,7 +751,7 @@ Pokedex_UpdateSearchScreen:
 
 .MenuAction_MonSearchType:
 	call Pokedex_NextSearchMonType
-	call Pokedex_PlaceSearchScreenTypeStrings
+	call Pokedex_PlaceSearchScreenTypes
 	ret
 
 .MenuAction_BeginSearch:
@@ -769,7 +769,7 @@ Pokedex_UpdateSearchScreen:
 	ldh [hBGMapMode], a
 	call Pokedex_DrawSearchScreenBG
 	call Pokedex_InitArrowCursor
-	call Pokedex_PlaceSearchScreenTypeStrings
+	call Pokedex_PlaceSearchScreenTypes
 	call WaitBGMap
 	ret
 
@@ -2088,7 +2088,11 @@ Pokedex_NextSearchMonType:
 	scf
 	ret
 
-Pokedex_PlaceSearchScreenTypeStrings:
+Pokedex_PlaceSearchScreenTypes:
+	ldh a, [hCGB]
+	and a
+	jr nz, .cgb
+
 	xor a
 	ldh [hBGMapMode], a
 	hlcoord 9, 3
@@ -2105,6 +2109,43 @@ Pokedex_PlaceSearchScreenTypeStrings:
 	ldh [hBGMapMode], a
 	ret
 
+.cgb
+	xor a
+	ldh [hBGMapMode], a
+
+	hlcoord 9, 4
+	lb bc, 4, 8
+	ld a, ' '
+	call Pokedex_FillBox
+
+	hlcoord 9, 4, wAttrmap
+	lb bc, 4, 8
+	xor a
+	call Pokedex_FillBox
+
+	ld a, [wDexSearchMonType1]
+	call Pokedex_ConvertSearchTypeIndex
+	ld [wCachedMonType1], a
+
+	ld a, [wDexSearchMonType2]
+	and a
+	jr z, .type2_none
+	call Pokedex_ConvertSearchTypeIndex
+	ld [wCachedMonType2], a
+	jr .draw_icons
+
+.type2_none
+	ld a, [wDexSearchMonType2]
+	hlcoord 9, 6
+	call Pokedex_PlaceTypeString
+
+.draw_icons
+	farcall Pokedex_LoadAndDrawSearchTypeIcons
+	call CGBOnly_CopyTilemapAtOnce
+	ld a, $1
+	ldh [hBGMapMode], a
+	ret
+
 Pokedex_PlaceTypeString:
 	push hl
 	ld e, a
@@ -2117,6 +2158,14 @@ endr
 	ld d, h
 	pop hl
 	call PlaceString
+	ret
+
+Pokedex_ConvertSearchTypeIndex:
+	ld e, a
+	ld d, 0
+	ld hl, PokedexTypeSearchConversionTable - 1
+	add hl, de
+	ld a, [hl]
 	ret
 
 INCLUDE "data/types/search_strings.asm"

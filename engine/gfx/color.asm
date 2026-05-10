@@ -175,6 +175,54 @@ LoadPokedexTypeIconPalettes::
 	ldh [hCGBPalUpdate], a
 	ret
 
+LoadPokedexSearchTypeIconPalettes::
+; Load Pokédex search screen type icon palettes.
+; Uses:
+;   BG palette 6 = Type 1 selection
+;   BG palette 7 = Type 2 selection, unless Type 2 is NONE
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	ld a, [wCachedMonType1]
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+
+	; Replace palette 6 color 1 with palette 6 color 3.
+	; color 3 is black in every type icon palette.
+	ld a, [wBGPals1 palette 6 + 6]
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, [wBGPals1 palette 6 + 7]
+	ld [wBGPals1 palette 6 + 3], a
+
+	ld a, [wDexSearchMonType2]
+	and a
+	jr z, .done
+
+	ld a, [wCachedMonType2]
+	ld de, wBGPals1 palette 7
+	call LoadTypeIconPalette
+
+	; Replace palette 7 color 1 with palette 7 color 3.
+	; color 3 is black in every type icon palette.
+	ld a, [wBGPals1 palette 7 + 6]
+	ld [wBGPals1 palette 7 + 2], a
+	ld a, [wBGPals1 palette 7 + 7]
+	ld [wBGPals1 palette 7 + 3], a
+
+.done
+	pop af
+	ldh [rWBK], a
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
 LoadStatsScreenStatusIconPalette::
 ; Farcall-safe. Load one stats-screen status icon palette.
 ; input:

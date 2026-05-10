@@ -187,6 +187,48 @@ Pokedex_LoadAndDrawDexEntryTypeIcons::
 	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
 	jp Icon_Set4x2Attrs
 
+Pokedex_LoadAndDrawSearchTypeIcons::
+; Farcall-safe. Load and draw the Pokédex search screen's type icons on CGB.
+; Uses wCachedMonType1/wCachedMonType2, prepared from the search type indexes.
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	farcall LoadPokedexSearchTypeIconPalettes
+
+	ld a, [wCachedMonType1]
+	ld hl, vTiles2 tile POKEDEX_TYPE_ICON_SLOT_1_TILE
+	call Icon_LoadTypeIconGFX
+
+	ld a, [wDexSearchMonType2]
+	and a
+	jr z, .draw
+
+	ld a, [wCachedMonType2]
+	ld hl, vTiles2 tile POKEDEX_TYPE_ICON_SLOT_2_TILE
+	call Icon_LoadTypeIconGFX
+
+.draw
+	hlcoord POKEDEX_SEARCH_TYPE_ICON_X, POKEDEX_SEARCH_TYPE_1_ICON_Y
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_TILE
+	call Icon_Draw4x2
+
+	hlcoord POKEDEX_SEARCH_TYPE_ICON_X, POKEDEX_SEARCH_TYPE_1_ICON_Y, wAttrmap
+	ld a, POKEDEX_TYPE_ICON_SLOT_1_ATTR
+	call Icon_Set4x2Attrs
+
+	ld a, [wDexSearchMonType2]
+	and a
+	ret z
+
+	hlcoord POKEDEX_SEARCH_TYPE_ICON_X, POKEDEX_SEARCH_TYPE_2_ICON_Y
+	ld a, POKEDEX_TYPE_ICON_SLOT_2_TILE
+	call Icon_Draw4x2
+
+	hlcoord POKEDEX_SEARCH_TYPE_ICON_X, POKEDEX_SEARCH_TYPE_2_ICON_Y, wAttrmap
+	ld a, POKEDEX_TYPE_ICON_SLOT_2_ATTR
+	jp Icon_Set4x2Attrs
+
 Icon_LoadCurrentMoveCategoryIconGFX_Bank1::
 	call Icon_GetCurrentMoveCategory
 	ld hl, vTiles2 tile ICON_MOVE_CATEGORY_TILE
