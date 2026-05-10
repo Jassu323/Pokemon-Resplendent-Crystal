@@ -37,6 +37,7 @@ ROMX $03
 	"bank3"
 ROMX $04
 	"bank4"
+	"bank4_2"
 ROMX $05
 	"bank5"
 ROMX $06
@@ -72,8 +73,11 @@ ROMX $10
 	"Evolutions and Attacks 1"
 ROMX $11
 	"bank11"
+	"Pack Graphics"
+	"Kris Pack Graphics"
 ROMX $12
 	"Crystal Features 1"
+	"Crystal Features 1_2"
 	"Egg Moves 2"
 	"Evolutions and Attacks 2"
 ROMX $13

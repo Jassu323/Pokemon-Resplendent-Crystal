@@ -45,6 +45,10 @@ INCLUDE "engine/pokemon/knows_move.asm"
 SECTION "bank4", ROMX
 
 INCLUDE "engine/items/pack.asm"
+
+
+SECTION "bank4_2", ROMX
+
 INCLUDE "engine/overworld/time.asm"
 INCLUDE "engine/items/tmhm2.asm"
 INCLUDE "engine/menus/naming_screen.asm"
@@ -178,6 +182,10 @@ SECTION "Crystal Features 1", ROMX
 
 INCLUDE "engine/menus/init_gender.asm"
 INCLUDE "engine/items/pack_kris.asm"
+
+
+SECTION "Crystal Features 1_2", ROMX
+
 INCLUDE "engine/events/move_tutor.asm"
 INCLUDE "engine/gfx/crystal_layouts.asm"
 INCLUDE "engine/events/celebi.asm"
