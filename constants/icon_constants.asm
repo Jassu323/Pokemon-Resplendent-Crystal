@@ -5,6 +5,18 @@
 	const MOVE_CATEGORY_STATUS
 DEF NUM_MOVE_CATEGORIES EQU const_value
 
+; Status condition icons
+	const_def
+	const STATUS_ICON_BURN
+	const STATUS_ICON_FAINTED
+	const STATUS_ICON_FREEZE
+	const STATUS_ICON_PARALYSIS
+	const STATUS_ICON_POISON
+	const STATUS_ICON_SLEEP
+	const STATUS_ICON_TOXIC
+DEF NUM_STATUS_ICONS EQU const_value
+DEF STATUS_ICON_TILES EQU 3 ; 24x8, one row of three 8x8 tiles
+
 ; IconPointers indexes (see data/icon_pointers.asm)
 	const_def
 	const ICON_NULL

@@ -58,3 +58,4 @@ INCBIN "gfx/pokegear/pokegear.2bpp.lz"
 
 INCLUDE "gfx/types/icons.asm"
 INCLUDE "gfx/move_categories/icons.asm"
+INCLUDE "gfx/status_con/icons.asm"

@@ -530,9 +530,159 @@ _CGB_PartyMenu:
 	ld hl, PalPacket_PartyMenu + 1
 	call CopyFourPalettes
 	call InitPartyMenuBGPal0
+	call LoadPartyMenuStatusIconPalettes
 	call InitPartyMenuBGPal7
 	call InitPartyMenuOBPals
+	call CGB_PartyMenuStatusIconAttrs
 	call ApplyAttrmap
+	ret
+
+CGB_PartyMenuStatusIconAttrs:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+	hlcoord 3, 2, wAttrmap
+
+.loop
+	push bc
+	push hl
+	call CGB_GetPartyStatusIcon
+	jr nc, .no_icon
+	call CGB_GetStatusIconAttr
+	jr .got_attr
+
+.no_icon
+	xor a
+
+.got_attr
+	pop hl
+	push hl
+	call CGB_SetStatusIconAttrs
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	ret
+
+CGB_GetPartyStatusIcon:
+; input:
+;   b = party index
+; output:
+;   carry set and a = STATUS_ICON_* if status/fainted, carry clear otherwise
+	ld d, b
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Species
+	call AddNTimes
+	ld a, [hl]
+	cp EGG
+	jr z, .no_icon
+
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1HP
+	call AddNTimes
+	ld a, [hli]
+	or [hl]
+	jr nz, .check_status
+	ld a, STATUS_ICON_FAINTED
+	scf
+	ret
+
+.check_status
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Status
+	call AddNTimes
+	ld a, [hl]
+	bit PSN, a
+	jr nz, .poison
+	bit BRN, a
+	jr nz, .burn
+	bit FRZ, a
+	jr nz, .freeze
+	bit PAR, a
+	jr nz, .paralysis
+	and SLP_MASK
+	jr nz, .sleep
+
+.no_icon
+	and a
+	ret
+
+.poison
+	ld a, [wBattleMode]
+	and a
+	jr z, .regular_poison
+	ld a, [wCurBattleMon]
+	cp d
+	jr nz, .regular_poison
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_TOXIC, a
+	jr z, .regular_poison
+	ld a, STATUS_ICON_TOXIC
+	scf
+	ret
+
+.regular_poison
+	ld a, STATUS_ICON_POISON
+	scf
+	ret
+
+.burn
+	ld a, STATUS_ICON_BURN
+	scf
+	ret
+
+.freeze
+	ld a, STATUS_ICON_FREEZE
+	scf
+	ret
+
+.paralysis
+	ld a, STATUS_ICON_PARALYSIS
+	scf
+	ret
+
+.sleep
+	ld a, STATUS_ICON_SLEEP
+	scf
+	ret
+
+CGB_GetStatusIconAttr:
+; input:
+;   a = STATUS_ICON_* constant
+; output:
+;   a = attr byte, using VRAM bank 1 and BG palettes 4-6
+	cp STATUS_ICON_FREEZE
+	jr c, .burn_fainted
+	cp STATUS_ICON_POISON
+	jr c, .freeze_paralysis
+	ld a, $0e
+	ret
+
+.burn_fainted
+	ld a, $0c
+	ret
+
+.freeze_paralysis
+	ld a, $0d
+	ret
+
+CGB_SetStatusIconAttrs:
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+	ld c, STATUS_ICON_TILES
+.loop
+	ld [hli], a
+	dec c
+	jr nz, .loop
 	ret
 
 _CGB_Evolution:

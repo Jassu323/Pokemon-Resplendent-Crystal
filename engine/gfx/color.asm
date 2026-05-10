@@ -11,6 +11,9 @@ INCLUDE "data/types/palettes.asm"
 ;Palette data for the move category icons
 INCLUDE "data/move_categories/palettes.asm"
 
+; Palette data for the status condition icons
+INCLUDE "data/status_con/palettes.asm"
+
 LoadTypeIconPalette:
 ; Load one type icon palette.
 ; input:
@@ -27,6 +30,51 @@ LoadTypeIconPalette:
 	add hl, de
 
 	; hl = palette pointer
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	pop de
+	ld bc, 1 palettes
+	call CopyBytes
+	ret
+
+LoadPartyMenuStatusIconPalettes:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	ld a, STATUS_ICON_BURN
+	ld de, wBGPals1 palette 4
+	call LoadPartyMenuStatusIconPalette
+	ld a, STATUS_ICON_FREEZE
+	ld de, wBGPals1 palette 5
+	call LoadPartyMenuStatusIconPalette
+	ld a, STATUS_ICON_POISON
+	ld de, wBGPals1 palette 6
+	call LoadPartyMenuStatusIconPalette
+
+	pop af
+	ldh [rWBK], a
+	ret
+
+LoadPartyMenuStatusIconPalette:
+; input:
+;   a  = STATUS_ICON_* constant
+;   de = destination palette address
+	push de
+
+	ld e, a
+	ld d, 0
+	ld hl, PartyStatusIconPalettePointers
+	add hl, de
+	add hl, de
+
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a

@@ -1,3 +1,25 @@
+DEF STATUS_ICON_PARTY_BASE_TILE EQU $68 ; uses $68-$7c in VRAM bank 1
+
+PartyStatusIconGFXPointers:
+	table_width 3
+	dba BurnStatusIconGFX
+	dba FaintedStatusIconGFX
+	dba FreezeStatusIconGFX
+	dba ParalysisStatusIconGFX
+	dba PoisonStatusIconGFX
+	dba SleepStatusIconGFX
+	dba ToxicStatusIconGFX
+	assert_table_length NUM_STATUS_ICONS
+
+PartyStatusIconAttrs:
+	db $0c ; burn      -> BG palette 4, VRAM bank 1
+	db $0c ; fainted   -> BG palette 4, VRAM bank 1
+	db $0d ; freeze    -> BG palette 5, VRAM bank 1
+	db $0d ; paralysis -> BG palette 5, VRAM bank 1
+	db $0e ; poisoned  -> BG palette 6, VRAM bank 1
+	db $0e ; sleep     -> BG palette 6, VRAM bank 1
+	db $0e ; toxic     -> BG palette 6, VRAM bank 1
+
 SelectMonFromParty:
 	call DisableSpriteUpdates
 	xor a
@@ -267,10 +289,23 @@ PlacePartyMonStatus:
 	ld a, [wPartyCount]
 	and a
 	ret z
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg_status_text
+	call PartyMenu_HasAnyStatusIcon
+	call c, PartyMenu_LoadStatusIconGFX
+	ld a, [wPartyCount]
+	ld c, a
+	ld b, 0
+	hlcoord 3, 2
+	jr .icons_loop
+
+.dmg_status_text
+	ld a, [wPartyCount]
 	ld c, a
 	ld b, 0
 	hlcoord 5, 2
-.loop
+.text_loop
 	push bc
 	push hl
 	call PartyMenuCheckEgg
@@ -291,6 +326,211 @@ PlacePartyMonStatus:
 	add hl, de
 	pop bc
 	inc b
+	dec c
+	jr nz, .text_loop
+	ret
+
+.icons_loop
+	push bc
+	push hl
+	call PartyMenu_GetStatusIcon
+	jr nc, .icons_next
+	call PartyMenu_GetStatusIconStartTile
+	pop hl
+	push hl
+	call PartyMenu_DrawStatusIcon
+
+.icons_next
+	pop hl
+	ld de, SCREEN_WIDTH * 2
+	add hl, de
+	pop bc
+	inc b
+	dec c
+	jr nz, .icons_loop
+	ret
+
+PartyMenu_HasAnyStatusIcon:
+	ld a, [wPartyCount]
+	and a
+	ret z
+	ld c, a
+	ld b, 0
+
+.loop
+	push bc
+	call PartyMenu_GetStatusIcon
+	jr c, .found
+	pop bc
+	inc b
+	dec c
+	jr nz, .loop
+	and a
+	ret
+
+.found
+	pop bc
+	scf
+	ret
+
+PartyMenu_LoadStatusIconGFX:
+	ld hl, vTiles2 tile STATUS_ICON_PARTY_BASE_TILE
+	ld b, NUM_STATUS_ICONS
+	xor a
+
+.loop
+	push af
+	push bc
+	push hl
+	call PartyMenu_LoadStatusIconGFXByID
+	pop hl
+	ld de, STATUS_ICON_TILES tiles
+	add hl, de
+	pop bc
+	pop af
+	inc a
+	dec b
+	jr nz, .loop
+	ret
+
+PartyMenu_LoadStatusIconGFXByID:
+; input:
+;   a  = STATUS_ICON_* constant
+;   hl = destination tile address
+	push hl
+
+	ld hl, PartyStatusIconGFXPointers
+	ld e, a
+	ld d, 0
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, STATUS_ICON_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+PartyMenu_GetStatusIcon:
+; input:
+;   b = party index
+; output:
+;   carry set and a = STATUS_ICON_* if status/fainted, carry clear otherwise
+	ld d, b
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Species
+	call AddNTimes
+	ld a, [hl]
+	cp EGG
+	jr z, .no_icon
+
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1HP
+	call AddNTimes
+	ld a, [hli]
+	or [hl]
+	jr nz, .check_status
+	ld a, STATUS_ICON_FAINTED
+	scf
+	ret
+
+.check_status
+	ld a, d
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld hl, wPartyMon1Status
+	call AddNTimes
+	ld a, [hl]
+	bit PSN, a
+	jr nz, .poison
+	bit BRN, a
+	jr nz, .burn
+	bit FRZ, a
+	jr nz, .freeze
+	bit PAR, a
+	jr nz, .paralysis
+	and SLP_MASK
+	jr nz, .sleep
+
+.no_icon
+	and a
+	ret
+
+.poison
+	ld a, [wBattleMode]
+	and a
+	jr z, .regular_poison
+	ld a, [wCurBattleMon]
+	cp d
+	jr nz, .regular_poison
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_TOXIC, a
+	jr z, .regular_poison
+	ld a, STATUS_ICON_TOXIC
+	scf
+	ret
+
+.regular_poison
+	ld a, STATUS_ICON_POISON
+	scf
+	ret
+
+.burn
+	ld a, STATUS_ICON_BURN
+	scf
+	ret
+
+.freeze
+	ld a, STATUS_ICON_FREEZE
+	scf
+	ret
+
+.paralysis
+	ld a, STATUS_ICON_PARALYSIS
+	scf
+	ret
+
+.sleep
+	ld a, STATUS_ICON_SLEEP
+	scf
+	ret
+
+PartyMenu_GetStatusIconStartTile:
+; input:
+;   a = STATUS_ICON_* constant
+; output:
+;   a = starting tile ID
+	ld c, a
+	add a
+	add c
+	add STATUS_ICON_PARTY_BASE_TILE
+	ret
+
+PartyMenu_DrawStatusIcon:
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+	ld c, STATUS_ICON_TILES
+.loop
+	ld [hli], a
+	inc a
 	dec c
 	jr nz, .loop
 	ret

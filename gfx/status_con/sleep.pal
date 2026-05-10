@@ -1,0 +1,5 @@
+; gfx/status_con/sleep.pal
+	RGB 31, 31, 31 ; white
+	RGB 20,  8, 20 ; poison purple
+	RGB 21, 21, 15 ; sleep olive
+	RGB  0,  0,  0 ; black

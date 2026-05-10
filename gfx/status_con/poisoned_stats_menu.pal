@@ -1,0 +1,5 @@
+; gfx/status_con/poisoned_stats_menu.pal
+	RGB 31, 31, 31 ; white
+	RGB  0, 31, 31 ; cyan placeholder background
+	RGB 20,  8, 20 ; poison purple
+	RGB  0,  0,  0 ; black
