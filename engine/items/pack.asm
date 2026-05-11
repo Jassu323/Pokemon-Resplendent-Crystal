@@ -1375,7 +1375,7 @@ Pack_InterpretJoypad:
 	ld hl, wMenuJoypad
 	ld a, [wSwitchItem]
 	and a
-	jr nz, .switching_item
+	jp nz, .switching_item
 	ld a, [hl]
 	and PAD_A
 	jr nz, .a_button
@@ -1388,6 +1388,9 @@ Pack_InterpretJoypad:
 	ld a, [hl]
 	and PAD_RIGHT
 	jr nz, .d_right
+	ld a, [hl]
+	and PAD_START
+	jr nz, .start
 	ld a, [hl]
 	and PAD_SELECT
 	jr nz, .select
@@ -1426,6 +1429,28 @@ Pack_InterpretJoypad:
 	scf
 	ret
 
+.start
+	ld a, [wScrollingMenuListSize]
+	cp 2
+	jr c, .no_sort
+	ld hl, SortItemsText
+	call MenuTextbox
+	call YesNoBox
+	push af
+	call ExitMenu
+	pop af
+	jr c, .no_sort
+	farcall SortItemsInBag
+	jr nc, .no_sort
+	call Pack_ResetSortedPocketPosition
+	ld de, SFX_SWITCH_POKEMON
+	call WaitPlaySFX
+	ld de, SFX_SWITCH_POKEMON
+	call WaitPlaySFX
+.no_sort
+	scf
+	ret
+
 .select
 	farcall SwitchItemsInBag
 	ld hl, AskItemMoveText
@@ -1454,6 +1479,34 @@ Pack_InterpretJoypad:
 	ld [wSwitchItem], a
 	scf
 	ret
+
+Pack_ResetSortedPocketPosition:
+	ld a, [wCurPocket]
+	cp TM_HM_POCKET
+	ret z
+	cp NUM_POCKETS
+	ret nc
+	ld e, a
+	ld d, 0
+	ld hl, .cursor_order
+	add hl, de
+	ld e, [hl]
+	ld d, 0
+	ld hl, wItemsPocketCursor
+	add hl, de
+	ld [hl], 1
+	ld hl, wItemsPocketScrollPosition
+	add hl, de
+	xor a
+	ld [hl], a
+	ret
+
+.cursor_order
+	db 0 ; ITEM_POCKET
+	db 2 ; BALL_POCKET
+	db 1 ; KEY_ITEM_POCKET
+	db 0 ; TM_HM_POCKET
+	db 4 ; MEDICINE_POCKET
 
 Pack_InitGFX:
 	call ClearBGPalettes
@@ -1675,7 +1728,7 @@ ItemsPocketMenuHeader:
 	db 1 ; default option
 
 .MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR ; flags
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
 	db 5, 8 ; rows, columns
 	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
 	dbw 0, wNumItems
@@ -1705,7 +1758,7 @@ KeyItemsPocketMenuHeader:
 	db 1 ; default option
 
 .MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR ; flags
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
 	db 5, 8 ; rows, columns
 	db SCROLLINGMENU_ITEMS_NORMAL ; item format
 	dbw 0, wNumKeyItems
@@ -1735,7 +1788,7 @@ BallsPocketMenuHeader:
 	db 1 ; default option
 
 .MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR ; flags
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
 	db 5, 8 ; rows, columns
 	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
 	dbw 0, wNumBalls
@@ -1765,7 +1818,7 @@ MedicinePocketMenuHeader:
 	db 1 ; default option
 
 .MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR ; flags
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
 	db 5, 8 ; rows, columns
 	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
 	dbw 0, wNumMedicine
@@ -1799,6 +1852,11 @@ AskThrowAwayText:
 AskQuantityThrowAwayText:
 	text_far _AskQuantityThrowAwayText
 	text_end
+
+SortItemsText:
+	text "Sort items"
+	line "alphabetically?"
+	done
 
 ThrewAwayText:
 	text_far _ThrewAwayText

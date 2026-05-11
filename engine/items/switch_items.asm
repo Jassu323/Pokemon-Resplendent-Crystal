@@ -270,3 +270,123 @@ ItemSwitch_BackwardsCopyBytes:
 	or c
 	jr nz, .loop
 	ret
+
+SortItemsInBag:
+	call ItemSort_LoadCurrentPocket
+	ret nc
+	ld a, [hl]
+	cp 2
+	jr nc, .sort
+	and a
+	ret
+
+.sort
+	dec a
+	ld [wBuffer1], a
+
+.outer_loop
+	xor a
+	ld [wMenuCursorPosition], a
+	ld a, [wBuffer1]
+	ld c, a
+
+.inner_loop
+	push bc
+	ld a, [wMenuCursorPosition]
+	call ItemSort_CompareAdjacent
+	jr nc, .next_item
+	ld a, [wMenuCursorPosition]
+	call ItemSort_SwapAdjacent
+
+.next_item
+	ld hl, wMenuCursorPosition
+	inc [hl]
+	pop bc
+	dec c
+	jr nz, .inner_loop
+	ld hl, wBuffer1
+	dec [hl]
+	jr nz, .outer_loop
+	scf
+	ret
+
+ItemSort_CompareAdjacent:
+	push af
+	call ItemSwitch_GetNthItem
+	ld a, [hl]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	call CopyName1
+	pop af
+	inc a
+	call ItemSwitch_GetNthItem
+	ld a, [hl]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	ld h, d
+	ld l, e
+	ld de, wStringBuffer2
+	ld c, ITEM_NAME_LENGTH
+
+.compare_names
+	ld a, [de]
+	cp [hl]
+	jr nz, .different
+	cp '@'
+	jr z, .in_order
+	inc de
+	inc hl
+	dec c
+	jr nz, .compare_names
+
+.in_order
+	and a
+	ret
+
+.different
+	jr c, .in_order
+	scf
+	ret
+
+ItemSort_SwapAdjacent:
+	push af
+	call ItemSwitch_GetNthItem
+	ld d, h
+	ld e, l
+	pop af
+	inc a
+	call ItemSwitch_GetNthItem
+	call ItemSwitch_GetItemFormatSize
+	jp SwapBytes
+
+ItemSort_LoadCurrentPocket:
+	ld a, [wCurPocket]
+	cp TM_HM_POCKET
+	ret z
+	cp NUM_POCKETS
+	ret nc
+	ld e, a
+	ld d, 0
+	ld hl, .pocket_data
+	add hl, de
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld [wMenuData_ItemsPointerAddr], a
+	ld e, a
+	ld a, [hli]
+	ld [wMenuData_ItemsPointerAddr + 1], a
+	ld d, a
+	ld a, [hl]
+	ld [wMenuData_ScrollingMenuItemFormat], a
+	ld h, d
+	ld l, e
+	scf
+	ret
+
+.pocket_data
+	dwb wNumItems, SCROLLINGMENU_ITEMS_QUANTITY
+	dwb wNumBalls, SCROLLINGMENU_ITEMS_QUANTITY
+	dwb wNumKeyItems, SCROLLINGMENU_ITEMS_NORMAL
+	dwb 0, 0
+	dwb wNumMedicine, SCROLLINGMENU_ITEMS_QUANTITY
