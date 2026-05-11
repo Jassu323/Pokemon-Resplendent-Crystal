@@ -220,7 +220,7 @@ OaksPKMNTalk4:
 	; Point hl to the list of Pokémon for that time of day, skipping the map ID and the percentages
 	ld bc, 5
 	add hl, bc
-	ld c, 3 * NUM_GRASSMON
+	ld c, 5 * NUM_GRASSMON
 	call AddNTimes
 
 .loop3
@@ -236,7 +236,9 @@ OaksPKMNTalk4:
 	add hl, de
 	add hl, de
 	add hl, de
-	inc hl ; skip level
+	add hl, de
+	add hl, de
+	inc hl ; skip probability
 	ld a, BANK(JohtoGrassWildMons)
 	call GetFarWord
 	call GetPokemonIDFromIndex
