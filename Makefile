@@ -289,6 +289,21 @@ gfx/mobile/phone_tiles.2bpp: tools/gfx += --remove-whitespace
 gfx/mobile/pichu_animated.2bpp: tools/gfx += --trim-whitespace
 gfx/mobile/stadium2_n64.2bpp: tools/gfx += --trim-whitespace
 
+### Pack item icon graphics
+
+pack_item_icon_pngs := $(filter-out gfx/items/empty_space.png,$(wildcard gfx/items/*.png))
+pack_item_icon_gbcpals := $(pack_item_icon_pngs:.png=.gbcpal)
+pack_item_icon_2bpp := $(pack_item_icon_pngs:.png=.2bpp)
+
+gfx/items/%.gbcpal: gfx/items/%.pal
+	printf 'SECTION "Pack Item Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $*.pal.asm
+	$(RGBASM) $(RGBASMFLAGS) -o $*.pal.o $*.pal.asm
+	$(RGBLINK) -x -o $@ $*.pal.o
+	$(RM) $*.pal.o $*.pal.asm
+
+$(pack_item_icon_2bpp): %.2bpp: %.png %.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
 ### Type icon graphics
 
 type_icon_pngs := $(wildcard gfx/types/*.png)

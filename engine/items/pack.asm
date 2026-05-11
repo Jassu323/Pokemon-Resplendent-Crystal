@@ -14,6 +14,9 @@
 	const PACKSTATE_QUITNOSCRIPT       ; 11
 	const PACKSTATE_QUITRUNSCRIPT      ; 12
 
+DEF PACK_ITEM_ICON_FIRST_TILE EQU $60
+DEF PACK_ITEM_ICON_TILES EQU 9
+
 Pack:
 	ld hl, wOptions
 	set NO_TEXT_SCROLL, [hl]
@@ -1211,7 +1214,7 @@ TutorialPack:
 	dbw 0, wDudeNumItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 .KeyItems:
 	ld a, KEY_ITEM_POCKET
@@ -1231,7 +1234,7 @@ TutorialPack:
 	dbw 0, wDudeNumKeyItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 .TMHM:
 	ld a, TM_HM_POCKET
@@ -1260,7 +1263,7 @@ TutorialPack:
 	dbw 0, wDudeNumBalls
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 .Medicine:
 	ld a, MEDICINE_POCKET
@@ -1280,7 +1283,7 @@ TutorialPack:
 	dbw 0, wDudeNumMedicine
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 .DisplayPocket:
 	push hl
@@ -1486,12 +1489,13 @@ Pack_InitGFX:
 	hlcoord 0, SCREEN_HEIGHT - 4 - 2
 	lb bc, 4, SCREEN_WIDTH - 2
 	call Textbox
+	call Pack_LoadColors
 	call EnableLCD
 	call DrawPackGFX
 	ret
 
 PlacePackGFX:
-	hlcoord 0, 3
+	hlcoord 0, 1
 	ld a, $50
 	ld de, SCREEN_WIDTH - 5
 	ld b, 3
@@ -1519,7 +1523,7 @@ DrawPocketName:
 	add hl, de
 	ld d, h
 	ld e, l
-	hlcoord 0, 7
+	hlcoord 0, 5
 	ld c, 3
 .row
 	ld b, 5
@@ -1545,6 +1549,93 @@ INCBIN "gfx/pack/pack_menu.tilemap"
 	db $1a, $1b, $1c, $1d, $1e ; Medicine
 	db $02, $05, $05, $05, $03 ; bottom border
 
+UpdatePackItemIcon:
+	ld a, [wMenuSelection]
+	cp -1
+	jr z, ShowPackItemEmptyIcon
+	call PlacePackItemIcon
+	ld a, [wMenuSelection]
+	cp POKE_BALL
+	jr z, LoadPackItemPokeBallIcon
+	cp POTION
+	jr z, LoadPackItemPotionIcon
+LoadPackItemQuestionIcon:
+	ld de, PackItemQuestionIconGFX
+	ld hl, PackItemQuestionIconPalette
+	jr LoadPackItemIcon
+
+ShowPackItemEmptyIcon:
+	call PlacePackItemIcon
+	ld de, PackItemEmptyIconGFX
+	ld hl, PackItemEmptyIconPalette
+	jr LoadPackItemIcon
+
+LoadPackItemPokeBallIcon:
+	ld de, PackItemPokeBallIconGFX
+	ld hl, PackItemPokeBallIconPalette
+	jr LoadPackItemIcon
+
+LoadPackItemPotionIcon:
+	ld de, PackItemPotionIconGFX
+	ld hl, PackItemPotionIconPalette
+
+LoadPackItemIcon:
+	push hl
+	ld hl, vTiles2 tile PACK_ITEM_ICON_FIRST_TILE
+	lb bc, BANK(PackItemQuestionIconGFX), PACK_ITEM_ICON_TILES
+	call Request2bpp
+	pop hl
+	call LoadPackItemIconPalette
+	ret
+
+LoadPackItemIconPalette:
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld de, wBGPals1 palette 6
+	ld bc, 1 palettes
+	ld a, BANK(wBGPals1)
+	call FarCopyWRAM
+	farcall ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+HidePackItemIcon:
+	jr ShowPackItemEmptyIcon
+
+PlacePackItemIcon:
+	hlcoord 1, 9
+	ld a, PACK_ITEM_ICON_FIRST_TILE
+	jr PlacePackItemIconTiles
+
+PlacePackItemIconTiles:
+	ld de, SCREEN_WIDTH - 3
+	ld b, 3
+.row
+	ld c, 3
+.column
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .column
+	add hl, de
+	dec b
+	jr nz, .row
+	ret
+
+PackItemQuestionIconPalette:
+INCLUDE "gfx/items/placeholder.pal"
+PackItemEmptyIconPalette:
+	RGB 31, 31, 31
+	RGB 00, 00, 00
+	RGB 00, 00, 00
+	RGB 00, 00, 00
+PackItemPokeBallIconPalette:
+INCLUDE "gfx/items/poke_ball.pal"
+PackItemPotionIconPalette:
+INCLUDE "gfx/items/potion.pal"
+
 Pack_GetItemName:
 	ld a, [wCurItem]
 	ld [wNamedObjectIndex], a
@@ -1567,10 +1658,14 @@ ClearPocketList:
 
 Pack_InitColors:
 	call WaitBGMap
+	call Pack_LoadColors
+	call DelayFrame
+	ret
+
+Pack_LoadColors:
 	ld b, SCGB_PACKPALS
 	call GetSGBLayout
 	call SetDefaultBGPAndOBP
-	call DelayFrame
 	ret
 
 ItemsPocketMenuHeader:
@@ -1586,7 +1681,7 @@ ItemsPocketMenuHeader:
 	dbw 0, wNumItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 PC_Mart_ItemsPocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1601,7 +1696,7 @@ PC_Mart_ItemsPocketMenuHeader:
 	dbw 0, wNumItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 KeyItemsPocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1616,7 +1711,7 @@ KeyItemsPocketMenuHeader:
 	dbw 0, wNumKeyItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 PC_Mart_KeyItemsPocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1631,7 +1726,7 @@ PC_Mart_KeyItemsPocketMenuHeader:
 	dbw 0, wNumKeyItems
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 BallsPocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1646,7 +1741,7 @@ BallsPocketMenuHeader:
 	dbw 0, wNumBalls
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 PC_Mart_BallsPocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1661,7 +1756,7 @@ PC_Mart_BallsPocketMenuHeader:
 	dbw 0, wNumBalls
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 MedicinePocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1676,7 +1771,7 @@ MedicinePocketMenuHeader:
 	dbw 0, wNumMedicine
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 PC_Mart_MedicinePocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
@@ -1691,7 +1786,7 @@ PC_Mart_MedicinePocketMenuHeader:
 	dbw 0, wNumMedicine
 	dba PlaceMenuItemName
 	dba PlaceMenuItemQuantity
-	dba UpdateItemDescription
+	dba UpdatePackItemDescription
 
 PackNoItemText: ; unreferenced
 	text_far _PackNoItemText
@@ -1743,3 +1838,12 @@ PackMenuGFX:
 INCBIN "gfx/pack/pack_menu.2bpp"
 PackGFX:
 INCBIN "gfx/pack/pack.2bpp"
+
+PackItemQuestionIconGFX:
+INCBIN "gfx/items/placeholder.2bpp"
+PackItemEmptyIconGFX:
+INCBIN "gfx/items/empty_space.2bpp"
+PackItemPokeBallIconGFX:
+INCBIN "gfx/items/poke_ball.2bpp"
+PackItemPotionIconGFX:
+INCBIN "gfx/items/potion.2bpp"
