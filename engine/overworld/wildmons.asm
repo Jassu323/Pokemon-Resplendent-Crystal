@@ -109,9 +109,9 @@ FindNest:
 	jr .FindWater
 
 .SearchMapForMon:
-	inc hl
 .ScanMapLoop:
 	push af
+	inc hl ; probability
 	ld a, [hli]
 	cp c
 	ld a, [hli]
@@ -119,7 +119,8 @@ FindNest:
 	cp b
 	jr z, .found
 .next_mon
-	inc hl
+	inc hl ; min level
+	inc hl ; max level
 	pop af
 	dec a
 	jr nz, .ScanMapLoop
@@ -275,72 +276,39 @@ ChooseWildEncounter:
 	inc hl
 	inc hl
 	call CheckOnWater
-	ld de, WaterMonProbTable
 	jr z, .watermon
 	inc hl
 	inc hl
 	ld a, [wTimeOfDay]
-	ld bc, NUM_GRASSMON * 3
+	ld bc, NUM_GRASSMON * 5
 	call AddNTimes
-	ld de, GrassMonProbTable
 
 .watermon
-; hl contains the pointer to the wild mon data, let's save that to the stack
-	push hl
 .randomloop
 	call Random
 	cp 100
 	jr nc, .randomloop
-	inc a ; 1 <= a <= 100
-	ld b, a
-	ld h, d
-	ld l, e
+
+	ld de, 5
 ; This next loop chooses which mon to load up.
 .prob_bracket_loop
-	ld a, [hli]
-	cp b
-	jr nc, .got_it
-	inc hl
+	sub [hl]
+	jr c, .got_it
+	add hl, de
 	jr .prob_bracket_loop
 
 .got_it
-	ld c, [hl]
-	ld b, 0
-	pop hl
-	add hl, bc ; this selects our mon
-	ld a, [hli]
-	ld b, a
-; If the Pokemon is encountered by surfing, we need to give the levels some variety.
-	call CheckOnWater
-	jr nz, .ok
-; Check if we buff the wild mon, and by how much.
-	call Random
-	cp 35 percent
-	jr c, .ok
-	inc b
-	cp 65 percent
-	jr c, .ok
-	inc b
-	cp 85 percent
-	jr c, .ok
-	inc b
-	cp 95 percent
-	jr c, .ok
-	inc b
-; Store the level
-.ok
-	ld a, b
-	ld [wCurPartyLevel], a
-
+	push hl
+	inc hl ; probability
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
 	call ValidateTempWildMonSpecies
-	jr c, .nowildbattle
+	jr c, .nowildbattle_pop
 
 	ld a, l
 	sub LOW(UNOWN)
-	jr nz, .done
+	jr nz, .load_species
 	if HIGH(UNOWN) > 1
 		ld a, h
 		cp HIGH(UNOWN)
@@ -350,26 +318,74 @@ ChooseWildEncounter:
 	else
 		or h
 	endc
-	jr nz, .done
+	jr nz, .load_species
 
 	ld a, [wUnlockedUnowns]
 	and a
-	jr z, .nowildbattle
+	jr z, .nowildbattle_pop
 
-.done
+.load_species
 	call GetPokemonIDFromIndex
 	ld [wTempWildMonSpecies], a
+
+	pop hl
+	inc hl ; probability
+	inc hl ; species low byte
+	inc hl ; species high byte
+; Min level
+	ld a, [hli]
+	ld d, a
+; Max level
+	ld a, [hl]
+	sub d
+	jr nz, .RandomLevel
+
+; If min and max are the same.
+	ld b, d
+; Preserve Crystal's legacy surfing level variance for fixed-level water slots.
+	call CheckOnWater
+	jr nz, .FixedLevel
+	call Random
+	cp 35 percent
+	jr c, .FixedLevel
+	inc b
+	cp 65 percent
+	jr c, .FixedLevel
+	inc b
+	cp 85 percent
+	jr c, .FixedLevel
+	inc b
+	cp 95 percent
+	jr c, .FixedLevel
+	inc b
+
+.FixedLevel:
+	ld a, b
+	jr .GotLevel
+
+.RandomLevel:
+; Get a random level between the min and max.
+	ld c, a
+	inc c
+	call Random
+	ldh a, [hRandomAdd]
+	call SimpleDivide
+	add d
+
+.GotLevel:
+	ld [wCurPartyLevel], a
 
 .startwildbattle
 	xor a
 	ret
 
+.nowildbattle_pop
+	pop hl
+
 .nowildbattle
 	ld a, 1
 	and a
 	ret
-
-INCLUDE "data/wild/probabilities.asm"
 
 CheckRepelEffect::
 ; If there is no active Repel, there's no need to be here.
@@ -816,7 +832,7 @@ GetCallerRouteWildGrassMons:
 	ld bc, 5 ; skip the map ID and encounter rates
 	add hl, bc
 	ld a, [wTimeOfDay]
-	ld bc, NUM_GRASSMON * 3
+	ld bc, NUM_GRASSMON * 5
 	call AddNTimes
 	scf
 	ret
@@ -831,9 +847,11 @@ RandomUnseenWildMon:
 	call Random
 	and %11
 	jr z, .randloop1
-	ld bc, 10 ; skip three mons plus the level of the fourth
+	ld bc, 3 * 5 + 1 ; species index of the fourth wild Pokemon in that map
 	add hl, bc
 	ld c, a
+	add hl, bc
+	add hl, bc
 	add hl, bc
 	add hl, bc
 	add hl, bc
@@ -853,7 +871,9 @@ RandomUnseenWildMon:
 	cp d
 	jr z, .done
 .next
-	inc hl
+	inc hl ; min level
+	inc hl ; max level
+	inc hl ; next probability
 	dec b
 	jr nz, .loop2
 ; This Pokemon truly is rare.
@@ -893,7 +913,9 @@ RandomPhoneWildMon:
 	add hl, bc
 	add hl, bc
 	add hl, bc
-	inc hl
+	add hl, bc
+	add hl, bc
+	inc hl ; probability
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
