@@ -310,6 +310,12 @@ ROMX $77
 ROMX $78
 	"Debug Room"
 	"Tileset Data 8"
+ROMX $7a
+	"Night Songs 1"
+	"Night Songs 2"
+	"Night Songs 3"
+	"Night Songs 4"
+	"Night Songs 5"
 ROMX $7b
 	"Battle Tower Text"
 ROMX $7c

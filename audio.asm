@@ -18,8 +18,6 @@ INCLUDE "audio/music/darkcave.asm"
 INCLUDE "audio/music/johtogymbattle.asm"
 INCLUDE "audio/music/championbattle.asm"
 INCLUDE "audio/music/ssaqua.asm"
-INCLUDE "audio/music/newbarktown.asm"
-INCLUDE "audio/music/goldenrodcity.asm"
 INCLUDE "audio/music/vermilioncity.asm"
 INCLUDE "audio/music/titlescreen.asm"
 INCLUDE "audio/music/ruinsofalphinterior.asm"
@@ -34,7 +32,6 @@ INCLUDE "audio/music/route3.asm"
 INCLUDE "audio/music/route12.asm"
 INCLUDE "audio/music/kantogymbattle.asm"
 INCLUDE "audio/music/kantotrainerbattle.asm"
-INCLUDE "audio/music/kantowildbattle.asm"
 INCLUDE "audio/music/pokemoncenter.asm"
 INCLUDE "audio/music/looklass.asm"
 INCLUDE "audio/music/lookofficer.asm"
@@ -65,7 +62,6 @@ INCLUDE "audio/music/route30.asm"
 
 SECTION "Songs 3", ROMX
 
-INCLUDE "audio/music/violetcity.asm"
 INCLUDE "audio/music/route29.asm"
 INCLUDE "audio/music/halloffame.asm"
 INCLUDE "audio/music/healpokemon.asm"
@@ -95,7 +91,6 @@ assert BANK(Music_LookRival) == BANK(Music_AfterTheRivalFight)
 
 INCLUDE "audio/music/surf.asm"
 INCLUDE "audio/music/nationalpark.asm"
-INCLUDE "audio/music/azaleatown.asm"
 INCLUDE "audio/music/cherrygrovecity.asm"
 INCLUDE "audio/music/unioncave.asm"
 
@@ -124,6 +119,31 @@ INCLUDE "audio/music/mainmenu.asm"
 INCLUDE "audio/music/lookkimonogirl.asm"
 INCLUDE "audio/music/pokeflutechannel.asm"
 INCLUDE "audio/music/bugcatchingcontest.asm"
+
+
+SECTION "Night Songs 1", ROMX
+
+INCLUDE "audio/music/kantowildbattle.asm"
+
+
+SECTION "Night Songs 2", ROMX
+
+INCLUDE "audio/music/azaleatown.asm"
+
+
+SECTION "Night Songs 3", ROMX
+
+INCLUDE "audio/music/goldenrodcity.asm"
+
+
+SECTION "Night Songs 4", ROMX
+
+INCLUDE "audio/music/violetcity.asm"
+
+
+SECTION "Night Songs 5", ROMX
+
+INCLUDE "audio/music/newbarktown.asm"
 
 
 SECTION "Songs 5", ROMX
