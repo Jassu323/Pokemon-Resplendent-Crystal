@@ -5,6 +5,7 @@ LoadWildMonData:
 	xor a
 	ld [hli], a
 	ld [hli], a
+	ld [hli], a
 	ld [hl], a
 	jr .done_copy
 
@@ -14,6 +15,8 @@ LoadWildMonData:
 	ld de, wMornEncounterRate
 	ld bc, 3
 	call CopyBytes
+	ld a, [wNiteEncounterRate]
+	ld [wEveEncounterRate], a
 .done_copy
 	call _WaterWildmonLookup
 	ld a, 0
@@ -23,6 +26,13 @@ LoadWildMonData:
 	ld a, [hl]
 .no_copy
 	ld [wWaterEncounterRate], a
+	ret
+
+GetTimeOfDayNotEve:
+	ld a, [wTimeOfDay]
+	cp EVE_F
+	ret nz
+	ld a, NITE_F
 	ret
 
 FindNest:
@@ -279,7 +289,7 @@ ChooseWildEncounter:
 	jr z, .watermon
 	inc hl
 	inc hl
-	ld a, [wTimeOfDay]
+	call GetTimeOfDayNotEve
 	ld bc, NUM_GRASSMON * 5
 	call AddNTimes
 
@@ -831,7 +841,7 @@ GetCallerRouteWildGrassMons:
 .found
 	ld bc, 5 ; skip the map ID and encounter rates
 	add hl, bc
-	ld a, [wTimeOfDay]
+	call GetTimeOfDayNotEve
 	ld bc, NUM_GRASSMON * 5
 	call AddNTimes
 	scf
