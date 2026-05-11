@@ -5902,6 +5902,35 @@ BattleMoveInfo_RestoreBattleAttrs:
 	call FillBoxWithByte
 	ret
 
+BattleLevelUp_RestorePlayerHUDAttrs:
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord 9, 7, wAttrmap
+	lb bc, 5, 1
+	ld a, PAL_BATTLE_BG_PLAYER
+	call FillBoxWithByte
+
+	hlcoord 10, 7, wAttrmap
+	lb bc, 5, 10
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+
+	hlcoord 10, 11, wAttrmap
+	lb bc, 1, 9
+	ld a, PAL_BATTLE_BG_EXP
+	call FillBoxWithByte
+
+	ld a, [wBattleMonStatus]
+	and ALL_STATUS
+	ret z
+	hlcoord BATTLE_STATUS_ICON_PLAYER_X, BATTLE_STATUS_ICON_PLAYER_Y, wAttrmap
+	lb bc, 1, 3
+	ld a, BATTLE_STATUS_ICON_ATTR
+	call FillBoxWithByte
+	ret
+
 CheckPlayerHasUsableMoves:
 	ld hl, STRUGGLE
 	call GetMoveIDFromIndex
@@ -7505,7 +7534,13 @@ GiveExperiencePoints:
 	ld c, 30
 	call DelayFrames
 	call WaitPressAorB_BlinkCursor
-	call SafeLoadTempTilemapToTilemap
+	xor a
+	ldh [hBGMapMode], a
+	call LoadTempTilemapToTilemap
+	call BattleLevelUp_RestorePlayerHUDAttrs
+	call BattleMoveInfo_UpdateTilemapAndAttrmap
+	ld a, $1
+	ldh [hBGMapMode], a
 	xor a ; PARTYMON
 	ld [wMonType], a
 	ld a, [wCurSpecies]

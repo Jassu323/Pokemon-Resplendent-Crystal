@@ -1207,7 +1207,7 @@ StatsScreen_SetCurrentMonTypeIconAttrs:
 	ld a, TYPE_ICON_SLOT_1_ATTR
 	call Icon_Set4x2Attrs
 
-	hlcoord 5, 15, wAttrmap
+	hlcoord 4, 15, wAttrmap
 	ld a, TYPE_ICON_SLOT_2_ATTR
 	call Icon_Set4x2Attrs
 	ret
@@ -1217,7 +1217,7 @@ StatsScreen_ClearTypeIconAttrs:
 	xor a
 	call Icon_Set4x2Attrs
 
-	hlcoord 5, 15, wAttrmap
+	hlcoord 4, 15, wAttrmap
 	xor a
 	call Icon_Set4x2Attrs
 	ret
