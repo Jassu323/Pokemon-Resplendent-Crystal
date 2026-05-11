@@ -5,19 +5,19 @@ Music:
 	table_width 3
 	dba Music_Nothing
 	dba Music_TitleScreen
-	dba Music_Route1
-	dba Music_Route3
-	dba Music_Route12
+	dba Music_GSCRoute1
+	dba Music_GSCRoute3
+	dba Music_GSCRoute12
 	dba Music_MagnetTrain
 	dba Music_KantoGymBattle
 	dba Music_KantoTrainerBattle
-	dba Music_KantoWildBattle
+	dba Music_GSCKantoWildBattle
 	dba Music_PokemonCenter
 	dba Music_LookHiker
 	dba Music_LookLass
 	dba Music_LookOfficer
 	dba Music_HealPokemon
-	dba Music_LavenderTown
+	dba Music_GSCLavenderTown
 	dba Music_Route2
 	dba Music_MtMoon
 	dba Music_ShowMeAround
@@ -25,13 +25,13 @@ Music:
 	dba Music_Bicycle
 	dba Music_HallOfFame
 	dba Music_ViridianCity
-	dba Music_CeladonCity
+	dba Music_GSCCeladonCity
 	dba Music_TrainerVictory
 	dba Music_WildPokemonVictory
 	dba Music_GymLeaderVictory
 	dba Music_MtMoonSquare
 	dba Music_Gym
-	dba Music_PalletTown
+	dba Music_GSCPalletTown
 	dba Music_ProfOaksPokemonTalk
 	dba Music_ProfOak
 	dba Music_LookRival
@@ -56,7 +56,7 @@ Music:
 	dba Music_ElmsLab
 	dba Music_DarkCave
 	dba Music_Route29
-	dba Music_Route36
+	dba Music_Route34
 	dba Music_SSAqua
 	dba Music_LookYoungster
 	dba Music_LookBeauty
@@ -65,16 +65,16 @@ Music:
 	dba Music_LookSage
 	dba Music_NewBarkTown
 	dba Music_GoldenrodCity
-	dba Music_VermilionCity
+	dba Music_GSCVermilionCity
 	dba Music_PokemonChannel
 	dba Music_PokeFluteChannel
 	dba Music_TinTower
 	dba Music_SproutTower
 	dba Music_BurnedTower
 	dba Music_Lighthouse
-	dba Music_LakeOfRage
+	dba Music_Route42
 	dba Music_IndigoPlateau
-	dba Music_Route37
+	dba Music_Route38
 	dba Music_RocketHideout
 	dba Music_DragonsDen
 	dba Music_JohtoWildBattleNight
@@ -107,4 +107,23 @@ Music:
 	dba Music_SuicuneBattle
 	dba Music_BattleTowerLobby
 	dba Music_MobileCenter
+	dba Music_NewBarkTownNight
+	dba Music_Route29Night
+	dba Music_CherrygroveCityNight
+	dba Music_Route30Night
+	dba Music_VioletCityNight
+	dba Music_AzaleaTownNight
+	dba Music_GoldenrodCityNight
+	dba Music_EcruteakCityNight
+	dba Music_Route38Night
+	dba Music_Route42Night
+	dba Music_Route26Night
+	dba Music_GSCRoute3_Night
+	dba Music_GSCRoute12_Night
+	dba Music_GSCCeladonCity_Night
+	dba Music_GSCVermilionCityNight
+	dba Music_GSCPalletTownNight
+	dba Music_GSCRoute1Night
+	dba Music_GSCLavenderTownNight
+	dba Music_GSCKantoWildBattleNight
 	assert_table_length NUM_MUSIC_SONGS
