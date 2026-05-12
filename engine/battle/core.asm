@@ -7506,6 +7506,9 @@ GiveExperiencePoints:
 	call DelayFrames
 	call WaitPressAorB_BlinkCursor
 	call SafeLoadTempTilemapToTilemap
+	ld b, SCGB_BATTLE_COLORS
+	call GetSGBLayout
+	call SetDefaultBGPAndOBP
 	xor a ; PARTYMON
 	ld [wMonType], a
 	ld a, [wCurSpecies]

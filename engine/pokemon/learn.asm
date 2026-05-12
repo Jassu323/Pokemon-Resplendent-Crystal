@@ -162,6 +162,13 @@ ForgetMove:
 	call StaticMenuJoypad
 	push af
 	call SafeLoadTempTilemapToTilemap
+	ld a, [wBattleMode]
+	and a
+	jr z, .restored_tilemap
+	ld b, SCGB_BATTLE_COLORS
+	call GetSGBLayout
+	call SetDefaultBGPAndOBP
+.restored_tilemap
 	pop af
 	pop hl
 	bit B_PAD_B, a
@@ -189,7 +196,7 @@ ForgetMove:
 	ld hl, MoveCantForgetHMText
 	call PrintText
 	pop hl
-	jr .loop
+	jp .loop
 
 .cancel
 	scf
