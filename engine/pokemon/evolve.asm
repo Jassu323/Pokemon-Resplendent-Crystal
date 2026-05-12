@@ -291,6 +291,7 @@ EvolveAfterBattle_MasterLoop:
 	ld [wTempSpecies], a
 	xor a
 	ld [wMonType], a
+	call LearnEvolutionMove
 	call LearnLevelMoves
 	ld a, [wTempSpecies]
 	call SetSeenAndCaughtMon
@@ -479,6 +480,43 @@ LearnLevelMoves:
 	jr .find_move
 
 .done
+	ld a, [wCurPartySpecies]
+	ld [wTempSpecies], a
+	ret
+
+LearnEvolutionMove:
+	ld a, [wTempSpecies]
+	ld [wCurPartySpecies], a
+	call GetPokemonIndexFromID
+	ld bc, EvolutionMoves - 2
+	add hl, hl
+	add hl, bc
+	ld a, BANK(EvolutionMoves)
+	call GetFarWord
+	ld a, h
+	or l
+	ret z
+	call GetMoveIDFromIndex
+	ld d, a
+	ld hl, wPartyMon1Moves
+	ld a, [wCurPartyMon]
+	ld bc, PARTYMON_STRUCT_LENGTH
+	call AddNTimes
+
+	ld b, NUM_MOVES
+.check_move
+	ld a, [hli]
+	cp d
+	ret z
+	dec b
+	jr nz, .check_move
+
+	ld a, d
+	ld [wPutativeTMHMMove], a
+	ld [wNamedObjectIndex], a
+	call GetMoveName
+	call CopyName1
+	predef LearnMove
 	ld a, [wCurPartySpecies]
 	ld [wTempSpecies], a
 	ret

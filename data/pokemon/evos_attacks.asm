@@ -2,6 +2,8 @@
 
 SECTION "Evolutions and Attacks Pointers", ROMX
 
+INCLUDE "data/pokemon/evolution_moves.asm"
+
 ; Evos+attacks data structure:
 ; - Evolution methods:
 ;    * dbbw EVOLVE_LEVEL, level, species
