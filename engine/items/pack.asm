@@ -1608,29 +1608,44 @@ UpdatePackItemIcon:
 	jr z, ShowPackItemEmptyIcon
 	call PlacePackItemIcon
 	ld a, [wMenuSelection]
-	cp POKE_BALL
-	jr z, LoadPackItemPokeBallIcon
-	cp POTION
-	jr z, LoadPackItemPotionIcon
-LoadPackItemQuestionIcon:
+	call GetPackItemIcon
+	jr LoadPackItemIcon
+
+GetPackItemIcon:
+	ld b, a
+	ld hl, PackItemIconTable
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .question_icon
+	cp b
+	jr z, .found
+	inc hl
+	inc hl
+	inc hl
+	inc hl
+	jr .loop
+
+.found
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ret
+
+.question_icon
 	ld de, PackItemQuestionIconGFX
 	ld hl, PackItemQuestionIconPalette
-	jr LoadPackItemIcon
+	ret
 
 ShowPackItemEmptyIcon:
 	call PlacePackItemIcon
 	ld de, PackItemEmptyIconGFX
 	ld hl, PackItemEmptyIconPalette
 	jr LoadPackItemIcon
-
-LoadPackItemPokeBallIcon:
-	ld de, PackItemPokeBallIconGFX
-	ld hl, PackItemPokeBallIconPalette
-	jr LoadPackItemIcon
-
-LoadPackItemPotionIcon:
-	ld de, PackItemPotionIconGFX
-	ld hl, PackItemPotionIconPalette
 
 LoadPackItemIcon:
 	push hl
@@ -1677,17 +1692,7 @@ PlacePackItemIconTiles:
 	jr nz, .row
 	ret
 
-PackItemQuestionIconPalette:
-INCLUDE "gfx/items/placeholder.pal"
-PackItemEmptyIconPalette:
-	RGB 31, 31, 31
-	RGB 00, 00, 00
-	RGB 00, 00, 00
-	RGB 00, 00, 00
-PackItemPokeBallIconPalette:
-INCLUDE "gfx/items/poke_ball.pal"
-PackItemPotionIconPalette:
-INCLUDE "gfx/items/potion.pal"
+INCLUDE "gfx/items/items.asm"
 
 Pack_GetItemName:
 	ld a, [wCurItem]
@@ -1905,3 +1910,23 @@ PackItemPokeBallIconGFX:
 INCBIN "gfx/items/poke_ball.2bpp"
 PackItemPotionIconGFX:
 INCBIN "gfx/items/potion.2bpp"
+PackItemMasterBallIconGFX:
+INCBIN "gfx/items/master_ball.2bpp"
+PackItemUltraBallIconGFX:
+INCBIN "gfx/items/ultra_ball.2bpp"
+PackItemGreatBallIconGFX:
+INCBIN "gfx/items/great_ball.2bpp"
+PackItemHeavyBallIconGFX:
+INCBIN "gfx/items/heavy_ball.2bpp"
+PackItemLevelBallIconGFX:
+INCBIN "gfx/items/level_ball.2bpp"
+PackItemLureBallIconGFX:
+INCBIN "gfx/items/lure_ball.2bpp"
+PackItemFastBallIconGFX:
+INCBIN "gfx/items/fast_ball.2bpp"
+PackItemFriendBallIconGFX:
+INCBIN "gfx/items/friend_ball.2bpp"
+PackItemMoonBallIconGFX:
+INCBIN "gfx/items/moon_ball.2bpp"
+PackItemLoveBallIconGFX:
+INCBIN "gfx/items/love_ball.2bpp"
