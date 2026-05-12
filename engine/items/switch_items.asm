@@ -324,10 +324,12 @@ ItemSort_CompareAdjacent:
 	call ItemSort_GetSortRank
 	ld b, a
 	pop af
+	push bc
 	inc a
 	call ItemSwitch_GetNthItem
 	ld a, [hl]
 	call ItemSort_GetSortRank
+	pop bc
 	cp b
 	ret
 
