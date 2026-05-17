@@ -3261,7 +3261,15 @@ wPlayerMonSelection:: ds 3
 wdc5f:: db
 wdc60:: db
 
-	ds 18
+wApricornQuantities::
+wRedApricornQuantity:: db
+wBluApricornQuantity:: db
+wYlwApricornQuantity:: db
+wGrnApricornQuantity:: db
+wWhtApricornQuantity:: db
+wBlkApricornQuantity:: db
+wPnkApricornQuantity:: db
+	ds 11
 
 wStepCount:: db
 wPoisonStepCount:: db

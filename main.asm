@@ -490,6 +490,11 @@ INCLUDE "engine/events/npc_trade.asm"
 INCLUDE "engine/events/mom_phone.asm"
 
 
+SECTION "Apricorn Box", ROMX
+
+INCLUDE "engine/items/apricorn_box.asm"
+
+
 SECTION "mobile40", ROMX
 
 INCLUDE "mobile/mobile_40.asm"

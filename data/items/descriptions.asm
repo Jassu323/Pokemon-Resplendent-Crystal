@@ -90,7 +90,7 @@ ItemDescriptions:
 	dw BigMushroomDesc
 	dw SilverPowderDesc
 	dw BluApricornDesc
-	dw QuestionMarkDesc
+	dw ApricornBoxDesc
 	dw AmuletCoinDesc
 	dw YlwApricornDesc
 	dw GrnApricornDesc
@@ -592,6 +592,10 @@ SilverPowderDesc:
 
 BluApricornDesc:
 	db   "A blue APRICORN.@"
+
+ApricornBoxDesc:
+	db   "Stores APRICORNS"
+	next "by color.@"
 
 AmuletCoinDesc:
 	db   "Doubles monetary"

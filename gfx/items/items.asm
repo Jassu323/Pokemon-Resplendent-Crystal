@@ -67,8 +67,18 @@ PackItemIconTable:
 	dw PackItemBicycleIconPalette
 	dbw ESCAPE_ROPE, PackItemEscapeRopeIconGFX
 	dw PackItemEscapeRopeIconPalette
+	dbw REPEL, PackItemRepelIconGFX
+	dw PackItemRepelIconPalette
 	dbw FIRE_STONE, PackItemFireStoneIconGFX
 	dw PackItemFireStoneIconPalette
+	dbw THUNDERSTONE, PackItemThunderstoneIconGFX
+	dw PackItemThunderstoneIconPalette
+	dbw WATER_STONE, PackItemWaterStoneIconGFX
+	dw PackItemWaterStoneIconPalette
+	dbw MOON_STONE, PackItemMoonStoneIconGFX
+	dw PackItemMoonStoneIconPalette
+	dbw LEAF_STONE, PackItemLeafStoneIconGFX
+	dw PackItemLeafStoneIconPalette
 	dbw HP_UP, PackItemVitaminIconGFX
 	dw PackItemHPUpIconPalette
 	dbw PROTEIN, PackItemVitaminIconGFX
@@ -77,10 +87,14 @@ PackItemIconTable:
 	dw PackItemIronIconPalette
 	dbw CARBOS, PackItemVitaminIconGFX
 	dw PackItemCarbosIconPalette
+	dbw LUCKY_PUNCH, PackItemLuckyPunchIconGFX
+	dw PackItemLuckyPunchIconPalette
 	dbw CALCIUM, PackItemVitaminIconGFX
 	dw PackItemCalciumIconPalette
 	dbw COIN_CASE, PackItemCoinCaseIconGFX
 	dw PackItemCoinCaseIconPalette
+	dbw ITEMFINDER, PackItemItemfinderIconGFX
+	dw PackItemItemfinderIconPalette
 	dbw EXP_SHARE, PackItemExpShareIconGFX
 	dw PackItemExpShareIconPalette
 	dbw GOOD_ROD, PackItemGoodRodIconGFX
@@ -95,6 +109,8 @@ PackItemIconTable:
 	dw PackItemBigMushroomIconPalette
 	dbw BLU_APRICORN, PackItemApricornIconGFX
 	dw PackItemBlueApricornIconPalette
+	dbw APRICORN_BOX, PackItemApricornBoxIconGFX
+	dw PackItemApricornBoxIconPalette
 	dbw YLW_APRICORN, PackItemApricornIconGFX
 	dw PackItemYellowApricornIconPalette
 	dbw GRN_APRICORN, PackItemApricornIconGFX
@@ -109,6 +125,14 @@ PackItemIconTable:
 	dw PackItemPinkApricornIconPalette
 	dbw BLACKGLASSES, PackItemBlackGlassesIconGFX
 	dw PackItemBlackGlassesIconPalette
+	dbw KINGS_ROCK, PackItemKingsRockIconGFX
+	dw PackItemKingsRockIconPalette
+	dbw METAL_POWDER, PackItemMetalPowderIconGFX
+	dw PackItemMetalPowderIconPalette
+	dbw MYSTIC_WATER, PackItemMysticWaterIconGFX
+	dw PackItemMysticWaterIconPalette
+	dbw MIRACLE_SEED, PackItemMiracleSeedIconGFX
+	dw PackItemMiracleSeedIconPalette
 	dbw PEARL, PackItemPearlIconGFX
 	dw PackItemPearlIconPalette
 	dbw BIG_PEARL, PackItemBigPearlIconGFX
@@ -119,14 +143,28 @@ PackItemIconTable:
 	dw PackItemFocusBandIconPalette
 	dbw HARD_STONE, PackItemHardStoneIconGFX
 	dw PackItemHardStoneIconPalette
+	dbw LUCKY_EGG, PackItemLuckyEggIconGFX
+	dw PackItemLuckyEggIconPalette
 	dbw CARD_KEY, PackItemCardKeyIconGFX
 	dw PackItemCardKeyIconPalette
 	dbw CHARCOAL, PackItemCharcoalIconGFX
 	dw PackItemCharcoalIconPalette
+	dbw METAL_COAT, PackItemMetalCoatIconGFX
+	dw PackItemMetalCoatIconPalette
+	dbw LEFTOVERS, PackItemLeftoversIconGFX
+	dw PackItemLeftoversIconPalette
 	dbw DRAGON_FANG, PackItemDragonFangIconGFX
 	dw PackItemDragonFangIconPalette
 	dbw DRAGON_SCALE, PackItemDragonScaleIconGFX
 	dw PackItemDragonScaleIconPalette
+	dbw LIGHT_BALL, PackItemLightBallIconGFX
+	dw PackItemLightBallIconPalette
+	dbw SUN_STONE, PackItemSunStoneIconGFX
+	dw PackItemSunStoneIconPalette
+	dbw SUPER_REPEL, PackItemSuperRepelIconGFX
+	dw PackItemSuperRepelIconPalette
+	dbw MAX_REPEL, PackItemMaxRepelIconGFX
+	dw PackItemMaxRepelIconPalette
 	dbw HEAVY_BALL, PackItemHeavyBallIconGFX
 	dw PackItemHeavyBallIconPalette
 	dbw LEVEL_BALL, PackItemLevelBallIconGFX
@@ -165,6 +203,8 @@ PackItemIconTable:
 
 PackItemQuestionIconPalette:
 INCLUDE "gfx/items/misc/placeholder.pal"
+PackItemTMHMIconPalette:
+INCLUDE "gfx/items/misc/tmhm.pal"
 PackItemEmptyIconPalette:
 	RGB 31, 31, 31
 	RGB 00, 00, 00
@@ -283,10 +323,22 @@ PackItemBrightPowderIconPalette:
 INCLUDE "gfx/items/general/bright_powder.pal"
 PackItemEscapeRopeIconPalette:
 INCLUDE "gfx/items/general/escape_rope.pal"
+PackItemRepelIconPalette:
+INCLUDE "gfx/items/general/repel.pal"
 PackItemFireStoneIconPalette:
 INCLUDE "gfx/items/general/fire_stone.pal"
+PackItemThunderstoneIconPalette:
+INCLUDE "gfx/items/general/thunderstone.pal"
+PackItemWaterStoneIconPalette:
+INCLUDE "gfx/items/general/water_stone.pal"
+PackItemMoonStoneIconPalette:
+INCLUDE "gfx/items/general/moon_stone.pal"
+PackItemLeafStoneIconPalette:
+INCLUDE "gfx/items/general/leaf_stone.pal"
 PackItemExpShareIconPalette:
 INCLUDE "gfx/items/general/exp_share.pal"
+PackItemLuckyPunchIconPalette:
+INCLUDE "gfx/items/general/lucky_punch.pal"
 PackItemTinyMushroomIconPalette:
 INCLUDE "gfx/items/general/tinymushroom.pal"
 PackItemBigMushroomIconPalette:
@@ -295,6 +347,14 @@ PackItemBlackBeltIconPalette:
 INCLUDE "gfx/items/general/black_belt.pal"
 PackItemBlackGlassesIconPalette:
 INCLUDE "gfx/items/general/black_glasses.pal"
+PackItemKingsRockIconPalette:
+INCLUDE "gfx/items/general/kings_rock.pal"
+PackItemMetalPowderIconPalette:
+INCLUDE "gfx/items/general/metal_powder.pal"
+PackItemMysticWaterIconPalette:
+INCLUDE "gfx/items/general/mystic_water.pal"
+PackItemMiracleSeedIconPalette:
+INCLUDE "gfx/items/general/miracle_seed.pal"
 PackItemPearlIconPalette:
 INCLUDE "gfx/items/general/pearl.pal"
 PackItemBigPearlIconPalette:
@@ -305,20 +365,38 @@ PackItemFocusBandIconPalette:
 INCLUDE "gfx/items/general/focus_band.pal"
 PackItemHardStoneIconPalette:
 INCLUDE "gfx/items/general/hard_stone.pal"
+PackItemLuckyEggIconPalette:
+INCLUDE "gfx/items/general/lucky_egg.pal"
 PackItemCharcoalIconPalette:
 INCLUDE "gfx/items/general/charcoal.pal"
+PackItemMetalCoatIconPalette:
+INCLUDE "gfx/items/general/metal_coat.pal"
+PackItemLeftoversIconPalette:
+INCLUDE "gfx/items/general/leftovers.pal"
 PackItemDragonFangIconPalette:
 INCLUDE "gfx/items/general/dragon_fang.pal"
 PackItemDragonScaleIconPalette:
 INCLUDE "gfx/items/general/dragon_scale.pal"
+PackItemLightBallIconPalette:
+INCLUDE "gfx/items/general/light_ball.pal"
+PackItemSunStoneIconPalette:
+INCLUDE "gfx/items/general/sun_stone.pal"
+PackItemSuperRepelIconPalette:
+INCLUDE "gfx/items/general/super_repel.pal"
+PackItemMaxRepelIconPalette:
+INCLUDE "gfx/items/general/max_repel.pal"
 PackItemBicycleIconPalette:
 INCLUDE "gfx/items/key_items/bicycle.pal"
 PackItemCoinCaseIconPalette:
 INCLUDE "gfx/items/key_items/coin_case.pal"
+PackItemItemfinderIconPalette:
+INCLUDE "gfx/items/key_items/itemfinder.pal"
 PackItemGoodRodIconPalette:
 INCLUDE "gfx/items/key_items/good_rod.pal"
 PackItemCardKeyIconPalette:
 INCLUDE "gfx/items/key_items/card_key.pal"
+PackItemApricornBoxIconPalette:
+INCLUDE "gfx/items/key_items/apricorn_box.pal"
 PackItemRedApricornIconPalette:
 INCLUDE "gfx/items/apricorns/red_apricorn.pal"
 PackItemBlueApricornIconPalette:

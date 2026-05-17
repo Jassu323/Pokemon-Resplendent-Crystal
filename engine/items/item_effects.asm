@@ -103,7 +103,7 @@ ItemEffects:
 	dw NoEffect            ; BIG_MUSHROOM
 	dw NoEffect            ; SILVERPOWDER
 	dw NoEffect            ; BLU_APRICORN
-	dw NoEffect            ; ITEM_5A
+	dw ApricornBoxEffect   ; APRICORN_BOX
 	dw NoEffect            ; AMULET_COIN
 	dw NoEffect            ; YLW_APRICORN
 	dw NoEffect            ; GRN_APRICORN
@@ -2264,6 +2264,10 @@ UseRod:
 
 ItemfinderEffect:
 	farcall ItemFinder
+	ret
+
+ApricornBoxEffect:
+	farcall ApricornBox
 	ret
 
 RestorePPEffect:

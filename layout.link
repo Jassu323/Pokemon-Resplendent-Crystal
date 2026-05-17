@@ -181,6 +181,7 @@ ROMX $3e
 	"bank3E"
 ROMX $3f
 	"bank3F"
+	"Apricorn Box"
 ROMX $40
 	"mobile40"
 ROMX $41
@@ -301,6 +302,7 @@ ROMX $74
 	"Pokedex Entries 193-251"
 ROMX $75
 	"16-bit ID stuff"
+	"Pack Item Icon Graphics"
 ROMX $77
 	"Unown Font"
 	"Print Party"

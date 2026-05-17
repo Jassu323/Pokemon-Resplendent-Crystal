@@ -1470,6 +1470,19 @@ Pack_ResetSortedPocketPosition:
 	db 4 ; MEDICINE_POCKET
 
 Pack_InitGFX:
+	call Pack_InitGFXLayout
+	call Pack_LoadColors
+	jr Pack_InitGFXEnable
+
+Pack_InitGFX_NoColors:
+	call Pack_InitGFXLayout
+
+Pack_InitGFXEnable:
+	call EnableLCD
+	call DrawPackGFX
+	ret
+
+Pack_InitGFXLayout:
 	call ClearBGPalettes
 	call ClearTilemap
 	call ClearSprites
@@ -1503,9 +1516,6 @@ Pack_InitGFX:
 	hlcoord 0, SCREEN_HEIGHT - 4 - 2
 	lb bc, 4, SCREEN_WIDTH - 2
 	call Textbox
-	call Pack_LoadColors
-	call EnableLCD
-	call DrawPackGFX
 	ret
 
 PlacePackGFX:
@@ -1574,6 +1584,13 @@ UpdatePackItemIcon:
 
 GetPackItemIcon:
 	ld b, a
+	cp TM01
+	jr c, .search_table
+	ld de, PackItemTMHMIconGFX
+	ld hl, PackItemTMHMIconPalette
+	ret
+
+.search_table
 	ld hl, PackItemIconTable
 .loop
 	ld a, [hli]
@@ -1612,7 +1629,16 @@ LoadPackItemIcon:
 	push hl
 	ld hl, vTiles2 tile PACK_ITEM_ICON_FIRST_TILE
 	lb bc, BANK(PackItemQuestionIconGFX), PACK_ITEM_ICON_TILES
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	call Get2bppViaHDMA
+	jr .loaded
+
+.dmg
 	call Request2bpp
+
+.loaded
 	pop hl
 	call LoadPackItemIconPalette
 	ret
@@ -1893,8 +1919,12 @@ INCBIN "gfx/pack/pack_menu.2bpp"
 PackGFX:
 INCBIN "gfx/pack/pack.2bpp"
 
+SECTION "Pack Item Icon Graphics", ROMX
+
 PackItemQuestionIconGFX:
 INCBIN "gfx/items/misc/placeholder.2bpp"
+PackItemTMHMIconGFX:
+INCBIN "gfx/items/misc/tmhm.2bpp"
 PackItemEmptyIconGFX:
 INCBIN "gfx/items/misc/empty_space.2bpp"
 PackItemPokeBallIconGFX:
@@ -1982,10 +2012,24 @@ PackItemBrightPowderIconGFX:
 INCBIN "gfx/items/general/bright_powder.2bpp"
 PackItemEscapeRopeIconGFX:
 INCBIN "gfx/items/general/escape_rope.2bpp"
+PackItemRepelIconGFX:
+PackItemSuperRepelIconGFX:
+PackItemMaxRepelIconGFX:
+INCBIN "gfx/items/general/repel.2bpp"
 PackItemFireStoneIconGFX:
 INCBIN "gfx/items/general/fire_stone.2bpp"
+PackItemThunderstoneIconGFX:
+INCBIN "gfx/items/general/thunderstone.2bpp"
+PackItemWaterStoneIconGFX:
+INCBIN "gfx/items/general/water_stone.2bpp"
+PackItemMoonStoneIconGFX:
+INCBIN "gfx/items/general/moon_stone.2bpp"
+PackItemLeafStoneIconGFX:
+INCBIN "gfx/items/general/leaf_stone.2bpp"
 PackItemExpShareIconGFX:
 INCBIN "gfx/items/general/exp_share.2bpp"
+PackItemLuckyPunchIconGFX:
+INCBIN "gfx/items/general/lucky_punch.2bpp"
 PackItemTinyMushroomIconGFX:
 INCBIN "gfx/items/general/tinymushroom.2bpp"
 PackItemBigMushroomIconGFX:
@@ -1994,6 +2038,14 @@ PackItemBlackBeltIconGFX:
 INCBIN "gfx/items/general/black_belt.2bpp"
 PackItemBlackGlassesIconGFX:
 INCBIN "gfx/items/general/black_glasses.2bpp"
+PackItemKingsRockIconGFX:
+INCBIN "gfx/items/general/kings_rock.2bpp"
+PackItemMetalPowderIconGFX:
+INCBIN "gfx/items/general/metal_powder.2bpp"
+PackItemMysticWaterIconGFX:
+INCBIN "gfx/items/general/mystic_water.2bpp"
+PackItemMiracleSeedIconGFX:
+INCBIN "gfx/items/general/miracle_seed.2bpp"
 PackItemPearlIconGFX:
 INCBIN "gfx/items/general/pearl.2bpp"
 PackItemBigPearlIconGFX:
@@ -2004,19 +2056,33 @@ PackItemFocusBandIconGFX:
 INCBIN "gfx/items/general/focus_band.2bpp"
 PackItemHardStoneIconGFX:
 INCBIN "gfx/items/general/hard_stone.2bpp"
+PackItemLuckyEggIconGFX:
+INCBIN "gfx/items/general/lucky_egg.2bpp"
 PackItemCharcoalIconGFX:
 INCBIN "gfx/items/general/charcoal.2bpp"
+PackItemMetalCoatIconGFX:
+INCBIN "gfx/items/general/metal_coat.2bpp"
+PackItemLeftoversIconGFX:
+INCBIN "gfx/items/general/leftovers.2bpp"
 PackItemDragonFangIconGFX:
 INCBIN "gfx/items/general/dragon_fang.2bpp"
 PackItemDragonScaleIconGFX:
 INCBIN "gfx/items/general/dragon_scale.2bpp"
+PackItemLightBallIconGFX:
+INCBIN "gfx/items/general/light_ball.2bpp"
+PackItemSunStoneIconGFX:
+INCBIN "gfx/items/general/sun_stone.2bpp"
 PackItemBicycleIconGFX:
 INCBIN "gfx/items/key_items/bicycle.2bpp"
 PackItemCoinCaseIconGFX:
 INCBIN "gfx/items/key_items/coin_case.2bpp"
+PackItemItemfinderIconGFX:
+INCBIN "gfx/items/key_items/itemfinder.2bpp"
 PackItemGoodRodIconGFX:
 INCBIN "gfx/items/key_items/good_rod.2bpp"
 PackItemCardKeyIconGFX:
 INCBIN "gfx/items/key_items/card_key.2bpp"
+PackItemApricornBoxIconGFX:
+INCBIN "gfx/items/key_items/apricorn_box.2bpp"
 PackItemApricornIconGFX:
 INCBIN "gfx/items/apricorns/red_apricorn.2bpp"

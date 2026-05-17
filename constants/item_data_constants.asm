@@ -19,6 +19,7 @@ DEF ITEMATTR_STRUCT_LENGTH EQU _RS
 	const TM_HM    ; 4
 	const MEDICINE ; 5
 	const BERRIES  ; 6
+	const APRICORN ; 7
 DEF NUM_ITEM_TYPES EQU const_value - 1
 
 ; item menu types
