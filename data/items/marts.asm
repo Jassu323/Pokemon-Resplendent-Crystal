@@ -38,15 +38,7 @@ Marts:
 	assert_table_length NUM_MARTS
 
 MartCherrygrove:
-	db 12 ; # items
-	db APRICORN_BOX
-	db RED_APRICORN
-	db BLU_APRICORN
-	db YLW_APRICORN
-	db GRN_APRICORN
-	db WHT_APRICORN
-	db BLK_APRICORN
-	db PNK_APRICORN
+	db 4 ; # items
 	db POTION
 	db ANTIDOTE
 	db PARLYZ_HEAL
@@ -54,15 +46,7 @@ MartCherrygrove:
 	db -1 ; end
 
 MartCherrygroveDex:
-	db 13 ; # items
-	db APRICORN_BOX
-	db RED_APRICORN
-	db BLU_APRICORN
-	db YLW_APRICORN
-	db GRN_APRICORN
-	db WHT_APRICORN
-	db BLK_APRICORN
-	db PNK_APRICORN
+	db 5 ; # items
 	db POKE_BALL
 	db POTION
 	db ANTIDOTE
