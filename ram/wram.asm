@@ -2272,6 +2272,7 @@ wPartyMenuCursor::      db
 wItemsPocketCursor::    db
 wKeyItemsPocketCursor:: db
 wBallsPocketCursor::    db
+wBerriesPocketCursor::
 wTMHMPocketCursor::     db
 wMedicinePocketCursor:: db
 
@@ -2280,6 +2281,7 @@ wPCItemsScrollPosition::        db
 wItemsPocketScrollPosition::    db
 wKeyItemsPocketScrollPosition:: db
 wBallsPocketScrollPosition::    db
+wBerriesPocketScrollPosition::
 wTMHMPocketScrollPosition::     db
 wMedicinePocketScrollPosition:: db
 
@@ -2794,6 +2796,7 @@ wDudeNumItems:: db
 wDudeItems:: ds 2 * 4 + 1
 
 wDudeNumMedicine::
+wDudeNumBerries::
 wDudeNumKeyItems:: db
 wDudeKeyItems:: ds 18 + 1
 
@@ -3018,6 +3021,9 @@ wKeyItems:: ds MAX_KEY_ITEMS + 1
 wNumBalls:: db
 wBalls:: ds MAX_BALLS * 2 + 1
 
+wNumBerries:: db
+wBerries:: ds MAX_BERRIES * 2 + 1
+
 wNumMedicine:: db
 wMedicine:: ds MAX_MEDICINE * 2 + 1
 
@@ -3162,7 +3168,7 @@ wKenjiFightCount::   db ; unreferenced
 wParryFightCount::   db
 wErinFightCount::    db
 
-	ds 100
+	ds 58
 
 wEventFlags:: flag_array NUM_EVENTS
 

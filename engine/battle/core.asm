@@ -8512,12 +8512,14 @@ CleanUpBattleRAM:
 	ld [wBattleMenuCursorPosition], a
 	ld [wCurMoveNum], a
 	ld [wBallsPocketCursor], a
+	ld [wBerriesPocketCursor], a
 	ld [wMedicinePocketCursor], a
 	ld [wLastPocket], a
 	ld [wMenuScrollPosition], a
 	ld [wKeyItemsPocketScrollPosition], a
 	ld [wItemsPocketScrollPosition], a
 	ld [wBallsPocketScrollPosition], a
+	ld [wBerriesPocketScrollPosition], a
 	ld [wMedicinePocketScrollPosition], a
 	ld hl, wPlayerSubStatus1
 	ld b, wEnemyFuryCutterCount - wPlayerSubStatus1

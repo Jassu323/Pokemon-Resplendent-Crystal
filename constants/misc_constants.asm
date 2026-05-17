@@ -24,8 +24,8 @@ DEF RESERVED_GAME_VERSION EQU 4
 
 ; save file corruption check values
 ; Bump these when the saved WRAM/SRAM layout changes incompatibly.
-DEF SAVE_CHECK_VALUE_1 EQU $b7
-DEF SAVE_CHECK_VALUE_2 EQU $6d
+DEF SAVE_CHECK_VALUE_1 EQU $b8
+DEF SAVE_CHECK_VALUE_2 EQU $6e
 
 ; RTC halted check value
 DEF RTC_HALT_VALUE EQU $1234

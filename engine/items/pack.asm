@@ -7,8 +7,8 @@
 	const PACKSTATE_BALLSPOCKETMENU    ;  4
 	const PACKSTATE_INITKEYITEMSPOCKET ;  5
 	const PACKSTATE_KEYITEMSPOCKETMENU ;  6
-	const PACKSTATE_INITTMHMPOCKET     ;  7
-	const PACKSTATE_TMHMPOCKETMENU     ;  8
+	const PACKSTATE_INITBERRIESPOCKET  ;  7
+	const PACKSTATE_BERRIESPOCKETMENU  ;  8
 	const PACKSTATE_INITMEDICINEPOCKET ;  9
 	const PACKSTATE_MEDICINEPOCKETMENU ; 10
 	const PACKSTATE_QUITNOSCRIPT       ; 11
@@ -52,8 +52,8 @@ Pack:
 	dw .BallsPocketMenu    ;  4
 	dw .InitKeyItemsPocket ;  5
 	dw .KeyItemsPocketMenu ;  6
-	dw .InitTMHMPocket     ;  7
-	dw .TMHMPocketMenu     ;  8
+	dw .InitBerriesPocket  ;  7
+	dw .BerriesPocketMenu  ;  8
 	dw .InitMedicinePocket ;  9
 	dw .MedicinePocketMenu ; 10
 	dw Pack_QuitNoScript   ; 11
@@ -118,104 +118,38 @@ Pack:
 	ld a, [wMenuCursorY]
 	ld [wKeyItemsPocketCursor], a
 	ld b, PACKSTATE_INITBALLSPOCKET ; left
-	ld c, PACKSTATE_INITTMHMPOCKET ; right
+	ld c, PACKSTATE_INITBERRIESPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
 	call .ItemBallsKey_LoadSubmenu
 	ret
 
-.InitTMHMPocket:
-	ld a, TM_HM_POCKET
+.InitBerriesPocket:
+	ld a, BERRY_POCKET
 	ld [wCurPocket], a
 	call ClearPocketList
 	call DrawPocketName
-	xor a
-	ldh [hBGMapMode], a
 	call WaitBGMap_DrawPackGFX
 	call Pack_JumptableNext
 	ret
 
-.TMHMPocketMenu:
-	farcall TMHMPocket
+.BerriesPocketMenu:
+	ld hl, BerriesPocketMenuHeader
+	call CopyMenuHeader
+	ld a, [wBerriesPocketCursor]
+	ld [wMenuCursorPosition], a
+	ld a, [wBerriesPocketScrollPosition]
+	ld [wMenuScrollPosition], a
+	call ScrollingMenu
+	ld a, [wMenuScrollPosition]
+	ld [wBerriesPocketScrollPosition], a
+	ld a, [wMenuCursorY]
+	ld [wBerriesPocketCursor], a
 	ld b, PACKSTATE_INITKEYITEMSPOCKET ; left
 	ld c, PACKSTATE_INITMEDICINEPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
-	farcall _CheckTossableItem
-	ld a, [wItemAttributeValue]
-	and a
-	jr nz, .use_quit
-	ld hl, .MenuHeader2
-	ld de, .Jumptable2
-	jr .load_jump
-
-.use_quit
-	ld hl, .MenuHeader1
-	ld de, .Jumptable1
-.load_jump
-	push de
-	call LoadMenuHeader
-	call VerticalMenu
-	call ExitMenu
-	pop hl
-	ret c
-	ld a, [wMenuCursorY]
-	dec a
-	call Pack_GetJumptablePointer
-	jp hl
-
-.MenuHeader1:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 13, 7, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData_1
-	db 1 ; default option
-
-.MenuData_1:
-	db STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING ; flags
-	db 2 ; items
-	db "USE@"
-	db "QUIT@"
-
-.Jumptable1:
-	dw .UseItem
-	dw QuitItemSubmenu
-
-.MenuHeader2:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 13, 5, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData_2
-	db 1 ; default option
-
-.MenuData_2:
-	db STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING ; flags
-	db 3 ; items
-	db "USE@"
-	db "GIVE@"
-	db "QUIT@"
-
-.Jumptable2:
-	dw .UseItem
-	dw GiveItem
-	dw QuitItemSubmenu
-
-.UseItem:
-	farcall AskTeachTMHM
-	ret c
-	farcall ChooseMonToLearnTMHM
-	jr c, .declined
-	ld hl, wOptions
-	ld a, [hl]
-	push af
-	res NO_TEXT_SCROLL, [hl]
-	farcall TeachTMHM
-	pop af
-	ld [wOptions], a
-.declined
-	xor a
-	ldh [hBGMapMode], a
-	call Pack_InitGFX
-	call WaitBGMap_DrawPackGFX
-	call Pack_InitColors
+	call .ItemBallsKey_LoadSubmenu
 	ret
 
 .InitBallsPocket:
@@ -267,7 +201,7 @@ Pack:
 	ld [wMedicinePocketScrollPosition], a
 	ld a, [wMenuCursorY]
 	ld [wMedicinePocketCursor], a
-	ld b, PACKSTATE_INITTMHMPOCKET ; left
+	ld b, PACKSTATE_INITBERRIESPOCKET ; left
 	ld c, PACKSTATE_INITITEMSPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
@@ -545,9 +479,9 @@ ResetPocketCursorPositions: ; unreferenced
 	assert KEY_ITEM_POCKET == 2
 	dec a
 	jr z, .key
-	assert TM_HM_POCKET == 3
+	assert BERRY_POCKET == 3
 	dec a
-	ret z
+	jr z, .berries
 	assert MEDICINE_POCKET == 4
 	dec a
 	jr z, .medicine
@@ -569,6 +503,12 @@ ResetPocketCursorPositions: ; unreferenced
 	xor a
 	ld [wKeyItemsPocketCursor], a
 	ld [wKeyItemsPocketScrollPosition], a
+	ret
+
+.berries
+	xor a
+	ld [wBerriesPocketCursor], a
+	ld [wBerriesPocketScrollPosition], a
 	ret
 
 .medicine
@@ -706,8 +646,8 @@ BattlePack:
 	dw .BallsPocketMenu    ;  4
 	dw .InitKeyItemsPocket ;  5
 	dw .KeyItemsPocketMenu ;  6
-	dw .InitTMHMPocket     ;  7
-	dw .TMHMPocketMenu     ;  8
+	dw .InitBerriesPocket  ;  7
+	dw .BerriesPocketMenu  ;  8
 	dw .InitMedicinePocket ;  9
 	dw .MedicinePocketMenu ; 10
 	dw Pack_QuitNoScript   ; 11
@@ -772,33 +712,38 @@ BattlePack:
 	ld a, [wMenuCursorY]
 	ld [wKeyItemsPocketCursor], a
 	ld b, PACKSTATE_INITBALLSPOCKET ; left
-	ld c, PACKSTATE_INITTMHMPOCKET ; right
+	ld c, PACKSTATE_INITBERRIESPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
 	call ItemSubmenu
 	ret
 
-.InitTMHMPocket:
-	ld a, TM_HM_POCKET
+.InitBerriesPocket:
+	ld a, BERRY_POCKET
 	ld [wCurPocket], a
 	call ClearPocketList
 	call DrawPocketName
-	xor a
-	ldh [hBGMapMode], a
 	call WaitBGMap_DrawPackGFX
-	ld hl, PackEmptyText
-	call Pack_PrintTextNoScroll
 	call Pack_JumptableNext
 	ret
 
-.TMHMPocketMenu:
-	farcall TMHMPocket
+.BerriesPocketMenu:
+	ld hl, BerriesPocketMenuHeader
+	call CopyMenuHeader
+	ld a, [wBerriesPocketCursor]
+	ld [wMenuCursorPosition], a
+	ld a, [wBerriesPocketScrollPosition]
+	ld [wMenuScrollPosition], a
+	call ScrollingMenu
+	ld a, [wMenuScrollPosition]
+	ld [wBerriesPocketScrollPosition], a
+	ld a, [wMenuCursorY]
+	ld [wBerriesPocketCursor], a
 	ld b, PACKSTATE_INITKEYITEMSPOCKET ; left
 	ld c, PACKSTATE_INITMEDICINEPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
-	xor a
-	call TMHMSubmenu
+	call ItemSubmenu
 	ret
 
 .InitBallsPocket:
@@ -850,7 +795,7 @@ BattlePack:
 	ld [wMedicinePocketScrollPosition], a
 	ld a, [wMenuCursorY]
 	ld [wMedicinePocketCursor], a
-	ld b, PACKSTATE_INITTMHMPOCKET ; left
+	ld b, PACKSTATE_INITBERRIESPOCKET ; left
 	ld c, PACKSTATE_INITITEMSPOCKET ; right
 	call Pack_InterpretJoypad
 	ret c
@@ -1026,7 +971,7 @@ DepositSellPack:
 	dw .ItemsPocket
 	dw .BallsPocket
 	dw .KeyItemsPocket
-	dw .TMHMPocket
+	dw .BerriesPocket
 	dw .MedicinePocket
 
 .ItemsPocket:
@@ -1061,13 +1006,20 @@ DepositSellPack:
 	ld [wKeyItemsPocketCursor], a
 	ret
 
-.TMHMPocket:
-	ld a, TM_HM_POCKET
+.BerriesPocket:
+	ld a, BERRY_POCKET
 	call InitPocket
-	call WaitBGMap_DrawPackGFX
-	farcall TMHMPocket
-	ld a, [wCurItem]
-	ld [wCurItem], a
+	ld hl, PC_Mart_BerriesPocketMenuHeader
+	call CopyMenuHeader
+	ld a, [wBerriesPocketCursor]
+	ld [wMenuCursorPosition], a
+	ld a, [wBerriesPocketScrollPosition]
+	ld [wMenuScrollPosition], a
+	call ScrollingMenu
+	ld a, [wMenuScrollPosition]
+	ld [wBerriesPocketScrollPosition], a
+	ld a, [wMenuCursorY]
+	ld [wBerriesPocketCursor], a
 	ret
 
 .BallsPocket:
@@ -1193,7 +1145,7 @@ TutorialPack:
 	dw .Items
 	dw .Balls
 	dw .KeyItems
-	dw .TMHM
+	dw .Berries
 	dw .Medicine
 
 .Items:
@@ -1236,14 +1188,25 @@ TutorialPack:
 	dba PlaceMenuItemQuantity
 	dba UpdatePackItemDescription
 
-.TMHM:
-	ld a, TM_HM_POCKET
-	call InitPocket
-	call WaitBGMap_DrawPackGFX
-	farcall TMHMPocket
-	ld a, [wCurItem]
-	ld [wCurItem], a
-	ret
+.Berries:
+	ld a, BERRY_POCKET
+	ld hl, .BerriesMenuHeader
+	jp .DisplayPocket
+
+.BerriesMenuHeader:
+	db MENU_BACKUP_TILES ; flags
+	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
+	dw .BerriesMenuData
+	db 1 ; default option
+
+.BerriesMenuData:
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR ; flags
+	db 5, 8 ; rows, columns
+	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
+	dbw 0, wDudeNumBerries
+	dba PlaceMenuItemName
+	dba PlaceMenuItemQuantity
+	dba UpdatePackItemDescription
 
 .Balls:
 	ld a, BALL_POCKET
@@ -1368,7 +1331,7 @@ PackGFXPointers:
 	dw PackGFX + (15 tiles) * 1 ; ITEM_POCKET
 	dw PackGFX + (15 tiles) * 3 ; BALL_POCKET
 	dw PackGFX + (15 tiles) * 0 ; KEY_ITEM_POCKET
-	dw PackGFX + (15 tiles) * 2 ; TM_HM_POCKET
+	dw PackGFX + (15 tiles) * 2 ; BERRY_POCKET
 	dw PackGFX + (15 tiles) * 4 ; MEDICINE_POCKET
 
 Pack_InterpretJoypad:
@@ -1482,8 +1445,6 @@ Pack_InterpretJoypad:
 
 Pack_ResetSortedPocketPosition:
 	ld a, [wCurPocket]
-	cp TM_HM_POCKET
-	ret z
 	cp NUM_POCKETS
 	ret nc
 	ld e, a
@@ -1505,7 +1466,7 @@ Pack_ResetSortedPocketPosition:
 	db 0 ; ITEM_POCKET
 	db 2 ; BALL_POCKET
 	db 1 ; KEY_ITEM_POCKET
-	db 0 ; TM_HM_POCKET
+	db 3 ; BERRY_POCKET
 	db 4 ; MEDICINE_POCKET
 
 Pack_InitGFX:
@@ -1816,6 +1777,36 @@ PC_Mart_BallsPocketMenuHeader:
 	dba PlaceMenuItemQuantity
 	dba UpdatePackItemDescription
 
+BerriesPocketMenuHeader:
+	db MENU_BACKUP_TILES ; flags
+	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
+	dw .MenuData
+	db 1 ; default option
+
+.MenuData:
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
+	db 5, 8 ; rows, columns
+	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
+	dbw 0, wNumBerries
+	dba PlaceMenuItemName
+	dba PlaceMenuItemQuantity
+	dba UpdatePackItemDescription
+
+PC_Mart_BerriesPocketMenuHeader:
+	db MENU_BACKUP_TILES ; flags
+	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
+	dw .MenuData
+	db 1 ; default option
+
+.MenuData:
+	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
+	db 5, 8 ; rows, columns
+	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
+	dbw 0, wNumBerries
+	dba PlaceMenuItemName
+	dba PlaceMenuItemQuantity
+	dba UpdatePackItemDescription
+
 MedicinePocketMenuHeader:
 	db MENU_BACKUP_TILES ; flags
 	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
@@ -1903,30 +1894,129 @@ PackGFX:
 INCBIN "gfx/pack/pack.2bpp"
 
 PackItemQuestionIconGFX:
-INCBIN "gfx/items/placeholder.2bpp"
+INCBIN "gfx/items/misc/placeholder.2bpp"
 PackItemEmptyIconGFX:
-INCBIN "gfx/items/empty_space.2bpp"
+INCBIN "gfx/items/misc/empty_space.2bpp"
 PackItemPokeBallIconGFX:
-INCBIN "gfx/items/poke_ball.2bpp"
+INCBIN "gfx/items/poke_balls/poke_ball.2bpp"
 PackItemPotionIconGFX:
-INCBIN "gfx/items/potion.2bpp"
+INCBIN "gfx/items/medicine/potion.2bpp"
+PackItemAntidoteIconGFX:
+INCBIN "gfx/items/medicine/antidote.2bpp"
+PackItemMaxPotionIconGFX:
+INCBIN "gfx/items/medicine/max_potion.2bpp"
+PackItemFullHealIconGFX:
+INCBIN "gfx/items/medicine/full_heal.2bpp"
+PackItemReviveIconGFX:
+INCBIN "gfx/items/medicine/revive.2bpp"
+PackItemMaxReviveIconGFX:
+INCBIN "gfx/items/medicine/max_revive.2bpp"
+PackItemFreshWaterIconGFX:
+INCBIN "gfx/items/medicine/fresh_water.2bpp"
+PackItemSodaPopIconGFX:
+INCBIN "gfx/items/medicine/soda_pop.2bpp"
+PackItemLemonadeIconGFX:
+INCBIN "gfx/items/medicine/lemonade.2bpp"
+PackItemEtherIconGFX:
+INCBIN "gfx/items/medicine/ether.2bpp"
+PackItemMoomooMilkIconGFX:
+INCBIN "gfx/items/medicine/moomoo_milk.2bpp"
+PackItemEnergyPowderIconGFX:
+INCBIN "gfx/items/medicine/energypowder.2bpp"
+PackItemHealPowderIconGFX:
+INCBIN "gfx/items/medicine/heal_powder.2bpp"
+PackItemRevivalHerbIconGFX:
+INCBIN "gfx/items/medicine/revival_herb.2bpp"
+PackItemBerryJuiceIconGFX:
+INCBIN "gfx/items/medicine/berry_juice.2bpp"
+PackItemSacredAshIconGFX:
+INCBIN "gfx/items/medicine/sacred_ash.2bpp"
 PackItemMasterBallIconGFX:
-INCBIN "gfx/items/master_ball.2bpp"
+INCBIN "gfx/items/poke_balls/master_ball.2bpp"
 PackItemUltraBallIconGFX:
-INCBIN "gfx/items/ultra_ball.2bpp"
+INCBIN "gfx/items/poke_balls/ultra_ball.2bpp"
 PackItemGreatBallIconGFX:
-INCBIN "gfx/items/great_ball.2bpp"
+INCBIN "gfx/items/poke_balls/great_ball.2bpp"
 PackItemHeavyBallIconGFX:
-INCBIN "gfx/items/heavy_ball.2bpp"
+INCBIN "gfx/items/poke_balls/heavy_ball.2bpp"
 PackItemLevelBallIconGFX:
-INCBIN "gfx/items/level_ball.2bpp"
+INCBIN "gfx/items/poke_balls/level_ball.2bpp"
 PackItemLureBallIconGFX:
-INCBIN "gfx/items/lure_ball.2bpp"
+INCBIN "gfx/items/poke_balls/lure_ball.2bpp"
 PackItemFastBallIconGFX:
-INCBIN "gfx/items/fast_ball.2bpp"
+INCBIN "gfx/items/poke_balls/fast_ball.2bpp"
 PackItemFriendBallIconGFX:
-INCBIN "gfx/items/friend_ball.2bpp"
+INCBIN "gfx/items/poke_balls/friend_ball.2bpp"
 PackItemMoonBallIconGFX:
-INCBIN "gfx/items/moon_ball.2bpp"
+INCBIN "gfx/items/poke_balls/moon_ball.2bpp"
 PackItemLoveBallIconGFX:
-INCBIN "gfx/items/love_ball.2bpp"
+INCBIN "gfx/items/poke_balls/love_ball.2bpp"
+PackItemOranBerryIconGFX:
+INCBIN "gfx/items/berries/oran_berry.2bpp"
+PackItemPechaBerryIconGFX:
+INCBIN "gfx/items/berries/pecha_berry.2bpp"
+PackItemCheriBerryIconGFX:
+INCBIN "gfx/items/berries/cheri_berry.2bpp"
+PackItemAspearBerryIconGFX:
+INCBIN "gfx/items/berries/aspear_berry.2bpp"
+PackItemRawstBerryIconGFX:
+INCBIN "gfx/items/berries/rawst_berry.2bpp"
+PackItemPersimBerryIconGFX:
+INCBIN "gfx/items/berries/persim_berry.2bpp"
+PackItemChestoBerryIconGFX:
+INCBIN "gfx/items/berries/chesto_berry.2bpp"
+PackItemLumBerryIconGFX:
+INCBIN "gfx/items/berries/lum_berry.2bpp"
+PackItemLeppaBerryIconGFX:
+INCBIN "gfx/items/berries/leppa_berry.2bpp"
+PackItemSitrusBerryIconGFX:
+INCBIN "gfx/items/berries/sitrus_berry.2bpp"
+
+PackItemEnergyRootIconGFX:
+INCBIN "gfx/items/medicine/energy_root.2bpp"
+PackItemVitaminIconGFX:
+INCBIN "gfx/items/medicine/hp_up.2bpp"
+PackItemPPUpIconGFX:
+INCBIN "gfx/items/medicine/pp_up.2bpp"
+PackItemBrightPowderIconGFX:
+INCBIN "gfx/items/general/bright_powder.2bpp"
+PackItemEscapeRopeIconGFX:
+INCBIN "gfx/items/general/escape_rope.2bpp"
+PackItemFireStoneIconGFX:
+INCBIN "gfx/items/general/fire_stone.2bpp"
+PackItemExpShareIconGFX:
+INCBIN "gfx/items/general/exp_share.2bpp"
+PackItemTinyMushroomIconGFX:
+INCBIN "gfx/items/general/tinymushroom.2bpp"
+PackItemBigMushroomIconGFX:
+INCBIN "gfx/items/general/big_mushroom.2bpp"
+PackItemBlackBeltIconGFX:
+INCBIN "gfx/items/general/black_belt.2bpp"
+PackItemBlackGlassesIconGFX:
+INCBIN "gfx/items/general/black_glasses.2bpp"
+PackItemPearlIconGFX:
+INCBIN "gfx/items/general/pearl.2bpp"
+PackItemBigPearlIconGFX:
+INCBIN "gfx/items/general/big_pearl.2bpp"
+PackItemEverstoneIconGFX:
+INCBIN "gfx/items/general/everstone.2bpp"
+PackItemFocusBandIconGFX:
+INCBIN "gfx/items/general/focus_band.2bpp"
+PackItemHardStoneIconGFX:
+INCBIN "gfx/items/general/hard_stone.2bpp"
+PackItemCharcoalIconGFX:
+INCBIN "gfx/items/general/charcoal.2bpp"
+PackItemDragonFangIconGFX:
+INCBIN "gfx/items/general/dragon_fang.2bpp"
+PackItemDragonScaleIconGFX:
+INCBIN "gfx/items/general/dragon_scale.2bpp"
+PackItemBicycleIconGFX:
+INCBIN "gfx/items/key_items/bicycle.2bpp"
+PackItemCoinCaseIconGFX:
+INCBIN "gfx/items/key_items/coin_case.2bpp"
+PackItemGoodRodIconGFX:
+INCBIN "gfx/items/key_items/good_rod.2bpp"
+PackItemCardKeyIconGFX:
+INCBIN "gfx/items/key_items/card_key.2bpp"
+PackItemApricornIconGFX:
+INCBIN "gfx/items/apricorns/red_apricorn.2bpp"

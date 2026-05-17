@@ -363,8 +363,6 @@ ItemSort_SwapAdjacent:
 
 ItemSort_LoadCurrentPocket:
 	ld a, [wCurPocket]
-	cp TM_HM_POCKET
-	ret z
 	cp NUM_POCKETS
 	ret nc
 	ld e, a
@@ -390,7 +388,7 @@ ItemSort_LoadCurrentPocket:
 	dwb wNumItems, SCROLLINGMENU_ITEMS_QUANTITY
 	dwb wNumBalls, SCROLLINGMENU_ITEMS_QUANTITY
 	dwb wNumKeyItems, SCROLLINGMENU_ITEMS_NORMAL
-	dwb 0, 0
+	dwb wNumBerries, SCROLLINGMENU_ITEMS_QUANTITY
 	dwb wNumMedicine, SCROLLINGMENU_ITEMS_QUANTITY
 
 ItemSortRankTable:

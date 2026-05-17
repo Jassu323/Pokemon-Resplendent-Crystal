@@ -6,6 +6,7 @@ ItemPocketNames:
 	dw .Ball
 	dw .TM
 	dw .Medicine
+	dw .Berry
 	assert_table_length NUM_ITEM_TYPES
 
 .Item:     db "ITEM POCKET@"
@@ -13,3 +14,4 @@ ItemPocketNames:
 .Ball:     db "BALL POCKET@"
 .TM:       db "TM POCKET@"
 .Medicine: db "MEDICINE PCKT@"
+.Berry:    db "BERRY POCKET@"
