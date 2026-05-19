@@ -99,7 +99,7 @@ ItemNames::
 	li "WHT APRICORN"
 	li "BLACKBELT"
 	li "BLK APRICORN"
-	li "TERU-SAMA"
+	li "TM/HM CASE"
 	li "PNK APRICORN"
 	li "BLACKGLASSES"
 	li "SLOWPOKETAIL"

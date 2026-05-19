@@ -100,7 +100,7 @@ ItemDescriptions:
 	dw WhtApricornDesc
 	dw BlackbeltDesc
 	dw BlkApricornDesc
-	dw QuestionMarkDesc
+	dw TMHMCaseDesc
 	dw PnkApricornDesc
 	dw BlackGlassesDesc
 	dw SlowpokeTailDesc
@@ -629,6 +629,10 @@ BlackbeltDesc:
 BlkApricornDesc:
 	db   "A black APRICORN."
 	next "@"
+
+TMHMCaseDesc:
+	db   "Stores TMs and"
+	next "HMs.@"
 
 PnkApricornDesc:
 	db   "A pink APRICORN."

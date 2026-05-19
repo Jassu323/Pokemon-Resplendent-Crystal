@@ -113,7 +113,7 @@ ItemEffects:
 	dw NoEffect            ; WHT_APRICORN
 	dw NoEffect            ; BLACKBELT_I
 	dw NoEffect            ; BLK_APRICORN
-	dw NoEffect            ; ITEM_64
+	dw TMHMCaseEffect      ; TMHM_CASE
 	dw NoEffect            ; PNK_APRICORN
 	dw NoEffect            ; BLACKGLASSES
 	dw NoEffect            ; SLOWPOKETAIL
@@ -2268,6 +2268,10 @@ ItemfinderEffect:
 
 ApricornBoxEffect:
 	farcall ApricornBox
+	ret
+
+TMHMCaseEffect:
+	farcall TMHMCase
 	ret
 
 RestorePPEffect:

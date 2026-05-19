@@ -305,6 +305,15 @@ gfx/items/%.gbcpal: gfx/items/%.pal
 $(pack_item_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
+tmhm_case_frame_2bpp := \
+	gfx/items/tmhm/tmhm_frame_1.2bpp \
+	gfx/items/tmhm/tmhm_frame_2.2bpp \
+	gfx/items/tmhm/tmhm_frame_3.2bpp \
+	gfx/items/tmhm/tmhm_frame_4.2bpp
+
+$(tmhm_case_frame_2bpp): %.2bpp: %.png gfx/items/tmhm/tmhm_static.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/items/tmhm/tmhm_static.gbcpal -o $@ $<
+
 ### Type icon graphics
 
 type_icon_pngs := $(wildcard gfx/types/*.png)
@@ -321,6 +330,9 @@ gfx/types/%.gbcpal: gfx/types/%.pal
 $(type_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
+gfx/types/compact/%_compact.2bpp: gfx/types/compact/%_compact.png gfx/types/%.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/types/$*.gbcpal -o $@ $<
+
 ### Move category icon graphics
 
 move_category_icon_pngs := $(wildcard gfx/move_categories/*.png)
@@ -336,6 +348,9 @@ gfx/move_categories/%.gbcpal: gfx/move_categories/%.pal
 
 $(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
+gfx/move_categories/compact/%_compact.2bpp: gfx/move_categories/compact/%_compact.png gfx/move_categories/%.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/move_categories/$*.gbcpal -o $@ $<
 
 ### Status condition icon graphics
 

@@ -1924,7 +1924,7 @@ SECTION "Pack Item Icon Graphics", ROMX
 PackItemQuestionIconGFX:
 INCBIN "gfx/items/misc/placeholder.2bpp"
 PackItemTMHMIconGFX:
-INCBIN "gfx/items/misc/tmhm.2bpp"
+INCBIN "gfx/items/tmhm/tmhm_static.2bpp"
 PackItemEmptyIconGFX:
 INCBIN "gfx/items/misc/empty_space.2bpp"
 PackItemPokeBallIconGFX:
@@ -2084,5 +2084,7 @@ PackItemCardKeyIconGFX:
 INCBIN "gfx/items/key_items/card_key.2bpp"
 PackItemApricornBoxIconGFX:
 INCBIN "gfx/items/key_items/apricorn_box.2bpp"
+PackItemTMHMCaseIconGFX:
+INCBIN "gfx/items/key_items/tmhm_case.2bpp"
 PackItemApricornIconGFX:
 INCBIN "gfx/items/apricorns/red_apricorn.2bpp"

@@ -121,6 +121,8 @@ PackItemIconTable:
 	dw PackItemBlackBeltIconPalette
 	dbw BLK_APRICORN, PackItemApricornIconGFX
 	dw PackItemBlackApricornIconPalette
+	dbw TMHM_CASE, PackItemTMHMCaseIconGFX
+	dw PackItemTMHMCaseIconPalette
 	dbw PNK_APRICORN, PackItemApricornIconGFX
 	dw PackItemPinkApricornIconPalette
 	dbw BLACKGLASSES, PackItemBlackGlassesIconGFX
@@ -204,7 +206,7 @@ PackItemIconTable:
 PackItemQuestionIconPalette:
 INCLUDE "gfx/items/misc/placeholder.pal"
 PackItemTMHMIconPalette:
-INCLUDE "gfx/items/misc/tmhm.pal"
+INCLUDE "gfx/items/tmhm/tmhm_static.pal"
 PackItemEmptyIconPalette:
 	RGB 31, 31, 31
 	RGB 00, 00, 00
@@ -397,6 +399,8 @@ PackItemCardKeyIconPalette:
 INCLUDE "gfx/items/key_items/card_key.pal"
 PackItemApricornBoxIconPalette:
 INCLUDE "gfx/items/key_items/apricorn_box.pal"
+PackItemTMHMCaseIconPalette:
+INCLUDE "gfx/items/key_items/tmhm_case.pal"
 PackItemRedApricornIconPalette:
 INCLUDE "gfx/items/apricorns/red_apricorn.pal"
 PackItemBlueApricornIconPalette:

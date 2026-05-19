@@ -495,6 +495,11 @@ SECTION "Apricorn Box", ROMX
 INCLUDE "engine/items/apricorn_box.asm"
 
 
+SECTION "TMHM Case", ROMX
+
+INCLUDE "engine/items/tmhm_case.asm"
+
+
 SECTION "mobile40", ROMX
 
 INCLUDE "mobile/mobile_40.asm"
