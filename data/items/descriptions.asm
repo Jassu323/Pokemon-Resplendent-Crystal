@@ -145,9 +145,9 @@ ItemDescriptions:
 	dw QuestionMarkDesc
 	dw MetalCoatDesc
 	dw DragonFangDesc
-	dw QuestionMarkDesc
+	dw HeartScaleDesc
 	dw LeftoversDesc
-	dw QuestionMarkDesc
+	dw ZincDesc
 	dw QuestionMarkDesc
 	dw QuestionMarkDesc
 	dw MysteryBerryDesc
@@ -372,7 +372,7 @@ LuckyPunchDesc:
 	next "ratio of CHANSEY.@"
 
 CalciumDesc:
-	db   "Ups SPECIAL stats"
+	db   "Raises SPCL.ATK"
 	next "of one #MON.@"
 
 RareCandyDesc:
@@ -785,9 +785,17 @@ DragonFangDesc:
 	db   "Powers up dragon-"
 	next "type moves. (HOLD)@"
 
+HeartScaleDesc:
+	db   "A pretty, heart-"
+	next "shaped scale.@"
+
 LeftoversDesc:
 	db   "Restores HP during"
 	next "battle. (HOLD)@"
+
+ZincDesc:
+	db   "Raises SPCL.DEF"
+	next "of one #MON.@"
 
 MysteryBerryDesc:
 	db   "A self-restore"

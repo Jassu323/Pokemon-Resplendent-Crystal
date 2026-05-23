@@ -111,13 +111,6 @@ TMHMCase:
 	ld a, PAD_B
 	call MenuClickSound
 	call ClearSprites
-	xor a
-	ldh [hBGMapMode], a
-	farcall Pack_InitGFX_NoColors
-	farcall WaitBGMap_DrawPackGFX
-	farcall Pack_InitColors
-	xor a
-	ldh [hInMenu], a
 	ret
 
 TMHMCase_MoveLeft:
@@ -733,10 +726,19 @@ TMHMCase_ClearAttrmap:
 	jp ByteFill
 
 TMHMCase_LoadGFX:
-	ld hl, PackMenuGFX
-	ld de, vTiles2
-	ld bc, $60 tiles
-	ld a, BANK(PackMenuGFX)
+	xor a
+	ldh [rVBK], a
+
+	ld hl, PackBorderGFX
+	ld de, vTiles2 tile TMHM_CASE_BORDER_TILE
+	ld bc, 1 tiles
+	ld a, BANK(PackBorderGFX)
+	call FarCopyBytes
+
+	ld hl, TMHMCaseStatsGFX
+	ld de, vTiles2 tile TMHM_CASE_SELECT_TILE
+	ld bc, 6 tiles
+	ld a, BANK(TMHMCaseStatsGFX)
 	call FarCopyBytes
 
 	ld hl, TMHMCaseAnimGFX
@@ -2526,6 +2528,8 @@ TMHMCaseStaticGFX:
 INCBIN "gfx/items/tmhm/tmhm_static.2bpp"
 TMHMCaseTitleGFX:
 INCBIN "gfx/items/tmhm/tmhm_case_title.2bpp"
+TMHMCaseStatsGFX:
+INCBIN "gfx/items/tmhm/tmhm_stats.2bpp"
 
 TMHMCaseHeaderGFX:
 	rept 16

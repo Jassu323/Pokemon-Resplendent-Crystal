@@ -2120,7 +2120,14 @@ SECTION UNION "Miscellaneous WRAM 1", WRAMX
 
 ; Every previous SECTION UNION takes up 60 or fewer bytes,
 ; except the initial "mon buffer" one.
-	ds 60
+wPackItemIconPaletteCount:: db
+wPackItemIconOverflowSlot:: db
+wPackItemIconOAMBuffer:: db
+wPackItemIconOAMPreviousBuffer:: db
+wPackItemIconOAMNextBuffer:: db
+wPackItemIconPaletteAttrs:: ds 8
+wPackItemIconPaletteRecords:: ds 8 * 3
+	ds 23
 
 UNION
 ; trainer data

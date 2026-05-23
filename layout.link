@@ -73,6 +73,8 @@ ROMX $10
 	"Evolutions and Attacks 1"
 ROMX $11
 	"bank11"
+	"Pack"
+	"Pack Kris Code"
 	"Pack Graphics"
 	"Kris Pack Graphics"
 ROMX $12
@@ -302,7 +304,7 @@ ROMX $74
 	"Pokedex Entries 193-251"
 ROMX $75
 	"16-bit ID stuff"
-	"Pack Item Icon Graphics"
+	"Pack Other Item Icons"
 ROMX $77
 	"Unown Font"
 	"Print Party"
@@ -320,6 +322,7 @@ ROMX $7b
 	"Battle Tower Text"
 ROMX $7c
 	"Battle Tower Trainer Data"
+	"Pack General Item Icons"
 ROMX $7d
 	"Mobile News Data"
 ROMX $7e

@@ -44,8 +44,6 @@ INCLUDE "engine/pokemon/knows_move.asm"
 
 SECTION "bank4", ROMX
 
-INCLUDE "engine/items/pack.asm"
-
 
 SECTION "bank4_2", ROMX
 
@@ -178,10 +176,18 @@ INCLUDE "engine/pokedex/pokedex_2.asm"
 INCLUDE "engine/pokemon/mail.asm"
 
 
+SECTION "Pack", ROMX
+
+INCLUDE "engine/items/pack.asm"
+
+SECTION "Pack Kris Code", ROMX
+
+INCLUDE "engine/items/pack_kris.asm"
+
+
 SECTION "Crystal Features 1", ROMX
 
 INCLUDE "engine/menus/init_gender.asm"
-INCLUDE "engine/items/pack_kris.asm"
 
 
 SECTION "Crystal Features 1_2", ROMX

@@ -64,11 +64,6 @@ ApricornBox:
 	ld a, PAD_B
 	call MenuClickSound
 	call ClearSprites
-	xor a
-	ldh [hBGMapMode], a
-	farcall Pack_InitGFX_NoColors
-	farcall WaitBGMap_DrawPackGFX
-	farcall Pack_InitColors
 	ret
 
 .LeftMoves:
@@ -258,10 +253,19 @@ ApricornBox_ClearAttrmap:
 	jp ByteFill
 
 ApricornBox_LoadGFX:
-	ld hl, PackMenuGFX
-	ld de, vTiles2
-	ld bc, $60 tiles
-	ld a, BANK(PackMenuGFX)
+	xor a
+	ldh [rVBK], a
+
+	ld hl, PackBorderGFX
+	ld de, vTiles2 tile APRICORN_BOX_BORDER_TILE
+	ld bc, 1 tiles
+	ld a, BANK(PackBorderGFX)
+	call FarCopyBytes
+
+	ld hl, ApricornBoxItemsGFX
+	ld de, vTiles2 tile APRICORN_BOX_ITEMS_TILE
+	ld bc, 5 tiles
+	ld a, BANK(ApricornBoxItemsGFX)
 	call FarCopyBytes
 
 	ld hl, ApricornBoxRedApricornGFX
@@ -764,6 +768,8 @@ ApricornBoxPinkApricornGFX:
 INCBIN "gfx/items/apricorns/pink_apricorn.2bpp"
 ApricornBoxTitleGFX:
 INCBIN "gfx/items/apricorns/apricorn_box_title.2bpp"
+ApricornBoxItemsGFX:
+INCBIN "gfx/items/apricorns/apricorn_select.2bpp"
 
 ApricornBoxHeaderGFX:
 	db %11111111
