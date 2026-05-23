@@ -37,6 +37,7 @@ ROMX $03
 	"bank3"
 ROMX $04
 	"bank4"
+	"bank4_2"
 ROMX $05
 	"bank5"
 ROMX $06
@@ -72,8 +73,13 @@ ROMX $10
 	"Evolutions and Attacks 1"
 ROMX $11
 	"bank11"
+	"Pack"
+	"Pack Kris Code"
+	"Pack Graphics"
+	"Kris Pack Graphics"
 ROMX $12
 	"Crystal Features 1"
+	"Crystal Features 1_2"
 	"Egg Moves 2"
 	"Evolutions and Attacks 2"
 ROMX $13
@@ -177,6 +183,7 @@ ROMX $3e
 	"bank3E"
 ROMX $3f
 	"bank3F"
+	"Apricorn Box"
 ROMX $40
 	"mobile40"
 ROMX $41
@@ -297,6 +304,7 @@ ROMX $74
 	"Pokedex Entries 193-251"
 ROMX $75
 	"16-bit ID stuff"
+	"Pack Other Item Icons"
 ROMX $77
 	"Unown Font"
 	"Print Party"
@@ -320,6 +328,7 @@ ROMX $7b
 	"Battle Tower Text"
 ROMX $7c
 	"Battle Tower Trainer Data"
+	"Pack General Item Icons"
 ROMX $7d
 	"Mobile News Data"
 ROMX $7e

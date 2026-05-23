@@ -8,6 +8,12 @@ HasNoItems:
 	ld a, [wNumBalls]
 	and a
 	ret nz
+	ld a, [wNumBerries]
+	and a
+	ret nz
+	ld a, [wNumMedicine]
+	and a
+	ret nz
 	ld hl, wTMsHMs
 	ld b, NUM_TMS + NUM_HMS
 .loop
@@ -259,9 +265,9 @@ GiveTakePartyMonItem:
 	call TryGiveItemToPartymon
 	jr .quit
 
-.next
+	.next
 	ld hl, ItemCantHeldText
-	call MenuTextboxBackup
+	call MonMenuPack_MenuTextboxBackup
 	jr .loop
 
 .quit
@@ -283,23 +289,23 @@ TryGiveItemToPartymon:
 	ld a, [hl]
 	jr .already_holding_item
 
-.give_item_to_mon
+	.give_item_to_mon
 	call GiveItemToPokemon
 	ld hl, PokemonHoldItemText
-	call MenuTextboxBackup
+	call MonMenuPack_MenuTextboxBackup
 	call GivePartyItem
 	ret
 
-.please_remove_mail
+	.please_remove_mail
 	ld hl, PokemonRemoveMailText
-	call MenuTextboxBackup
+	call MonMenuPack_MenuTextboxBackup
 	ret
 
-.already_holding_item
+	.already_holding_item
 	ld [wNamedObjectIndex], a
 	call GetItemName
 	ld hl, PokemonAskSwapItemText
-	call StartMenuYesNo
+	call MonMenuPack_StartMenuYesNo
 	jr c, .abort
 
 	call GiveItemToPokemon
@@ -313,7 +319,7 @@ TryGiveItemToPartymon:
 	jr nc, .bag_full
 
 	ld hl, PokemonSwapItemText
-	call MenuTextboxBackup
+	call MonMenuPack_MenuTextboxBackup
 	ld a, [wNamedObjectIndex]
 	ld [wCurItem], a
 	call GivePartyItem
@@ -324,9 +330,9 @@ TryGiveItemToPartymon:
 	ld [wCurItem], a
 	call ReceiveItemFromPokemon
 	ld hl, ItemStorageFullText
-	call MenuTextboxBackup
+	call MonMenuPack_MenuTextboxBackup
 
-.abort
+	.abort
 	ret
 
 GivePartyItem:
@@ -441,6 +447,42 @@ StartMenuYesNo:
 	call MenuTextbox
 	call YesNoBox
 	jp ExitMenu
+
+MonMenuPack_MenuTextbox:
+	push hl
+	call LoadMenuTextbox
+	pop hl
+	; fallthrough
+
+MonMenuPack_PrintTextNoScroll:
+	ld a, [wOptions]
+	push af
+	set NO_TEXT_SCROLL, a
+	ld [wOptions], a
+	push hl
+	call SpeechTextbox
+	farcall Pack_PrepareTextboxAttrs
+	call UpdateSprites
+	farcall Pack_TransferTilemapAndAttrmap
+	pop hl
+	call BuenaPrintText
+	farcall Pack_TransferTilemapAndAttrmap
+	pop af
+	ld [wOptions], a
+	ret
+
+MonMenuPack_MenuTextboxBackup:
+	call MonMenuPack_MenuTextbox
+	farcall Pack_CloseWindow
+	ret
+
+MonMenuPack_StartMenuYesNo:
+	call MonMenuPack_MenuTextbox
+	farcall Pack_YesNoBox
+	push af
+	farcall Pack_CloseWindow
+	pop af
+	ret
 
 ComposeMailMessage:
 	ld de, wTempMailMessage

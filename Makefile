@@ -289,6 +289,31 @@ gfx/mobile/phone_tiles.2bpp: tools/gfx += --remove-whitespace
 gfx/mobile/pichu_animated.2bpp: tools/gfx += --trim-whitespace
 gfx/mobile/stadium2_n64.2bpp: tools/gfx += --trim-whitespace
 
+### Pack item icon graphics
+
+pack_item_icon_pals := $(wildcard gfx/items/*.pal gfx/items/*/*.pal)
+pack_item_icon_pngs := $(pack_item_icon_pals:.pal=.png)
+pack_item_icon_gbcpals := $(pack_item_icon_pngs:.png=.gbcpal)
+pack_item_icon_2bpp := $(pack_item_icon_pngs:.png=.2bpp)
+
+gfx/items/%.gbcpal: gfx/items/%.pal
+	printf 'SECTION "Pack Item Icon Palette", ROM0\nINCLUDE "%s"\n' "$<" > $@.asm
+	$(RGBASM) $(RGBASMFLAGS) -o $@.o $@.asm
+	$(RGBLINK) -x -o $@ $@.o
+	$(RM) $@.o $@.asm
+
+$(pack_item_icon_2bpp): %.2bpp: %.png %.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
+tmhm_case_frame_2bpp := \
+	gfx/items/tmhm/tmhm_frame_1.2bpp \
+	gfx/items/tmhm/tmhm_frame_2.2bpp \
+	gfx/items/tmhm/tmhm_frame_3.2bpp \
+	gfx/items/tmhm/tmhm_frame_4.2bpp
+
+$(tmhm_case_frame_2bpp): %.2bpp: %.png gfx/items/tmhm/tmhm_static.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/items/tmhm/tmhm_static.gbcpal -o $@ $<
+
 ### Type icon graphics
 
 type_icon_pngs := $(wildcard gfx/types/*.png)
@@ -305,6 +330,9 @@ gfx/types/%.gbcpal: gfx/types/%.pal
 $(type_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
+gfx/types/compact/%_compact.2bpp: gfx/types/compact/%_compact.png gfx/types/%.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/types/$*.gbcpal -o $@ $<
+
 ### Move category icon graphics
 
 move_category_icon_pngs := $(wildcard gfx/move_categories/*.png)
@@ -320,6 +348,9 @@ gfx/move_categories/%.gbcpal: gfx/move_categories/%.pal
 
 $(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
+
+gfx/move_categories/compact/%_compact.2bpp: gfx/move_categories/compact/%_compact.png gfx/move_categories/%.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/move_categories/$*.gbcpal -o $@ $<
 
 ### Status condition icon graphics
 

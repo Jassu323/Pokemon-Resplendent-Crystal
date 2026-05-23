@@ -761,23 +761,25 @@ SellMenu:
 	and a
 	jr z, .okay_to_sell
 	ld hl, MartCantBuyText
-	call PrintText
+	call MartPack_PrintTextNoScroll
 	and a
 	ret
 
 .okay_to_sell
 	ld hl, MartSellHowManyText
-	call PrintText
-	farcall PlaceMoneyAtTopLeftOfTextbox
-	farcall SelectQuantityToSell
-	call ExitMenu
+	call MartPack_PrintTextNoScroll
+	call MartPack_PlaceMoneyAtTopLeftOfTextbox
+	farcall Pack_SelectQuantityToSell
+	push af
+	farcall Pack_CloseWindow
+	pop af
 	jr c, .declined
 	hlcoord 1, 14
 	lb bc, 3, 18
 	call ClearBox
 	ld hl, MartSellPriceText
-	call PrintTextboxText
-	call YesNoBox
+	call MartPack_PrintTextboxText
+	farcall Pack_YesNoBox
 	jr c, .declined
 	ld de, wMoney
 	ld bc, hMoneyTemp
@@ -790,14 +792,47 @@ SellMenu:
 	lb bc, 3, 18
 	call ClearBox
 	ld hl, MartBoughtText
-	call PrintTextboxText
+	call MartPack_PrintTextboxText
 	call PlayTransactionSound
-	farcall PlaceMoneyBottomLeft
+	call MartPack_PlaceMoneyBottomLeft
 	call JoyWaitAorB
 
 .declined
-	call ExitMenu
 	and a
+	ret
+
+MartPack_PrintTextNoScroll:
+	ld a, [wOptions]
+	push af
+	set NO_TEXT_SCROLL, a
+	ld [wOptions], a
+	push hl
+	call SpeechTextbox
+	farcall Pack_PrepareTextboxAttrs
+	call UpdateSprites
+	farcall Pack_TransferTilemapAndAttrmap
+	pop hl
+	call BuenaPrintText
+	farcall Pack_TransferTilemapAndAttrmap
+	pop af
+	ld [wOptions], a
+	ret
+
+MartPack_PrintTextboxText:
+	call PrintTextboxText
+	farcall Pack_TransferTilemapAndAttrmap
+	ret
+
+MartPack_PlaceMoneyAtTopLeftOfTextbox:
+	farcall PlaceMoneyAtTopLeftOfTextbox
+	farcall Pack_PrepareItemSubmenuAttrs
+	farcall Pack_CommitPopupTilemapAndAttrmap
+	ret
+
+MartPack_PlaceMoneyBottomLeft:
+	farcall PlaceMoneyBottomLeft
+	farcall Pack_PrepareItemSubmenuAttrs
+	farcall Pack_CommitPopupTilemapAndAttrmap
 	ret
 
 MartSellHowManyText:

@@ -540,7 +540,7 @@ GetPocketName:
 	ld a, [wItemAttributeValue]
 	dec a
 	ld hl, ItemPocketNames
-	maskbits NUM_POCKETS
+	maskbits NUM_ITEM_TYPES
 	add a
 	ld e, a
 	ld d, 0

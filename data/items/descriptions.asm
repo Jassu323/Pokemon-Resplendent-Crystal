@@ -90,7 +90,7 @@ ItemDescriptions:
 	dw BigMushroomDesc
 	dw SilverPowderDesc
 	dw BluApricornDesc
-	dw QuestionMarkDesc
+	dw ApricornBoxDesc
 	dw AmuletCoinDesc
 	dw YlwApricornDesc
 	dw GrnApricornDesc
@@ -100,7 +100,7 @@ ItemDescriptions:
 	dw WhtApricornDesc
 	dw BlackbeltDesc
 	dw BlkApricornDesc
-	dw QuestionMarkDesc
+	dw TMHMCaseDesc
 	dw PnkApricornDesc
 	dw BlackGlassesDesc
 	dw SlowpokeTailDesc
@@ -145,9 +145,9 @@ ItemDescriptions:
 	dw QuestionMarkDesc
 	dw MetalCoatDesc
 	dw DragonFangDesc
-	dw QuestionMarkDesc
+	dw HeartScaleDesc
 	dw LeftoversDesc
-	dw QuestionMarkDesc
+	dw ZincDesc
 	dw QuestionMarkDesc
 	dw QuestionMarkDesc
 	dw MysteryBerryDesc
@@ -372,7 +372,7 @@ LuckyPunchDesc:
 	next "ratio of CHANSEY.@"
 
 CalciumDesc:
-	db   "Ups SPECIAL stats"
+	db   "Raises SPCL.ATK"
 	next "of one #MON.@"
 
 RareCandyDesc:
@@ -593,6 +593,10 @@ SilverPowderDesc:
 BluApricornDesc:
 	db   "A blue APRICORN.@"
 
+ApricornBoxDesc:
+	db   "Stores APRICORNS"
+	next "by color.@"
+
 AmuletCoinDesc:
 	db   "Doubles monetary"
 	next "earnings. (HOLD)@"
@@ -625,6 +629,10 @@ BlackbeltDesc:
 BlkApricornDesc:
 	db   "A black APRICORN."
 	next "@"
+
+TMHMCaseDesc:
+	db   "Stores TMs and"
+	next "HMs.@"
 
 PnkApricornDesc:
 	db   "A pink APRICORN."
@@ -777,9 +785,17 @@ DragonFangDesc:
 	db   "Powers up dragon-"
 	next "type moves. (HOLD)@"
 
+HeartScaleDesc:
+	db   "A pretty, heart-"
+	next "shaped scale.@"
+
 LeftoversDesc:
 	db   "Restores HP during"
 	next "battle. (HOLD)@"
+
+ZincDesc:
+	db   "Raises SPCL.DEF"
+	next "of one #MON.@"
 
 MysteryBerryDesc:
 	db   "A self-restore"
