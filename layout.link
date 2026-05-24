@@ -334,6 +334,7 @@ ROMX $7d
 ROMX $7e
 	"Crystal Events"
 ROMX $7f
+	"Battle Animation Scripts"
 	org $7de0
 	"Stadium 2 Checksums"
 WRAM0

@@ -291,7 +291,6 @@ SECTION "bank21", ROMX
 
 INCLUDE "engine/printer/printer_serial.asm"
 INCLUDE "engine/printer/printer.asm"
-INCLUDE "gfx/battle_anims.asm"
 INCLUDE "engine/events/halloffame.asm"
 
 
@@ -416,8 +415,13 @@ INCLUDE "engine/events/trainer_scripts.asm"
 SECTION "bank32", ROMX
 
 INCLUDE "engine/battle_anims/bg_effects.asm"
-INCLUDE "data/moves/animations.asm"
+INCLUDE "gfx/battle_anims.asm"
 INCLUDE "engine/events/poisonstep_pals.asm"
+
+
+SECTION "Battle Animation Scripts", ROMX
+
+INCLUDE "data/moves/animations.asm"
 
 
 SECTION "Move Animations", ROMX
