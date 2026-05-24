@@ -133,6 +133,8 @@ BattleCommand_CheckTurn:
 	jp nz, CheckEnemyTurn
 
 ; check player turn
+	call TickDisable
+
 	ld hl, wPlayerSubStatus4
 	bit SUBSTATUS_RECHARGE, [hl]
 	jr z, .no_recharge
@@ -228,23 +230,6 @@ BattleCommand_CheckTurn:
 	jp EndTurn
 
 .not_flinched
-
-	ld hl, wPlayerDisableCount
-	ld a, [hl]
-	and a
-	jr z, .not_disabled
-
-	dec a
-	ld [hl], a
-	and $f
-	jr nz, .not_disabled
-
-	ld [hl], a
-	ld [wDisabledMove], a
-	ld hl, DisabledNoMoreText
-	call StdBattleTextbox
-
-.not_disabled
 
 	ld a, [wPlayerSubStatus3]
 	add a
@@ -373,6 +358,8 @@ OpponentCantMove:
 	jp BattleCommand_SwitchTurn
 
 CheckEnemyTurn:
+	call TickDisable
+
 	ld hl, wEnemySubStatus4
 	bit SUBSTATUS_RECHARGE, [hl]
 	jr z, .no_recharge
@@ -466,24 +453,6 @@ CheckEnemyTurn:
 	jp EndTurn
 
 .not_flinched
-
-	ld hl, wEnemyDisableCount
-	ld a, [hl]
-	and a
-	jr z, .not_disabled
-
-	dec a
-	ld [hl], a
-	and $f
-	jr nz, .not_disabled
-
-	ld [hl], a
-	ld [wEnemyDisabledMove], a
-
-	ld hl, DisabledNoMoreText
-	call StdBattleTextbox
-
-.not_disabled
 
 	ld a, [wEnemySubStatus3]
 	add a ; bit SUBSTATUS_CONFUSED
@@ -603,6 +572,30 @@ EndTurn:
 	ld a, $1
 	ld [wTurnEnded], a
 	jp ResetDamage
+
+TickDisable:
+	ld hl, wPlayerDisableCount
+	ld de, wDisabledMove
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_disable
+	ld hl, wEnemyDisableCount
+	inc de
+
+.got_disable
+	ld a, [hl]
+	and a
+	ret z
+
+	dec a
+	ld [hl], a
+	and $f
+	ret nz
+
+	ld [hl], a
+	ld [de], a
+	ld hl, DisabledNoMoreText
+	jp StdBattleTextbox
 
 MoveDisabled:
 	; Make sure any charged moves fail
@@ -3643,6 +3636,15 @@ UpdateMoveData:
 	call GetMoveName
 	jp CopyName1
 
+BattleRandom_3_5:
+.loop
+	call BattleRandom
+	and %11
+	cp %11
+	jr z, .loop
+	add 3
+	ret
+
 BattleCommand_SleepTarget:
 	call GetOpponentItem
 	ld a, b
@@ -3681,19 +3683,7 @@ BattleCommand_SleepTarget:
 	jr nz, .fail
 
 	call AnimateCurrentMove
-	ld b, SLP_MASK
-	ld a, [wInBattleTowerBattle]
-	and a
-	jr z, .random_loop
-	ld b, %011
-
-.random_loop
-	call BattleRandom
-	and b
-	jr z, .random_loop
-	cp SLP_MASK
-	jr z, .random_loop
-	inc a
+	call BattleRandom_3_5
 	ld [de], a
 	call UpdateOpponentInParty
 	call RefreshBattleHuds
@@ -5870,11 +5860,8 @@ BattleCommand_FinishConfusingTarget:
 
 .got_confuse_count
 	set SUBSTATUS_CONFUSED, [hl]
-	; confused for 2-5 turns
-	call BattleRandom
-	and %11
-	inc a
-	inc a
+	; Confusion lasts 3-5 turns, giving 2-4 confusion rolls.
+	call BattleRandom_3_5
 	ld [bc], a
 
 	ld a, BATTLE_VARS_MOVE_EFFECT

@@ -45,11 +45,8 @@ BattleCommand_Disable:
 	ld a, [hl]
 	and a
 	jr z, .failed
-.loop2
-	call BattleRandom
-	and 7
-	jr z, .loop2
-	inc a
+	call BattleRandom_3_5
+	inc a ; Disable lasts 4-6 turns.
 	inc c
 	swap c
 	add c
