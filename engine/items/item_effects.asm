@@ -1208,12 +1208,12 @@ StatStrings:
 	dw .special_attack
 	dw .special_defense
 
-.health  db "HEALTH@"
-.attack  db "ATTACK@"
-.defense db "DEFENSE@"
-.speed   db "SPEED@"
-.special_attack db "SPCL.ATK@"
-.special_defense db "SPCL.DEF@"
+.health  db "Health@"
+.attack  db "Attack@"
+.defense db "Defense@"
+.speed   db "Speed@"
+.special_attack db "Spcl.Atk@"
+.special_defense db "Spcl.Def@"
 
 GetVitaminStatString:
 	ld a, [wCurItem]

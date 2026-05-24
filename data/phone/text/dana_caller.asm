@@ -10,7 +10,7 @@ DanaTakingPhotosText:
 
 DanaDefeatedMonText:
 	text "It took only an"
-	line "instant to KO a"
+	line "instant to Ko a"
 	cont "wild @"
 	text_ram wStringBuffer4
 	text "."

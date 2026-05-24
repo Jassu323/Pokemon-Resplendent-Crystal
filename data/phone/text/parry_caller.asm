@@ -6,7 +6,7 @@ ParryNothingCanMatchText:
 	done
 
 ParryDefeatedMonText:
-	text "Yeah, we KO'd a"
+	text "Yeah, we Ko'd a"
 	line "wild @"
 	text_ram wStringBuffer4
 	text "!"

@@ -152,18 +152,18 @@ GoldenrodPokeCenter1FLinkReceptionistWalkToStairsFromRightDoorwayTileMovement:
 
 GoldenrodPokecomCenterWelcomeToTradeCornerText: ; unreferenced
 	text "Hello! Welcome to"
-	line "#COM CENTER"
-	cont "TRADE CORNER."
+	line "#Com Center"
+	cont "Trade Corner."
 
 	para "You can trade"
-	line "#MON with other"
+	line "#mon with other"
 	cont "people far away."
 	done
 
 GoldenrodPokecomCenterWeMustHoldYourMonText: ; unreferenced
 	text "To make a trade,"
 	line "we must hold your"
-	cont "#MON."
+	cont "#mon."
 
 	para "Would you like to"
 	line "trade?"
@@ -171,7 +171,7 @@ GoldenrodPokecomCenterWeMustHoldYourMonText: ; unreferenced
 
 GoldenrodPokecomCenterWhatMonDoYouWantText: ; unreferenced
 	text "What kind of"
-	line "#MON do you"
+	line "#mon do you"
 	cont "want in return?"
 	done
 
@@ -187,7 +187,7 @@ GoldenrodPokecomCenterWeWillTradeYourMonForMonText: ; unreferenced
 	text "."
 
 	para "We'll have to hold"
-	line "your #MON"
+	line "your #mon"
 	cont "during the trade."
 
 	para "Please wait while"
@@ -202,11 +202,11 @@ GoldenrodPokecomCenterWeWillTradeYourMonForNewText: ; unreferenced
 	para "@"
 	text_ram wStringBuffer3
 	text " for a"
-	line "#MON that you"
+	line "#mon that you"
 	cont "have never seen."
 
 	para "We'll have to hold"
-	line "your #MON"
+	line "your #mon"
 	cont "during the trade."
 
 	para "Please wait while"
@@ -215,7 +215,7 @@ GoldenrodPokecomCenterWeWillTradeYourMonForNewText: ; unreferenced
 	done
 
 GoldenrodPokecomCenterYourMonHasBeenReceivedText: ; unreferenced
-	text "Your trade #MON"
+	text "Your trade #mon"
 	line "has been received."
 
 	para "It will take time"
@@ -227,7 +227,7 @@ GoldenrodPokecomCenterYourMonHasBeenReceivedText: ; unreferenced
 
 GoldenrodPokecomCenterYouHaveOnlyOneMonText: ; unreferenced
 	text "Oh? You have only"
-	line "one #MON in"
+	line "one #mon in"
 	cont "your party. "
 
 	para "Please come back"
@@ -248,18 +248,18 @@ GoldenrodPokecomCenterCommunicationErrorText: ; unreferenced
 
 GoldenrodPokecomCenterCantAcceptLastMonText: ; unreferenced
 	text "If we accept that"
-	line "#MON, what will"
+	line "#mon, what will"
 	cont "you battle with?"
 	done
 
 GoldenrodPokecomCenterCantAcceptEggText: ; unreferenced
 	text "Sorry. We can't"
-	line "accept an EGG."
+	line "accept an Egg."
 	done
 
 GoldenrodPokecomCenterCantAcceptAbnormalMonText: ; unreferenced
 	text "Sorry, but your"
-	line "#MON appears to"
+	line "#mon appears to"
 
 	para "be abnormal. We"
 	line "can't accept it."
@@ -268,7 +268,7 @@ GoldenrodPokecomCenterCantAcceptAbnormalMonText: ; unreferenced
 GoldenrodPokecomCenterAlreadyHoldingMonText: ; unreferenced
 	text "Oh? Aren't we"
 	line "already holding a"
-	cont "#MON of yours?"
+	cont "#mon of yours?"
 	done
 
 GoldenrodPokecomCenterCheckingTheRoomsText: ; unreferenced
@@ -314,12 +314,12 @@ GoldenrodPokecomCenterNoTradePartnerFoundText: ; unreferenced
 	line "trade partner."
 
 	para "Would you like"
-	line "your #MON back?"
+	line "your #mon back?"
 	done
 
 GoldenrodPokecomCenterReturnedYourMonText: ; unreferenced
 	text "We have returned"
-	line "your #MON."
+	line "your #mon."
 	done
 
 GoldenrodPokecomCenterYourMonIsLonelyText: ; unreferenced
@@ -330,7 +330,7 @@ GoldenrodPokecomCenterYourMonIsLonelyText: ; unreferenced
 	line "trade partner."
 
 	para "We've held your"
-	line "#MON for a long"
+	line "#mon for a long"
 
 	para "time. As a result,"
 	line "it is very lonely."
@@ -347,12 +347,12 @@ GoldenrodPokecenter1FWeHopeToSeeYouAgainText_2: ; unreferenced
 GoldenrodPokecomCenterContinueToHoldYourMonText: ; unreferenced
 	text "Fine. We will"
 	line "continue to hold"
-	cont "your #MON."
+	cont "your #mon."
 	done
 
 GoldenrodPokecomCenterRecentlyLeftYourMonText: ; unreferenced
 	text "Oh? You left your"
-	line "#MON with us"
+	line "#mon with us"
 	cont "only recently."
 
 	para "Please come back"
@@ -360,13 +360,13 @@ GoldenrodPokecomCenterRecentlyLeftYourMonText: ; unreferenced
 	done
 
 GoldenrodPokecomCenterSaveBeforeTradeCornerText: ; unreferenced
-	text "We'll SAVE before"
+	text "We'll Save before"
 	line "connecting to the"
-	cont "CENTER."
+	cont "Center."
 	done
 
 GoldenrodPokecomCenterWhichMonToTradeText: ; unreferenced
-	text "Which #MON do"
+	text "Which #mon do"
 	line "you want to trade?"
 	done
 
@@ -379,13 +379,13 @@ GoldenrodPokecomCenterEggTicketText: ; unreferenced
 	text "Oh!"
 
 	para "I see you have an"
-	line "EGG TICKET!"
+	line "Egg Ticket!"
 
 	para "It's a coupon that"
 	line "special people can"
 
 	para "redeem for a"
-	line "special #MON!"
+	line "special #mon!"
 	done
 
 GoldenrodPokecomCenterOddEggBriefingText: ; unreferenced
@@ -393,7 +393,7 @@ GoldenrodPokecomCenterOddEggBriefingText: ; unreferenced
 	line "quick briefing."
 
 	para "Trades held at the"
-	line "TRADE CORNER are"
+	line "Trade Corner are"
 
 	para "between two"
 	line "trainers who don't"
@@ -404,8 +404,8 @@ GoldenrodPokecomCenterOddEggBriefingText: ; unreferenced
 	para "As a result, it"
 	line "may take time."
 
-	para "However, an ODD"
-	line "EGG is available"
+	para "However, an Odd"
+	line "Egg is available"
 	cont "just for you."
 
 	para "It will be sent to"
@@ -414,8 +414,8 @@ GoldenrodPokecomCenterOddEggBriefingText: ; unreferenced
 	para "Please choose one"
 	line "of the rooms in"
 
-	para "the CENTER."
-	line "An ODD EGG will be"
+	para "the Center."
+	line "An Odd Egg will be"
 
 	para "sent from the"
 	line "chosen room."
@@ -431,7 +431,7 @@ GoldenrodPokecomCenterHereIsYourOddEggText: ; unreferenced
 	line "waiting."
 
 	para "We received your"
-	line "ODD EGG."
+	line "Odd Egg."
 
 	para "Here it is!"
 
@@ -442,14 +442,14 @@ GoldenrodPokecomCenterHereIsYourOddEggText: ; unreferenced
 GoldenrodPokecomCenterNoEggTicketServiceText: ; unreferenced
 	text "I'm awfully sorry."
 
-	para "The EGG TICKET"
+	para "The Egg Ticket"
 	line "exchange service"
 	cont "isn't running now."
 	done
 
 GoldenrodPokecomCenterNewsMachineText: ; unreferenced
-	text "It's a #MON"
-	line "NEWS MACHINE."
+	text "It's a #mon"
+	line "News Machine."
 	done
 
 GoldenrodPokecomCenterWhatToDoText: ; unreferenced
@@ -458,19 +458,19 @@ GoldenrodPokecomCenterWhatToDoText: ; unreferenced
 	done
 
 GoldenrodPokecomCenterNewsMachineExplanationText: ; unreferenced
-	text "#MON NEWS is"
+	text "#mon News is"
 	line "news compiled from"
 
-	para "the SAVE files of"
-	line "#MON trainers."
+	para "the Save files of"
+	line "#mon trainers."
 
 	para "When reading the"
-	line "NEWS, your SAVE"
+	line "News, your Save"
 
 	para "file may be sent"
 	line "out."
 
-	para "The SAVE file data"
+	para "The Save file data"
 	line "will contain your"
 
 	para "adventure log and"
@@ -480,39 +480,39 @@ GoldenrodPokecomCenterNewsMachineExplanationText: ; unreferenced
 	line "will not be sent."
 
 	para "The contents of"
-	line "the NEWS will vary"
+	line "the News will vary"
 
 	para "depending on the"
-	line "SAVE files sent by"
+	line "Save files sent by"
 
 	para "you and the other"
-	line "#MON trainers."
+	line "#mon trainers."
 
 	para "You might even be"
-	line "in the NEWS!"
+	line "in the News!"
 	done
 
 GoldenrodPokecomCenterWouldYouLikeTheNewsText: ; unreferenced
 	text "Would you like to"
-	line "get the NEWS?"
+	line "get the News?"
 	done
 
 GoldenrodPokecomCenterReadingTheLatestNewsText: ; unreferenced
 	text "Reading the latest"
-	line "NEWS… Please wait."
+	line "News… Please wait."
 	done
 
 GoldenrodPokecomCenterNoOldNewsText: ; unreferenced
 	text "There is no old"
-	line "NEWS…"
+	line "News…"
 	done
 
 GoldenrodPokecomCenterCorruptedNewsDataText: ; unreferenced
-	text "The NEWS data is"
+	text "The News data is"
 	line "corrupted."
 
 	para "Please download"
-	line "the NEWS again."
+	line "the News again."
 	done
 
 GoldenrodPokecomCenterMakingPreparationsText: ; unreferenced
@@ -524,16 +524,16 @@ GoldenrodPokecomCenterMakingPreparationsText: ; unreferenced
 	done
 
 GoldenrodPokecomCenterSaveBeforeNewsMachineText: ; unreferenced
-	text "We will SAVE your"
+	text "We will Save your"
 	line "progress before"
 
-	para "starting the NEWS"
-	line "MACHINE."
+	para "starting the News"
+	line "Machine."
 	done
 
 GoldenrodPokecomCenterPerson1Text: ; unreferenced
-	text "Whoa, this #MON"
-	line "CENTER is huge."
+	text "Whoa, this #mon"
+	line "Center is huge."
 
 	para "They just built"
 	line "this place. They"
@@ -545,23 +545,23 @@ GoldenrodPokecomCenterPerson1Text: ; unreferenced
 GoldenrodPokecomCenterPerson2Text: ; unreferenced
 	text "I thought up a fun"
 	line "new thing for the"
-	cont "TRADE CORNER!"
+	cont "Trade Corner!"
 
-	para "I make a PIDGEY"
-	line "hold MAIL, then"
+	para "I make a Pidgey"
+	line "hold Mail, then"
 
 	para "put it up for"
 	line "trade for another"
 	cont "one!"
 
 	para "If everyone did"
-	line "that, MAIL could"
+	line "that, Mail could"
 
 	para "be traded with all"
 	line "sorts of people!"
 
-	para "I call it PIDGEY"
-	line "MAIL!"
+	para "I call it Pidgey"
+	line "Mail!"
 
 	para "If it becomes"
 	line "popular, I might"
@@ -572,7 +572,7 @@ GoldenrodPokecomCenterPerson2Text: ; unreferenced
 
 GoldenrodPokecomCenterPerson3Text: ; unreferenced
 	text "They said you can"
-	line "trade #MON with"
+	line "trade #mon with"
 
 	para "total strangers up"
 	line "here."
@@ -585,25 +585,25 @@ GoldenrodPokecomCenterPerson4Text: ; unreferenced
 	text "Some girl I don't"
 	line "know sent me her"
 
-	para "HOPPIP."
+	para "Hoppip."
 	line "You should trade"
 
-	para "for a #MON that"
+	para "for a #mon that"
 	line "you want."
 	done
 
 GoldenrodPokecomCenterPerson5Text: ; unreferenced
 	text "I received a"
-	line "female HOPPIP, but"
-	cont "its named STANLEY!"
+	line "female Hoppip, but"
+	cont "its named Stanley!"
 
 	para "That's my dad's"
 	line "name!"
 	done
 
 GoldenrodPokecomCenterPerson6Text: ; unreferenced
-	text "What is the NEWS"
-	line "MACHINE?"
+	text "What is the News"
+	line "Machine?"
 
 	para "Does it get news"
 	line "from a wider area"
@@ -611,10 +611,10 @@ GoldenrodPokecomCenterPerson6Text: ; unreferenced
 	done
 
 GoldenrodPokecomCenterPerson7Text: ; unreferenced
-	text "The #COM CENTER"
+	text "The #Com Center"
 	line "will link with all"
 
-	para "#MON CENTERS in"
+	para "#mon Centers in"
 	line "a wireless net."
 
 	para "That must mean"
@@ -637,7 +637,7 @@ GoldenrodPokecomCenterPerson8Text: ; unreferenced
 
 GoldenrodPokecomCenterPerson9Text: ; unreferenced
 	text "My friend was in"
-	line "the NEWS a while"
+	line "the News a while"
 
 	para "back. I was really"
 	line "surprised!"
@@ -646,23 +646,23 @@ GoldenrodPokecomCenterPerson9Text: ; unreferenced
 GoldenrodPokecomCenterPerson10Text: ; unreferenced
 	text "I get anxious if I"
 	line "don't check out"
-	cont "the latest NEWS!"
+	cont "the latest News!"
 	done
 
 GoldenrodPokecomCenterPerson11Text: ; unreferenced
 	text "If I get in the"
-	line "NEWS and become"
+	line "News and become"
 
 	para "famous, I bet I'll"
 	line "be adored."
 
 	para "I wonder how I"
 	line "could get in the"
-	cont "NEWS?"
+	cont "News?"
 	done
 
 GoldenrodPokecenter1FGameboyKidText:
-	text "The COLOSSEUM"
+	text "The Colosseum"
 	line "upstairs is for"
 	cont "link battles."
 
@@ -677,8 +677,8 @@ GoldenrodPokecomCenterPerson12Text: ; unreferenced
 	text "I came over here"
 	line "when I got word"
 
-	para "that GOLDENROD's"
-	line "#MON CENTER has"
+	para "that Goldenrod's"
+	line "#mon Center has"
 
 	para "new machines that"
 	line "no one's ever seen"
@@ -701,7 +701,7 @@ GoldenrodPokecomCenterPerson13Text: ; unreferenced
 
 GoldenrodPokecenter1FLassText:
 	text "A higher level"
-	line "#MON doesn't"
+	line "#mon doesn't"
 	cont "always win."
 
 	para "After all, it may"
@@ -711,7 +711,7 @@ GoldenrodPokecenter1FLassText:
 	para "I don't think"
 	line "there is a single"
 
-	para "#MON that is"
+	para "#mon that is"
 	line "the toughest."
 	done
 
@@ -721,7 +721,7 @@ GoldenrodPokeCenter1FLinkReceptionistPleaseAcceptGSBallText:
 	para "Congratulations!"
 
 	para "As a special deal,"
-	line "a GS BALL has been"
+	line "a GS Ball has been"
 	cont "sent just for you!"
 
 	para "Please accept it!"
@@ -733,22 +733,22 @@ GoldenrodPokeCenter1FLinkReceptionistPleaseDoComeAgainText:
 	done
 
 GoldenrodPokecomCenterSignText: ; unreferenced
-	text "#COM CENTER"
-	line "1F INFORMATION"
+	text "#Com Center"
+	line "1F Information"
 
 	para "Left:"
-	line "ADMINISTRATION"
+	line "Administration"
 
 	para "Center:"
-	line "TRADE CORNER"
+	line "Trade Corner"
 
 	para "Right:"
-	line "#MON NEWS"
+	line "#mon News"
 	done
 
 GoldenrodPokecomCenterNewsMachineNotYetText: ; unreferenced
-	text "It's a #MON"
-	line "NEWS MACHINE!"
+	text "It's a #mon"
+	line "News Machine!"
 
 	para "It's not in"
 	line "operation yet…"
@@ -760,7 +760,7 @@ GoldenrodPokecenter1FPokefanFDoYouHaveEonMailText:
 
 	para "Oh! Do you happen"
 	line "to have something"
-	cont "named EON MAIL?"
+	cont "named Eon Mail?"
 
 	para "My daughter is"
 	line "after one."
@@ -770,8 +770,8 @@ GoldenrodPokecenter1FPokefanFDoYouHaveEonMailText:
 	done
 
 GoldenrodPokecenter1FAskGiveAwayAnEonMailText:
-	text "Give away an EON"
-	line "MAIL?"
+	text "Give away an Eon"
+	line "Mail?"
 	done
 
 GoldenrodPokecenter1FPokefanFThisIsForYouText:
@@ -799,7 +799,7 @@ GoldenrodPokecenter1FPokefanFAnotherTimeThenText:
 
 GoldenrodPokecenter1FPlayerGaveAwayTheEonMailText:
 	text "<PLAYER> gave away"
-	line "the EON MAIL."
+	line "the Eon Mail."
 	done
 
 GoldenrodPokecenter1F_MapEvents:

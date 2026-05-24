@@ -27,7 +27,7 @@ RuinsOfAlphAerodactylItemRoomAncientReplica:
 RuinsOfAlphAerodactylItemRoomAncientReplicaText:
 	text "It's a replica of"
 	line "an ancient #-"
-	cont "MON."
+	cont "Mon."
 	done
 
 RuinsOfAlphAerodactylItemRoom_MapEvents:

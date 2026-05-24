@@ -607,7 +607,7 @@ ExchangeBytes:
 	ret
 
 String_PleaseWait:
-	db "PLEASE WAIT!@"
+	db "Please Wait!@"
 
 ClearLinkData:
 	ld hl, wLinkData
@@ -1913,7 +1913,7 @@ LinkTrade_TradeStatsMenu:
 	text_end
 
 .String_Stats_Trade:
-	db "STATS     TRADE@"
+	db "Stats     Trade@"
 
 .LinkAbnormalMonText:
 	text_far _LinkAbnormalMonText
@@ -2006,7 +2006,7 @@ GSPlaceTradeScreenFooter: ; unreferenced
 	jp PlaceString
 
 .CancelString:
-	db "CANCEL@"
+	db "Cancel@"
 
 LinkTradePlaceArrow:
 ; Indicates which pokemon the other player has selected to trade
@@ -2410,8 +2410,8 @@ InitTradeMenuDisplay_Delay:
 	jp InitTradeMenuDisplay
 
 String_TradeCancel:
-	db   "TRADE"
-	next "CANCEL@"
+	db   "Trade"
+	next "Cancel@"
 
 LinkAskTradeForText:
 	text_far _LinkAskTradeForText
@@ -2704,7 +2704,7 @@ WaitForLinkedFriend:
 	vc_assert hSerialConnectionStatus == $ffcb, \
 		"hSerialConnectionStatus is no longer located at 00:ffcb."
 	vc_assert USING_INTERNAL_CLOCK == $02, \
-		"USING_INTERNAL_CLOCK is no longer equal to $02."
+		"Using_Internal_Clock is no longer equal to $02."
 	ldh [rSC], a
 	ld a, [wLinkTimeoutFrames]
 	dec a

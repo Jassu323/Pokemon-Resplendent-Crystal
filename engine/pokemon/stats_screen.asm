@@ -244,7 +244,7 @@ if DEF(_DEBUG)
 	jp StatsScreen_JoypadAction
 
 .HatchSoonString:
-	db "▶HATCH SOON!@"
+	db "▶Hatch Soon!@"
 endc
 
 StatsScreen_LoadPage:
@@ -740,23 +740,23 @@ LoadPinkPage:
 	ret
 
 .Status_Type:
-	db   "STATUS/"
-	next "TYPE/@"
+	db   "Status/"
+	next "Type/@"
 
 .OK_str:
 	db "OK @"
 
 .ExpPointStr:
-	db "EXP POINTS@"
+	db "Exp Points@"
 
 .LevelUpStr:
-	db "LEVEL UP@"
+	db "Level Up@"
 
 .ToStr:
-	db "TO@"
+	db "To@"
 
 .PkrsStr:
-	db "#RUS@"
+	db "#rus@"
 
 LoadGreenPage:
 	ld de, .Item
@@ -795,13 +795,13 @@ LoadGreenPage:
 	ret
 
 .Item:
-	db "ITEM@"
+	db "Item@"
 
 .ThreeDashes:
 	db "---@"
 
 .Move:
-	db "MOVE@"
+	db "Move@"
 
 LoadBluePage:
 	call .PlaceOTInfo
@@ -1273,7 +1273,7 @@ if DEF(_DEBUG)
 	jr .placed_push_start
 
 .PushStartString:
-	db "▶PUSH START.@"
+	db "▶Push Start.@"
 
 .placed_push_start
 endc
@@ -1308,7 +1308,7 @@ endc
 	ret
 
 EggString:
-	db "EGG@"
+	db "Egg@"
 
 FiveQMarkString:
 	db "?????@"
@@ -1330,7 +1330,7 @@ EggMoreTimeString:
 	next "more time, though.@"
 
 EggALotMoreTimeString:
-	db   "This EGG needs a"
+	db   "This Egg needs a"
 	next "lot more time to"
 	next "hatch.@"
 
