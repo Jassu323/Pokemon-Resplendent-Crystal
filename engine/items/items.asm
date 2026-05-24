@@ -16,6 +16,9 @@ _ReceiveItem::
 	dw .KeyItem
 	dw .Ball
 	dw .TMHM
+	dw .Medicine
+	dw .Berry
+	dw .Apricorn
 
 .Item:
 	ld h, d
@@ -30,6 +33,17 @@ _ReceiveItem::
 .Ball:
 	ld hl, wNumBalls
 	jp PutItemInPocket
+
+.Medicine:
+	ld hl, wNumMedicine
+	jp PutItemInPocket
+
+.Berry:
+	ld hl, wNumBerries
+	jp PutItemInPocket
+
+.Apricorn:
+	jp ReceiveApricorn
 
 .TMHM:
 	ld h, d
@@ -57,10 +71,24 @@ _TossItem::
 	dw .KeyItem
 	dw .Ball
 	dw .TMHM
+	dw .Medicine
+	dw .Berry
+	dw .Apricorn
 
 .Ball:
 	ld hl, wNumBalls
 	jp RemoveItemFromPocket
+
+.Medicine:
+	ld hl, wNumMedicine
+	jp RemoveItemFromPocket
+
+.Berry:
+	ld hl, wNumBerries
+	jp RemoveItemFromPocket
+
+.Apricorn:
+	jp TossApricorn
 
 .TMHM:
 	ld h, d
@@ -100,10 +128,24 @@ _CheckItem::
 	dw .KeyItem
 	dw .Ball
 	dw .TMHM
+	dw .Medicine
+	dw .Berry
+	dw .Apricorn
 
 .Ball:
 	ld hl, wNumBalls
 	jp CheckTheItem
+
+.Medicine:
+	ld hl, wNumMedicine
+	jp CheckTheItem
+
+.Berry:
+	ld hl, wNumBerries
+	jp CheckTheItem
+
+.Apricorn:
+	jp CheckApricorn
 
 .TMHM:
 	ld h, d
@@ -124,6 +166,89 @@ _CheckItem::
 
 .nope
 	jp CheckTheItem
+
+GetApricornQuantityAddress::
+	ld a, [wCurItem]
+	ld c, a
+	ld hl, ApricornQuantityTable
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .nope
+	cp c
+	jr z, .found
+	inc hl
+	inc hl
+	jr .loop
+
+.found
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	scf
+	ret
+
+.nope
+	and a
+	ret
+
+GetApricornQuantity::
+	call GetApricornQuantityAddress
+	ret nc
+	ld a, [hl]
+	ld [wItemQuantityChange], a
+	and a
+	ret z
+	scf
+	ret
+
+ReceiveApricorn:
+	call GetApricornQuantityAddress
+	ret nc
+	ld a, [wItemQuantityChange]
+	ld b, a
+	ld a, [hl]
+	add b
+	cp MAX_ITEM_STACK + 1
+	jr nc, .nope
+	ld [hl], a
+	scf
+	ret
+
+.nope
+	and a
+	ret
+
+TossApricorn:
+	call GetApricornQuantityAddress
+	ret nc
+	ld a, [wItemQuantityChange]
+	ld b, a
+	ld a, [hl]
+	sub b
+	jr c, .nope
+	ld [hl], a
+	ld [wItemQuantity], a
+	scf
+	ret
+
+.nope
+	and a
+	ret
+
+CheckApricorn:
+	call GetApricornQuantity
+	ret
+
+ApricornQuantityTable:
+	dbw RED_APRICORN, wRedApricornQuantity
+	dbw BLU_APRICORN, wBluApricornQuantity
+	dbw YLW_APRICORN, wYlwApricornQuantity
+	dbw GRN_APRICORN, wGrnApricornQuantity
+	dbw WHT_APRICORN, wWhtApricornQuantity
+	dbw BLK_APRICORN, wBlkApricornQuantity
+	dbw PNK_APRICORN, wPnkApricornQuantity
+	db -1
 
 DoesHLEqualNumItems:
 	ld a, l
@@ -152,6 +277,24 @@ GetPocketCapacity:
 	ret z
 
 .not_pc
+	ld c, MAX_MEDICINE
+	ld a, e
+	cp LOW(wNumMedicine)
+	jr nz, .not_medicine
+	ld a, d
+	cp HIGH(wNumMedicine)
+	ret z
+
+.not_medicine
+	ld c, MAX_BERRIES
+	ld a, e
+	cp LOW(wNumBerries)
+	jr nz, .not_berries
+	ld a, d
+	cp HIGH(wNumBerries)
+	ret z
+
+.not_berries
 	ld c, MAX_BALLS
 	ret
 

@@ -103,7 +103,7 @@ ItemEffects:
 	dw NoEffect            ; BIG_MUSHROOM
 	dw NoEffect            ; SILVERPOWDER
 	dw NoEffect            ; BLU_APRICORN
-	dw NoEffect            ; ITEM_5A
+	dw ApricornBoxEffect   ; APRICORN_BOX
 	dw NoEffect            ; AMULET_COIN
 	dw NoEffect            ; YLW_APRICORN
 	dw NoEffect            ; GRN_APRICORN
@@ -113,7 +113,7 @@ ItemEffects:
 	dw NoEffect            ; WHT_APRICORN
 	dw NoEffect            ; BLACKBELT_I
 	dw NoEffect            ; BLK_APRICORN
-	dw NoEffect            ; ITEM_64
+	dw TMHMCaseEffect      ; TMHM_CASE
 	dw NoEffect            ; PNK_APRICORN
 	dw NoEffect            ; BLACKGLASSES
 	dw NoEffect            ; SLOWPOKETAIL
@@ -158,9 +158,9 @@ ItemEffects:
 	dw NoEffect            ; ITEM_8E
 	dw NoEffect            ; METAL_COAT
 	dw NoEffect            ; DRAGON_FANG
-	dw NoEffect            ; ITEM_91
+	dw NoEffect            ; HEART_SCALE
 	dw NoEffect            ; LEFTOVERS
-	dw NoEffect            ; ITEM_93
+	dw VitaminEffect       ; ZINC
 	dw NoEffect            ; ITEM_94
 	dw NoEffect            ; ITEM_95
 	dw RestorePPEffect     ; MYSTERYBERRY
@@ -1161,13 +1161,7 @@ VitaminEffect:
 	ld [hl], a
 	call UpdateStatsAfterItem
 
-	call GetStatExpRelativePointer
-
-	ld hl, StatStrings
-	add hl, bc
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
+	call GetVitaminStatString
 	ld de, wStringBuffer2
 	ld bc, ITEM_NAME_LENGTH
 	call CopyBytes
@@ -1211,13 +1205,31 @@ StatStrings:
 	dw .attack
 	dw .defense
 	dw .speed
-	dw .special
+	dw .special_attack
+	dw .special_defense
 
 .health  db "HEALTH@"
 .attack  db "ATTACK@"
 .defense db "DEFENSE@"
 .speed   db "SPEED@"
-.special db "SPECIAL@"
+.special_attack db "SPCL.ATK@"
+.special_defense db "SPCL.DEF@"
+
+GetVitaminStatString:
+	ld a, [wCurItem]
+	cp ZINC
+	jr z, .zinc
+	call GetStatExpRelativePointer
+	ld hl, StatStrings
+	add hl, bc
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	ret
+
+.zinc
+	ld hl, StatStrings.special_defense
+	ret
 
 GetStatExpRelativePointer:
 	ld a, [wCurItem]
@@ -1241,6 +1253,7 @@ StatExpItemPointerOffsets:
 	db IRON,    MON_DEF_EXP - MON_STAT_EXP
 	db CARBOS,  MON_SPD_EXP - MON_STAT_EXP
 	db CALCIUM, MON_SPC_EXP - MON_STAT_EXP
+	db ZINC,    MON_SPC_EXP - MON_STAT_EXP
 
 RareCandy_StatBooster_GetParameters:
 	ld a, [wCurPartySpecies]
@@ -2264,6 +2277,14 @@ UseRod:
 
 ItemfinderEffect:
 	farcall ItemFinder
+	ret
+
+ApricornBoxEffect:
+	farcall ApricornBox
+	ret
+
+TMHMCaseEffect:
+	farcall TMHMCase
 	ret
 
 RestorePPEffect:

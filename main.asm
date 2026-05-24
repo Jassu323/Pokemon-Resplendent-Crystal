@@ -44,7 +44,9 @@ INCLUDE "engine/pokemon/knows_move.asm"
 
 SECTION "bank4", ROMX
 
-INCLUDE "engine/items/pack.asm"
+
+SECTION "bank4_2", ROMX
+
 INCLUDE "engine/overworld/time.asm"
 INCLUDE "engine/items/tmhm2.asm"
 INCLUDE "engine/menus/naming_screen.asm"
@@ -174,10 +176,22 @@ INCLUDE "engine/pokedex/pokedex_2.asm"
 INCLUDE "engine/pokemon/mail.asm"
 
 
+SECTION "Pack", ROMX
+
+INCLUDE "engine/items/pack.asm"
+
+SECTION "Pack Kris Code", ROMX
+
+INCLUDE "engine/items/pack_kris.asm"
+
+
 SECTION "Crystal Features 1", ROMX
 
 INCLUDE "engine/menus/init_gender.asm"
-INCLUDE "engine/items/pack_kris.asm"
+
+
+SECTION "Crystal Features 1_2", ROMX
+
 INCLUDE "engine/events/move_tutor.asm"
 INCLUDE "engine/gfx/crystal_layouts.asm"
 INCLUDE "engine/events/celebi.asm"
@@ -480,6 +494,16 @@ SECTION "bank3F", ROMX
 INCLUDE "engine/tilesets/tileset_anims.asm"
 INCLUDE "engine/events/npc_trade.asm"
 INCLUDE "engine/events/mom_phone.asm"
+
+
+SECTION "Apricorn Box", ROMX
+
+INCLUDE "engine/items/apricorn_box.asm"
+
+
+SECTION "TMHM Case", ROMX
+
+INCLUDE "engine/items/tmhm_case.asm"
 
 
 SECTION "mobile40", ROMX

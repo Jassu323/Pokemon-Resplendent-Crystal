@@ -510,13 +510,13 @@ PlayerDepositItemMenu:
 	ld [wItemQuantityChange], a
 	jr .ContinueDeposit
 
-.AskQuantity:
+	.AskQuantity:
 	ld hl, .PlayersPCHowManyDepositText
-	call MenuTextbox
-	farcall SelectQuantityToToss
+	call .Pack_MenuTextbox
+	farcall Pack_SelectQuantityToToss
 	push af
-	call ExitMenu
-	call ExitMenu
+	farcall Pack_CloseWindow
+	farcall Pack_CloseWindow
 	pop af
 	jr c, .DeclinedToDeposit
 
@@ -536,19 +536,42 @@ PlayerDepositItemMenu:
 	call TossItem
 	predef PartyMonItemName
 	ld hl, .PlayersPCDepositItemsText
-	call PrintText
+	call .Pack_PrintTextNoScroll
 	ret
 
-.NoRoomInPC:
+	.NoRoomInPC:
 	ld hl, .PlayersPCNoRoomDepositText
-	call PrintText
+	call .Pack_PrintTextNoScroll
 	ret
 
-.DeclinedToDeposit:
+	.DeclinedToDeposit:
 	and a
 	ret
 
-.PlayersPCHowManyDepositText:
+	.Pack_MenuTextbox:
+	push hl
+	call LoadMenuTextbox
+	pop hl
+	; fallthrough
+
+	.Pack_PrintTextNoScroll:
+	ld a, [wOptions]
+	push af
+	set NO_TEXT_SCROLL, a
+	ld [wOptions], a
+	push hl
+	call SpeechTextbox
+	farcall Pack_PrepareTextboxAttrs
+	call UpdateSprites
+	farcall Pack_TransferTilemapAndAttrmap
+	pop hl
+	call BuenaPrintText
+	farcall Pack_TransferTilemapAndAttrmap
+	pop af
+	ld [wOptions], a
+	ret
+
+	.PlayersPCHowManyDepositText:
 	text_far _PlayersPCHowManyDepositText
 	text_end
 

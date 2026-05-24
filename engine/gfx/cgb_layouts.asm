@@ -953,30 +953,10 @@ _CGB_PackPals:
 
 .got_gender
 	ld de, wBGPals1
-	ld bc, 8 palettes ; 6 palettes?
+	ld bc, 8 palettes
 	ld a, BANK(wBGPals1)
 	call FarCopyWRAM
 	call WipeAttrmap
-	hlcoord 0, 0, wAttrmap
-	lb bc, 1, 10
-	ld a, $1
-	call FillBoxCGB
-	hlcoord 10, 0, wAttrmap
-	lb bc, 1, 10
-	ld a, $2
-	call FillBoxCGB
-	hlcoord 7, 2, wAttrmap
-	lb bc, 9, 1
-	ld a, $3
-	call FillBoxCGB
-	hlcoord 0, 7, wAttrmap
-	lb bc, 3, 5
-	ld a, $4
-	call FillBoxCGB
-	hlcoord 0, 3, wAttrmap
-	lb bc, 3, 5
-	ld a, $5
-	call FillBoxCGB
 	call ApplyAttrmap
 	call ApplyPals
 	ld a, TRUE
