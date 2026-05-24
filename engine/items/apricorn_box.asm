@@ -661,13 +661,13 @@ ApricornBoxColorNamePointers:
 	dw .Green
 	dw .Pink
 
-.Red:    db "RED@"
-.Blue:   db "BLUE@"
-.White:  db "WHITE@"
-.Black:  db "BLACK@"
-.Yellow: db "YELLOW@"
-.Green:  db "GREEN@"
-.Pink:   db "PINK@"
+.Red:    db "Red@"
+.Blue:   db "Blue@"
+.White:  db "White@"
+.Black:  db "Black@"
+.Yellow: db "Yellow@"
+.Green:  db "Green@"
+.Pink:   db "Pink@"
 
 ApricornBoxBallNamePointers:
 	dw .Level
@@ -678,13 +678,13 @@ ApricornBoxBallNamePointers:
 	dw .Friend
 	dw .Love
 
-.Level:  db "LEVEL BALL.@"
-.Lure:   db "LURE BALL.@"
-.Fast:   db "FAST BALL.@"
-.Heavy:  db "HEAVY BALL.@"
-.Moon:   db "MOON BALL.@"
-.Friend: db "FRIEND BALL.@"
-.Love:   db "LOVE BALL.@"
+.Level:  db "Level Ball.@"
+.Lure:   db "Lure Ball.@"
+.Fast:   db "Fast Ball.@"
+.Heavy:  db "Heavy Ball.@"
+.Moon:   db "Moon Ball.@"
+.Friend: db "Friend Ball.@"
+.Love:   db "Love Ball.@"
 
 ApricornBoxItemIDs:
 	db RED_APRICORN
@@ -714,7 +714,7 @@ ApricornBoxCursorPositions:
 	db 97, 48
 
 ApricornBoxQuantityLabel:
-	db "APRICORN  ×@"
+	db "Apricorn  ×@"
 
 ApricornBoxBallLeadText:
 	db "Can be made into a@"
@@ -728,8 +728,8 @@ ApricornBoxTossMenuHeader:
 .MenuData:
 	db STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING ; flags
 	db 2 ; items
-	db "TOSS@"
-	db "QUIT@"
+	db "Toss@"
+	db "Quit@"
 
 ApricornBoxAskThrowAwayText:
 	text_far _AskThrowAwayText

@@ -114,7 +114,7 @@ RuinsOfAlphOmanyteChamberWallPatternLeftText:
 	done
 
 RuinsOfAlphOmanyteChamberUnownText: ; unreferenced
-	text "It's UNOWN text!"
+	text "It's Unown text!"
 	done
 
 RuinsOfAlphOmanyteChamberWallPatternRightText:
@@ -130,11 +130,11 @@ RuinsOfAlphOmanyteChamberWallHoleText:
 RuinsOfAlphOmanyteChamberAncientReplicaText:
 	text "It's a replica of"
 	line "an ancient #-"
-	cont "MON."
+	cont "Mon."
 	done
 
 RuinsOfAlphOmanyteChamberDescriptionText:
-	text "This #MON"
+	text "This #mon"
 	line "drifted in the"
 
 	para "sea by twisting"

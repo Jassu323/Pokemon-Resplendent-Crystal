@@ -1,7 +1,7 @@
-	db "PSI@" ; species name
+	db "Psi@" ; species name
 	dw 411, 1060 ; height, weight
 
-	db   "It has an IQ of"
+	db   "It has an Iq of"
 	next "5000. It calcu-"
 	next "lates many things"
 

@@ -163,7 +163,7 @@ endc
 
 .String_PressAToLink_BToCancel:
 	db   "Press A to"
-	next "link IR-Device"
+	next "link Ir-Device"
 	next "Press B to"
 	next "cancel it."
 	db   "@"

@@ -114,7 +114,7 @@ RuinsOfAlphHoOhChamberWallPatternLeftText:
 	done
 
 RuinsOfAlphHoOhChamberUnownText: ; unreferenced
-	text "It's UNOWN text!"
+	text "It's Unown text!"
 	done
 
 RuinsOfAlphHoOhChamberWallPatternRightText:
@@ -130,11 +130,11 @@ RuinsOfAlphHoOhChamberWallHoleText:
 RuinsOfAlphHoOhChamberAncientReplicaText:
 	text "It's a replica of"
 	line "an ancient #-"
-	cont "MON."
+	cont "Mon."
 	done
 
 RuinsOfAlphHoOhChamberDescriptionText:
-	text "A #MON that"
+	text "A #mon that"
 	line "flew gracefully on"
 
 	para "rainbow-colored"

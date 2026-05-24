@@ -2384,8 +2384,8 @@ TMHMCaseUseMenuHeader:
 .MenuData:
 	db STATICMENU_CURSOR | STATICMENU_NO_TOP_SPACING ; flags
 	db 2 ; items
-	db "USE@"
-	db "QUIT@"
+	db "Use@"
+	db "Quit@"
 
 TMHMCaseYouDontHaveAMonText:
 	text_far _YouDontHaveAMonText

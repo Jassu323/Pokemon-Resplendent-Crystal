@@ -12,7 +12,7 @@ TullyMonHasGrownText:
 	done
 
 TullyDefeatedMonText:
-	text "Oh yeah, I KO'd a"
+	text "Oh yeah, I Ko'd a"
 	line "wild @"
 	text_ram wStringBuffer4
 	text "."
@@ -82,7 +82,7 @@ TullyNoItemText:
 	done
 
 TullyForwardText:
-	text "Yup, TULLY here…"
+	text "Yup, Tully here…"
 
 	para "<PLAY_G>? What?"
 	line "You're lost?"

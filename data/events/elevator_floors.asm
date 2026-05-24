@@ -19,10 +19,10 @@ ElevatorFloorNames:
 	dw .ROOF
 	assert_table_length NUM_FLOORS
 
-.B4F:  db "B4F@"
-.B3F:  db "B3F@"
-.B2F:  db "B2F@"
-.B1F:  db "B1F@"
+.B4F:  db "B4f@"
+.B3F:  db "B3f@"
+.B2F:  db "B2f@"
+.B1F:  db "B1f@"
 ._1F:  db "1F@"
 ._2F:  db "2F@"
 ._3F:  db "3F@"
@@ -34,4 +34,4 @@ ElevatorFloorNames:
 ._9F:  db "9F@"
 ._10F: db "10F@"
 ._11F: db "11F@"
-.ROOF: db "ROOF@"
+.ROOF: db "Roof@"

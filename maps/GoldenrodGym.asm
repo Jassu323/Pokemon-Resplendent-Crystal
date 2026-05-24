@@ -183,13 +183,13 @@ BridgetWalksAwayMovement:
 	step_end
 
 WhitneyBeforeText:
-	text "Hi! I'm WHITNEY!"
+	text "Hi! I'm Whitney!"
 
 	para "Everyone was into"
-	line "#MON, so I got"
+	line "#mon, so I got"
 	cont "into it too!"
 
-	para "#MON are"
+	para "#mon are"
 	line "super-cute!"
 
 	para "You want to bat-"
@@ -221,38 +221,38 @@ WhitneyWhatDoYouWantText:
 	text "…Sniff…"
 
 	para "What? What do you"
-	line "want? A BADGE?"
+	line "want? A Badge?"
 
 	para "Oh, right."
 	line "I forgot. Here's"
-	cont "PLAINBADGE."
+	cont "Plainbadge."
 	done
 
 PlayerReceivedPlainBadgeText:
 	text "<PLAYER> received"
-	line "PLAINBADGE."
+	line "Plainbadge."
 	done
 
 WhitneyPlainBadgeText:
-	text "PLAINBADGE lets"
-	line "your #MON use"
+	text "Plainbadge lets"
+	line "your #mon use"
 
-	para "STRENGTH outside"
+	para "Strength outside"
 	line "of battle."
 
 	para "It also boosts"
-	line "your #MON's"
-	cont "SPEED."
+	line "your #mon's"
+	cont "Speed."
 
 	para "Oh, you can have"
 	line "this too!"
 	done
 
 WhitneyAttractText:
-	text "It's ATTRACT!"
+	text "It's Attract!"
 	line "It makes full use"
 
-	para "of a #MON's"
+	para "of a #mon's"
 	line "charm."
 
 	para "Isn't it just per-"
@@ -270,7 +270,7 @@ WhitneyGoodCryText:
 
 LassCarrieSeenText:
 	text "Don't let my"
-	line "#MON's cute"
+	line "#mon's cute"
 
 	para "looks fool you."
 	line "They can whip you!"
@@ -282,17 +282,17 @@ LassCarrieBeatenText:
 	done
 
 LassCarrieAfterBattleText:
-	text "Do my #MON"
+	text "Do my #mon"
 	line "think I'm cute?"
 	done
 
 LassBridgetSeenText:
 	text "I like cute #-"
-	line "MON better than"
-	cont "strong #MON."
+	line "Mon better than"
+	cont "strong #mon."
 
 	para "But I have strong"
-	line "and cute #MON!"
+	line "and cute #mon!"
 	done
 
 LassBridgetBeatenText:
@@ -301,7 +301,7 @@ LassBridgetBeatenText:
 
 LassBridgetAfterBattleText:
 	text "I'm trying to beat"
-	line "WHITNEY, but…"
+	line "Whitney, but…"
 	cont "It's depressing."
 
 	para "I'm okay! If I"
@@ -313,7 +313,7 @@ LassBridgetAfterBattleText:
 
 BridgetWhitneyCriesText:
 	text "Oh, no. You made"
-	line "WHITNEY cry."
+	line "Whitney cry."
 
 	para "It's OK. She'll"
 	line "stop soon. She"
@@ -348,27 +348,27 @@ BeautySamanthaSeenText:
 	done
 
 BeautySamanthaBeatenText:
-	text "No! Oh, MEOWTH,"
+	text "No! Oh, Meowth,"
 	line "I'm so sorry!"
 	done
 
 BeautySamanthaAfterBattleText:
-	text "I taught MEOWTH"
+	text "I taught Meowth"
 	line "moves for taking"
 	cont "on any type…"
 	done
 
 GoldenrodGymGuideText:
-	text "Yo! CHAMP in"
+	text "Yo! Champ in"
 	line "making!"
 
-	para "This GYM is home"
+	para "This Gym is home"
 	line "to normal-type"
-	cont "#MON trainers."
+	cont "#mon trainers."
 
 	para "I recommend you"
 	line "use fighting-type"
-	cont "#MON."
+	cont "#mon."
 	done
 
 GoldenrodGymGuideWinText:

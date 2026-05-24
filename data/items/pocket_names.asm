@@ -10,10 +10,10 @@ ItemPocketNames:
 	dw .Apricorn
 	assert_table_length NUM_ITEM_TYPES
 
-.Item:     db "ITEM POCKET@"
-.Key:      db "KEY POCKET@"
-.Ball:     db "BALL POCKET@"
-.TM:       db "TM POCKET@"
-.Medicine: db "MEDICINE PCKT@"
-.Berry:    db "BERRY POCKET@"
-.Apricorn: db "APRICORN BOX@"
+.Item:     db "Item Pocket@"
+.Key:      db "Key Pocket@"
+.Ball:     db "Ball Pocket@"
+.TM:       db "TM Pocket@"
+.Medicine: db "Medicine Pckt@"
+.Berry:    db "Berry Pocket@"
+.Apricorn: db "Apricorn Box@"

@@ -113,7 +113,7 @@ DrawPokedexSearchResultsWindow:
 
 .esults_D
 ; (SEARCH R)
-	db   "ESULTS"
+	db   "Esults"
 	next ""
 ; (### FOUN)
 	next "D!@"

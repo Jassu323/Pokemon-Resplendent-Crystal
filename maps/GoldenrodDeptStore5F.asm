@@ -140,7 +140,7 @@ GoldenrodDeptStore5FElevatorButton:
 
 GoldenrodDeptStore5FReceptionistOhYourMonDotDotDotText:
 	text "Hello. Oh, your"
-	line "#MON…"
+	line "#mon…"
 	done
 
 GoldenrodDeptStore5FReceptionistThisMoveShouldBePerfectText:
@@ -170,11 +170,11 @@ GoldenrodDeptStore5FReceptionistThereAreTMsPerfectForMonText:
 	line "be TMs that are"
 
 	para "just perfect for"
-	line "your #MON."
+	line "your #mon."
 	done
 
 GoldenrodDeptStore5FCarrieMysteryGiftExplanationText:
-	text "MYSTERY GIFT."
+	text "Mystery Gift."
 
 	para "With just a"
 	line "little beep, you"
@@ -182,7 +182,7 @@ GoldenrodDeptStore5FCarrieMysteryGiftExplanationText:
 	done
 
 GoldenrodDeptStore5FCarrieMysteryGiftRequiresGBCText:
-	text "The MYSTERY GIFT"
+	text "The Mystery Gift"
 	line "option requires a"
 	cont "Game Boy Color."
 	done
@@ -190,7 +190,7 @@ GoldenrodDeptStore5FCarrieMysteryGiftRequiresGBCText:
 GoldenrodDeptStore5FLassText:
 	text "On Sundays, a lady"
 	line "comes to check out"
-	cont "#MON."
+	cont "#mon."
 
 	para "She even gives"
 	line "away TMs!"
@@ -198,7 +198,7 @@ GoldenrodDeptStore5FLassText:
 
 GoldenrodDeptStore5FPokefanMText:
 	text "You can't rename a"
-	line "#MON you get in"
+	line "#mon you get in"
 	cont "a trade."
 
 	para "The name is a re-"
@@ -210,9 +210,9 @@ GoldenrodDeptStore5FPokefanMText:
 
 GoldenrodDeptStore5FDirectoryText:
 	text "Customize Your"
-	line "#MON"
+	line "#mon"
 
-	para "5F TM CORNER"
+	para "5F TM Corner"
 	done
 
 GoldenrodDeptStore5F_MapEvents:

@@ -43,11 +43,11 @@ HikerJimBeatenText:
 HikerJimAfterBattleText:
 	text "Hay fever is"
 	line "making me sneeze!"
-	cont "Ahahah-CHOO!"
+	cont "Ahahah-Choo!"
 	done
 
 PokefanmRobertSeenText:
-	text "You like #MON,"
+	text "You like #mon,"
 	line "don't you?"
 
 	para "Me too!"
@@ -60,17 +60,17 @@ PokefanmRobertBeatenText:
 
 PokefanmRobertAfterBattleText:
 	text "Look what you did"
-	line "to my #MON…"
+	line "to my #mon…"
 
 	para "I won't forget"
 	line "this…"
 	done
 
 Route10SignText:
-	text "ROUTE 10"
+	text "Route 10"
 
-	para "CERULEAN CITY -"
-	line "LAVENDER TOWN"
+	para "Cerulean City -"
+	line "Lavender Town"
 	done
 
 Route10South_MapEvents:
