@@ -1740,12 +1740,16 @@ HandleWeather:
 
 	ld hl, wWeatherCount
 	dec [hl]
-	jr z, .ended
+	jp z, .ended
 
 	ld hl, .WeatherMessages
 	call .PrintWeatherMessage
 
 	ld a, [wBattleWeather]
+	cp WEATHER_RAIN
+	jr z, .rain
+	cp WEATHER_SUN
+	jr z, .sun
 	cp WEATHER_SANDSTORM
 	ret nz
 
@@ -1758,6 +1762,18 @@ HandleWeather:
 	call .SandstormDamage
 	call SetEnemyTurn
 	jr .SandstormDamage
+
+.rain
+	ld de, ANIM_IN_RAIN
+	jr .WeatherAnim
+
+.sun
+	ld de, ANIM_IN_SUN
+
+.WeatherAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	jp Call_PlayBattleAnim
 
 .enemy_first
 	call SetEnemyTurn

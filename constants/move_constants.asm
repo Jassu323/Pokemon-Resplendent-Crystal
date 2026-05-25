@@ -293,4 +293,6 @@ DEF CANNOT_MOVE EQU $ff
 	const ANIM_RETURN_MON        ; -14 (ffec)
 	const ANIM_SEND_OUT_MON      ; -15 (ffeb)
 	const ANIM_THROW_POKE_BALL   ; -16 (ffea)
+	const ANIM_IN_RAIN           ; -17 (ffe9)
+	const ANIM_IN_SUN            ; -18 (ffe8)
 DEF NUM_BATTLE_ANIMS EQU -const_value - 1

@@ -2639,6 +2639,7 @@ PlayerAttackDamage:
 	rl b
 
 .specialcrit
+	call SandstormSpDefBoost
 	ld hl, wBattleMonSpclAtk
 	call CheckDamageStatsCritical
 	jr c, .lightball
@@ -2701,9 +2702,6 @@ TruncateHL_BC:
 
 .finish
 ; BUG: Reflect and Light Screen can make (Special) Defense wrap around above 1024 (see docs/bugs_and_glitches.md)
-	ld a, [wLinkMode]
-	cp LINK_COLOSSEUM
-	jr z, .done
 ; If we go back to the loop point,
 ; it's the same as doing this exact
 ; same check twice.
@@ -2713,6 +2711,35 @@ TruncateHL_BC:
 
 .done
 	ld b, l
+	ret
+
+SandstormSpDefBoost:
+	ld a, [wBattleWeather]
+	cp WEATHER_SANDSTORM
+	ret nz
+
+	ld hl, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_types
+	ld hl, wBattleMonType1
+
+.got_types
+	ld a, [hli]
+	cp ROCK
+	jr z, .boost
+	ld a, [hl]
+	cp ROCK
+	ret nz
+
+.boost
+	ld h, b
+	ld l, c
+	srl b
+	rr c
+	add hl, bc
+	ld b, h
+	ld c, l
 	ret
 
 CheckDamageStatsCritical:
@@ -2894,6 +2921,7 @@ EnemyAttackDamage:
 	rl b
 
 .specialcrit
+	call SandstormSpDefBoost
 	ld hl, wEnemyMonSpclAtk
 	call CheckDamageStatsCritical
 	jr c, .lightball

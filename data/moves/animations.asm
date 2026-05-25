@@ -1,7 +1,10 @@
 ; entries correspond to constants/move_constants.asm
 :
 	table_width 2, :-
-; negative entries first (see the constants file for details)
+; negative entries first, ordered from most-negative ID back toward -1
+; (see the constants file for details)
+	dw BattleAnim_InSun
+	dw BattleAnim_InRain
 	dw BattleAnim_ThrowPokeBall
 	dw BattleAnim_SendOutMon
 	dw BattleAnim_ReturnMon
@@ -4404,6 +4407,16 @@ BattleAnim_Twister:
 	anim_ret
 
 BattleAnim_RainDance:
+	anim_call BattleAnimSub_RainWeather
+	anim_wait 128
+	anim_ret
+
+BattleAnim_InRain:
+	anim_call BattleAnimSub_RainWeather
+	anim_wait 48
+	anim_ret
+
+BattleAnimSub_RainWeather:
 	anim_1gfx BATTLE_ANIM_GFX_WATER
 	anim_bgp $f8
 	anim_obp0 $7c
@@ -4413,10 +4426,19 @@ BattleAnim_RainDance:
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $1
 	anim_wait 8
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $2
-	anim_wait 128
 	anim_ret
 
 BattleAnim_SunnyDay:
+	anim_call BattleAnimSub_SunWeather
+	anim_wait 128
+	anim_ret
+
+BattleAnim_InSun:
+	anim_call BattleAnimSub_SunWeather
+	anim_wait 48
+	anim_ret
+
+BattleAnimSub_SunWeather:
 	anim_1gfx BATTLE_ANIM_GFX_WATER
 	anim_bgp $90
 	anim_sound 0, 1, SFX_MORNING_SUN
@@ -4425,7 +4447,6 @@ BattleAnim_SunnyDay:
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $2
 	anim_wait 8
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $2
-	anim_wait 128
 	anim_ret
 
 BattleAnim_MirrorCoat:
