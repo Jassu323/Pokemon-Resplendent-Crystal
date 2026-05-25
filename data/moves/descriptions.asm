@@ -256,6 +256,7 @@ MoveDescriptions1:
 	dw RockSmashDescription
 	dw WhirlpoolDescription
 	dw BeatUpDescription
+	dw HailDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1263,3 +1264,7 @@ WhirlpoolDescription:
 
 BeatUpDescription:
 	db   "Placeholder@"
+
+HailDescription:
+	db   "Summons a hail-"
+	line "storm for 5 turns.@"

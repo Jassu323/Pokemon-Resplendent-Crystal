@@ -1751,17 +1751,20 @@ HandleWeather:
 	cp WEATHER_SUN
 	jr z, .sun
 	cp WEATHER_SANDSTORM
+	jr z, .damaging_weather
+	cp WEATHER_HAIL
 	ret nz
 
+.damaging_weather
 	ldh a, [hSerialConnectionStatus]
 	cp USING_EXTERNAL_CLOCK
 	jr z, .enemy_first
 
 ; player first
 	call SetPlayerTurn
-	call .SandstormDamage
+	call .WeatherDamage
 	call SetEnemyTurn
-	jr .SandstormDamage
+	jr .WeatherDamage
 
 .rain
 	ld de, ANIM_IN_RAIN
@@ -1777,10 +1780,10 @@ HandleWeather:
 
 .enemy_first
 	call SetEnemyTurn
-	call .SandstormDamage
+	call .WeatherDamage
 	call SetPlayerTurn
 
-.SandstormDamage:
+.WeatherDamage:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	bit SUBSTATUS_UNDERGROUND, a
@@ -1792,6 +1795,10 @@ HandleWeather:
 	jr z, .ok
 	ld hl, wEnemyMonType1
 .ok
+	ld a, [wBattleWeather]
+	cp WEATHER_HAIL
+	jr z, .hail
+
 	ld a, [hli]
 	cp ROCK
 	ret z
@@ -1808,16 +1815,37 @@ HandleWeather:
 	cp STEEL
 	ret z
 
+	ld de, ANIM_IN_SANDSTORM
+	ld hl, SandstormHitsText
+	jr .damage
+
+.hail
+	ld a, [hli]
+	cp ICE
+	ret z
+	cp STEEL
+	ret z
+
+	ld a, [hl]
+	cp ICE
+	ret z
+	cp STEEL
+	ret z
+
+	ld de, ANIM_IN_HAIL
+	ld hl, PeltedByHailText
+
+.damage
+	push hl
 	call SwitchTurnCore
 	xor a
 	ld [wBattleAfterAnim], a
-	ld de, ANIM_IN_SANDSTORM
 	call Call_PlayBattleAnim
 	call SwitchTurnCore
-	call GetEighthMaxHP
+	call GetSixteenthMaxHP
 	call SubtractHPFromUser
 
-	ld hl, SandstormHitsText
+	pop hl
 	jp StdBattleTextbox
 
 .ended
@@ -1844,12 +1872,14 @@ HandleWeather:
 	dw BattleText_RainContinuesToFall
 	dw BattleText_TheSunlightIsStrong
 	dw BattleText_TheSandstormRages
+	dw BattleText_HailContinuesToFall
 
 .WeatherEndedMessages:
 ; entries correspond to WEATHER_* constants
 	dw BattleText_TheRainStopped
 	dw BattleText_TheSunlightFaded
 	dw BattleText_TheSandstormSubsided
+	dw BattleText_TheHailStopped
 
 SubtractHPFromTarget:
 	call SubtractHP

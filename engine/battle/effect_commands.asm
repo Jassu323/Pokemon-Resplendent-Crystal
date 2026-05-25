@@ -1605,7 +1605,7 @@ BattleCommand_CheckHit:
 	call .FlyDigMoves
 	jp nz, .Miss
 
-	call .ThunderRain
+	call .WeatherAccuracy
 	ret z
 
 	call .XAccuracy
@@ -1773,15 +1773,45 @@ BattleCommand_CheckHit:
 	dw MAGNITUDE
 	dw -1
 
-.ThunderRain:
-; Return z if the current move always hits in rain, and it is raining.
+.WeatherAccuracy:
+; Return z if weather makes the current move always hit.
+; Otherwise, lower the move's base accuracy in unfavorable weather.
 	ld a, BATTLE_VARS_MOVE_EFFECT
 	call GetBattleVar
 	cp EFFECT_THUNDER
-	ret nz
+	jr z, .thunder
+	cp EFFECT_BLIZZARD
+	jr z, .blizzard
+	jr .not_weather_accurate
 
+.thunder
 	ld a, [wBattleWeather]
 	cp WEATHER_RAIN
+	ret z
+	cp WEATHER_SUN
+	jr z, .lower_accuracy
+	cp WEATHER_HAIL
+	jr z, .lower_accuracy
+	jr .not_weather_accurate
+
+.blizzard
+	ld a, [wBattleWeather]
+	cp WEATHER_HAIL
+	ret z
+	cp WEATHER_SUN
+	jr z, .lower_accuracy
+	cp WEATHER_RAIN
+	jr nz, .not_weather_accurate
+
+.lower_accuracy
+	ld a, BATTLE_VARS_MOVE_TYPE
+	call GetBattleVarAddr
+	inc hl
+	ld [hl], 50 percent + 1
+
+.not_weather_accurate
+	ld a, 1
+	and a
 	ret
 
 .XAccuracy:
@@ -2612,6 +2642,7 @@ PlayerAttackDamage:
 	rl b
 
 .physicalcrit
+	call HailDefenseBoost
 	ld hl, wBattleMonAttack
 	call CheckDamageStatsCritical
 	jr c, .thickclub
@@ -2730,6 +2761,31 @@ SandstormSpDefBoost:
 	ret nz
 
 .boost
+	jr BoostDefensiveStatByHalf
+
+HailDefenseBoost:
+	ld a, [wBattleWeather]
+	cp WEATHER_HAIL
+	ret nz
+
+	ld hl, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_types
+	ld hl, wBattleMonType1
+
+.got_types
+	ld a, [hli]
+	cp ICE
+	jr z, .boost
+	ld a, [hl]
+	cp ICE
+	ret nz
+
+.boost
+	jr BoostDefensiveStatByHalf
+
+BoostDefensiveStatByHalf:
 	ld h, b
 	ld l, c
 	srl b
@@ -2894,6 +2950,7 @@ EnemyAttackDamage:
 	rl b
 
 .physicalcrit
+	call HailDefenseBoost
 	ld hl, wEnemyMonAttack
 	call CheckDamageStatsCritical
 	jr c, .thickclub
@@ -6564,6 +6621,8 @@ INCLUDE "engine/battle/move_effects/rain_dance.asm"
 
 INCLUDE "engine/battle/move_effects/sunny_day.asm"
 
+INCLUDE "engine/battle/move_effects/hail.asm"
+
 INCLUDE "engine/battle/move_effects/belly_drum.asm"
 
 INCLUDE "engine/battle/move_effects/psych_up.asm"
@@ -6599,8 +6658,6 @@ BattleCommand_SkipSunCharge:
 	jp SkipToBattleCommand
 
 INCLUDE "engine/battle/move_effects/future_sight.asm"
-
-INCLUDE "engine/battle/move_effects/thunder.asm"
 
 CheckHiddenOpponent:
 ; BUG: Lock-On and Mind Reader don't always bypass Fly and Dig (see docs/bugs_and_glitches.md)

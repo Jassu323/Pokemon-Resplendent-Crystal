@@ -257,6 +257,7 @@
 	const ROCK_SMASH   ; f9
 	const WHIRLPOOL    ; fa
 	const BEAT_UP      ; fb
+	const HAIL         ; fc
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff
@@ -266,7 +267,7 @@ DEF CANNOT_MOVE EQU $ff
 	endc
 
 ; Battle animations use the same constants as the moves
-	const ANIM_SWEET_SCENT_2     ; fc
+	const ANIM_SWEET_SCENT_2     ; fd
 ; Animations with negative IDs will play even when animations are disabled
 	const_def -1, -1
 	const ANIM_HIT_CONFUSION     ;  -1 (ffff)
@@ -295,4 +296,5 @@ DEF CANNOT_MOVE EQU $ff
 	const ANIM_THROW_POKE_BALL   ; -16 (ffea)
 	const ANIM_IN_RAIN           ; -17 (ffe9)
 	const ANIM_IN_SUN            ; -18 (ffe8)
+	const ANIM_IN_HAIL           ; -19 (ffe7)
 DEF NUM_BATTLE_ANIMS EQU -const_value - 1

@@ -3,6 +3,7 @@
 	table_width 2, :-
 ; negative entries first, ordered from most-negative ID back toward -1
 ; (see the constants file for details)
+	dw BattleAnim_InHail
 	dw BattleAnim_InSun
 	dw BattleAnim_InRain
 	dw BattleAnim_ThrowPokeBall
@@ -282,6 +283,7 @@ BattleAnimations::
 	dw BattleAnim_RockSmash
 	dw BattleAnim_Whirlpool
 	dw BattleAnim_Tackle ; placeholder
+	dw BattleAnim_Hail
 	assert_table_length NUM_ATTACKS + 1
 	dw BattleAnim_SweetScent2
 
@@ -577,6 +579,15 @@ BattleAnim_InSandstorm:
 	anim_obj BATTLE_ANIM_OBJ_SANDSTORM, 56, 0, $2
 .loop
 	anim_sound 0, 1, SFX_MENU
+	anim_wait 8
+	anim_loop 6, .loop
+	anim_wait 8
+	anim_ret
+
+BattleAnim_InHail:
+	anim_call BattleAnimSub_HailWeather
+.loop
+	anim_sound 0, 1, SFX_SHINE
 	anim_wait 8
 	anim_loop 6, .loop
 	anim_wait 8
@@ -3697,6 +3708,15 @@ BattleAnim_Sandstorm:
 	anim_wait 8
 	anim_ret
 
+BattleAnim_Hail:
+	anim_call BattleAnimSub_HailWeather
+.loop
+	anim_sound 0, 1, SFX_SHINE
+	anim_wait 8
+	anim_loop 16, .loop
+	anim_wait 8
+	anim_ret
+
 BattleAnim_GigaDrain:
 	anim_2gfx BATTLE_ANIM_GFX_BUBBLE, BATTLE_ANIM_GFX_CHARGE
 	anim_call BattleAnim_TargetObj_1Row
@@ -4447,6 +4467,16 @@ BattleAnimSub_SunWeather:
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $2
 	anim_wait 8
 	anim_obj BATTLE_ANIM_OBJ_RAIN, 88, 0, $2
+	anim_ret
+
+BattleAnimSub_HailWeather:
+	anim_1gfx BATTLE_ANIM_GFX_ICE
+	anim_bgeffect BATTLE_BG_EFFECT_WHITE_HUES, $0, $8, $0
+	anim_obj BATTLE_ANIM_OBJ_HAIL, 88, 0, $0
+	anim_wait 8
+	anim_obj BATTLE_ANIM_OBJ_HAIL, 72, 0, $1
+	anim_wait 8
+	anim_obj BATTLE_ANIM_OBJ_HAIL, 56, 0, $2
 	anim_ret
 
 BattleAnim_MirrorCoat:

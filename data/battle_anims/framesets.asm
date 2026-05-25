@@ -186,6 +186,7 @@ BattleAnimFrameData:
 	dw .Frameset_PlayerHead1Row      ; BATTLE_ANIM_FRAMESET_PLAYERHEAD_1ROW
 	dw .Frameset_EnemyFeet2Row       ; BATTLE_ANIM_FRAMESET_ENEMYFEET_2ROW
 	dw .Frameset_PlayerHead2Row      ; BATTLE_ANIM_FRAMESET_PLAYERHEAD_2ROW
+	dw .Frameset_Hail                ; BATTLE_ANIM_FRAMESET_HAIL
 	assert_table_length NUM_BATTLE_ANIM_FRAMESETS
 
 .Frameset_HitBig:
@@ -1251,6 +1252,10 @@ BattleAnimFrameData:
 
 .Frameset_Sandstorm:
 	oamframe BATTLE_ANIM_OAMSET_D3, 32
+	oamend
+
+.Frameset_Hail:
+	oamframe BATTLE_ANIM_OAMSET_HAIL, 32
 	oamend
 
 .Frameset_EnemyFeet1Row:

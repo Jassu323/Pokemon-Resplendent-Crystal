@@ -163,9 +163,9 @@ ENDM
 	command futuresight             ; 9c
 	command doubleminimizedamage    ; 9d
 	command skipsuncharge           ; 9e
-	command thunderaccuracy         ; 9f
+	command unused9f                ; 9f
 	command teleport                ; a0
-	command unuseda1                ; a1
+	command starthail               ; a1
 	command ragedamage              ; a2
 	command resettypematchup        ; a3
 	command allstatsup              ; a4

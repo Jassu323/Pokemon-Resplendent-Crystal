@@ -163,9 +163,9 @@ BattleCommandPointers:
 	dw BattleCommand_FutureSight
 	dw BattleCommand_DoubleMinimizeDamage
 	dw BattleCommand_SkipSunCharge
-	dw BattleCommand_ThunderAccuracy
-	dw BattleCommand_Teleport
 	dw BattleCommand_Unused5D
+	dw BattleCommand_Teleport
+	dw BattleCommand_StartHail
 	dw BattleCommand_RageDamage
 	dw BattleCommand_ResetTypeMatchup
 	dw BattleCommand_AllStatsUp

@@ -38,7 +38,7 @@ MoveEffectsPointers:
 	dw PayDay
 	dw LightScreen
 	dw TriAttack
-	dw NormalHit
+	dw FreezeHit
 	dw OHKOHit
 	dw RazorWind
 	dw SuperFang
@@ -153,9 +153,9 @@ MoveEffectsPointers:
 	dw Gust
 	dw Stomp
 	dw Solarbeam
-	dw Thunder
+	dw ParalyzeHit
 	dw Teleport
-	dw NormalHit
+	dw Hail
 	dw Fly
 	dw DefenseCurl
 	assert_table_length NUM_MOVE_EFFECTS

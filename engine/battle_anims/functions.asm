@@ -4169,7 +4169,7 @@ BattleAnimFunc_RainSandstorm:
 	ret
 
 BattleAnimFunc_AnimObjB0: ; unused
-; Used by object BATTLE_ANIM_OBJ_B0, with itself is not used in any animation
+; Formerly used by the unused B0 animation object.
 ; Obj Param: Lower nybble is added to VAR1 while upper nybble is added to XCOORD
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
