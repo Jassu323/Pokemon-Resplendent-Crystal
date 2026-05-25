@@ -151,9 +151,9 @@ MACRO anim_clearobjs
 	db anim_clearobjs_command
 ENDM
 
-	const anim_beatup_command ; $e6
-MACRO anim_beatup
-	db anim_beatup_command
+	const anim_0xe6_command ; $e6
+MACRO anim_0xe6
+	db anim_0xe6_command
 ENDM
 
 	const anim_0xe7_command ; $e7

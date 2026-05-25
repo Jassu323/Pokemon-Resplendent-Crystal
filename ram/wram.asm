@@ -594,7 +594,7 @@ wEnemyFutureSightDamage:: dw
 wPlayerRageCounter:: db
 wEnemyRageCounter:: db
 
-wBeatUpHitAtLeastOnce:: db
+	ds 1 ; unused
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db
@@ -2068,7 +2068,6 @@ SECTION UNION "Miscellaneous WRAM 1", WRAMX
 ; miscellaneous
 wTempDayOfWeek::
 wPrevPartyLevel::
-wCurBeatUpPartyMon::
 wUnownPuzzleCornerTile::
 wKeepSevenBiasChance::
 wPokeFluteCuredSleep::

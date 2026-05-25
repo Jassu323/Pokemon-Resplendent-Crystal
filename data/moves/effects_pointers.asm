@@ -155,7 +155,7 @@ MoveEffectsPointers:
 	dw Solarbeam
 	dw Thunder
 	dw Teleport
-	dw BeatUp
+	dw NormalHit
 	dw Fly
 	dw DefenseCurl
 	assert_table_length NUM_MOVE_EFFECTS

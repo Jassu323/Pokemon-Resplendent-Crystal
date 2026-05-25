@@ -1262,5 +1262,4 @@ WhirlpoolDescription:
 	line "2-5 turns.@"
 
 BeatUpDescription:
-	db   "Party #mon join"
-	line "in the attack.@"
+	db   "Placeholder@"
