@@ -22,10 +22,308 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_WishStar
 	dw BattleAnimFunc_SeismicTossLight
 	dw BattleAnimFunc_MudShot
+	dw BattleAnimFunc_AromatherapyFlower
+	dw BattleAnimFunc_OverheatFlame
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
 	ret
+
+BattleAnimExt_LoadFrame:
+.next_frame
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	inc [hl]
+	call .GetPointer
+	ld a, [hli]
+	cp oamrestart_command
+	jr z, .restart
+	cp oamend_command
+	jr z, .repeat_last
+	cp oamdelete_command
+	jr z, .store_delete
+	cp oamwait_command
+	jr z, .store_wait
+
+	ld e, a
+	ld a, [hl]
+	ld d, a
+	and ~(OAM_YFLIP << 1 | OAM_XFLIP << 1)
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], a
+	ld a, d
+	and OAM_YFLIP << 1 | OAM_XFLIP << 1
+	srl a
+	set BATTLEANIMSTRUCT_EXT_OAMFLAGS_EXT_F, a
+	jr .store_frame
+
+.store_wait
+	ld e, a
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], a
+	xor a
+	jr .store_frame
+
+.store_delete
+	ld e, a
+	xor a
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], a
+
+.store_frame
+	ld hl, BATTLEANIMSTRUCT_EXT_OAMFLAGS
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_EXT_OAMSET
+	add hl, bc
+	ld [hl], e
+	ret
+
+.repeat_last
+	xor a
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	dec [hl]
+	dec [hl]
+	jr .next_frame
+
+.restart
+	xor a
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], a
+	dec a
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	ld [hl], a
+	jr .next_frame
+
+.GetPointer:
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld a, [hl]
+	sub FIRST_BATTLE_ANIM_EXT_FRAMESET
+	ld e, a
+	ld d, 0
+	ld hl, BattleAnimExtFrameData
+	add hl, de
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	ld l, [hl]
+	ld h, 0
+	add hl, hl
+	add hl, de
+	ret
+
+BattleAnimExtFrameData:
+; entries correspond to BATTLE_ANIM_FRAMESET_* constants starting at FIRST_BATTLE_ANIM_EXT_FRAMESET
+	table_width 2
+	dw .Frameset_ThunderBolt         ; BATTLE_ANIM_FRAMESET_THUNDER_BOLT
+	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
+
+.Frameset_ThunderBolt:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_1,  1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_2,  1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_3,  1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1,  2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_2,  5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_3,  8
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_4,  5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5,  2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_3,  1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_2,  1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_1,  1
+	oamdelete
+
+BattleAnimExtOAMUpdate:
+	ld l, e
+	ld h, 0
+	ld de, BattleAnimExtOAMData
+	add hl, hl
+	add hl, hl
+	add hl, de
+	ld a, [wBattleAnimTempTileID]
+	add [hl] ; tile offset
+	ld [wBattleAnimTempTileID], a
+	inc hl
+	ld a, [hli] ; oam data length
+	ld c, a
+	ld a, [hli] ; oam data pointer
+	ld h, [hl]
+	ld l, a
+	ld a, [wBattleAnimOAMPointerLo]
+	ld e, a
+	ld d, HIGH(wShadowOAM)
+
+.loop
+	; Y Coord
+	ld a, [wBattleAnimTempYCoord]
+	ld b, a
+	ld a, [wBattleAnimTempYOffset]
+	add b
+	ld b, a
+	push hl
+	ld a, [hl]
+	ld hl, wBattleAnimTempOAMFlags
+	bit B_OAM_YFLIP, [hl]
+	jr z, .no_yflip
+	add $8
+	xor $ff
+	inc a
+.no_yflip
+	pop hl
+	add b
+	ld [de], a
+
+	; X Coord
+	inc hl
+	inc de
+	ld a, [wBattleAnimTempXCoord]
+	ld b, a
+	ld a, [wBattleAnimTempXOffset]
+	add b
+	ld b, a
+	push hl
+	ld a, [hl]
+	ld hl, wBattleAnimTempOAMFlags
+	bit B_OAM_XFLIP, [hl]
+	jr z, .no_xflip
+	add $8
+	xor $ff
+	inc a
+.no_xflip
+	pop hl
+	add b
+	ld [de], a
+
+	; Tile ID
+	inc hl
+	inc de
+	ld a, [wBattleAnimTempTileID]
+	add BATTLEANIM_BASE_TILE
+	add [hl]
+	ld [de], a
+
+	; Attributes
+	inc hl
+	inc de
+	ld a, [wBattleAnimTempOAMFlags]
+	ld b, a
+	ld a, [hl]
+	xor b
+	and OAM_PRIO | OAM_YFLIP | OAM_XFLIP
+	ld b, a
+	ld a, [hl]
+	and OAM_PAL1
+	or b
+	ld b, a
+	ld a, [wBattleAnimTempPalette]
+	and OAM_PALETTE | OAM_BANK1
+	or b
+	ld [de], a
+
+	inc hl
+	inc de
+	ld a, e
+	ld [wBattleAnimOAMPointerLo], a
+	cp LOW(wShadowOAMEnd)
+	jr nc, .exit_set_carry
+	dec c
+	jr nz, .loop
+	and a
+	ret
+
+.exit_set_carry
+	scf
+	ret
+
+BattleAnimExtOAMData:
+; entries correspond to BATTLE_ANIM_EXT_OAMSET_* constants
+	table_width 4
+	battleanimoam $00,  7, .OAMData_ThunderBolt1 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1
+	battleanimoam $10, 16, .OAMData_ThunderBolt2 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_2
+	battleanimoam $20, 14, .OAMData_ThunderBolt3 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_3
+	battleanimoam $30,  8, .OAMData_ThunderBolt4 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_4
+	battleanimoam $40,  6, .OAMData_ThunderBolt5 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5
+	battleanimoam $00,  1, .OAMData_ThunderBolt1 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_1
+	battleanimoam $00,  3, .OAMData_ThunderBolt1 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_2
+	battleanimoam $00,  5, .OAMData_ThunderBolt1 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_1_ROW_3
+	battleanimoam $40,  5, .OAMData_ThunderBolt5 + 1 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_3
+	battleanimoam $40,  4, .OAMData_ThunderBolt5 + 2 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_2
+	battleanimoam $40,  2, .OAMData_ThunderBolt5 + 4 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDER_BOLT_5_LOWER_1
+	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
+
+.OAMData_ThunderBolt1:
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+
+.OAMData_ThunderBolt2:
+	dbsprite  -2,  -2, 0, 0, $00, $0
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite   1,  -2, 0, 0, $03, $0
+	dbsprite  -2,  -1, 0, 0, $04, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   1,  -1, 0, 0, $07, $0
+	dbsprite  -2,   0, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+	dbsprite  -2,   1, 0, 0, $0c, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+	dbsprite   1,   1, 0, 0, $0f, $0
+
+.OAMData_ThunderBolt3:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -2,  -1, 0, 0, $04, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   1,  -1, 0, 0, $07, $0
+	dbsprite  -2,   0, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+	dbsprite  -2,   1, 0, 0, $0c, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+	dbsprite   1,   1, 0, 0, $0f, $0
+
+.OAMData_ThunderBolt4:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+
+.OAMData_ThunderBolt5:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
 
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
@@ -461,6 +759,127 @@ BattleAnimFunc_MudShot:
 	ld [hl], -1
 .splash
 	ret
+
+BattleAnimFunc_AromatherapyFlower:
+; Object curves down into a horizontal drift.
+; Obj Param: Upper nybble = x speed. Lower nybble = curve height.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $48
+	jr nc, .done
+	and a
+	jr nz, .got_frame
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_frame
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, $b4
+	sub [hl]
+	ld [hl], a
+.got_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f
+	ld d, a
+	ld a, e
+	cp $10
+	jr c, .curve
+	xor a
+	jr .set_y
+.curve
+	push de
+	call BattleAnimExt_Sine
+	ld h, a
+	pop de
+	ld a, h
+	sub d
+.set_y
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	swap a
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [hl]
+	jr nz, .move_left
+	add e
+	jr .store_x
+.move_left
+	sub e
+.store_x
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_OverheatFlame:
+; Object shoots outward in a fixed fan and disappears after $1c frames.
+; Obj Param: Lower nybble selects one of nine X/Y vectors.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $1c
+	jr nc, .done
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f
+	cp $9
+	jr c, .got_vector
+	ld a, $8
+.got_vector
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Vectors
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.Vectors:
+	db 2, -3
+	db 3, -3
+	db 3, -2
+	db 4, -2
+	db 4, -1
+	db 5, -1
+	db 5, -2
+	db 6, -1
+	db 6,  0
 
 BattleAnimExt_Deinit:
 	ld hl, BATTLEANIMSTRUCT_INDEX

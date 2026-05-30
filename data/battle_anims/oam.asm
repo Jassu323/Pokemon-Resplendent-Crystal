@@ -239,17 +239,6 @@ BattleAnimOAMData:
 	battleanimoam $00,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1
 	battleanimoam $04,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2
 	battleanimoam $08,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3
-	battleanimoam $00,  7, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1
-	battleanimoam $10, 16, .OAMData_1c ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_2
-	battleanimoam $20, 14, .OAMData_ThunderBolt3 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_3
-	battleanimoam $30,  8, .OAMData_ThunderBolt4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_4
-	battleanimoam $40,  6, .OAMData_ThunderBolt5 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5
-	battleanimoam $00,  1, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_1
-	battleanimoam $00,  3, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_2
-	battleanimoam $00,  5, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_3
-	battleanimoam $40,  5, .OAMData_ThunderBolt5 + 1 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_3
-	battleanimoam $40,  4, .OAMData_ThunderBolt5 + 2 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_2
-	battleanimoam $40,  2, .OAMData_ThunderBolt5 + 4 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_1
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_11:
@@ -1063,49 +1052,6 @@ BattleAnimOAMData:
 	dbsprite   0,  -1, 0, 0, $01, $0
 	dbsprite  -1,   0, 0, 0, $02, $0
 	dbsprite   0,   0, 0, 0, $03, $0
-
-.OAMData_ThunderBolt1:
-	dbsprite   0,  -2, 0, 0, $02, $0
-	dbsprite  -1,  -1, 0, 0, $05, $0
-	dbsprite   0,  -1, 0, 0, $06, $0
-	dbsprite  -1,   0, 0, 0, $09, $0
-	dbsprite   0,   0, 0, 0, $0a, $0
-	dbsprite  -1,   1, 0, 0, $0d, $0
-	dbsprite   0,   1, 0, 0, $0e, $0
-
-.OAMData_ThunderBolt3:
-	dbsprite  -1,  -2, 0, 0, $01, $0
-	dbsprite   0,  -2, 0, 0, $02, $0
-	dbsprite  -2,  -1, 0, 0, $04, $0
-	dbsprite  -1,  -1, 0, 0, $05, $0
-	dbsprite   0,  -1, 0, 0, $06, $0
-	dbsprite   1,  -1, 0, 0, $07, $0
-	dbsprite  -2,   0, 0, 0, $08, $0
-	dbsprite  -1,   0, 0, 0, $09, $0
-	dbsprite   0,   0, 0, 0, $0a, $0
-	dbsprite   1,   0, 0, 0, $0b, $0
-	dbsprite  -2,   1, 0, 0, $0c, $0
-	dbsprite  -1,   1, 0, 0, $0d, $0
-	dbsprite   0,   1, 0, 0, $0e, $0
-	dbsprite   1,   1, 0, 0, $0f, $0
-
-.OAMData_ThunderBolt4:
-	dbsprite  -1,  -2, 0, 0, $01, $0
-	dbsprite   0,  -2, 0, 0, $02, $0
-	dbsprite  -1,  -1, 0, 0, $05, $0
-	dbsprite   0,  -1, 0, 0, $06, $0
-	dbsprite  -1,   0, 0, 0, $09, $0
-	dbsprite   0,   0, 0, 0, $0a, $0
-	dbsprite  -1,   1, 0, 0, $0d, $0
-	dbsprite   0,   1, 0, 0, $0e, $0
-
-.OAMData_ThunderBolt5:
-	dbsprite  -1,  -2, 0, 0, $01, $0
-	dbsprite  -1,  -1, 0, 0, $05, $0
-	dbsprite  -1,   0, 0, 0, $09, $0
-	dbsprite   0,   0, 0, 0, $0a, $0
-	dbsprite  -1,   1, 0, 0, $0d, $0
-	dbsprite   0,   1, 0, 0, $0e, $0
 
 .OAMData_a4:
 	dbsprite  -2,  -2, 4, 4, $00, $0

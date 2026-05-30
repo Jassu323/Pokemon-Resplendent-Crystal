@@ -18,12 +18,16 @@ GetBattleAnimFrame:
 	and a
 	jr z, .next_frame
 	dec [hl]
+	call .IsExtFrameset
+	jr nc, .return_ext_frame
 	call .GetPointer
 	ld a, [hli]
 	push af
 	jr .okay
 
 .next_frame
+	call .IsExtFrameset
+	jr nc, .next_ext_frame
 	ld hl, BATTLEANIMSTRUCT_FRAME
 	add hl, bc
 	inc [hl]
@@ -48,6 +52,19 @@ GetBattleAnimFrame:
 	srl a
 	ld [wBattleAnimTempFrameOAMFlags], a
 	pop af
+	ret
+
+.next_ext_frame
+	farcall BattleAnimExt_LoadFrame
+
+.return_ext_frame
+	ld hl, BATTLEANIMSTRUCT_EXT_OAMFLAGS
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleAnimTempFrameOAMFlags], a
+	ld hl, BATTLEANIMSTRUCT_EXT_OAMSET
+	add hl, bc
+	ld a, [hl]
 	ret
 
 .repeat_last
@@ -91,6 +108,13 @@ GetBattleAnimFrame:
 	ld h, 0
 	add hl, hl
 	add hl, de
+	ret
+
+.IsExtFrameset:
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld a, [hl]
+	cp FIRST_BATTLE_ANIM_EXT_FRAMESET
 	ret
 
 GetBattleAnimOAMPointer:

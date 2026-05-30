@@ -195,8 +195,7 @@ BattleAnimFrameData:
 	dw .Frameset_ElectricityEffect   ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT
 	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
 	dw .Frameset_ElectricityEffectYFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_YFLIP
-	dw .Frameset_ThunderBolt         ; BATTLE_ANIM_FRAMESET_THUNDER_BOLT
-	assert_table_length NUM_BATTLE_ANIM_FRAMESETS
+	assert_table_length FIRST_BATTLE_ANIM_EXT_FRAMESET
 
 .Frameset_HitBig:
 	oamframe BATTLE_ANIM_OAMSET_00,  6
@@ -1306,20 +1305,6 @@ BattleAnimFrameData:
 
 .Frameset_ElectricityEffectYFlip:
 	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3,  5, B_OAM_YFLIP
-	oamdelete
-
-.Frameset_ThunderBolt:
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_1,  1
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_2,  1
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_3,  1
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_2,  5
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_3,  8
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_4,  5
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_3,  1
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_2,  1
-	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_1,  1
 	oamdelete
 
 .Frameset_EnemyFeet1Row:

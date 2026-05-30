@@ -2223,7 +2223,7 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
-	anim_1gfx BATTLE_ANIM_GFX_HIT
+ 	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4

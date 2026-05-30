@@ -94,6 +94,11 @@ BattleAnimOAMUpdate:
 	pop af
 
 	push bc
+	ld e, a
+	ld a, [wBattleAnimTempFrameOAMFlags]
+	bit BATTLEANIMSTRUCT_EXT_OAMFLAGS_EXT_F, a
+	jr nz, .extended_oam
+	ld a, e
 	call GetBattleAnimOAMPointer
 	ld a, [wBattleAnimTempTileID]
 	add [hl] ; tile offset
@@ -107,6 +112,13 @@ BattleAnimOAMUpdate:
 	ld a, [wBattleAnimOAMPointerLo]
 	ld e, a
 	ld d, HIGH(wShadowOAM)
+	jr .loop
+
+.extended_oam
+	farcall BattleAnimExtOAMUpdate
+	pop bc
+	ret c
+	jr .done
 
 .loop
 	; Y Coord
