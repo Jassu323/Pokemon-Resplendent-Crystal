@@ -156,9 +156,12 @@ MACRO anim_0xe6
 	db anim_0xe6_command
 ENDM
 
-	const anim_0xe7_command ; $e7
+	const anim_clearhuds_command ; $e7
+MACRO anim_clearhuds
+	db anim_clearhuds_command
+ENDM
 MACRO anim_0xe7
-	db anim_0xe7_command
+	db anim_clearhuds_command
 ENDM
 
 	const anim_updateactorpic_command ; $e8
@@ -236,14 +239,24 @@ MACRO anim_keepsprites
 	db anim_keepsprites_command
 ENDM
 
-	const anim_0xf5_command ; $f5
-MACRO anim_0xf5
-	db anim_0xf5_command
+	const anim_indigofirepal_command ; $f5
+MACRO anim_indigofirepal
+	db anim_indigofirepal_command
 ENDM
 
-	const anim_0xf6_command ; $f6
+MACRO anim_0xf5
+	db anim_indigofirepal_command
+ENDM
+
+	const anim_thunderpal_command ; $f6
+MACRO anim_thunderpal
+	db anim_thunderpal_command
+	db \1
+ENDM
+
 MACRO anim_0xf6
-	db anim_0xf6_command
+	db anim_thunderpal_command
+	db \1
 ENDM
 
 	const anim_0xf7_command ; $f7

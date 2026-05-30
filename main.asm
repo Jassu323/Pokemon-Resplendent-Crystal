@@ -37,6 +37,7 @@ INCLUDE "engine/pokemon/move_mon.asm"
 INCLUDE "engine/pokemon/bills_pc_top.asm"
 INCLUDE "engine/pokemon/breedmon_level_growth.asm"
 INCLUDE "engine/events/bug_contest/caught_mon.asm"
+INCLUDE "engine/events/bug_contest/display_stats.asm"
 INCLUDE "engine/items/item_effects.asm"
 INCLUDE "engine/battle_anims/pokeball_wobble.asm"
 INCLUDE "engine/pokemon/knows_move.asm"
@@ -158,7 +159,6 @@ INCLUDE "engine/battle/read_trainer_party.asm"
 SECTION "Battle Core", ROMX
 
 INCLUDE "engine/battle/core.asm"
-INCLUDE "data/battle/effect_command_pointers.asm"
 
 
 SECTION "bank10", ROMX
@@ -426,7 +426,6 @@ INCLUDE "data/moves/animations.asm"
 
 SECTION "Move Animations", ROMX
 
-INCLUDE "engine/events/bug_contest/display_stats.asm"
 INCLUDE "engine/battle_anims/anim_commands.asm"
 INCLUDE "engine/battle_anims/core.asm"
 INCLUDE "engine/battle_anims/functions.asm"
@@ -503,6 +502,11 @@ INCLUDE "engine/events/mom_phone.asm"
 SECTION "Apricorn Box", ROMX
 
 INCLUDE "engine/items/apricorn_box.asm"
+
+
+SECTION "Battle Animation Extensions", ROMX
+
+INCLUDE "engine/battle_anims/extensions.asm"
 
 
 SECTION "TMHM Case", ROMX
@@ -700,6 +704,11 @@ INCLUDE "data/battle_tower/unknown.asm"
 SECTION "Mobile News Data", ROMX
 
 INCLUDE "mobile/news/news.asm"
+
+
+SECTION "Battle Command Pointers", ROMX
+
+INCLUDE "data/battle/effect_command_pointers.asm"
 
 
 SECTION "Crystal Events", ROMX

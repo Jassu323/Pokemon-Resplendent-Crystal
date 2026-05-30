@@ -50,7 +50,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         65, NORMAL,        100, 25,   0      ;HORN_ATTACK
 	move EFFECT_MULTI_HIT,          15, NORMAL,         85, 20,   0      ;FURY_ATTACK
 	move EFFECT_OHKO,                1, NORMAL,         30,  5,   0      ;HORN_DRILL
-	move EFFECT_NORMAL_HIT,         35, NORMAL,         95, 35,   0      ;TACKLE
+	move EFFECT_NORMAL_HIT,         35, NORMAL,        100, 35,   0      ;TACKLE
 	move EFFECT_PARALYZE_HIT,       85, NORMAL,        100, 15,  30      ;BODY_SLAM
 	move EFFECT_TRAP_TARGET,        15, NORMAL,         85, 20,   0      ;WRAP
 	move EFFECT_RECOIL_HIT,         90, NORMAL,         85, 20,   0      ;TAKE_DOWN
@@ -269,5 +269,64 @@ Moves1:
 	move EFFECT_DEFENSE_DOWN_HIT,   20, FIGHTING,      100, 15,  50      ;ROCK_SMASH
 	move EFFECT_TRAP_TARGET,        15, WATER,          70, 15,   0      ;WHIRLPOOL
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;BEAT_UP
-	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL
+	move EFFECT_NORMAL_HIT,         40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
+	move EFFECT_NORMAL_HIT,        100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
+	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
+	move EFFECT_NORMAL_HIT,          0, FIRE,           75, 15,   0      ;WILL_O_WISP #261
+	move EFFECT_NORMAL_HIT,        150, FIGHTING,      100, 20,   0      ;FOCUS_PUNCH #264
+	move EFFECT_NORMAL_HIT,          0, DARK,          100, 20,   0      ;TAUNT #269
+	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;WISH #273
+	move EFFECT_NORMAL_HIT,          0, GRASS,         100, 20,   0      ;INGRAIN #275
+	move EFFECT_NORMAL_HIT,        120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
+	move EFFECT_NORMAL_HIT,         75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
+	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;YAWN #281
+	move EFFECT_NORMAL_HIT,         15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
+	move EFFECT_NORMAL_HIT,         30, ICE,            90, 20,   0      ;ICE_BALL #301
+	move EFFECT_NORMAL_HIT,         50, POISON,        100, 15,  30      ;POISON_FANG #305
+	move EFFECT_NORMAL_HIT,         75, NORMAL,         95, 10,  50      ;CRUSH_CLAW #306
+	move EFFECT_NORMAL_HIT,        150, FIRE,           90,  5,   0      ;BLAST_BURN #307
+	move EFFECT_NORMAL_HIT,        150, WATER,          90,  5,   0      ;HYDRO_CANNON #308
+	move EFFECT_NORMAL_HIT,          0, GRASS,         100,  5,   0      ;AROMATHERAPY #312
+	move EFFECT_NORMAL_HIT,         55, FLYING,         95, 25,   0      ;AIR_CUTTER #314
+	move EFFECT_NORMAL_HIT,        140, FIRE,           90,  5, 100      ;OVERHEAT #315
+	move EFFECT_NORMAL_HIT,         50, ROCK,           80, 10, 100      ;ROCK_TOMB #317
+	move EFFECT_NORMAL_HIT,         60, BUG,           100,  5,  10      ;SILVER_WIND #318
+	move EFFECT_NORMAL_HIT,         80, PSYCHIC_TYPE,  100, 30,  10      ;EXTRASENSORY #326
+	move EFFECT_NORMAL_HIT,         85, FIGHTING,       90, 15,   0      ;SKY_UPPERCUT #327
+	move EFFECT_NORMAL_HIT,         15, GROUND,         70, 15, 100      ;SAND_TOMB #328
+	move EFFECT_NORMAL_HIT,         10, GRASS,         100, 30,   0      ;BULLET_SEED #331
+	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;AERIAL_ACE #332
+	move EFFECT_NORMAL_HIT,         10, ICE,           100, 30,   0      ;ICICLE_SPEAR #333
+	move EFFECT_NORMAL_HIT,          0, NORMAL,        100,  5,   0      ;BLOCK #335
+	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 40,   0      ;HOWL #336
+	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
+	move EFFECT_NORMAL_HIT,        150, GRASS,          90,  5,   0      ;FRENZY_PLANT #338
+	move EFFECT_NORMAL_HIT,          0, FIGHTING,      100, 20,   0      ;BULK_UP #339
+	move EFFECT_NORMAL_HIT,         55, GROUND,         95, 15, 100      ;MUD_SHOT #341
+	move EFFECT_NORMAL_HIT,         50, POISON,        100, 25,  10      ;POISON_TAIL #342
+	move EFFECT_NORMAL_HIT,         60, GRASS,         100, 20,   0      ;MAGICAL_LEAF #345
+	move EFFECT_NORMAL_HIT,          0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
+	move EFFECT_NORMAL_HIT,          0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349
+	move EFFECT_NORMAL_HIT,         25, ROCK,           80, 10,   0      ;ROCK_BLAST #350
+	move EFFECT_NORMAL_HIT,         60, ELECTRIC,      100, 20,   0      ;SHOCK_WAVE #351
+	move EFFECT_NORMAL_HIT,         60, WATER,         100, 20,  20      ;WATER_PULSE #352
+	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;PLUCK #365
+	move EFFECT_NORMAL_HIT,         80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
+	move EFFECT_NORMAL_HIT,         60, FIGHTING,      100, 10,  30      ;FORCE_PALM #395
+	move EFFECT_NORMAL_HIT,         80, POISON,        100, 20,  30      ;POISON_JAB #398
+	move EFFECT_NORMAL_HIT,         70, DARK,          100, 15,   0      ;NIGHT_SLASH #400
+	move EFFECT_NORMAL_HIT,         80, BUG,           100, 15,   0      ;X_SCISSOR #404
+	move EFFECT_NORMAL_HIT,         90, BUG,           100, 10,  10      ;BUG_BUZZ #405
+	move EFFECT_NORMAL_HIT,         60, FIGHTING,      100,  5,   0      ;DRAIN_PUNCH #409
+	move EFFECT_NORMAL_HIT,         80, GRASS,         100, 10,  10      ;ENERGY_BALL #412
+	move EFFECT_NORMAL_HIT,         40, STEEL,         100, 30,   0      ;BULLET_PUNCH #418
+	move EFFECT_NORMAL_HIT,         65, ELECTRIC,       95, 15,  10      ;THUNDER_FANG #422
+	move EFFECT_NORMAL_HIT,         65, ICE,            95, 15,  10      ;ICE_FANG #423
+	move EFFECT_NORMAL_HIT,         65, FIRE,           95, 15,  10      ;FIRE_FANG #424
+	move EFFECT_NORMAL_HIT,         40, GHOST,         100, 30,   0      ;SHADOW_SNEAK #425
+	move EFFECT_NORMAL_HIT,         65, GROUND,         85, 10,  30      ;MUD_BOMB #426
+	move EFFECT_NORMAL_HIT,         80, FIRE,          100, 15,  30      ;LAVA_PLUME #436
+	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
+	move EFFECT_NORMAL_HIT,         60, BUG,           100, 20,   0      ;BUG_BITE #450
+	move EFFECT_NORMAL_HIT,         60, GHOST,         100,  5,  10      ;OMINOUS_WIND #466
 .IndirectEnd::

@@ -257,7 +257,66 @@
 	const ROCK_SMASH   ; f9
 	const WHIRLPOOL    ; fa
 	const BEAT_UP      ; fb
-	const HAIL         ; fc
+	const FAKE_OUT     ; fc
+	const HEAT_WAVE    ; fd
+	const HAIL         ; fe
+	const WILL_O_WISP  ; ff
+	const FOCUS_PUNCH  ; 100
+	const TAUNT        ; 101
+	const WISH         ; 102
+	const INGRAIN      ; 103
+	const SUPERPOWER   ; 104
+	const BRICK_BREAK  ; 105
+	const YAWN         ; 106
+	const ARM_THRUST   ; 107
+	const ICE_BALL     ; 108
+	const POISON_FANG  ; 109
+	const CRUSH_CLAW   ; 10a
+	const BLAST_BURN   ; 10b
+	const HYDRO_CANNON ; 10c
+	const AROMATHERAPY ; 10d
+	const AIR_CUTTER   ; 10e
+	const OVERHEAT     ; 10f
+	const ROCK_TOMB    ; 110
+	const SILVER_WIND  ; 111
+	const EXTRASENSORY ; 112
+	const SKY_UPPERCUT ; 113
+	const SAND_TOMB    ; 114
+	const BULLET_SEED  ; 115
+	const AERIAL_ACE   ; 116
+	const ICICLE_SPEAR ; 117
+	const BLOCK        ; 118
+	const HOWL         ; 119
+	const DRAGON_CLAW  ; 11a
+	const FRENZY_PLANT ; 11b
+	const BULK_UP      ; 11c
+	const MUD_SHOT     ; 11d
+	const POISON_TAIL  ; 11e
+	const MAGICAL_LEAF ; 11f
+	const CALM_MIND    ; 120
+	const DRAGON_DANCE ; 121
+	const ROCK_BLAST   ; 122
+	const SHOCK_WAVE   ; 123
+	const WATER_PULSE  ; 124
+	const PLUCK        ; 125
+	const SUCKER_PUNCH ; 126
+	const FORCE_PALM   ; 127
+	const POISON_JAB   ; 128
+	const NIGHT_SLASH  ; 129
+	const X_SCISSOR    ; 12a
+	const BUG_BUZZ     ; 12b
+	const DRAIN_PUNCH  ; 12c
+	const ENERGY_BALL  ; 12d
+	const BULLET_PUNCH ; 12e
+	const THUNDER_FANG ; 12f
+	const ICE_FANG     ; 130
+	const FIRE_FANG    ; 131
+	const SHADOW_SNEAK ; 132
+	const MUD_BOMB     ; 133
+	const LAVA_PLUME   ; 134
+	const STONE_EDGE   ; 135
+	const BUG_BITE     ; 136
+	const OMINOUS_WIND ; 137
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff

@@ -1121,6 +1121,7 @@ GeodudeEvosAttacks:
 	dbbw EVOLVE_LEVEL, 25, GRAVELER
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
+	dbw 4, WISH
 	dbw 6, DEFENSE_CURL
 	dbw 11, ROCK_THROW
 	dbw 16, MAGNITUDE

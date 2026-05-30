@@ -187,6 +187,15 @@ BattleAnimFrameData:
 	dw .Frameset_EnemyFeet2Row       ; BATTLE_ANIM_FRAMESET_ENEMYFEET_2ROW
 	dw .Frameset_PlayerHead2Row      ; BATTLE_ANIM_FRAMESET_PLAYERHEAD_2ROW
 	dw .Frameset_Hail                ; BATTLE_ANIM_FRAMESET_HAIL
+	dw .Frameset_EnergyBall          ; BATTLE_ANIM_FRAMESET_ENERGY_BALL
+	dw .Frameset_SeismicTossLight    ; BATTLE_ANIM_FRAMESET_SEISMIC_TOSS_LIGHT
+	dw .Frameset_MudBall             ; BATTLE_ANIM_FRAMESET_MUD_BALL
+	dw .Frameset_MudSplash           ; BATTLE_ANIM_FRAMESET_MUD_SPLASH
+	dw .Frameset_ThundershockStrike  ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
+	dw .Frameset_ElectricityEffect   ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT
+	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
+	dw .Frameset_ElectricityEffectYFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_YFLIP
+	dw .Frameset_ThunderBolt         ; BATTLE_ANIM_FRAMESET_THUNDER_BOLT
 	assert_table_length NUM_BATTLE_ANIM_FRAMESETS
 
 .Frameset_HitBig:
@@ -1257,6 +1266,61 @@ BattleAnimFrameData:
 .Frameset_Hail:
 	oamframe BATTLE_ANIM_OAMSET_HAIL, 32
 	oamend
+
+.Frameset_EnergyBall:
+	oamframe BATTLE_ANIM_OAMSET_1E,  8
+	oamend
+
+.Frameset_SeismicTossLight:
+	oamframe BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT,  8
+	oamend
+
+.Frameset_MudBall:
+	oamframe BATTLE_ANIM_OAMSET_14,  8
+	oamend
+
+.Frameset_MudSplash:
+	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_2,  8
+	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_1,  8
+	oamdelete
+
+.Frameset_ThundershockStrike:
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_1,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_2,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_3,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_4,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_5,  7
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1,  2
+	oamdelete
+
+.Frameset_ElectricityEffect:
+	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1,  5
+	oamdelete
+
+.Frameset_ElectricityEffectXFlip:
+	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2,  5, B_OAM_XFLIP
+	oamdelete
+
+.Frameset_ElectricityEffectYFlip:
+	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3,  5, B_OAM_YFLIP
+	oamdelete
+
+.Frameset_ThunderBolt:
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_1,  1
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_2,  1
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_3,  1
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_1,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_2,  5
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_3,  8
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_4,  5
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5,  2
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_3,  1
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_2,  1
+	oamframe BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_1,  1
+	oamdelete
 
 .Frameset_EnemyFeet1Row:
 	oamframe BATTLE_ANIM_OAMSET_D4,  8

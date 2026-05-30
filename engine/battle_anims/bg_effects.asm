@@ -134,6 +134,8 @@ BattleBGEffects:
 	dw BattleBGEffect_VibrateMon
 	dw BattleBGEffect_WobblePlayer
 	dw BattleBGEffect_WobbleScreen
+	dw BattleBGEffect_CycleGreenOBPal
+	dw BattleBGEffect_CycleIndigoFireOBPal
 	assert_table_length NUM_BATTLE_BG_EFFECTS
 
 BattleBGEffect_End:
@@ -327,6 +329,152 @@ BattleBGEffect_CycleMidOBPalsGrayAndYellow:
 	dc 3, 3, 0, 0
 	dc 3, 0, 3, 0
 	db -2
+
+BattleBGEffect_CycleGreenOBPal:
+	call BattleBGEffects_AnonJumptable
+.anon_dw
+	dw .init
+	dw .cycle
+	dw .finish
+
+.init
+	call BattleBGEffects_IncAnonJumptableIndex
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr nz, .got_speed
+	ld a, [hl]
+	swap a
+	and $f
+	jr nz, .got_speed
+	ld a, $4
+.got_speed
+	ld e, a
+	swap a
+	or e
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld [hl], $0
+	ret
+
+.cycle
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr z, .apply_pal
+	dec [hl]
+	ret
+
+.apply_pal
+	ld a, [hl]
+	swap a
+	or [hl]
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	ld e, a
+	inc a
+	cp 7
+	jr c, .store_step
+	xor a
+.store_step
+	ld [hl], a
+	ld a, e
+	add a
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .RainbowPals
+	add hl, de
+	call BattleBGEffect_LoadGreenRainbowOBPal
+	ret
+
+.finish
+	ld a, %11100100
+	call BattleBGEffect_LoadGreenOBPal
+	call EndBattleBGEffect
+	ret
+
+.RainbowPals:
+	RGB 31, 19, 24
+	RGB 30, 10, 06
+	RGB 31, 22, 05
+	RGB 31, 12, 00
+	RGB 31, 31, 07
+	RGB 31, 16, 01
+	RGB 12, 25, 01
+	RGB 05, 14, 00
+	RGB 08, 12, 31
+	RGB 01, 04, 31
+	RGB 12, 08, 31
+	RGB 05, 03, 20
+	RGB 24, 09, 31
+	RGB 14, 03, 22
+
+BattleBGEffect_LoadGreenRainbowOBPal:
+	ld a, %11100100
+	ld [wOBP0], a
+	ldh [rOBP0], a
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN color 1
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hli]
+	ld [de], a
+	pop af
+	ldh [rWBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+BattleBGEffect_LoadGreenOBPal:
+	ld [wOBP0], a
+	ldh [rOBP0], a
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld a, [wOBP0]
+	push bc
+	ld hl, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	ld de, wOBPals1 palette PAL_BATTLE_OB_GREEN
+	ld b, a
+	ld c, 1
+	call CopyPals
+	pop bc
+	pop af
+	ldh [rWBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+BattleBGEffect_CycleIndigoFireOBPal:
+	farcall BattleAnimExt_CycleIndigoFireOBPal
+	ret
 
 BattleBGEffect_CycleBGPals_Inverted:
 	ld de, .Pals

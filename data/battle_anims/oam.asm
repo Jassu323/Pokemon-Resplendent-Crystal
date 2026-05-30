@@ -224,6 +224,32 @@ BattleAnimOAMData:
 	battleanimoam $00, 14, .OAMData_d6 ; BATTLE_ANIM_OAMSET_D6
 	battleanimoam $00, 12, .OAMData_d7 ; BATTLE_ANIM_OAMSET_D7
 	battleanimoam $00, 13, .OAMData_Hail ; BATTLE_ANIM_OAMSET_HAIL
+	battleanimoam $05,  6, .OAMData_SeismicTossLight ; BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT
+	battleanimoam $01,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_1
+	battleanimoam $03,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_2
+	battleanimoam $00,  2, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_1
+	battleanimoam $00,  4, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_2
+	battleanimoam $00,  6, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_3
+	battleanimoam $00,  8, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_4
+	battleanimoam $00, 10, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_5
+	battleanimoam $00,  8, .OAMData_ThundershockStrike + 2 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4
+	battleanimoam $00,  6, .OAMData_ThundershockStrike + 4 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3
+	battleanimoam $00,  4, .OAMData_ThundershockStrike + 6 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2
+	battleanimoam $00,  2, .OAMData_ThundershockStrike + 8 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1
+	battleanimoam $00,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1
+	battleanimoam $04,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2
+	battleanimoam $08,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3
+	battleanimoam $00,  7, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1
+	battleanimoam $10, 16, .OAMData_1c ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_2
+	battleanimoam $20, 14, .OAMData_ThunderBolt3 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_3
+	battleanimoam $30,  8, .OAMData_ThunderBolt4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_4
+	battleanimoam $40,  6, .OAMData_ThunderBolt5 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5
+	battleanimoam $00,  1, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_1
+	battleanimoam $00,  3, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_2
+	battleanimoam $00,  5, .OAMData_ThunderBolt1 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_1_ROW_3
+	battleanimoam $40,  5, .OAMData_ThunderBolt5 + 1 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_3
+	battleanimoam $40,  4, .OAMData_ThunderBolt5 + 2 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_2
+	battleanimoam $40,  2, .OAMData_ThunderBolt5 + 4 * 4 ; BATTLE_ANIM_OAMSET_THUNDER_BOLT_5_LOWER_1
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_11:
@@ -1011,6 +1037,75 @@ BattleAnimOAMData:
 	dbsprite  -1,   1, 4, 4, $00, $0
 	dbsprite  -1,  -4, 4, 4, $00, $0
 	dbsprite  -1,   2, 4, 4, $00, $0
+
+.OAMData_SeismicTossLight:
+	dbsprite   0,   0, 0, 0, $00, $0
+	dbsprite   3,   0, 0, 4, $00, $0
+	dbsprite   6,  -1, 0, 4, $00, $0
+	dbsprite   9,   0, 0, 2, $00, $0
+	dbsprite  12,   0, 0, 6, $00, $0
+	dbsprite  15,  -1, 0, 0, $00, $0
+
+.OAMData_ThundershockStrike:
+	dbsprite   0,  -7, 0, 0, $00, $0
+	dbsprite   0,  -6, 0, 0, $01, $0
+	dbsprite   0,  -5, 0, 0, $02, $0
+	dbsprite   0,  -4, 0, 0, $03, $0
+	dbsprite   0,  -3, 0, 0, $04, $0
+	dbsprite   0,  -2, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   0,   0, 0, 0, $07, $0
+	dbsprite   0,   1, 0, 0, $00, $0
+	dbsprite   0,   2, 0, 0, $01, $0
+
+.OAMData_ElectricityEffect:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite  -1,   0, 0, 0, $02, $0
+	dbsprite   0,   0, 0, 0, $03, $0
+
+.OAMData_ThunderBolt1:
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+
+.OAMData_ThunderBolt3:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -2,  -1, 0, 0, $04, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   1,  -1, 0, 0, $07, $0
+	dbsprite  -2,   0, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+	dbsprite  -2,   1, 0, 0, $0c, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+	dbsprite   1,   1, 0, 0, $0f, $0
+
+.OAMData_ThunderBolt4:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+
+.OAMData_ThunderBolt5:
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
 
 .OAMData_a4:
 	dbsprite  -2,  -2, 4, 4, $00, $0

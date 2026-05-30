@@ -145,13 +145,30 @@ RunBattleAnimScript:
 BattleAnimClearHud:
 	call BattleAnimDelayFrame
 	call WaitTop
+	call BattleAnim_IsWish
+	jr nz, .clear_actor_hud
+	call BattleAnimCmd_ClearHuds
+	jr .cleared_hud
+
+.clear_actor_hud
 	call ClearActorHud
+
+.cleared_hud
 	ld a, $1
 	ldh [hBGMapMode], a
 	call BattleAnimDelayFrame
 	call BattleAnimDelayFrame
 	call BattleAnimDelayFrame
 	call WaitTop
+	ret
+
+BattleAnim_IsWish:
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(WISH)
+	ret nz
+	ld a, [hl]
+	cp HIGH(WISH)
 	ret
 
 BattleAnimRestoreHuds:
@@ -222,6 +239,17 @@ ClearActorHud:
 	hlcoord 9, 7
 	lb bc, 5, 11
 	call ClearBox
+	ret
+
+BattleAnimCmd_ClearHuds:
+	hlcoord 1, 0
+	lb bc, 4, 11
+	call ClearBox
+	hlcoord 9, 7
+	lb bc, 5, 11
+	call ClearBox
+	ld a, $1
+	ldh [hBGMapMode], a
 	ret
 
 PlaceWindowOverBattleTextbox: ; unreferenced
@@ -361,7 +389,7 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OAMOff
 	dw BattleAnimCmd_ClearObjs
 	dw BattleAnimCmd_E7 ; dummy
-	dw BattleAnimCmd_E7
+	dw BattleAnimCmd_ClearHuds
 	dw BattleAnimCmd_UpdateActorPic
 	dw BattleAnimCmd_Minimize
 	dw BattleAnimCmd_EA ; dummy
@@ -375,8 +403,8 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OBP0
 	dw BattleAnimCmd_OBP1
 	dw BattleAnimCmd_KeepSprites
-	dw BattleAnimCmd_F5
-	dw BattleAnimCmd_F6
+	dw BattleAnimCmd_IndigoFirePal
+	dw BattleAnimCmd_ThunderPal
 	dw BattleAnimCmd_F7
 	dw BattleAnimCmd_IfParamEqual
 	dw BattleAnimCmd_SetVar
@@ -1144,10 +1172,14 @@ BattleAnimCmd_KeepSprites:
 	set BATTLEANIM_KEEPSPRITES_F, [hl]
 	ret
 
-BattleAnimCmd_F5:
+BattleAnimCmd_IndigoFirePal:
+	callfar BattleAnimExt_LoadIndigoFirePal
 	ret
 
-BattleAnimCmd_F6:
+BattleAnimCmd_ThunderPal:
+	call GetBattleAnimByte
+	ld e, a
+	callfar BattleAnimExt_LoadThunderPal
 	ret
 
 BattleAnimCmd_F7:

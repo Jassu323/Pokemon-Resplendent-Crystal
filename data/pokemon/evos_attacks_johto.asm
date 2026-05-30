@@ -109,6 +109,7 @@ ChikoritaEvosAttacks:
 	dbw 1, TACKLE
 	dbw 1, GROWL
 	dbw 8, RAZOR_LEAF
+	dbw 9, BRICK_BREAK
 	dbw 12, REFLECT
 	dbw 15, POISONPOWDER
 	dbw 22, SYNTHESIS

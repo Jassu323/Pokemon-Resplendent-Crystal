@@ -89,12 +89,73 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_RapidSpin
 	dw BattleAnimFunc_BetaPursuit
 	dw BattleAnimFunc_RainSandstorm
-	dw BattleAnimFunc_AnimObjB0
+	dw BattleAnimFunc_AromatherapyFlower
 	dw BattleAnimFunc_PsychUp
 	dw BattleAnimFunc_AncientPower
 	dw BattleAnimFunc_RockSmash
 	dw BattleAnimFunc_Cotton
+	dw BattleAnimFunc_OverheatFlame
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EXT_NULL
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WISH_STAR
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SEISMIC_TOSS_LIGHT
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_MUD_SHOT
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
+
+BattleAnimFunc_Extension:
+	farcall BattleAnimFunc_ExtensionDispatch
+	ret
+
+BattleAnimFunc_OverheatFlame:
+; Object shoots outward in a fixed fan and disappears after $1c frames.
+; Obj Param: Lower nybble selects one of nine X/Y vectors.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $1c
+	jr nc, .done
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f
+	cp $9
+	jr c, .got_vector
+	ld a, $8
+.got_vector
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Vectors
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ret
+
+.done
+	call DeinitBattleAnimation
+	ret
+
+.Vectors:
+	db 2, -3
+	db 3, -3
+	db 3, -2
+	db 4, -2
+	db 4, -1
+	db 5, -1
+	db 5, -2
+	db 6, -1
+	db 6,  0
 
 BattleAnimFunc_Null:
 	call BattleAnim_AnonJumptable
@@ -4168,37 +4229,73 @@ BattleAnimFunc_RainSandstorm:
 	ld [hl], a
 	ret
 
-BattleAnimFunc_AnimObjB0: ; unused
-; Formerly used by the unused B0 animation object.
-; Obj Param: Lower nybble is added to VAR1 while upper nybble is added to XCOORD
-	ld hl, BATTLEANIMSTRUCT_XCOORD
-	add hl, bc
-	ld d, [hl]
+BattleAnimFunc_AromatherapyFlower:
+; Object curves down into a horizontal drift.
+; Obj Param: Upper nybble = x speed. Lower nybble = curve height.
 	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
-	ld e, [hl]
+	ld a, [hl]
+	cp $48
+	jr nc, .done
+	and a
+	jr nz, .got_frame
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_frame
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, $b4
+	sub [hl]
+	ld [hl], a
+.got_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	ld e, a
 	ld hl, BATTLEANIMSTRUCT_PARAM
 	add hl, bc
 	ld a, [hl]
-	ld l, a
-	and $f0
-	ld h, a
-	swap a
-	or h
-	ld h, a
-	ld a, l
 	and $f
+	ld d, a
+	ld a, e
+	cp $10
+	jr c, .curve
+	xor a
+	jr .set_y
+.curve
+	push de
+	call BattleAnim_Sine
+	ld h, a
+	pop de
+	ld a, h
+	sub d
+.set_y
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
 	swap a
-	ld l, a
-	add hl, de
-	ld e, l
-	ld d, h
+	ld e, a
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
-	ld [hl], d
-	ld hl, BATTLEANIMSTRUCT_VAR1
-	add hl, bc
-	ld [hl], e
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [hl]
+	jr nz, .move_left
+	add e
+	jr .store_x
+.move_left
+	sub e
+.store_x
+	ld [hl], a
+	ret
+
+.done
+	call DeinitBattleAnimation
 	ret
 
 BattleAnimFunc_PsychUp:

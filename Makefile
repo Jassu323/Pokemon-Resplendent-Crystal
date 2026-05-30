@@ -255,6 +255,14 @@ gfx/battle_anims/reflect.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/rocks.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/skyattack.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/status.2bpp: tools/gfx += --remove-whitespace
+gfx/battle_anims/mud_ball.2bpp: gfx/battle_anims/mud_ball.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#ffffff,#70543e,#000000' -o $@ $<
+gfx/battle_anims/thundershock.2bpp: gfx/battle_anims/thundershock.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#ffff38,#ff8408,#000000' -o $@ $<
+gfx/battle_anims/electricity_effect.2bpp: gfx/battle_anims/electricity_effect.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#808080,#ffff38,#ff8408,#000000' -o $@ $<
+gfx/battle_anims/thunder.2bpp: gfx/battle_anims/thunder.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#c8c8c8,#686868,#ffffff' -o $@ $<
 
 gfx/player/chris.2bpp: RGBGFXFLAGS += --columns
 gfx/player/chris_back.2bpp: RGBGFXFLAGS += --columns

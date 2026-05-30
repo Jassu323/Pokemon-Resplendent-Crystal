@@ -153,7 +153,6 @@ ROMX $32
 	"The End"
 ROMX $33
 	"Move Animations"
-	"Extra Songs 2"
 ROMX $34
 	"Pic Animations 1"
 ROMX $35
@@ -179,11 +178,13 @@ ROMX $3c
 	"Cries"
 ROMX $3d
 	"Songs 4"
+	"Extra Songs 2"
 ROMX $3e
 	"bank3E"
 ROMX $3f
 	"bank3F"
 	"Apricorn Box"
+	"Battle Animation Extensions"
 ROMX $40
 	"mobile40"
 ROMX $41
@@ -331,6 +332,7 @@ ROMX $7c
 	"Pack General Item Icons"
 ROMX $7d
 	"Mobile News Data"
+	"Battle Command Pointers"
 ROMX $7e
 	"Crystal Events"
 ROMX $7f
