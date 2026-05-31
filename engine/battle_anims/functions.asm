@@ -99,6 +99,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_MUD_SHOT
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_AROMATHERAPY_FLOWER
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_OVERHEAT_FLAME
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_THUNDER
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:

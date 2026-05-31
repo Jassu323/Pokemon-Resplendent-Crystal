@@ -1377,58 +1377,151 @@ BattleAnim_ThunderWave:
 
 BattleAnim_Thunder:
 	anim_1gfx BATTLE_ANIM_GFX_THUNDER
-	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $6, $20
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_LOAD
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_call BattleAnimSub_ThunderStrikeRight
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_call BattleAnimSub_ThunderStrikeLeft
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_call BattleAnimSub_ThunderStrikeRight
 	anim_wait 12
-	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $6, $20
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_call BattleAnimSub_ThunderStrikeCenter
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RESTORE_BLUE
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RESTORE
 	anim_wait 8
 	anim_ret
 
 BattleAnimSub_ThunderStrikeRight:
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 152, 36, $0
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 152, 68, $0
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 152, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 152, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 152, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 152, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 152, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 152, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 152, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 152, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 152, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 152, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 152, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 152, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_PURPLE
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 152, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 152, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 152, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 152, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 152, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 152, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 152, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 152, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_wait 13
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RED
-	anim_wait 6
 	anim_ret
 
 BattleAnimSub_ThunderStrikeLeft:
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 120, 36, $0
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 120, 68, $0
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 120, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 120, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 120, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 120, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 120, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 120, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 120, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 120, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 120, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 120, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 120, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 120, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_PURPLE
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 120, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 120, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 120, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 120, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 120, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 120, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 120, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 120, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_wait 13
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RED
-	anim_wait 6
 	anim_ret
 
 BattleAnimSub_ThunderStrikeCenter:
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 136, 36, $0
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_BOLT, 136, 68, $0
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 136, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 136, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 136, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, 136, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 136, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 136, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 136, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_PURPLE, 136, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 136, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 136, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 136, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, 136, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_PURPLE
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 136, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 136, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 136, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_ORANGE, 136, 0, $3
+	anim_wait 2
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 136, 0, $0
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 136, 0, $1
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 136, 0, $2
+	anim_wait 1
+	anim_obj BATTLE_ANIM_OBJ_THUNDER_RED, 136, 0, $3
 	anim_wait 5
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_YELLOW
-	anim_wait 13
-	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RED
-	anim_wait 6
 	anim_ret
 
 BattleAnim_RazorWind:
@@ -2223,14 +2316,16 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
- 	anim_1gfx BATTLE_ANIM_GFX_HIT
+/*  	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_TACKLE
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
-	anim_call BattleAnim_ShowMon_0
+	anim_call BattleAnim_ShowMon_0 */
+	anim_call BattleAnim_Thunder
+	anim_ret
 
 BattleAnim_BodySlam:
 	anim_1gfx BATTLE_ANIM_GFX_HIT
