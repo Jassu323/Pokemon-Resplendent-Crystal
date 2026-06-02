@@ -150,6 +150,8 @@ BattleAnimExtFrameData:
 	dw .Frameset_ThunderRed_1     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_1
 	dw .Frameset_ThunderRed_2     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_2
 	dw .Frameset_ThunderRed_3     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_3
+	dw .Frameset_ThunderboltStrike ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_STRIKE
+	dw .Frameset_ThunderboltAftereffect ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_AFTEREFFECT
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -230,6 +232,44 @@ BattleAnimExtFrameData:
 
 .Frameset_ThunderRed_3:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_3, 5
+	oamdelete
+
+.Frameset_ThunderboltStrike:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_1, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_2, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_3, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_4, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_5, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_6, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_7, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_8, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_9, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_10, 9
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_9, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_8, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_7, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_6, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_5, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_4, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_3, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_2, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_1, 1
+	oamdelete
+
+.Frameset_ThunderboltAftereffect:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL, 3
+	oamwait 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM, 3
+	oamwait 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_LARGE, 6
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL, 3
+	oamwait 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM, 3
+	oamwait 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_LARGE, 6
+	oamwait 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL, 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM, 3
 	oamdelete
 
 BattleAnimExtOAMUpdate:
@@ -357,6 +397,28 @@ BattleAnimExtOAMData:
 	battleanimoam $44, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_1
 	battleanimoam $48, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_2
 	battleanimoam $44, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_3
+	battleanimoam $00,  2, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_1
+	battleanimoam $00,  4, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_2
+	battleanimoam $00,  6, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_3
+	battleanimoam $00,  8, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_4
+	battleanimoam $00, 10, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_5
+	battleanimoam $00, 12, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_6
+	battleanimoam $00, 14, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_7
+	battleanimoam $00, 16, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_8
+	battleanimoam $00, 18, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_9
+	battleanimoam $00, 20, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_10
+	battleanimoam $00, 18, .OAMData_ThunderboltStrike + 2 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_9
+	battleanimoam $00, 16, .OAMData_ThunderboltStrike + 4 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_8
+	battleanimoam $00, 14, .OAMData_ThunderboltStrike + 6 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_7
+	battleanimoam $00, 12, .OAMData_ThunderboltStrike + 8 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_6
+	battleanimoam $00, 10, .OAMData_ThunderboltStrike + 10 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_5
+	battleanimoam $00,  8, .OAMData_ThunderboltStrike + 12 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_4
+	battleanimoam $00,  6, .OAMData_ThunderboltStrike + 14 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_3
+	battleanimoam $00,  4, .OAMData_ThunderboltStrike + 16 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_2
+	battleanimoam $00,  2, .OAMData_ThunderboltStrike + 18 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_LOWER_1
+	battleanimoam $00, 10, .OAMData_ThunderboltAftereffectSmall ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL
+	battleanimoam $00, 12, .OAMData_ThunderboltAftereffectMedium ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM
+	battleanimoam $00, 16, .OAMData_ThunderboltAftereffectLarge ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_LARGE
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_ThunderNarrowSection:
@@ -374,6 +436,72 @@ BattleAnimExtOAMData:
 	dbsprite  -1, 1, 0, 0, $05, $0
 	dbsprite   0, 1, 0, 0, $06, $0
 	dbsprite   1, 1, 0, 0, $07, $0
+
+.OAMData_ThunderboltStrike:
+	dbsprite  -1, -7, 0, 0, $00, $0
+	dbsprite   0, -7, 0, 0, $01, $0
+	dbsprite  -1, -6, 0, 0, $02, $0
+	dbsprite   0, -6, 0, 0, $03, $0
+	dbsprite  -1, -5, 0, 0, $04, $0
+	dbsprite   0, -5, 0, 0, $05, $0
+	dbsprite  -1, -4, 0, 0, $06, $0
+	dbsprite   0, -4, 0, 0, $07, $0
+	dbsprite  -1, -3, 0, 0, $08, $0
+	dbsprite   0, -3, 0, 0, $09, $0
+	dbsprite  -1, -2, 0, 0, $0a, $0
+	dbsprite   0, -2, 0, 0, $0b, $0
+	dbsprite  -1, -1, 0, 0, $0c, $0
+	dbsprite   0, -1, 0, 0, $0d, $0
+	dbsprite  -1,  0, 0, 0, $0e, $0
+	dbsprite   0,  0, 0, 0, $0f, $0
+	dbsprite  -1,  1, 0, 0, $00, $0
+	dbsprite   0,  1, 0, 0, $01, $0
+	dbsprite  -1,  2, 0, 0, $02, $0
+	dbsprite   0,  2, 0, 0, $03, $0
+
+.OAMData_ThunderboltAftereffectSmall:
+	dbsprite  -2, -1, 0, 0, $00, $0
+	dbsprite  -1, -1, 0, 0, $01, $0
+	dbsprite   0, -1, 0, 0, $02, $0
+	dbsprite   1, -1, 0, 0, $03, $0
+	dbsprite  -2,  0, 0, 0, $04, $0
+	dbsprite  -1,  0, 0, 0, $05, $0
+	dbsprite   0,  0, 0, 0, $06, $0
+	dbsprite   1,  0, 0, 0, $07, $0
+	dbsprite  -1,  1, 0, 0, $09, $0
+	dbsprite   0,  1, 0, 0, $0a, $0
+
+.OAMData_ThunderboltAftereffectMedium:
+	dbsprite  -2, -1, 0, 0, $0c, $0
+	dbsprite  -1, -1, 0, 0, $0d, $0
+	dbsprite   0, -1, 0, 0, $0e, $0
+	dbsprite   1, -1, 0, 0, $0f, $0
+	dbsprite  -2,  0, 0, 0, $10, $0
+	dbsprite  -1,  0, 0, 0, $11, $0
+	dbsprite   0,  0, 0, 0, $12, $0
+	dbsprite   1,  0, 0, 0, $13, $0
+	dbsprite  -2,  1, 0, 0, $14, $0
+	dbsprite  -1,  1, 0, 0, $15, $0
+	dbsprite   0,  1, 0, 0, $16, $0
+	dbsprite   1,  1, 0, 0, $17, $0
+
+.OAMData_ThunderboltAftereffectLarge:
+	dbsprite  -2, -2, 0, 4, $18, $0
+	dbsprite  -1, -2, 0, 4, $19, $0
+	dbsprite   0, -2, 0, 4, $1a, $0
+	dbsprite   1, -2, 0, 4, $1b, $0
+	dbsprite  -2, -1, 0, 4, $1c, $0
+	dbsprite  -1, -1, 0, 4, $1d, $0
+	dbsprite   0, -1, 0, 4, $1e, $0
+	dbsprite   1, -1, 0, 4, $1f, $0
+	dbsprite  -2,  0, 0, 4, $20, $0
+	dbsprite  -1,  0, 0, 4, $21, $0
+	dbsprite   0,  0, 0, 4, $22, $0
+	dbsprite   1,  0, 0, 4, $23, $0
+	dbsprite  -2,  1, 0, 4, $24, $0
+	dbsprite  -1,  1, 0, 4, $25, $0
+	dbsprite   0,  1, 0, 4, $26, $0
+	dbsprite   1,  1, 0, 4, $27, $0
 
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
@@ -589,6 +717,52 @@ BattleAnimExt_LoadThunderPal:
 	RGB 19, 00, 00
 	RGB 19, 00, 00
 	RGB 19, 00, 00
+
+BattleAnimExt_LoadThunderboltPal:
+	ld a, e
+	cp BATTLE_ANIM_THUNDERBOLT_PAL_RESTORE
+	jr z, .restore
+	ldh a, [hCGB]
+	and a
+	ret z
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld hl, .ThunderboltPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	ld bc, 1 palettes
+	call CopyBytes
+	jr .done
+
+.restore
+	ldh a, [hCGB]
+	and a
+	ret z
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_BLUE
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	ld bc, 1 palettes
+	call CopyBytes
+
+.done
+	pop af
+	ldh [rWBK], a
+	pop bc
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.ThunderboltPal:
+	RGB 31, 31, 31
+	RGB 07, 06, 31
+	RGB 31, 31, 07
+	RGB 07, 30, 23
 
 BattleAnimFunc_Thunder:
 	ld hl, BATTLEANIMSTRUCT_VAR1

@@ -45,3 +45,7 @@ AnimObjElectricityEffectGFX:
 	INCBIN "gfx/battle_anims/electricity_effect.2bpp.lz"
 AnimObjThunderGFX:
 	INCBIN "gfx/battle_anims/thunder.2bpp.lz"
+AnimObjThunderboltGFX:
+	INCBIN "gfx/battle_anims/thunderbolt.2bpp.lz"
+AnimObjThunderboltAftereffectGFX:
+	INCBIN "gfx/battle_anims/thunderbolt_aftereffect.2bpp.lz"

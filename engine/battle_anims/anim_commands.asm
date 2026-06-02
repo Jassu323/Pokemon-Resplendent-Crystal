@@ -405,7 +405,7 @@ BattleAnimCommands::
 	dw BattleAnimCmd_KeepSprites
 	dw BattleAnimCmd_IndigoFirePal
 	dw BattleAnimCmd_ThunderPal
-	dw BattleAnimCmd_F7
+	dw BattleAnimCmd_ThunderboltPal
 	dw BattleAnimCmd_IfParamEqual
 	dw BattleAnimCmd_SetVar
 	dw BattleAnimCmd_IncVar
@@ -1182,7 +1182,10 @@ BattleAnimCmd_ThunderPal:
 	callfar BattleAnimExt_LoadThunderPal
 	ret
 
-BattleAnimCmd_F7:
+BattleAnimCmd_ThunderboltPal:
+	call GetBattleAnimByte
+	ld e, a
+	callfar BattleAnimExt_LoadThunderboltPal
 	ret
 
 BattleAnimCmd_Sound:

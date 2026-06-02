@@ -259,9 +259,15 @@ MACRO anim_0xf6
 	db \1
 ENDM
 
-	const anim_0xf7_command ; $f7
+	const anim_thunderboltpal_command ; $f7
+MACRO anim_thunderboltpal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
-	db anim_0xf7_command
+	db anim_thunderboltpal_command
+	db \1
 ENDM
 
 	const anim_if_param_equal_command ; $f8

@@ -53,4 +53,6 @@ AnimObjGFX:
 	anim_obj_gfx  8, AnimObjThundershockGFX
 	anim_obj_gfx 12, AnimObjElectricityEffectGFX
 	anim_obj_gfx 79, AnimObjThunderGFX
+	anim_obj_gfx 16, AnimObjThunderboltGFX
+	anim_obj_gfx 40, AnimObjThunderboltAftereffectGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

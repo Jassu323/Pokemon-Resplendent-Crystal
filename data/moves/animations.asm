@@ -1328,6 +1328,10 @@ BattleAnim_Thundershock:
 	anim_obj BATTLE_ANIM_OBJ_THUNDERSHOCK_STRIKE, 136, 68, $0
 	anim_wait 60
 	anim_sound 0, 1, SFX_THUNDERSHOCK_SHORT
+	anim_call BattleAnimSub_ElectricityEffect
+	anim_ret
+
+BattleAnimSub_ElectricityEffect:
 	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 141, 56, $0
 	anim_wait 2
 	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 131, 66, $0
@@ -1353,15 +1357,63 @@ BattleAnim_Thundershock:
 	anim_ret
 
 BattleAnim_Thunderbolt:
-	anim_2gfx BATTLE_ANIM_GFX_LIGHTNING, BATTLE_ANIM_GFX_EXPLOSION
-	anim_obj BATTLE_ANIM_OBJ_THUNDERBOLT_BALL, 136, 56, $2
-	anim_wait 16
+	anim_4gfx BATTLE_ANIM_GFX_THUNDERSHOCK, BATTLE_ANIM_GFX_THUNDERBOLT, BATTLE_ANIM_GFX_THUNDERBOLT_AFTEREFFECT, BATTLE_ANIM_GFX_ELECTRICITY_EFFECT
+	anim_thunderboltpal BATTLE_ANIM_THUNDERBOLT_PAL_LOAD
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
-	anim_sound 0, 1, SFX_THUNDERSHOCK
-	anim_obj BATTLE_ANIM_OBJ_SPARKS_CIRCLE_BIG, 136, 56, $0
-	anim_wait 64
+	anim_sound 0, 1, SFX_THUNDER
+	anim_obj BATTLE_ANIM_OBJ_THUNDERSHOCK_STRIKE, 160, 68, $0
+	anim_wait 7
+	anim_obj BATTLE_ANIM_OBJ_THUNDERSHOCK_STRIKE, 112, 68, $0
+	anim_wait 7
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
-	anim_wait 64
+	anim_obj BATTLE_ANIM_OBJ_THUNDERBOLT_STRIKE, 136, 68, $0
+	anim_wait 60
+	anim_sound 0, 1, SFX_THUNDERSHOCK_LONG
+	anim_obj BATTLE_ANIM_OBJ_THUNDERBOLT_AFTEREFFECT, 136, 56, $0
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
+	anim_call BattleAnimSub_ThunderboltSparkBurst1
+	anim_wait 6
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
+	anim_wait 6
+	anim_call BattleAnimSub_ThunderboltSparkBurst2
+	anim_wait 12
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
+	anim_call BattleAnimSub_ThunderboltSparkBurst3
+	anim_wait 6
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
+	anim_wait 6
+	anim_call BattleAnimSub_ThunderboltSparkBurst2
+	anim_wait 30
+	anim_call BattleAnimSub_ElectricityEffect
+	anim_thunderboltpal BATTLE_ANIM_THUNDERBOLT_PAL_RESTORE
+	anim_wait 4
+	anim_ret
+
+BattleAnimSub_ThunderboltSparkBurst1:
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 160, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 148, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 124, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 112, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 124, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 148, 72, $0
+	anim_ret
+
+BattleAnimSub_ThunderboltSparkBurst2:
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 156, 44, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 136, 38, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 116, 44, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 116, 68, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 136, 74, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 156, 68, $0
+	anim_ret
+
+BattleAnimSub_ThunderboltSparkBurst3:
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 160, 64, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 144, 38, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 120, 48, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT, 112, 64, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 132, 74, $0
+	anim_obj BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 152, 48, $0
 	anim_ret
 
 BattleAnim_ThunderWave:
@@ -2324,7 +2376,7 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0 */
-	anim_call BattleAnim_Thunder
+	anim_call BattleAnim_Thunderbolt
 	anim_ret
 
 BattleAnim_BodySlam:
