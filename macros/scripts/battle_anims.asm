@@ -265,6 +265,16 @@ MACRO anim_thunderboltpal
 	db \1
 ENDM
 
+MACRO anim_watercolumnpal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
+MACRO anim_vinewhippal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
 	db anim_thunderboltpal_command
 	db \1

@@ -49,3 +49,7 @@ AnimObjThunderboltGFX:
 	INCBIN "gfx/battle_anims/thunderbolt.2bpp.lz"
 AnimObjThunderboltAftereffectGFX:
 	INCBIN "gfx/battle_anims/thunderbolt_aftereffect.2bpp.lz"
+AnimObjWaterColumnGFX:
+	INCBIN "gfx/battle_anims/water_column.2bpp.lz"
+AnimObjVineWhipGFX:
+	INCBIN "gfx/battle_anims/vine_whip.2bpp.lz"

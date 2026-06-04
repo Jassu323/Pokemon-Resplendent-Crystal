@@ -268,6 +268,17 @@ gfx/battle_anims/mud_ball.2bpp: gfx/battle_anims/mud_ball.png
 	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#ffffff,#70543e,#000000' -o $@ $<
 gfx/battle_anims/thunder.2bpp: gfx/battle_anims/thunder.png
 	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#c8c8c8,#686868,#ffffff' -o $@ $<
+gfx/battle_anims/vine_whip.2bpp: tools/gfx += --remove-whitespace
+gfx/battle_anims/vine_whip.2bpp: gfx/battle_anims/vine_whip.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#60e048,#38d000,#38a000' -o $@ $<
+	tools/gfx $(tools/gfx) -o $@ $@
+gfx/battle_anims/water_column.2bpp: gfx/battle_anims/water_column_1.png gfx/battle_anims/water_column_2.png gfx/battle_anims/water_column_3.png gfx/battle_anims/water_column_4.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.1 gfx/battle_anims/water_column_1.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.2 gfx/battle_anims/water_column_2.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.3 gfx/battle_anims/water_column_3.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.4 gfx/battle_anims/water_column_4.png
+	cat $@.1 $@.2 $@.3 $@.4 > $@
+	$(RM) $@.1 $@.2 $@.3 $@.4
 
 gfx/player/chris.2bpp: RGBGFXFLAGS += --columns
 gfx/player/chris_back.2bpp: RGBGFXFLAGS += --columns

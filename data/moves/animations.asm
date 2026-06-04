@@ -1165,37 +1165,30 @@ BattleAnim_WaterGun:
 
 BattleAnim_HydroPump:
 	anim_bgeffect BATTLE_BG_EFFECT_START_WATER, $0, BG_EFFECT_TARGET, $0
-	anim_1gfx BATTLE_ANIM_GFX_WATER
-	anim_call BattleAnim_UserObj_2Row
+	anim_1gfx BATTLE_ANIM_GFX_WATER_COLUMN
+	anim_watercolumnpal BATTLE_ANIM_WATER_COLUMN_PAL_LOAD
 	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 108, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN, 108, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $1c, $0, $0
-	anim_wait 8
+	anim_wait 14
 	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 116, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN, 120, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $8, $0, $0
-	anim_wait 8
+	anim_wait 14
 	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 124, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN, 132, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $30, $0, $0
-	anim_wait 8
+	anim_wait 14
 	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 132, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN_SLOW, 144, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $1c, $0, $0
-	anim_wait 8
+	anim_wait 14
 	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 140, 72, $0
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN_SLOW, 156, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $8, $0, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 148, 72, $0
-	anim_bgeffect BATTLE_BG_EFFECT_WATER, $30, $0, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_HYDRO_PUMP
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 156, 72, $0
-	anim_bgeffect BATTLE_BG_EFFECT_WATER, $1c, $0, $0
-	anim_wait 32
-	anim_call BattleAnim_ShowMon_1
+	anim_wait 24
+	anim_wait 30
+	anim_watercolumnpal BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
 	anim_bgeffect BATTLE_BG_EFFECT_END_WATER, $0, $0, $0
 	anim_wait 16
 	anim_ret
@@ -1213,15 +1206,18 @@ BattleAnim_Surf:
 	anim_ret
 
 BattleAnim_VineWhip:
-	anim_1gfx BATTLE_ANIM_GFX_WHIP
-	anim_sound 0, 1, SFX_VINE_WHIP
-	anim_obj BATTLE_ANIM_OBJ_VINE_WHIP2, 116, 52, $80
+	anim_2gfx BATTLE_ANIM_GFX_VINE_WHIP, BATTLE_ANIM_GFX_HIT
+	anim_vinewhippal BATTLE_ANIM_VINE_WHIP_PAL_LOAD
+	anim_call BattleAnim_TargetObj_1Row
+	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_VINE_WHIP
-	anim_obj BATTLE_ANIM_OBJ_VINE_WHIP1, 128, 60, $0
-	anim_wait 4
-	anim_incobj 1
-	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_VINE_WHIP1, 112, 48, $0
+	anim_wait 20
+	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX_GREEN, 128, 48, $0
+	anim_wait 18
+	anim_vinewhippal BATTLE_ANIM_VINE_WHIP_PAL_RESTORE
+	anim_call BattleAnim_ShowMon_0
 	anim_ret
 
 BattleAnim_LeechSeed:
@@ -2376,7 +2372,7 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0 */
-	anim_call BattleAnim_Thunderbolt
+	anim_call BattleAnim_VineWhip
 	anim_ret
 
 BattleAnim_BodySlam:
@@ -3283,29 +3279,46 @@ BattleAnim_Barrier:
 	anim_ret
 
 BattleAnim_Waterfall:
-	anim_2gfx BATTLE_ANIM_GFX_WATER, BATTLE_ANIM_GFX_HIT
+	anim_3gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_WATER, BATTLE_ANIM_GFX_BUBBLE
 	anim_sound 0, 1, SFX_HYDRO_PUMP
 	anim_bgeffect BATTLE_BG_EFFECT_WHIRLPOOL, $0, $0, $0
 	anim_wait 36
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 124, 72, $0
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 132, 72, $0
-	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 140, 72, $0
-	anim_wait 8
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 108, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 116, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 124, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 132, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 140, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 148, 32, $0
+	anim_wait 19
+	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP, 156, 32, $0
+	anim_wait 21
 	anim_sound 0, 1, SFX_DOUBLE_KICK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 64, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_HIT_SMALL, 136, 64, $0
 	anim_wait 3
 	anim_sound 0, 1, SFX_DOUBLE_KICK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_HIT_SMALL, 136, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 120, 64, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 148, 60, $1
 	anim_wait 3
 	anim_sound 0, 1, SFX_DOUBLE_KICK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 48, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_HIT_SMALL, 136, 48, $0
 	anim_wait 3
 	anim_sound 0, 1, SFX_DOUBLE_KICK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_HIT_SMALL, 136, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 128, 48, $2
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 156, 52, $3
 	anim_wait 3
 	anim_sound 0, 1, SFX_DOUBLE_KICK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 32, $0
-	anim_wait 8
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_HIT_SMALL, 136, 32, $0
+	anim_wait 3
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 116, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 144, 36, $1
+	anim_wait 29
 	anim_incbgeffect BATTLE_BG_EFFECT_WHIRLPOOL
 	anim_wait 12
 	anim_ret

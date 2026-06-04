@@ -100,6 +100,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_AROMATHERAPY_FLOWER
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_OVERHEAT_FLAME
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_THUNDER
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WATERFALL_BUBBLE
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:

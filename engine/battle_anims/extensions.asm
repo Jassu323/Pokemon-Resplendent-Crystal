@@ -25,6 +25,7 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_AromatherapyFlower
 	dw BattleAnimFunc_OverheatFlame
 	dw BattleAnimFunc_Thunder
+	dw BattleAnimFunc_WaterfallBubble
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -152,6 +153,9 @@ BattleAnimExtFrameData:
 	dw .Frameset_ThunderRed_3     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_3
 	dw .Frameset_ThunderboltStrike ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_STRIKE
 	dw .Frameset_ThunderboltAftereffect ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_AFTEREFFECT
+	dw .Frameset_HydroPumpColumn ; BATTLE_ANIM_FRAMESET_HYDRO_PUMP_COLUMN
+	dw .Frameset_HydroPumpColumnSlow ; BATTLE_ANIM_FRAMESET_HYDRO_PUMP_COLUMN_SLOW
+	dw .Frameset_VineWhip ; BATTLE_ANIM_FRAMESET_VINE_WHIP
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -270,6 +274,58 @@ BattleAnimExtFrameData:
 	oamwait 3
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL, 3
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM, 3
+	oamdelete
+
+.Frameset_HydroPumpColumn:
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_5ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_5ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1ROW, 1
+	oamdelete
+
+.Frameset_HydroPumpColumnSlow:
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_5ROW, 1
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_5ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2ROW, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1ROW, 2
+	oamdelete
+
+.Frameset_VineWhip:
+	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_1, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_2, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_3, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_4, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_5, 4
 	oamdelete
 
 BattleAnimExtOAMUpdate:
@@ -419,6 +475,20 @@ BattleAnimExtOAMData:
 	battleanimoam $00, 10, .OAMData_ThunderboltAftereffectSmall ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_SMALL
 	battleanimoam $00, 12, .OAMData_ThunderboltAftereffectMedium ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_MEDIUM
 	battleanimoam $00, 16, .OAMData_ThunderboltAftereffectLarge ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_AFTEREFFECT_LARGE
+	battleanimoam $00,  2, .OAMData_WaterColumn1Row ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1ROW
+	battleanimoam $00,  4, .OAMData_WaterColumn2Row ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2ROW
+	battleanimoam $00,  6, .OAMData_WaterColumn3Row ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3ROW
+	battleanimoam $00,  8, .OAMData_WaterColumn4Row ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4ROW
+	battleanimoam $00, 10, .OAMData_WaterColumn5Row ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_5ROW
+	battleanimoam $00, 12, .OAMData_WaterColumn ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_1_6ROW
+	battleanimoam $0c, 12, .OAMData_WaterColumn ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_2_6ROW
+	battleanimoam $18, 12, .OAMData_WaterColumn ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_3_6ROW
+	battleanimoam $24, 12, .OAMData_WaterColumn ; BATTLE_ANIM_EXT_OAMSET_WATER_COLUMN_4_6ROW
+	battleanimoam $00,  8, .OAMData_VineWhip1 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_1
+	battleanimoam $00,  9, .OAMData_VineWhip2 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_2
+	battleanimoam $00,  8, .OAMData_VineWhip3 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_3
+	battleanimoam $00,  7, .OAMData_VineWhip4 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_4
+	battleanimoam $00,  8, .OAMData_VineWhip5 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_5
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_ThunderNarrowSection:
@@ -502,6 +572,110 @@ BattleAnimExtOAMData:
 	dbsprite  -1,  1, 0, 4, $25, $0
 	dbsprite   0,  1, 0, 4, $26, $0
 	dbsprite   1,  1, 0, 4, $27, $0
+
+.OAMData_WaterColumn:
+	dbsprite  -1, -6, 0, 0, $00, $0
+	dbsprite   0, -6, 0, 0, $01, $0
+	dbsprite  -1, -5, 0, 0, $02, $0
+	dbsprite   0, -5, 0, 0, $03, $0
+	dbsprite  -1, -4, 0, 0, $04, $0
+	dbsprite   0, -4, 0, 0, $05, $0
+	dbsprite  -1, -3, 0, 0, $06, $0
+	dbsprite   0, -3, 0, 0, $07, $0
+	dbsprite  -1, -2, 0, 0, $08, $0
+	dbsprite   0, -2, 0, 0, $09, $0
+	dbsprite  -1, -1, 0, 0, $0a, $0
+	dbsprite   0, -1, 0, 0, $0b, $0
+
+.OAMData_WaterColumn1Row:
+	dbsprite  -1, -1, 0, 0, $00, $0
+	dbsprite   0, -1, 0, 0, $01, $0
+
+.OAMData_WaterColumn2Row:
+	dbsprite  -1, -2, 0, 0, $00, $0
+	dbsprite   0, -2, 0, 0, $01, $0
+	dbsprite  -1, -1, 0, 0, $02, $0
+	dbsprite   0, -1, 0, 0, $03, $0
+
+.OAMData_WaterColumn3Row:
+	dbsprite  -1, -3, 0, 0, $00, $0
+	dbsprite   0, -3, 0, 0, $01, $0
+	dbsprite  -1, -2, 0, 0, $02, $0
+	dbsprite   0, -2, 0, 0, $03, $0
+	dbsprite  -1, -1, 0, 0, $04, $0
+	dbsprite   0, -1, 0, 0, $05, $0
+
+.OAMData_WaterColumn4Row:
+	dbsprite  -1, -4, 0, 0, $00, $0
+	dbsprite   0, -4, 0, 0, $01, $0
+	dbsprite  -1, -3, 0, 0, $02, $0
+	dbsprite   0, -3, 0, 0, $03, $0
+	dbsprite  -1, -2, 0, 0, $04, $0
+	dbsprite   0, -2, 0, 0, $05, $0
+	dbsprite  -1, -1, 0, 0, $06, $0
+	dbsprite   0, -1, 0, 0, $07, $0
+
+.OAMData_WaterColumn5Row:
+	dbsprite  -1, -5, 0, 0, $00, $0
+	dbsprite   0, -5, 0, 0, $01, $0
+	dbsprite  -1, -4, 0, 0, $02, $0
+	dbsprite   0, -4, 0, 0, $03, $0
+	dbsprite  -1, -3, 0, 0, $04, $0
+	dbsprite   0, -3, 0, 0, $05, $0
+	dbsprite  -1, -2, 0, 0, $06, $0
+	dbsprite   0, -2, 0, 0, $07, $0
+	dbsprite  -1, -1, 0, 0, $08, $0
+	dbsprite   0, -1, 0, 0, $09, $0
+
+.OAMData_VineWhip1:
+	dbsprite  -2, -1, 0, 0, $00, $0
+	dbsprite  -1, -1, 0, 0, $01, $0
+	dbsprite   0, -1, 0, 0, $02, $0
+	dbsprite  -2,  0, 0, 0, $03, $0
+	dbsprite   0,  0, 0, 0, $04, $0
+	dbsprite  -2,  1, 0, 0, $05, $0
+	dbsprite  -1,  1, 0, 0, $06, $0
+	dbsprite   0,  1, 0, 0, $07, $0
+
+.OAMData_VineWhip2:
+	dbsprite  -1, -2, 0, 0, $08, $0
+	dbsprite   0, -2, 0, 0, $09, $0
+	dbsprite   1, -2, 0, 0, $0a, $0
+	dbsprite   1, -1, 0, 0, $0b, $0
+	dbsprite   1,  0, 0, 0, $0c, $0
+	dbsprite  -2,  1, 0, 0, $0d, $0
+	dbsprite  -1,  1, 0, 0, $0e, $0
+	dbsprite   0,  1, 0, 0, $0f, $0
+	dbsprite   1,  1, 0, 0, $10, $0
+
+.OAMData_VineWhip3:
+	dbsprite  -2, -1, 0, 0, $11, $0
+	dbsprite  -1, -1, 0, 0, $12, $0
+	dbsprite  -2,  0, 0, 0, $13, $0
+	dbsprite  -1,  0, 0, 0, $14, $0
+	dbsprite   0,  0, 0, 0, $15, $0
+	dbsprite  -2,  1, 0, 0, $16, $0
+	dbsprite   0,  1, 0, 0, $17, $0
+	dbsprite   1,  1, 0, 0, $18, $0
+
+.OAMData_VineWhip4:
+	dbsprite  -2, -1, 0, 0, $19, $0
+	dbsprite  -1, -1, 0, 0, $1a, $0
+	dbsprite   0, -1, 0, 0, $1b, $0
+	dbsprite   1, -1, 0, 0, $1c, $0
+	dbsprite  -2,  0, 0, 0, $1d, $0
+	dbsprite   1,  0, 0, 0, $1e, $0
+	dbsprite  -2,  1, 0, 0, $1f, $0
+
+.OAMData_VineWhip5:
+	dbsprite  -2, -2, 0, 0, $20, $0
+	dbsprite  -1, -2, 0, 0, $21, $0
+	dbsprite   0, -2, 0, 0, $22, $0
+	dbsprite  -2, -1, 0, 0, $23, $0
+	dbsprite   0, -1, 0, 0, $24, $0
+	dbsprite   1, -1, 0, 0, $25, $0
+	dbsprite  -2,  0, 0, 0, $26, $0
+	dbsprite  -2,  1, 0, 0, $27, $0
 
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
@@ -720,8 +894,16 @@ BattleAnimExt_LoadThunderPal:
 
 BattleAnimExt_LoadThunderboltPal:
 	ld a, e
+	cp BATTLE_ANIM_WATER_COLUMN_PAL_LOAD
+	jr z, .load_water_column
+	cp BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
+	jr z, .restore_blue
+	cp BATTLE_ANIM_VINE_WHIP_PAL_LOAD
+	jr z, .load_vine_whip
+	cp BATTLE_ANIM_VINE_WHIP_PAL_RESTORE
+	jr z, .restore_green
 	cp BATTLE_ANIM_THUNDERBOLT_PAL_RESTORE
-	jr z, .restore
+	jr z, .restore_blue
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -736,7 +918,37 @@ BattleAnimExt_LoadThunderboltPal:
 	call CopyBytes
 	jr .done
 
-.restore
+.load_water_column
+	ldh a, [hCGB]
+	and a
+	ret z
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld hl, .WaterColumnPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	ld bc, 1 palettes
+	call CopyBytes
+	jr .done
+
+.load_vine_whip
+	ldh a, [hCGB]
+	and a
+	ret z
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld hl, .VineWhipPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	ld bc, 1 palettes
+	call CopyBytes
+	jr .done
+
+.restore_blue
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -747,6 +959,21 @@ BattleAnimExt_LoadThunderboltPal:
 	ldh [rWBK], a
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_BLUE
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	ld bc, 1 palettes
+	call CopyBytes
+	jr .done
+
+.restore_green
+	ldh a, [hCGB]
+	and a
+	ret z
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_GREEN
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	ld bc, 1 palettes
 	call CopyBytes
 
@@ -763,6 +990,18 @@ BattleAnimExt_LoadThunderboltPal:
 	RGB 07, 06, 31
 	RGB 31, 31, 07
 	RGB 07, 30, 23
+
+.WaterColumnPal:
+	RGB 31, 31, 31
+	RGB 01, 07, 31
+	RGB 01, 20, 31
+	RGB 12, 29, 31
+
+.VineWhipPal:
+	RGB 31, 31, 31
+	RGB 12, 28, 09
+	RGB 07, 26, 00
+	RGB 07, 20, 00
 
 BattleAnimFunc_Thunder:
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -806,6 +1045,48 @@ BattleAnimFunc_Thunder:
 
 .EnemyYCoords:
 	db $88 - 44, $88 - 60, $88 - 76, $88 - 92
+
+BattleAnimFunc_WaterfallBubble:
+; Obj Param: bit 0 = drift right. bit 1 = faster horizontal drift.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	ld e, a
+	and $1
+	jr nz, .check_x
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+
+.check_x
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 1, [hl]
+	jr nz, .medium_x
+	ld a, e
+	and $3
+	ret nz
+	jr .move_x
+
+.medium_x
+	ld a, e
+	and $1
+	ret nz
+
+.move_x
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 0, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	jr nz, .right
+	dec [hl]
+	ret
+
+.right
+	inc [hl]
+	ret
 
 BattleAnimFunc_WishStar:
 ; Object moves right in a smooth half-sine arc over $28 frames.

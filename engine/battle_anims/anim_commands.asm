@@ -145,7 +145,7 @@ RunBattleAnimScript:
 BattleAnimClearHud:
 	call BattleAnimDelayFrame
 	call WaitTop
-	call BattleAnim_IsWish
+	call BattleAnim_ClearsBothHuds
 	jr nz, .clear_actor_hud
 	call BattleAnimCmd_ClearHuds
 	jr .cleared_hud
@@ -162,13 +162,31 @@ BattleAnimClearHud:
 	call WaitTop
 	ret
 
-BattleAnim_IsWish:
+BattleAnim_ClearsBothHuds:
 	ld hl, wFXAnimID
 	ld a, [hli]
 	cp LOW(WISH)
-	ret nz
+	jr nz, .check_vine_whip
 	ld a, [hl]
 	cp HIGH(WISH)
+	ret z
+
+.check_vine_whip
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(VINE_WHIP)
+	jr nz, .check_tackle
+	ld a, [hl]
+	cp HIGH(VINE_WHIP)
+	ret
+
+.check_tackle
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(TACKLE)
+	ret nz
+	ld a, [hl]
+	cp HIGH(TACKLE)
 	ret
 
 BattleAnimRestoreHuds:

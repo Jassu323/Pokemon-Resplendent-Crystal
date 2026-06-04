@@ -195,6 +195,7 @@ BattleAnimFrameData:
 	dw .Frameset_ElectricityEffect   ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT
 	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
 	dw .Frameset_ElectricityEffectYFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_YFLIP
+	dw .Frameset_WaterfallBubble     ; BATTLE_ANIM_FRAMESET_WATERFALL_BUBBLE
 	assert_table_length FIRST_BATTLE_ANIM_EXT_FRAMESET
 
 .Frameset_HitBig:
@@ -515,15 +516,15 @@ BattleAnimFrameData:
 	oamdelete
 
 .Frameset_HydroPump:
-	oamframe BATTLE_ANIM_OAMSET_2A,  1
-	oamframe BATTLE_ANIM_OAMSET_2B,  1
-	oamframe BATTLE_ANIM_OAMSET_2C,  1
-	oamframe BATTLE_ANIM_OAMSET_2D,  1
-	oamframe BATTLE_ANIM_OAMSET_2E,  1
-	oamframe BATTLE_ANIM_OAMSET_2D,  1
-	oamframe BATTLE_ANIM_OAMSET_2C,  1
-	oamframe BATTLE_ANIM_OAMSET_2B,  1
-	oamframe BATTLE_ANIM_OAMSET_2A,  1
+	oamframe BATTLE_ANIM_OAMSET_2A,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2B,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2C,  4, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2D,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2E,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2D,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2C,  4, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2B,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2A,  3, B_OAM_YFLIP
 	oamdelete
 
 .Frameset_Powder:
@@ -1305,6 +1306,10 @@ BattleAnimFrameData:
 
 .Frameset_ElectricityEffectYFlip:
 	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3,  5, B_OAM_YFLIP
+	oamdelete
+
+.Frameset_WaterfallBubble:
+	oamframe BATTLE_ANIM_OAMSET_20, 32
 	oamdelete
 
 .Frameset_EnemyFeet1Row:
