@@ -1,7 +1,10 @@
+; Input: D = bank selector (0 = regular/bank51, 1 = ext/bank63), E = frameset index
 ReinitBattleAnimFrameset:
 	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
 	add hl, bc
-	ld [hl], a
+	ld [hl], e     ; write low byte (index)
+	inc hl
+	ld [hl], d     ; write high byte (bank selector)
 	ld hl, BATTLEANIMSTRUCT_DURATION
 	add hl, bc
 	ld [hl], 0
@@ -113,8 +116,9 @@ GetBattleAnimFrame:
 .IsExtFrameset:
 	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
 	add hl, bc
+	inc hl          ; point to high byte (bank selector)
 	ld a, [hl]
-	cp FIRST_BATTLE_ANIM_EXT_FRAMESET
+	cp 1            ; carry set = bank 0 (regular), carry clear = bank 1+ (ext)
 	ret
 
 GetBattleAnimOAMPointer:

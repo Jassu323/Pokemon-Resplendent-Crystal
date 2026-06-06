@@ -116,9 +116,7 @@ BattleAnimExt_LoadFrame:
 .GetPointer:
 	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
 	add hl, bc
-	ld a, [hl]
-	sub FIRST_BATTLE_ANIM_EXT_FRAMESET
-	ld e, a
+	ld e, [hl]     ; low byte is already a 0-based index into BattleAnimExtFrameData
 	ld d, 0
 	ld hl, BattleAnimExtFrameData
 	add hl, de
@@ -135,7 +133,7 @@ BattleAnimExt_LoadFrame:
 	ret
 
 BattleAnimExtFrameData:
-; entries correspond to BATTLE_ANIM_FRAMESET_* constants starting at FIRST_BATTLE_ANIM_EXT_FRAMESET
+; entries correspond to BATTLE_ANIM_FRAMESET_* ext constants (bank selector = 1, low byte = 0-based index)
 	table_width 2
 	dw .Frameset_ThunderYellow1_0 ; BATTLE_ANIM_FRAMESET_THUNDER_YELLOW_1_0
 	dw .Frameset_ThunderYellow1_1 ; BATTLE_ANIM_FRAMESET_THUNDER_YELLOW_1_1
@@ -1441,16 +1439,8 @@ BattleAnimFunc_MudShot:
 	add hl, bc
 	add [hl]
 	ld [hl], a
-	ld a, BATTLE_ANIM_FRAMESET_MUD_SPLASH
-	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
-	add hl, bc
-	ld [hl], a
-	ld hl, BATTLEANIMSTRUCT_DURATION
-	add hl, bc
-	ld [hl], $0
-	ld hl, BATTLEANIMSTRUCT_FRAME
-	add hl, bc
-	ld [hl], -1
+	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH  ; D=0 (regular bank), E=index
+	farcall ReinitBattleAnimFrameset
 .splash
 	ret
 

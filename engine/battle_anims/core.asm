@@ -42,7 +42,10 @@ InitBattleAnimation:
 	ld [hli], a ; BATTLEANIMSTRUCT_FIX_Y
 	ld a, [de]
 	inc de
-	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID
+	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID (lo = index)
+	ld a, [de]
+	inc de
+	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID (hi = bank selector)
 	ld a, [de]
 	inc de
 	ld [hli], a ; BATTLEANIMSTRUCT_FUNCTION

@@ -210,7 +210,7 @@ BattleAnimFrameData:
 	dw .Frameset_OverheatFlame       ; BATTLE_ANIM_FRAMESET_OVERHEAT_FLAME
 	dw .Frameset_LavaPlumeEruption   ; BATTLE_ANIM_FRAMESET_LAVA_PLUME_ERUPTION
 	dw .Frameset_OutrageFlame        ; BATTLE_ANIM_FRAMESET_OUTRAGE_FLAME
-	assert_table_length FIRST_BATTLE_ANIM_EXT_FRAMESET
+	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
 	oamframe BATTLE_ANIM_OAMSET_00,  6
