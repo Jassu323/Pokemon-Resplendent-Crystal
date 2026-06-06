@@ -238,47 +238,63 @@ gfx/slots/slots_3.2bpp: tools/gfx += --interleave --png=$< --remove-duplicates -
 gfx/card_flip/card_flip_1.2bpp: tools/gfx += --trim-whitespace
 gfx/card_flip/card_flip_2.2bpp: tools/gfx += --remove-whitespace
 
-gfx/battle_anims/angels.2bpp: tools/gfx += --trim-whitespace
+battle_anim_dir := gfx/battle_anims
+battle_anim_2bpp = $(addprefix $(battle_anim_dir)/,$(addsuffix .2bpp,$(1)))
+battle_anim_png = $(addprefix $(battle_anim_dir)/,$(addsuffix .png,$(1)))
+battle_anim_chunk_pngs = $(foreach chunk,$(2),$(battle_anim_dir)/$(1)_$(chunk).png)
+battle_anim_chunk_tmps = $(foreach chunk,$(1),$@.$(chunk))
+
+$(call battle_anim_2bpp,angels bubble charge): tools/gfx += --trim-whitespace
+$(call battle_anim_2bpp,egg explosion hit horn lightning noise reflect rocks skyattack status vine_whip): tools/gfx += --remove-whitespace
+
 gfx/battle_anims/beam.2bpp: tools/gfx += --remove-xflip --remove-yflip --remove-whitespace
-gfx/battle_anims/bubble.2bpp: tools/gfx += --trim-whitespace
-gfx/battle_anims/charge.2bpp: tools/gfx += --trim-whitespace
-gfx/battle_anims/egg.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/explosion.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/hit.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/horn.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/lightning.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/misc.2bpp: tools/gfx += --remove-duplicates --remove-xflip
-gfx/battle_anims/noise.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/objects.2bpp: tools/gfx += --remove-whitespace --remove-xflip
 gfx/battle_anims/pokeball.2bpp: tools/gfx += --remove-xflip --keep-whitespace
-gfx/battle_anims/reflect.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/rocks.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/skyattack.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/status.2bpp: tools/gfx += --remove-whitespace
-transparent_battle_anim_2bpp := \
-	gfx/battle_anims/electricity_effect.2bpp \
-	gfx/battle_anims/thundershock.2bpp \
-	gfx/battle_anims/thunderbolt.2bpp \
-	gfx/battle_anims/thunderbolt_aftereffect.2bpp
 
-$(transparent_battle_anim_2bpp): %.2bpp: %.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#606060,#909090,#c8c8c8' -o $@ $<
+transparent_gray_battle_anim_colors := '\#none,\#606060,\#909090,\#c8c8c8'
+mud_ball_battle_anim_colors := '\#none,\#ffffff,\#70543e,\#000000'
+thunder_battle_anim_colors := '\#none,\#c8c8c8,\#686868,\#ffffff'
+ember_transparent_battle_anim_colors := '\#none,\#a0a0a0,\#606060,\#282828'
+ember_opaque_battle_anim_colors := '\#ffffff,\#a0a0a0,\#606060,\#282828'
+water_column_battle_anim_colors := '\#none,\#0838f8,\#08a0f8,\#60e8f8'
+claw_battle_anim_colors := '\#ffffff,\#606060,\#a0a0a0,\#282828'
 
-gfx/battle_anims/mud_ball.2bpp: gfx/battle_anims/mud_ball.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#ffffff,#70543e,#000000' -o $@ $<
-gfx/battle_anims/thunder.2bpp: gfx/battle_anims/thunder.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#c8c8c8,#686868,#ffffff' -o $@ $<
-gfx/battle_anims/vine_whip.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/vine_whip.2bpp: gfx/battle_anims/vine_whip.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#60e048,#38d000,#38a000' -o $@ $<
-	tools/gfx $(tools/gfx) -o $@ $@
-gfx/battle_anims/water_column.2bpp: gfx/battle_anims/water_column_1.png gfx/battle_anims/water_column_2.png gfx/battle_anims/water_column_3.png gfx/battle_anims/water_column_4.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.1 gfx/battle_anims/water_column_1.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.2 gfx/battle_anims/water_column_2.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.3 gfx/battle_anims/water_column_3.png
-	$(RGBGFX) $(RGBGFXFLAGS) --colors '#none,#0838f8,#08a0f8,#60e8f8' -o $@.4 gfx/battle_anims/water_column_4.png
-	cat $@.1 $@.2 $@.3 $@.4 > $@
-	$(RM) $@.1 $@.2 $@.3 $@.4
+define battle_anim_rgbgfx_rule
+$(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
+	$$(RGBGFX) $$(RGBGFXFLAGS) --colors $$($(2)) -o $$@ $$<
+endef
+
+$(call battle_anim_2bpp,electricity_effect thundershock thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors $(transparent_gray_battle_anim_colors) -o $@ $<
+
+$(eval $(call battle_anim_rgbgfx_rule,mud_ball,mud_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thunder,thunder_battle_anim_colors))
+
+$(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
+	for chunk in 1 2; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(ember_transparent_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/ember_$$chunk.png; \
+	done
+	for chunk in 3 4 5; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(ember_opaque_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/ember_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5)
+
+$(call battle_anim_2bpp,water_column): $(call battle_anim_chunk_pngs,water_column,1 2 3 4)
+	for chunk in 1 2 3 4; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(water_column_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/water_column_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4)
+
+$(call battle_anim_2bpp,claw): $(call battle_anim_chunk_pngs,claw,1 2 3 4 5)
+	for chunk in 1 2 3 4 5; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(claw_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/claw_$$chunk.png; \
+		tools/gfx --remove-whitespace -o $@.$$chunk $@.$$chunk; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5)
 
 gfx/player/chris.2bpp: RGBGFXFLAGS += --columns
 gfx/player/chris_back.2bpp: RGBGFXFLAGS += --columns

@@ -53,3 +53,7 @@ AnimObjWaterColumnGFX:
 	INCBIN "gfx/battle_anims/water_column.2bpp.lz"
 AnimObjVineWhipGFX:
 	INCBIN "gfx/battle_anims/vine_whip.2bpp.lz"
+AnimObjEmberGFX:
+	INCBIN "gfx/battle_anims/ember.2bpp.lz"
+AnimObjDragonClawGFX:
+	INCBIN "gfx/battle_anims/claw.2bpp.lz"

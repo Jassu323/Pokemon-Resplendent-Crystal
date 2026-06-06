@@ -196,6 +196,20 @@ BattleAnimFrameData:
 	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
 	dw .Frameset_ElectricityEffectYFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_YFLIP
 	dw .Frameset_WaterfallBubble     ; BATTLE_ANIM_FRAMESET_WATERFALL_BUBBLE
+	dw .Frameset_Ember1              ; BATTLE_ANIM_FRAMESET_EMBER_1
+	dw .Frameset_Ember2              ; BATTLE_ANIM_FRAMESET_EMBER_2
+	dw .Frameset_Ember3              ; BATTLE_ANIM_FRAMESET_EMBER_3
+	dw .Frameset_Ember4              ; BATTLE_ANIM_FRAMESET_EMBER_4
+	dw .Frameset_Ember5              ; BATTLE_ANIM_FRAMESET_EMBER_5
+	dw .Frameset_Ember2_3_4          ; BATTLE_ANIM_FRAMESET_EMBER_2_3_4
+	dw .Frameset_Ember1_2_3_4_5      ; BATTLE_ANIM_FRAMESET_EMBER_1_2_3_4_5
+	dw .Frameset_EmberAftereffect    ; BATTLE_ANIM_FRAMESET_EMBER_AFTEREFFECT
+	dw .Frameset_FireBlastEruption   ; BATTLE_ANIM_FRAMESET_FIRE_BLAST_ERUPTION
+	dw .Frameset_EmberFlare          ; BATTLE_ANIM_FRAMESET_EMBER_FLARE
+	dw .Frameset_SacredFireWindup    ; BATTLE_ANIM_FRAMESET_SACRED_FIRE_WINDUP
+	dw .Frameset_OverheatFlame       ; BATTLE_ANIM_FRAMESET_OVERHEAT_FLAME
+	dw .Frameset_LavaPlumeEruption   ; BATTLE_ANIM_FRAMESET_LAVA_PLUME_ERUPTION
+	dw .Frameset_OutrageFlame        ; BATTLE_ANIM_FRAMESET_OUTRAGE_FLAME
 	assert_table_length FIRST_BATTLE_ANIM_EXT_FRAMESET
 
 .Frameset_HitBig:
@@ -1311,6 +1325,92 @@ BattleAnimFrameData:
 .Frameset_WaterfallBubble:
 	oamframe BATTLE_ANIM_OAMSET_20, 32
 	oamdelete
+
+.Frameset_Ember1:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
+	oamrestart
+
+.Frameset_Ember2:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
+	oamrestart
+
+.Frameset_Ember3:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  4
+	oamrestart
+
+.Frameset_Ember4:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  4
+	oamrestart
+
+.Frameset_Ember5:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamrestart
+
+.Frameset_Ember2_3_4:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  2
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  2
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  2
+	oamrestart
+
+.Frameset_Ember1_2_3_4_5:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  3
+	oamdelete
+
+.Frameset_EmberAftereffect:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamdelete
+
+.Frameset_FireBlastEruption:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  12
+	oamdelete
+
+.Frameset_EmberFlare:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamdelete
+
+.Frameset_SacredFireWindup:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  9
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  9
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  4
+	oamend
+
+.Frameset_OverheatFlame:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  5
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  5
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  5
+	oamdelete
+
+.Frameset_LavaPlumeEruption:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  6
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  6
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  6
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  6
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  6
+	oamdelete
+
+.Frameset_OutrageFlame:
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  4
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamrestart
 
 .Frameset_EnemyFeet1Row:
 	oamframe BATTLE_ANIM_OAMSET_D4,  8

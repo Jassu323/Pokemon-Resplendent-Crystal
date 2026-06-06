@@ -57,4 +57,6 @@ AnimObjGFX:
 	anim_obj_gfx 40, AnimObjThunderboltAftereffectGFX
 	anim_obj_gfx 48, AnimObjWaterColumnGFX
 	anim_obj_gfx 40, AnimObjVineWhipGFX
+	anim_obj_gfx 15, AnimObjEmberGFX
+	anim_obj_gfx 33, AnimObjDragonClawGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

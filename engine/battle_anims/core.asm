@@ -27,15 +27,9 @@ DeinitBattleAnimation:
 	ret
 
 InitBattleAnimation:
-	ld a, [wBattleObjectTempID]
-	ld e, a
-	ld d, 0
-	ld hl, BattleAnimObjects
-rept BATTLEANIMOBJ_LENGTH
-	add hl, de
-endr
-	ld e, l
-	ld d, h
+	push bc
+	call GetBattleAnimObjectCached
+	pop bc
 	ld hl, BATTLEANIMSTRUCT_INDEX
 	add hl, bc
 	ld a, [wLastAnimObjectIndex]
@@ -75,6 +69,71 @@ endr
 	ld [hli], a ; BATTLEANIMSTRUCT_JUMPTABLE_INDEX
 	ld [hli], a ; BATTLEANIMSTRUCT_VAR1
 	ld [hl], a  ; BATTLEANIMSTRUCT_VAR2
+	ret
+
+GetBattleAnimObjectCached:
+	ld a, [wBattleObjectTempID]
+	ld hl, wBattleAnimObjCache1ID
+	cp [hl]
+	jr z, .hit_slot1
+	ld hl, wBattleAnimObjCache2ID
+	cp [hl]
+	jr z, .hit_slot2
+	ld hl, wBattleAnimObjCache3ID
+	cp [hl]
+	jr z, .hit_slot3
+
+	ld hl, wBattleAnimObjCache2ID
+	ld de, wBattleAnimObjCache3ID
+	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+	call CopyBytes
+	ld hl, wBattleAnimObjCache1ID
+	ld de, wBattleAnimObjCache2ID
+	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+	call CopyBytes
+	ld a, [wBattleObjectTempID]
+	ld [wBattleAnimObjCache1ID], a
+	ld e, a
+	ld d, 0
+	ld hl, BattleAnimObjects
+rept BATTLEANIMOBJ_LENGTH
+	add hl, de
+endr
+	ld de, wBattleAnimObjCache1Data
+	ld bc, BATTLEANIMOBJ_LENGTH
+	ld a, BANK(BattleAnimObjects)
+	call FarCopyBytes
+.hit_slot1
+	ld de, wBattleAnimObjCache1Data
+	ret
+
+.hit_slot2
+	ld hl, wBattleAnimObjCache1ID
+	ld de, wBattleAnimObjCache2ID
+	call SwapBattleAnimObjectCacheEntries
+	jr .hit_slot1
+
+.hit_slot3
+	ld hl, wBattleAnimObjCache2ID
+	ld de, wBattleAnimObjCache3ID
+	call SwapBattleAnimObjectCacheEntries
+	ld hl, wBattleAnimObjCache1ID
+	ld de, wBattleAnimObjCache2ID
+	call SwapBattleAnimObjectCacheEntries
+	jr .hit_slot1
+
+SwapBattleAnimObjectCacheEntries:
+	ld b, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+.loop
+	ld a, [de]
+	ld c, a
+	ld a, [hl]
+	ld [de], a
+	ld a, c
+	ld [hli], a
+	inc de
+	dec b
+	jr nz, .loop
 	ret
 
 BattleAnimOAMUpdate:
@@ -328,5 +387,3 @@ _ExecuteBGEffects:
 _QueueBGEffect:
 	callfar QueueBGEffect
 	ret
-
-INCLUDE "data/battle_anims/objects.asm"

@@ -26,6 +26,12 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_OverheatFlame
 	dw BattleAnimFunc_Thunder
 	dw BattleAnimFunc_WaterfallBubble
+	dw BattleAnimFunc_FireBlastModern
+	dw BattleAnimFunc_EmberGen3
+	dw BattleAnimFunc_FlameWheelHit
+	dw BattleAnimFunc_SacredFireHit
+	dw BattleAnimFunc_LavaPlumeEruption
+	dw BattleAnimFunc_DragonClawFlame
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -156,6 +162,8 @@ BattleAnimExtFrameData:
 	dw .Frameset_HydroPumpColumn ; BATTLE_ANIM_FRAMESET_HYDRO_PUMP_COLUMN
 	dw .Frameset_HydroPumpColumnSlow ; BATTLE_ANIM_FRAMESET_HYDRO_PUMP_COLUMN_SLOW
 	dw .Frameset_VineWhip ; BATTLE_ANIM_FRAMESET_VINE_WHIP
+	dw .Frameset_DragonClawSlash ; BATTLE_ANIM_FRAMESET_DRAGON_CLAW_SLASH
+	dw .Frameset_DragonClawSlashXFlip ; BATTLE_ANIM_FRAMESET_DRAGON_CLAW_SLASH_XFLIP
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -328,6 +336,24 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_5, 4
 	oamdelete
 
+.Frameset_DragonClawSlash:
+	oamwait 10
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_1, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_2, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_3, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_4, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_5, 4
+	oamdelete
+
+.Frameset_DragonClawSlashXFlip:
+	oamwait 55
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_1, 4, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_2, 4, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_3, 4, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_4, 4, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_5, 4, B_OAM_XFLIP
+	oamdelete
+
 BattleAnimExtOAMUpdate:
 	ld l, e
 	ld h, 0
@@ -489,6 +515,11 @@ BattleAnimExtOAMData:
 	battleanimoam $00,  8, .OAMData_VineWhip3 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_3
 	battleanimoam $00,  7, .OAMData_VineWhip4 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_4
 	battleanimoam $00,  8, .OAMData_VineWhip5 ; BATTLE_ANIM_EXT_OAMSET_VINE_WHIP_5
+	battleanimoam $00,  1, .OAMData_DragonClawSlash1 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_1
+	battleanimoam $01,  4, .OAMData_DragonClawSlash2 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_2
+	battleanimoam $05,  8, .OAMData_DragonClawSlash3 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_3
+	battleanimoam $0d, 10, .OAMData_DragonClawSlash4 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_4
+	battleanimoam $17, 10, .OAMData_DragonClawSlash5 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_5
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_ThunderNarrowSection:
@@ -677,13 +708,57 @@ BattleAnimExtOAMData:
 	dbsprite  -2,  0, 0, 0, $26, $0
 	dbsprite  -2,  1, 0, 0, $27, $0
 
+.OAMData_DragonClawSlash1:
+	dbsprite  -2, -2, 0, 0, $00, $0
+
+.OAMData_DragonClawSlash2:
+	dbsprite  -2, -2, 0, 0, $00, $0
+	dbsprite  -1, -2, 0, 0, $01, $0
+	dbsprite  -2, -1, 0, 0, $02, $0
+	dbsprite  -1, -1, 0, 0, $03, $0
+
+.OAMData_DragonClawSlash3:
+	dbsprite  -2, -2, 0, 0, $00, $0
+	dbsprite  -1, -2, 0, 0, $01, $0
+	dbsprite  -2, -1, 0, 0, $02, $0
+	dbsprite  -1, -1, 0, 0, $03, $0
+	dbsprite   0, -1, 0, 0, $04, $0
+	dbsprite  -1,  0, 0, 0, $05, $0
+	dbsprite   0,  0, 0, 0, $06, $0
+	dbsprite   1,  1, 0, 0, $07, $0
+
+.OAMData_DragonClawSlash4:
+	dbsprite  -2, -2, 0, 0, $00, $0
+	dbsprite  -1, -2, 0, 0, $01, $0
+	dbsprite  -2, -1, 0, 0, $02, $0
+	dbsprite  -1, -1, 0, 0, $03, $0
+	dbsprite   0, -1, 0, 0, $04, $0
+	dbsprite  -1,  0, 0, 0, $05, $0
+	dbsprite   0,  0, 0, 0, $06, $0
+	dbsprite   1,  0, 0, 0, $07, $0
+	dbsprite   0,  1, 0, 0, $08, $0
+	dbsprite   1,  1, 0, 0, $09, $0
+
+.OAMData_DragonClawSlash5:
+	dbsprite  -2, -2, 0, 0, $00, $0
+	dbsprite  -1, -2, 0, 0, $01, $0
+	dbsprite  -2, -1, 0, 0, $02, $0
+	dbsprite  -1, -1, 0, 0, $03, $0
+	dbsprite   0, -1, 0, 0, $04, $0
+	dbsprite  -1,  0, 0, 0, $05, $0
+	dbsprite   0,  0, 0, 0, $06, $0
+	dbsprite   1,  0, 0, 0, $07, $0
+	dbsprite   0,  1, 0, 0, $08, $0
+	dbsprite   1,  1, 0, 0, $09, $0
+
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
-	jp BattleAnimExt_LoadIndigoFireColorPair
+	jp BattleAnimExt_LoadIndigoFireColors
 
 .IndigoFirePal:
-	RGB 15, 07, 31
+	RGB 04, 01, 16
 	RGB 08, 02, 26
+	RGB 15, 07, 31
 
 BattleAnimExt_CycleIndigoFireOBPal:
 	ld hl, BG_EFFECT_STRUCT_JT_INDEX
@@ -718,7 +793,7 @@ BattleAnimExt_CycleIndigoFireOBPal:
 	add hl, bc
 	ld [hl], $1
 	ld hl, .CyclePals
-	call BattleAnimExt_LoadIndigoFireColorPair
+	call BattleAnimExt_LoadIndigoFireColors
 	ret
 
 .cycle
@@ -747,12 +822,13 @@ BattleAnimExt_CycleIndigoFireOBPal:
 	ld [hl], a
 	ld a, e
 	add a
+	add e
 	add a
 	ld e, a
 	ld d, 0
 	ld hl, .CyclePals
 	add hl, de
-	call BattleAnimExt_LoadIndigoFireColorPair
+	call BattleAnimExt_LoadIndigoFireColors
 	ret
 
 .finish
@@ -763,20 +839,26 @@ BattleAnimExt_CycleIndigoFireOBPal:
 	ret
 
 .CyclePals:
-	RGB 15, 07, 31
+	RGB 04, 01, 16
 	RGB 08, 02, 26
-	RGB 28, 08, 31
+	RGB 15, 07, 31
+	RGB 08, 00, 14
 	RGB 18, 01, 24
-	RGB 09, 11, 31
+	RGB 28, 08, 31
+	RGB 01, 02, 16
 	RGB 03, 04, 29
-	RGB 28, 08, 31
+	RGB 09, 11, 31
+	RGB 08, 00, 14
 	RGB 18, 01, 24
-	RGB 04, 16, 31
+	RGB 28, 08, 31
+	RGB 00, 03, 16
 	RGB 00, 06, 31
-	RGB 28, 08, 31
+	RGB 04, 16, 31
+	RGB 08, 00, 14
 	RGB 18, 01, 24
+	RGB 28, 08, 31
 
-BattleAnimExt_LoadIndigoFireColorPair:
+BattleAnimExt_LoadIndigoFireColors:
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -786,7 +868,7 @@ BattleAnimExt_LoadIndigoFireColorPair:
 	ld a, BANK(wOBPals1)
 	ldh [rWBK], a
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE color 1
-rept 4
+rept 6
 	ld a, [hli]
 	ld [de], a
 	inc de
@@ -896,44 +978,73 @@ BattleAnimExt_LoadThunderboltPal:
 	ld a, e
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_LOAD
 	jr z, .load_water_column
+	cp BATTLE_ANIM_GRASS_PAL_LOAD
+	jr z, .load_grass
+	cp BATTLE_ANIM_FIRE_PAL_LOAD
+	jr z, .load_fire
+	cp BATTLE_ANIM_DRAGON_PAL_LOAD
+	jr z, .load_dragon
+	cp BATTLE_ANIM_FIRE_BLUE_PAL_LOAD
+	jr z, .load_fire_blue
+	cp BATTLE_ANIM_DRAGON_CLAW_PAL_LOAD
+	jr z, .load_dragon_claw
+	cp BATTLE_ANIM_DRAGON_BLUE_PAL_LOAD
+	jr z, .load_dragon_blue
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
 	jr z, .restore_blue
-	cp BATTLE_ANIM_VINE_WHIP_PAL_LOAD
-	jr z, .load_vine_whip
-	cp BATTLE_ANIM_VINE_WHIP_PAL_RESTORE
+	cp BATTLE_ANIM_GRASS_PAL_RESTORE
 	jr z, .restore_green
+	cp BATTLE_ANIM_FIRE_PAL_RESTORE
+	jr z, .restore_red
+	cp BATTLE_ANIM_DRAGON_PAL_RESTORE
+	jr z, .restore_red
+	cp BATTLE_ANIM_FIRE_BLUE_PAL_RESTORE
+	jr z, .restore_blue
+	cp BATTLE_ANIM_DRAGON_CLAW_PAL_RESTORE
+	jr z, .restore_red
+	cp BATTLE_ANIM_DRAGON_BLUE_PAL_RESTORE
+	jr z, .restore_blue
 	cp BATTLE_ANIM_THUNDERBOLT_PAL_RESTORE
 	jr z, .restore_blue
-	ldh a, [hCGB]
-	and a
-	ret z
-	push bc
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wOBPals1)
-	ldh [rWBK], a
 	ld hl, .ThunderboltPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	ld bc, 1 palettes
-	call CopyBytes
-	jr .done
+	jr .load_custom_pal
 
 .load_water_column
-	ldh a, [hCGB]
-	and a
-	ret z
-	push bc
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wOBPals1)
-	ldh [rWBK], a
 	ld hl, .WaterColumnPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	ld bc, 1 palettes
-	call CopyBytes
-	jr .done
+	jr .load_custom_pal
 
-.load_vine_whip
+.load_grass
+	ld hl, .GrassPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	jr .load_custom_pal
+
+.load_fire
+	ld hl, .FirePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jr .load_custom_pal
+
+.load_dragon
+	ld hl, .DragonPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jr .load_custom_pal
+
+.load_dragon_blue
+	ld hl, .DragonPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_fire_blue
+	ld hl, .FireBluePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_dragon_claw
+	ld hl, .DragonClawPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+
+.load_custom_pal
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -942,28 +1053,25 @@ BattleAnimExt_LoadThunderboltPal:
 	push af
 	ld a, BANK(wOBPals1)
 	ldh [rWBK], a
-	ld hl, .VineWhipPal
-	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	ld bc, 1 palettes
 	call CopyBytes
 	jr .done
 
 .restore_blue
-	ldh a, [hCGB]
-	and a
-	ret z
-	push bc
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wOBPals1)
-	ldh [rWBK], a
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_BLUE
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	ld bc, 1 palettes
-	call CopyBytes
-	jr .done
+	jr .restore_pal
 
 .restore_green
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_GREEN
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	jr .restore_pal
+
+.restore_red
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_RED
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+
+.restore_pal
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -972,8 +1080,6 @@ BattleAnimExt_LoadThunderboltPal:
 	push af
 	ld a, BANK(wOBPals1)
 	ldh [rWBK], a
-	ld hl, wOBPals1 palette PAL_BATTLE_OB_GREEN
-	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	ld bc, 1 palettes
 	call CopyBytes
 
@@ -997,11 +1103,35 @@ BattleAnimExt_LoadThunderboltPal:
 	RGB 01, 20, 31
 	RGB 12, 29, 31
 
-.VineWhipPal:
+.GrassPal:
 	RGB 31, 31, 31
 	RGB 12, 28, 09
 	RGB 07, 26, 00
 	RGB 07, 20, 00
+
+.FirePal:
+	RGB 31, 31, 31
+	RGB 31, 31, 15
+	RGB 31, 24, 04
+	RGB 31, 12, 02
+
+.DragonPal:
+	RGB 31, 31, 31
+	RGB 24, 14, 31
+	RGB 19, 06, 31
+	RGB 13, 00, 27
+
+.FireBluePal:
+	RGB 31, 31, 31
+	RGB 24, 31, 31
+	RGB 08, 24, 31
+	RGB 00, 10, 31
+
+.DragonClawPal:
+	RGB 31, 31, 31
+	RGB 07, 12, 15
+	RGB 31, 05, 00
+	RGB 07, 00, 00
 
 BattleAnimFunc_Thunder:
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -1428,7 +1558,15 @@ BattleAnimFunc_OverheatFlame:
 	ld a, [hl]
 	add d
 	ld [hl], a
-	ret
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld a, [hl]
+	cp $28
+	ret nc
+	; Opponent-side flames render downward as raw Y decreases.
+	; Delete before they enter the text box.
+	jr .done
 
 .done
 	call BattleAnimExt_Deinit
@@ -1444,6 +1582,416 @@ BattleAnimFunc_OverheatFlame:
 	db 5, -2
 	db 6, -1
 	db 6,  0
+
+BattleAnimFunc_FireBlastModern:
+; Obj Param: $00-$3f = orbit angle. $81-$85 = eruption direction.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 7, [hl]
+	jr nz, .eruption
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .orbit
+	dw .travel
+
+.orbit
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], $10
+	call .apply_ring_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	inc [hl]
+	ret
+
+.travel
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	cp $88
+	jr nc, .done
+	add $4
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub $2
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp $4
+	jr z, .got_travel_radius
+	dec [hl]
+.got_travel_radius
+	call .apply_ring_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	inc [hl]
+	ret
+
+.eruption
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $14
+	jr nc, .done
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	cp $1
+	jr z, .eruption_up
+	cp $2
+	jr z, .eruption_left
+	cp $3
+	jr z, .eruption_right
+	cp $4
+	jr z, .eruption_down_left
+	cp $5
+	jr z, .eruption_down_right
+	ret
+
+.eruption_up
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.eruption_down_left
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+.eruption_left
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.eruption_down_right
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+.eruption_right
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.apply_ring_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+.apply_ring_offsets
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3f
+	add e
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld d, [hl]
+	push de
+	call BattleAnimExt_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	ld a, e
+	call BattleAnimExt_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+BattleAnimFunc_EmberGen3:
+; Obj Param: $00-$02 = projectile path. Bit 7 = target flare sweep.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 7, [hl]
+	jr nz, .flare
+
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $14
+	jr nc, .done
+	ld e, a
+	inc [hl]
+	push de
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	cp $3
+	jr c, .got_path
+	ld a, $2
+.got_path
+	ld d, a
+	add a
+	add a
+	add d
+	add a
+	add a
+	pop de
+	push de
+	add e
+	ld e, a
+	ld d, 0
+	ld hl, .ProjectileXSteps
+	add hl, de
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+
+	pop de
+	ld d, 0
+	ld hl, .ProjectileYSteps
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_projectile_y_steps
+	ld hl, .ProjectileYStepsOpponent
+.got_projectile_y_steps
+	add hl, de
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ret
+
+.flare
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $14
+	jr nc, .done
+	and a
+	call z, .init_flare
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	ld e, a
+	ld d, 0
+	ld hl, .FlareXOffsets
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.init_flare
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	sub $4
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub $18
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.ProjectileXSteps:
+	db 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3
+	db 4, 3, 4, 4, 3, 4, 3, 4, 4, 3, 4, 3, 4, 4, 3, 4, 3, 4, 4, 3
+	db 4, 5, 4, 4, 5, 4, 5, 4, 4, 5, 4, 5, 4, 4, 5, 4, 5, 4, 4, 5
+
+.ProjectileYSteps:
+	db -1, -2, -1, -1, -2, -1, -2, -1, -1, -2, -1, -2, -1, -1, -2, -1, -2, -1, -1, -2
+
+.ProjectileYStepsOpponent:
+	db -2, -3, -2, -3, -2, -3, -2, -3, -2, -3, -2, -3, -2, -3, -2, -3, -3, -3, -3, -3
+
+.FlareXOffsets:
+	db -24, -21, -19, -16, -14, -11, -9, -6, -4, -1
+	db   1,   4,   6,   9,  11,  14, 16, 19, 21, 24
+
+BattleAnimFunc_FlameWheelHit:
+; Obj Param: $0 = right, $1 = left, $2 = up-left, $3 = up-right,
+;            $4 = down-left, $5 = down-right.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $10
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	cp $1
+	jr z, .left
+	cp $2
+	jr z, .up_left
+	cp $3
+	jr z, .up_right
+	cp $4
+	jr z, .down_left
+	cp $5
+	jr z, .down_right
+
+.right
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	inc [hl]
+	ret
+
+.up_left
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+.left
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.up_right
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	jr .right
+
+.down_left
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+	jr .left
+
+.down_right
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+	jr .right
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_SacredFireHit:
+; Obj Param: Fire Blast-style directions $1 = up, $4 = down-left,
+;            $5 = down-right. Preserves the object's frameset.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	cp $1
+	jr z, .up
+	cp $4
+	jr z, .down_left
+	cp $5
+	jr z, .down_right
+	ret
+
+.up
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.down_left
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.down_right
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	inc [hl]
+	ret
+
+BattleAnimFunc_LavaPlumeEruption:
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+BattleAnimFunc_DragonClawFlame:
+; Obj Param: $0-$2 = first slash trail, $3-$5 = second slash trail.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	ret nz
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	cp 6
+	ret nc
+	add a
+	ld e, a
+	ld d, 0
+
+	ld hl, .PlayerCoords
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_coords
+	ld hl, .EnemyCoords
+
+.got_coords
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], d
+	ret
+
+.PlayerCoords:
+	db 126, 44
+	db 136, 56
+	db 146, 68
+	db 146, 44
+	db 136, 56
+	db 126, 68
+
+.EnemyCoords:
+	db  54, 76
+	db  44, 88
+	db  34, 100
+	db  34, 76
+	db  44, 88
+	db  54, 100
 
 BattleAnimExt_Deinit:
 	ld hl, BATTLEANIMSTRUCT_INDEX
@@ -1478,3 +2026,5 @@ BattleAnimExt_Sine:
 	callfar BattleAnim_Sine_e
 	ld a, e
 	ret
+
+INCLUDE "data/battle_anims/objects.asm"

@@ -93,6 +93,8 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_AncientPower
 	dw BattleAnimFunc_RockSmash
 	dw BattleAnimFunc_Cotton
+	dw BattleAnimFunc_Flamethrower
+	dw BattleAnimFunc_OutrageFlame
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EXT_NULL
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WISH_STAR
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SEISMIC_TOSS_LIGHT
@@ -101,6 +103,12 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_OVERHEAT_FLAME
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_THUNDER
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WATERFALL_BUBBLE
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_FIRE_BLAST_MODERN
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EMBER_GEN3
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_FLAME_WHEEL_HIT
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SACRED_FIRE_HIT
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_LAVA_PLUME_ERUPTION
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_DRAGON_CLAW_FLAME
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:
@@ -216,6 +224,62 @@ BattleAnimFunc_MoveInCircle:
 	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
 	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], 20
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7f
+	ld [hl], a
+.one
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld d, [hl]
+	push af
+	push de
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	dec [hl]
+	ret nz
+	call DeinitBattleAnimation
+	ret
+
+BattleAnimFunc_Flamethrower:
+; Original no-delete circular motion. Script clears these objects explicitly.
+; Obj Param: Distance from center (masked with $7F). Bit 7 starts on the opposite side.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .zero
+	dw .one
+.zero
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 7, [hl]
+	ld a, $0
+	jr z, .got_starting_position
+	ld a, $20
+.got_starting_position
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
 	ld hl, BATTLEANIMSTRUCT_PARAM
 	add hl, bc
 	ld a, [hl]
@@ -245,8 +309,83 @@ BattleAnimFunc_MoveInCircle:
 	inc [hl]
 	ret
 
+BattleAnimFunc_OutrageFlame:
+; Obj Param: $0-$7 = forward-only flame vector.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 30
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	add a
+	ld e, a
+	ld d, 0
+
+	ld hl, .PlayerVectors
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_vectors
+	ld hl, .EnemyVectors
+
+.got_vectors
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld a, [hl]
+	cp $28
+	ret nc
+	; Opponent-side flames render downward as raw Y decreases.
+	; Delete before they enter the text box.
+	jr .done
+
+.done
+	call DeinitBattleAnimation
+	ret
+
+.PlayerVectors:
+; player-side rendered paths: broader upward wild burst
+	db  2, -4 ; $0 steep up-forward
+	db  3, -3 ; $1 up-forward
+	db  4, -1 ; $2 more shallow/targetward
+	db  4,  0 ; $3 straight right
+	db  3, -2 ; $4 lower wave carry
+	db  3, -3 ; $5 mid upward
+	db  1, -4 ; $6 near-vertical
+	db  3,  0 ; $7 lower forward lane
+
+.EnemyVectors:
+; opponent-side tuned to stay on-screen with valid travel toward the player.
+	db  4, -2 ; $0 down-left
+	db  4, -2 ; $1 down-left
+	db  5, -1 ; $2 shallow down-left
+	db  4,  0 ; $3 straight left
+	db  3, -1 ; $4 slower shallow down-left
+	db  3, -3 ; $5 steeper/slower down-left
+	db  3, -3 ; $6 steeper down-left
+	db  4,  0 ; $7 straight left
+
 BattleAnimFunc_MoveFromUserToTarget:
-; Moves object diagonally at a ~30° angle towards opponent and stops when it reaches x coord $84. Obj Param changes the speed
 	call BattleAnim_AnonJumptable
 .anon_dw
 	dw .zero
@@ -744,7 +883,7 @@ BattleAnimFunc_FireBlast:
 	ld [hl], a
 	cp $7
 	jr z, .seven
-	ld a, BATTLE_ANIM_FRAMESET_BURNED
+	ld a, BATTLE_ANIM_FRAMESET_EMBER_1_2_3_4_5
 	call ReinitBattleAnimFrameset
 	ret
 
@@ -763,7 +902,7 @@ BattleAnimFunc_FireBlast:
 
 .set_up_eight
 	call BattleAnim_IncAnonJumptableIndex
-	ld a, BATTLE_ANIM_FRAMESET_EMBER
+	ld a, BATTLE_ANIM_FRAMESET_EMBER_1_2_3_4_5
 	call ReinitBattleAnimFrameset
 .eight
 	ld hl, BATTLEANIMSTRUCT_VAR1

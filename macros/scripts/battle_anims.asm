@@ -275,6 +275,31 @@ MACRO anim_vinewhippal
 	db \1
 ENDM
 
+MACRO anim_grasspal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
+MACRO anim_firepal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
+MACRO anim_dragonpal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
+MACRO anim_dragonclawpal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
+MACRO anim_dragonbluepal
+	db anim_thunderboltpal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
 	db anim_thunderboltpal_command
 	db \1

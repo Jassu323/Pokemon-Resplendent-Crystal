@@ -239,6 +239,11 @@ BattleAnimOAMData:
 	battleanimoam $00,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1
 	battleanimoam $04,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2
 	battleanimoam $08,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3
+	battleanimoam $00,  1, .OAMData_0f ; BATTLE_ANIM_OAMSET_EMBER_1
+	battleanimoam $01,  2, .OAMData_11 ; BATTLE_ANIM_OAMSET_EMBER_2
+	battleanimoam $03,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_3
+	battleanimoam $07,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_4
+	battleanimoam $0b,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_5
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_11:

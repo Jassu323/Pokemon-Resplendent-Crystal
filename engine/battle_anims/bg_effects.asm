@@ -136,6 +136,7 @@ BattleBGEffects:
 	dw BattleBGEffect_WobbleScreen
 	dw BattleBGEffect_CycleGreenOBPal
 	dw BattleBGEffect_CycleIndigoFireOBPal
+	dw BattleBGEffect_FireBGPals
 	assert_table_length NUM_BATTLE_BG_EFFECTS
 
 BattleBGEffect_End:
@@ -475,6 +476,123 @@ BattleBGEffect_LoadGreenOBPal:
 BattleBGEffect_CycleIndigoFireOBPal:
 	farcall BattleAnimExt_CycleIndigoFireOBPal
 	ret
+
+BattleBGEffect_FireBGPals:
+	ldh a, [hCGB]
+	and a
+	jr nz, .cgb
+	call EndBattleBGEffect
+	ret
+
+.cgb
+	ld hl, BG_EFFECT_STRUCT_JT_INDEX
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr nz, .wait
+	inc [hl]
+	ld hl, .FireBGPal
+	call .LoadFireBGPal
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr nz, .got_duration
+	ld a, 60
+.got_duration
+	dec a
+	ld [hl], a
+	ret
+
+.wait
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .restore
+	dec [hl]
+	ret
+
+.restore
+	call .RestoreFireBGPal
+	call EndBattleBGEffect
+	ret
+
+.LoadFireBGPal:
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rWBK], a
+	push hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER
+	call .CopyFireBGPal
+	pop hl
+	push hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY
+	call .CopyFireBGPal
+	pop hl
+	push hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP
+	call .CopyFireBGPal
+	pop hl
+	push hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
+	call .CopyFireBGPal
+	pop hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_EXP
+	call .CopyFireBGPal
+	pop af
+	ldh [rWBK], a
+	pop bc
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.RestoreFireBGPal:
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_PLAYER
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER
+	call .CopyFireBGPal
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_ENEMY
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY
+	call .CopyFireBGPal
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_ENEMY_HP
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP
+	call .CopyFireBGPal
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_PLAYER_HP
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
+	call .CopyFireBGPal
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_EXP
+	ld de, wBGPals2 palette PAL_BATTLE_BG_EXP
+	call .CopyFireBGPal
+	pop af
+	ldh [rWBK], a
+	pop bc
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.CopyFireBGPal:
+	ld b, 1 palettes
+.copy_loop
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .copy_loop
+	ret
+
+.FireBGPal:
+; Fire-tinted BG palette
+	RGB 31, 28, 18
+	RGB 31, 19, 24
+	RGB 30, 10, 06
+	RGB 00, 00, 00
 
 BattleBGEffect_CycleBGPals_Inverted:
 	ld de, .Pals

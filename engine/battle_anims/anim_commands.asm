@@ -1392,6 +1392,11 @@ ClearBattleAnims::
 	or b
 	jr nz, .loop
 
+	ld a, $ff
+	ld [wBattleAnimObjCache1ID], a
+	ld [wBattleAnimObjCache2ID], a
+	ld [wBattleAnimObjCache3ID], a
+
 	ld hl, wFXAnimID
 	ld e, [hl]
 	inc hl

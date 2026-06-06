@@ -3653,6 +3653,13 @@ wSurfWaveBGEffect:: ds $40
 wSurfWaveBGEffectEnd::
 ENDU
 
+wBattleAnimObjCache1ID:: db
+wBattleAnimObjCache1Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache2ID:: db
+wBattleAnimObjCache2Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache3ID:: db
+wBattleAnimObjCache3Data:: ds BATTLEANIMOBJ_LENGTH
+
 
 SECTION "Mobile RAM and Pokedex Listings", WRAMX
 
