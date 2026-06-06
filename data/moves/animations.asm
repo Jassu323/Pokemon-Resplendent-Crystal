@@ -2394,6 +2394,7 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0
+	anim_ret
 
 BattleAnim_BodySlam:
 	anim_1gfx BATTLE_ANIM_GFX_HIT
@@ -4504,24 +4505,28 @@ BattleAnim_DragonClaw:
 	anim_dragonpal BATTLE_ANIM_DRAGON_PAL_RESTORE
 	anim_dragonclawpal BATTLE_ANIM_DRAGON_CLAW_PAL_LOAD
 	anim_dragonbluepal BATTLE_ANIM_DRAGON_BLUE_PAL_LOAD
+	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH, 126, 46, $0
+	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH, 126, 66, $0
+	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH_XFLIP, 146, 46, $0
+	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH_XFLIP, 146, 66, $0
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_RAZOR_WIND
-	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH, 126, 46, $0
-	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH, 126, 66, $0
 	anim_wait 20
 	anim_call BattleAnimSub_DragonClawTrailDownRight
 	anim_wait 15
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_RAZOR_WIND
-	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH_XFLIP, 146, 46, $0
-	anim_obj BATTLE_ANIM_OBJ_DRAGON_CLAW_SLASH_XFLIP, 146, 66, $0
 	anim_wait 20
 	anim_call BattleAnimSub_DragonClawTrailDownLeft
 	anim_wait 20
-	anim_call BattleAnim_ShowMon_0
+	anim_wait 1
+	anim_bgeffect BATTLE_BG_EFFECT_SHOW_MON, $0, BG_EFFECT_TARGET, $0
+	anim_wait 5
+	anim_incobj 5
+	anim_wait 1
 	anim_dragonclawpal BATTLE_ANIM_DRAGON_CLAW_PAL_RESTORE
 	anim_dragonbluepal BATTLE_ANIM_DRAGON_BLUE_PAL_RESTORE
 	anim_ret
