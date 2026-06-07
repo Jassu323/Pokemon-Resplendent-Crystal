@@ -1258,7 +1258,7 @@ BattleAnim_LeechSeed:
 	anim_ret
 
 BattleAnim_RazorLeaf:
-	anim_1gfx BATTLE_ANIM_GFX_PLANT
+	anim_2gfx BATTLE_ANIM_GFX_PLANT, BATTLE_ANIM_GFX_HIT
 	anim_sound 0, 0, SFX_VINE_WHIP
 	anim_obj BATTLE_ANIM_OBJ_RAZOR_LEAF, 48, 80, $28
 	anim_obj BATTLE_ANIM_OBJ_RAZOR_LEAF, 48, 80, $5c
@@ -2386,7 +2386,7 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
-  	anim_1gfx BATTLE_ANIM_GFX_HIT
+/*   	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
@@ -2394,6 +2394,8 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0
+	anim_ret */
+	anim_call BattleAnim_MagicalLeaf
 	anim_ret
 
 BattleAnim_BodySlam:
@@ -4579,7 +4581,7 @@ BattleAnim_PoisonTail:
 	anim_ret
 
 BattleAnim_MagicalLeaf:
-	anim_1gfx BATTLE_ANIM_GFX_PLANT
+	anim_2gfx BATTLE_ANIM_GFX_PLANT, BATTLE_ANIM_GFX_HIT
 	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_GREEN_OBPAL, $0, $0, $20
 	anim_sound 0, 0, SFX_METRONOME
 	anim_obj BATTLE_ANIM_OBJ_RAZOR_LEAF, 48, 80, $28

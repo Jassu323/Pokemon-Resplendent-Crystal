@@ -962,6 +962,17 @@ BattleAnimFunc_FireBlast:
 .six
 	ret
 
+; Razor Leaf impact tuning. RAZOR_LEAF_HIT_X_* is the internal XCOORD at which a
+; leaf spawns its hit; it is turn-specific because the renderer mirrors X on the
+; enemy turn, so one internal value lands on opposite sides of the screen. The
+; enemy descent is flattened (vs the player turn's 4) so the mirrored, downward
+; impact dash stays above the text box. Set RAZOR_LEAF_ENEMY_STEP_Y to 4 to
+; disable the flatten (enemy dash then matches the player turn).
+DEF RAZOR_LEAF_HIT_X_PLAYER EQU $7c ; enemy mon box center
+DEF RAZOR_LEAF_HIT_X_ENEMY  EQU $84 ; player mon, after the X mirror
+DEF RAZOR_LEAF_STEP_X       EQU $8  ; horizontal dash speed (both turns)
+DEF RAZOR_LEAF_ENEMY_STEP_Y EQU 2   ; enemy-turn descent per step
+
 BattleAnimFunc_RazorLeaf:
 ; Object moves at an arc
 ; Obj Param: Bit 6 defines offset from base frameset BATTLE_ANIM_FRAMESET_RAZOR_LEAF_2
@@ -977,6 +988,7 @@ BattleAnimFunc_RazorLeaf:
 	dw .six
 	dw .seven
 	dw .eight
+	dw .nine
 .zero
 	call BattleAnim_IncAnonJumptableIndex
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -1103,13 +1115,98 @@ BattleAnimFunc_RazorLeaf:
 	ret
 
 .eight
+; Flying toward the target. Spawn one hit when we reach it, then keep flying.
+	ldh a, [hBattleTurn]
+	and a
+	ld d, RAZOR_LEAF_HIT_X_PLAYER
+	jr z, .got_threshold
+	ld d, RAZOR_LEAF_HIT_X_ENEMY
+.got_threshold
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	cp d
+	jr c, .eight_step
+	call BattleAnimFunc_RazorLeaf_SpawnHit
+	call BattleAnim_IncAnonJumptableIndex
+.eight_step
+	call BattleAnimFunc_RazorLeaf_Step
+	ret
+
+.nine
+; Already struck; finish flying off-screen without spawning further hits.
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
 	ld a, [hl]
 	cp $c0
 	ret nc
-	ld a, $8
+	call BattleAnimFunc_RazorLeaf_Step
+	ret
+
+BattleAnimFunc_RazorLeaf_SpawnHit:
+; Spawn a small hit at this leaf's current position, copying the leaf's FixY and
+; X/Y offsets so the hit aligns with the leaf on both the player's and enemy's
+; turns. Preserves bc (the calling leaf object).
+	ld a, BATTLE_ANIM_OBJ_HIT_SMALL
+	ld [wBattleObjectTempID], a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempXCoord], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempYCoord], a
+	xor a
+	ld [wBattleObjectTempParam], a
+	push bc
+	call QueueBattleAnimation
+	jr c, .full
+	ld hl, BATTLEANIMSTRUCT_FIX_Y
+	add hl, bc
+	ld [hl], $78
+	pop de
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld b, d
+	ld c, e
+	ret
+.full
+	pop bc
+	ret
+
+BattleAnimFunc_RazorLeaf_Step:
+; Advance the leaf along its impact dash. The player turn uses the standard
+; diagonal step; the enemy turn keeps the same horizontal speed but a flatter
+; descent (RAZOR_LEAF_ENEMY_STEP_Y) so the mirrored, downward path stays above
+; the text box on the lower-left. Preserves bc.
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, RAZOR_LEAF_STEP_X
 	call BattleAnim_StepToTarget
+	ret
+.enemy
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add RAZOR_LEAF_STEP_X
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub RAZOR_LEAF_ENEMY_STEP_Y
+	ld [hl], a
 	ret
 
 BattleAnim_ScatterHorizontal:
