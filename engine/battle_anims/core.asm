@@ -71,7 +71,9 @@ InitBattleAnimation:
 	xor a
 	ld [hli], a ; BATTLEANIMSTRUCT_JUMPTABLE_INDEX
 	ld [hli], a ; BATTLEANIMSTRUCT_VAR1
-	ld [hl], a  ; BATTLEANIMSTRUCT_VAR2
+	ld [hli], a ; BATTLEANIMSTRUCT_VAR2
+	ld [hli], a ; BATTLEANIMSTRUCT_EXT_OAMSET
+	ld [hl], a  ; BATTLEANIMSTRUCT_EXT_OAMFLAGS
 	ret
 
 GetBattleAnimObjectCached:

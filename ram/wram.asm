@@ -3584,7 +3584,7 @@ wBattleAnimTileDict::
 	ds NUM_BATTLEANIMTILEDICT_ENTRIES * 2
 
 wActiveAnimObjects::
-; wAnimObject1 - wAnimObject10
+; wAnimObject1 - wAnimObject13
 for n, 1, NUM_BATTLE_ANIM_STRUCTS + 1
 wAnimObject{d:n}:: battle_anim_struct wAnimObject{d:n}
 endr
