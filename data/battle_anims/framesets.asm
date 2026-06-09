@@ -186,14 +186,7 @@ BattleAnimFrameData:
 	dw .Frameset_PlayerHead1Row      ; BATTLE_ANIM_FRAMESET_PLAYERHEAD_1ROW
 	dw .Frameset_EnemyFeet2Row       ; BATTLE_ANIM_FRAMESET_ENEMYFEET_2ROW
 	dw .Frameset_PlayerHead2Row      ; BATTLE_ANIM_FRAMESET_PLAYERHEAD_2ROW
-	dw .Frameset_Hail                ; BATTLE_ANIM_FRAMESET_HAIL
 	dw .Frameset_EnergyBall          ; BATTLE_ANIM_FRAMESET_ENERGY_BALL
-	dw .Frameset_SeismicTossLight    ; BATTLE_ANIM_FRAMESET_SEISMIC_TOSS_LIGHT
-	dw .Frameset_MudBallSmall        ; BATTLE_ANIM_FRAMESET_MUD_BALL_SMALL
-	dw .Frameset_MudBallMedium       ; BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM
-	dw .Frameset_MudSplash           ; BATTLE_ANIM_FRAMESET_MUD_SPLASH
-	dw .Frameset_MudSplashMedium     ; BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
-	dw .Frameset_ThundershockStrike  ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
 	dw .Frameset_ElectricityEffect   ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT
 	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
 	dw .Frameset_ElectricityEffectYFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_YFLIP
@@ -1284,47 +1277,9 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_D3, 32
 	oamend
 
-.Frameset_Hail:
-	oamframe BATTLE_ANIM_OAMSET_HAIL, 32
-	oamend
-
 .Frameset_EnergyBall:
 	oamframe BATTLE_ANIM_OAMSET_1E,  8
 	oamend
-
-.Frameset_SeismicTossLight:
-	oamframe BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT,  8
-	oamend
-
-.Frameset_MudBallSmall:
-	oamframe BATTLE_ANIM_OAMSET_14,  8
-	oamend
-
-.Frameset_MudBallMedium:
-	oamframe BATTLE_ANIM_OAMSET_MUD_BALL_MEDIUM,  8
-	oamend
-
-.Frameset_MudSplash:
-	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_2,  8
-	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_1,  8
-	oamdelete
-
-.Frameset_MudSplashMedium:
-	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_1,  8
-	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_2,  8
-	oamdelete
-
-.Frameset_ThundershockStrike:
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_1,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_2,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_3,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_4,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_5,  7
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2,  2
-	oamframe BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1,  2
-	oamdelete
 
 .Frameset_ElectricityEffect:
 	oamframe BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1,  5

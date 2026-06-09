@@ -223,23 +223,6 @@ BattleAnimOAMData:
 	battleanimoam $00,  6, .OAMData_d5 ; BATTLE_ANIM_OAMSET_D5
 	battleanimoam $00, 14, .OAMData_d6 ; BATTLE_ANIM_OAMSET_D6
 	battleanimoam $00, 12, .OAMData_d7 ; BATTLE_ANIM_OAMSET_D7
-	battleanimoam $00, 13, .OAMData_Hail ; BATTLE_ANIM_OAMSET_HAIL
-	battleanimoam $05,  6, .OAMData_SeismicTossLight ; BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT
-	battleanimoam $00,  4, .OAMData_MudBallMedium ; BATTLE_ANIM_OAMSET_MUD_BALL_MEDIUM
-	battleanimoam $06,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_1
-	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_2
-	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_3
-	battleanimoam $01,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_1
-	battleanimoam $03,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_2
-	battleanimoam $00,  2, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_1
-	battleanimoam $00,  4, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_2
-	battleanimoam $00,  6, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_3
-	battleanimoam $00,  8, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_4
-	battleanimoam $00, 10, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_5
-	battleanimoam $00,  8, .OAMData_ThundershockStrike + 2 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4
-	battleanimoam $00,  6, .OAMData_ThundershockStrike + 4 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3
-	battleanimoam $00,  4, .OAMData_ThundershockStrike + 6 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2
-	battleanimoam $00,  2, .OAMData_ThundershockStrike + 8 * 4 ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1
 	battleanimoam $00,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1
 	battleanimoam $04,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2
 	battleanimoam $08,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3
@@ -263,23 +246,6 @@ BattleAnimOAMData:
 	dbsprite   0,  -1, 0, 0, $01, $0
 	dbsprite  -1,   0, 0, 0, $02, $0
 	dbsprite   0,   0, 0, 0, $03, $0
-
-.OAMData_MudBallMedium:
-	dbsprite  -1,  -1, 0, 0, $00, $0
-	dbsprite   0,  -1, 0, 0, $01, $0
-	dbsprite  -1,   0, 0, 0, $03, $0
-	dbsprite   0,   0, 0, 0, $04, $0
-
-.OAMData_MudSplashMedium:
-	dbsprite  -1,  -1, 0, 0, $00, $0
-	dbsprite   0,  -1, 0, 0, $01, $0
-	dbsprite   1,  -1, 0, 0, $02, $0
-	dbsprite  -1,   0, 0, 0, $03, $0
-	dbsprite   0,   0, 0, 0, $04, $0
-	dbsprite   1,   0, 0, 0, $05, $0
-	dbsprite  -1,   1, 0, 0, $06, $0
-	dbsprite   0,   1, 0, 0, $07, $0
-	dbsprite   1,   1, 0, 0, $08, $0
 
 .OAMData_02:
 	dbsprite  -1,  -1, 0, 0, $00, $0
@@ -1053,26 +1019,6 @@ BattleAnimOAMData:
 	dbsprite  -1,  -4, 4, 4, $00, $0
 	dbsprite  -1,   2, 4, 4, $00, $0
 
-.OAMData_SeismicTossLight:
-	dbsprite   0,   0, 0, 0, $00, $0
-	dbsprite   3,   0, 0, 4, $00, $0
-	dbsprite   6,  -1, 0, 4, $00, $0
-	dbsprite   9,   0, 0, 2, $00, $0
-	dbsprite  12,   0, 0, 6, $00, $0
-	dbsprite  15,  -1, 0, 0, $00, $0
-
-.OAMData_ThundershockStrike:
-	dbsprite   0,  -7, 0, 0, $00, $0
-	dbsprite   0,  -6, 0, 0, $01, $0
-	dbsprite   0,  -5, 0, 0, $02, $0
-	dbsprite   0,  -4, 0, 0, $03, $0
-	dbsprite   0,  -3, 0, 0, $04, $0
-	dbsprite   0,  -2, 0, 0, $05, $0
-	dbsprite   0,  -1, 0, 0, $06, $0
-	dbsprite   0,   0, 0, 0, $07, $0
-	dbsprite   0,   1, 0, 0, $00, $0
-	dbsprite   0,   2, 0, 0, $01, $0
-
 .OAMData_ElectricityEffect:
 	dbsprite  -1,  -1, 0, 0, $00, $0
 	dbsprite   0,  -1, 0, 0, $01, $0
@@ -1158,18 +1104,3 @@ BattleAnimOAMData:
 	dbsprite   6,  -2, 4, 0, $00, $0
 	dbsprite   8,  -4, 4, 0, $00, $0
 	dbsprite  10,  -2, 4, 0, $00, $0
-
-.OAMData_Hail:
-	dbsprite -13,  -2, 4, 0, $04, $0
-	dbsprite -11,  -4, 4, 0, $04, $0
-	dbsprite  -9,  -1, 4, 0, $04, $0
-	dbsprite  -7,  -5, 4, 0, $04, $0
-	dbsprite  -5,  -3, 4, 0, $04, $0
-	dbsprite  -3,  -5, 4, 0, $04, $0
-	dbsprite  -1,  -3, 4, 0, $04, $0
-	dbsprite   0,  -3, 4, 0, $04, $0
-	dbsprite   2,  -5, 4, 0, $04, $0
-	dbsprite   4,   0, 4, 0, $04, $0
-	dbsprite   6,  -2, 4, 0, $04, $0
-	dbsprite   8,  -4, 4, 0, $04, $0
-	dbsprite  10,  -2, 4, 0, $04, $0

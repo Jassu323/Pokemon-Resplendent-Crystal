@@ -175,6 +175,13 @@ BattleAnimExtFrameData:
 	dw .Frameset_AcidDroplet ; BATTLE_ANIM_FRAMESET_ACID_DROPLET
 	dw .Frameset_ToxicBubble ; BATTLE_ANIM_FRAMESET_TOXIC_BUBBLE
 	dw .Frameset_PoisonPowder ; BATTLE_ANIM_FRAMESET_POISON_POWDER
+	dw .Frameset_Hail ; BATTLE_ANIM_FRAMESET_HAIL
+	dw .Frameset_SeismicTossLight ; BATTLE_ANIM_FRAMESET_SEISMIC_TOSS_LIGHT
+	dw .Frameset_MudBallSmall ; BATTLE_ANIM_FRAMESET_MUD_BALL_SMALL
+	dw .Frameset_MudBallMedium ; BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM
+	dw .Frameset_MudSplash ; BATTLE_ANIM_FRAMESET_MUD_SPLASH
+	dw .Frameset_MudSplashMedium ; BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
+	dw .Frameset_ThundershockStrike ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -416,6 +423,44 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8, 5
 	oamrestart
 
+.Frameset_Hail:
+	oamframe BATTLE_ANIM_EXT_OAMSET_HAIL, 32
+	oamend
+
+.Frameset_SeismicTossLight:
+	oamframe BATTLE_ANIM_EXT_OAMSET_SEISMIC_TOSS_LIGHT, 8
+	oamend
+
+.Frameset_MudBallSmall:
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_BALL_SMALL, 8
+	oamend
+
+.Frameset_MudBallMedium:
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_BALL_MEDIUM, 8
+	oamend
+
+.Frameset_MudSplash:
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_2, 8
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_1, 8
+	oamdelete
+
+.Frameset_MudSplashMedium:
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_1, 8
+	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_2, 8
+	oamdelete
+
+.Frameset_ThundershockStrike:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_1, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_2, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_3, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_4, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_5, 7
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2, 2
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1, 2
+	oamdelete
+
 BattleAnimExt_LoadSmallOAMCacheEntry:
 ; Input: c = BATTLE_ANIM_EXT_OAMSET_* id, de = cache slot
 ; Copies one 2-OAM extended set into WRAM with the tile offset baked into
@@ -642,6 +687,24 @@ BattleAnimExtOAMData:
 	battleanimoam $0a,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_6
 	battleanimoam $0c,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_7
 	battleanimoam $0e,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8
+	battleanimoam $00, 13, .OAMData_Hail ; BATTLE_ANIM_EXT_OAMSET_HAIL
+	battleanimoam $05,  6, .OAMData_SeismicTossLight ; BATTLE_ANIM_EXT_OAMSET_SEISMIC_TOSS_LIGHT
+	battleanimoam $00,  1, .OAMData_MudBallSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_BALL_SMALL
+	battleanimoam $00,  4, .OAMData_MudBallMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_BALL_MEDIUM
+	battleanimoam $01,  4, .OAMData_MudSplashSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_1
+	battleanimoam $03,  4, .OAMData_MudSplashSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_2
+	battleanimoam $06,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_1
+	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_2
+	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_3
+	battleanimoam $00,  2, .OAMData_ThundershockStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_1
+	battleanimoam $00,  4, .OAMData_ThundershockStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_2
+	battleanimoam $00,  6, .OAMData_ThundershockStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_3
+	battleanimoam $00,  8, .OAMData_ThundershockStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_4
+	battleanimoam $00, 10, .OAMData_ThundershockStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_5
+	battleanimoam $00,  8, .OAMData_ThundershockStrike + 2 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_4
+	battleanimoam $00,  6, .OAMData_ThundershockStrike + 4 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3
+	battleanimoam $00,  4, .OAMData_ThundershockStrike + 6 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2
+	battleanimoam $00,  2, .OAMData_ThundershockStrike + 8 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_HyperFangFrame1:
@@ -1088,6 +1151,67 @@ BattleAnimExtOAMData:
 .OAMData_PoisonPowder:
 	dbsprite  0, -1, 0, 0, $00, $0
 	dbsprite  0,  0, 0, 0, $01, $0
+
+.OAMData_Hail:
+	dbsprite -13,  -2, 4, 0, $04, $0
+	dbsprite -11,  -4, 4, 0, $04, $0
+	dbsprite  -9,  -1, 4, 0, $04, $0
+	dbsprite  -7,  -5, 4, 0, $04, $0
+	dbsprite  -5,  -3, 4, 0, $04, $0
+	dbsprite  -3,  -5, 4, 0, $04, $0
+	dbsprite  -1,  -3, 4, 0, $04, $0
+	dbsprite   0,  -3, 4, 0, $04, $0
+	dbsprite   2,  -5, 4, 0, $04, $0
+	dbsprite   4,   0, 4, 0, $04, $0
+	dbsprite   6,  -2, 4, 0, $04, $0
+	dbsprite   8,  -4, 4, 0, $04, $0
+	dbsprite  10,  -2, 4, 0, $04, $0
+
+.OAMData_SeismicTossLight:
+	dbsprite   0,   0, 0, 0, $00, $0
+	dbsprite   3,   0, 0, 4, $00, $0
+	dbsprite   6,  -1, 0, 4, $00, $0
+	dbsprite   9,   0, 0, 2, $00, $0
+	dbsprite  12,   0, 0, 6, $00, $0
+	dbsprite  15,  -1, 0, 0, $00, $0
+
+.OAMData_MudBallSmall:
+	dbsprite  -1,  -1, 4, 4, $00, $0
+
+.OAMData_MudBallMedium:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite  -1,   0, 0, 0, $03, $0
+	dbsprite   0,   0, 0, 0, $04, $0
+
+.OAMData_MudSplashSmall:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $00, OAM_XFLIP
+	dbsprite  -1,   0, 0, 0, $01, $0
+	dbsprite   0,   0, 0, 0, $01, OAM_XFLIP
+
+.OAMData_MudSplashMedium:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite   1,  -1, 0, 0, $02, $0
+	dbsprite  -1,   0, 0, 0, $03, $0
+	dbsprite   0,   0, 0, 0, $04, $0
+	dbsprite   1,   0, 0, 0, $05, $0
+	dbsprite  -1,   1, 0, 0, $06, $0
+	dbsprite   0,   1, 0, 0, $07, $0
+	dbsprite   1,   1, 0, 0, $08, $0
+
+.OAMData_ThundershockStrike:
+	dbsprite   0,  -7, 0, 0, $00, $0
+	dbsprite   0,  -6, 0, 0, $01, $0
+	dbsprite   0,  -5, 0, 0, $02, $0
+	dbsprite   0,  -4, 0, 0, $03, $0
+	dbsprite   0,  -3, 0, 0, $04, $0
+	dbsprite   0,  -2, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   0,   0, 0, 0, $07, $0
+	dbsprite   0,   1, 0, 0, $00, $0
+	dbsprite   0,   2, 0, 0, $01, $0
 
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
@@ -1862,7 +1986,7 @@ BattleAnimFunc_MudShot:
 	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
 	add hl, bc
 	ld a, [hl]
-	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH  ; D=0 (regular bank), E=index
+	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH
 	cp LOW(BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM)
 	jr nz, .reinit_splash
 	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
