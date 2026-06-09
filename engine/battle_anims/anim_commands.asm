@@ -1205,7 +1205,7 @@ BattleAnimCmd_ThunderPal:
 BattleAnimCmd_ThunderboltPal:
 	call GetBattleAnimByte
 	ld e, a
-	callfar BattleAnimExt_LoadThunderboltPal
+	callfar BattleAnimExt_LoadCustomPal
 	ret
 
 BattleAnimCmd_Sound:
@@ -1398,6 +1398,14 @@ ClearBattleAnims::
 	ld [wBattleAnimObjCache1ID], a
 	ld [wBattleAnimObjCache2ID], a
 	ld [wBattleAnimObjCache3ID], a
+	ld hl, wBattleAnimSmallExtOAMCache
+	ld de, BATTLEANIM_SMALL_EXT_OAM_CACHE_ENTRY_LENGTH
+	ld b, BATTLEANIM_SMALL_EXT_OAM_CACHE_SLOTS
+.clear_small_ext_oam_cache
+	ld [hl], a
+	add hl, de
+	dec b
+	jr nz, .clear_small_ext_oam_cache
 
 	ld hl, wFXAnimID
 	ld e, [hl]

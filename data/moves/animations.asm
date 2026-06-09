@@ -295,11 +295,13 @@ BattleAnimations::
 	dw BattleAnim_BrickBreak
 	dw BattleAnim_Yawn
 	dw BattleAnim_ArmThrust
+	dw BattleAnim_BlazeKick
 	dw BattleAnim_IceBall
 	dw BattleAnim_PoisonFang
 	dw BattleAnim_CrushClaw
 	dw BattleAnim_BlastBurn
 	dw BattleAnim_HydroCannon
+	dw BattleAnim_MeteorMash
 	dw BattleAnim_Aromatherapy
 	dw BattleAnim_AirCutter
 	dw BattleAnim_Overheat
@@ -343,6 +345,10 @@ BattleAnimations::
 	dw BattleAnim_StoneEdge
 	dw BattleAnim_BugBite
 	dw BattleAnim_OminousWind
+	dw BattleAnim_SludgeWave
+	dw BattleAnim_Hex
+	dw BattleAnim_WildCharge
+	dw BattleAnim_DrillRun
 	assert_table_length NUM_ATTACKS + 1
 	dw BattleAnim_SweetScent2
 
@@ -582,12 +588,26 @@ BattleAnim_Brn:
 
 BattleAnim_Psn:
 	anim_1gfx BATTLE_ANIM_GFX_POISON
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
 	anim_sound 0, 0, SFX_POISON
 	anim_obj BATTLE_ANIM_OBJ_SKULL, 64, 56, $0
 	anim_wait 8
 	anim_sound 0, 0, SFX_POISON
 	anim_obj BATTLE_ANIM_OBJ_SKULL, 48, 56, $0
+	anim_wait 16
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
+	anim_ret
+
+BattleAnim_Psn_Target:
+	anim_1gfx BATTLE_ANIM_GFX_POISON
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_sound 0, 0, SFX_POISON
+	anim_obj BATTLE_ANIM_OBJ_SKULL, 136, 24, $0
 	anim_wait 8
+	anim_sound 0, 0, SFX_POISON
+	anim_obj BATTLE_ANIM_OBJ_SKULL, 120, 24, $0
+	anim_wait 16
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Sap:
@@ -907,13 +927,16 @@ BattleAnim_MegaKick:
 	anim_ret
 
 BattleAnim_HyperFang:
-	anim_1gfx BATTLE_ANIM_GFX_HIT
-	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $1, $0
+	anim_2gfx BATTLE_ANIM_GFX_HYPER_FANG, BATTLE_ANIM_GFX_HIT
+	anim_hyperfangpal BATTLE_ANIM_HYPER_FANG_PAL_LOAD
 	anim_sound 0, 1, SFX_BITE
-	anim_obj BATTLE_ANIM_OBJ_FANG, 136, 56, $0
-	anim_wait 6
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 56, $0
-	anim_wait 16
+	anim_obj BATTLE_ANIM_OBJ_HYPER_FANG, 136, 56, $0
+	anim_wait 10
+	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $1, $0
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $2
+	anim_obj BATTLE_ANIM_OBJ_HIT, 136, 56, $0
+	anim_wait 28
+	anim_hyperfangpal BATTLE_ANIM_HYPER_FANG_PAL_RESTORE
 	anim_ret
 
 BattleAnim_SuperFang:
@@ -1208,8 +1231,11 @@ BattleAnim_HydroPump:
 	anim_sound 0, 1, SFX_HYDRO_PUMP
 	anim_obj BATTLE_ANIM_OBJ_HYDRO_PUMP_COLUMN_SLOW, 156, 72, $0
 	anim_bgeffect BATTLE_BG_EFFECT_WATER, $8, $0, $0
-	anim_wait 24
-	anim_wait 30
+	anim_wait 14
+	anim_bgeffect BATTLE_BG_EFFECT_WATER, $30, $0, $0
+	anim_wait 14
+	anim_bgeffect BATTLE_BG_EFFECT_WATER, $1c, $0, $0
+	anim_wait 26
 	anim_watercolumnpal BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
 	anim_bgeffect BATTLE_BG_EFFECT_END_WATER, $0, $0, $0
 	anim_wait 16
@@ -1331,11 +1357,14 @@ BattleAnim_Solarbeam:
 	anim_ret
 
 BattleAnim_Thunderpunch:
-	anim_2gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_LIGHTNING
+	anim_2gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_THUNDER
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_LOAD
 	anim_obj BATTLE_ANIM_OBJ_PUNCH_SHAKE, 136, 56, $43
-	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $8, $2
+	anim_wait 10
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_CENTER, 136, 68, $0
+	anim_call BattleAnimSub_ThunderStrikeCenter
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RESTORE
 	anim_wait 64
 	anim_ret
 
@@ -1691,9 +1720,32 @@ BattleAnim_Explosion:
 	anim_ret
 
 BattleAnim_Acid:
-	anim_1gfx BATTLE_ANIM_GFX_POISON
-	anim_call BattleAnimSub_Acid
-	anim_wait 64
+	anim_1gfx BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_sound 6, 2, SFX_WATER_GUN
+	anim_obj BATTLE_ANIM_OBJ_ACID_BUBBLE, 64, 92, $0
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_ACID_BUBBLE, 64, 92, $1
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_ACID_BUBBLE, 64, 92, $2
+	anim_wait 15
+	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $1, $0
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_ACID_DROPLET, 136, 34, $1a
+	anim_wait 10
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_ACID_DROPLET, 110, 32, $1c
+	anim_wait 10
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_ACID_DROPLET, 151, 29, $1e
+	anim_wait 10
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_ACID_DROPLET, 121, 39, $16
+	anim_wait 10
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_ACID_DROPLET, 160, 34, $1a
+	anim_wait 32
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_RockThrow:
@@ -1758,6 +1810,40 @@ BattleAnim_Sing:
 	anim_ret
 
 BattleAnim_Poisonpowder:
+	anim_1gfx BATTLE_ANIM_GFX_POISON_POWDER
+	anim_poisonpal BATTLE_ANIM_POISON_POWDER_PAL_LOAD
+	anim_sound 0, 1, SFX_POWDER
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 106, 34, $00
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 146, 34, $01
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 111, 34, $02
+	anim_wait 10
+	anim_sound 0, 1, SFX_POWDER
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 131, 34, $03
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 141, 34, $04
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 136, 34, $05
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 121, 34, $06
+	anim_wait 5
+	anim_sound 0, 1, SFX_POWDER
+	anim_wait 10
+	anim_sound 0, 1, SFX_POWDER
+	anim_wait 10
+	anim_sound 0, 1, SFX_POWDER
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 151, 34, $07
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 126, 34, $08
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 131, 34, $09
+	anim_wait 5
+	anim_sound 0, 1, SFX_POWDER
+	anim_wait 15
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 126, 34, $0a
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 136, 34, $0b
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 156, 34, $0c
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 141, 34, $0d
+	anim_wait 120
+	anim_poisonpal BATTLE_ANIM_POISON_POWDER_PAL_RESTORE
+	anim_ret
+
 BattleAnim_SleepPowder:
 BattleAnim_Spore:
 BattleAnim_StunSpore:
@@ -2386,7 +2472,7 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
-/*   	anim_1gfx BATTLE_ANIM_GFX_HIT
+  	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
@@ -2394,8 +2480,6 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0
-	anim_ret */
-	anim_call BattleAnim_MagicalLeaf
 	anim_ret
 
 BattleAnim_BodySlam:
@@ -2532,12 +2616,16 @@ BattleAnim_Smog:
 
 BattleAnim_PoisonGas:
 	anim_1gfx BATTLE_ANIM_GFX_HAZE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
 	anim_sound 16, 2, SFX_BUBBLEBEAM
 .loop
 	anim_obj BATTLE_ANIM_OBJ_POISON_GAS, 44, 80, $2
 	anim_wait 8
 	anim_loop 10, .loop
-	anim_wait 128
+	anim_wait 196
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
+	anim_call BattleAnim_Psn_Target
+	anim_wait 8
 	anim_ret
 
 BattleAnim_HornAttack:
@@ -2590,12 +2678,16 @@ BattleAnim_HornDrill:
 	anim_ret
 
 BattleAnim_PoisonSting:
-	anim_2gfx BATTLE_ANIM_GFX_HORN, BATTLE_ANIM_GFX_HIT
+	anim_3gfx BATTLE_ANIM_GFX_HORN, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
 	anim_obj BATTLE_ANIM_OBJ_NEEDLE, 64, 92, $14
 	anim_wait 16
 	anim_sound 0, 1, SFX_POISON_STING
 	anim_obj BATTLE_ANIM_OBJ_HIT_SMALL, 136, 56, $0
 	anim_wait 16
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Twineedle:
@@ -3363,18 +3455,25 @@ BattleAnim_PsychicM:
 	anim_ret
 
 BattleAnim_Sludge:
-	anim_1gfx BATTLE_ANIM_GFX_POISON
-	anim_call BattleAnimSub_Sludge
-	anim_wait 56
+	anim_1gfx BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_sound 6, 2, SFX_SLUDGE_BOMB
+	anim_obj BATTLE_ANIM_OBJ_POISON_SLUDGE, 64, 92, $10
+	anim_wait 36
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Toxic:
-	anim_1gfx BATTLE_ANIM_GFX_POISON
-	anim_bgeffect BATTLE_BG_EFFECT_BLACK_HUES, $0, $8, $0
-	anim_call BattleAnimSub_Acid
-	anim_wait 32
-	anim_call BattleAnimSub_Sludge
-	anim_wait 64
+	anim_2gfx BATTLE_ANIM_GFX_TOXIC_BUBBLE, BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_call BattleAnimSub_ToxicBubbles
+	anim_call BattleAnimSub_ToxicBubbles
+	anim_wait 20
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Metronome:
@@ -3873,13 +3972,68 @@ BattleAnim_BellyDrum:
 	anim_ret
 
 BattleAnim_SludgeBomb:
-	anim_2gfx BATTLE_ANIM_GFX_EGG, BATTLE_ANIM_GFX_POISON
-	anim_bgeffect BATTLE_BG_EFFECT_BLACK_HUES, $0, $8, $0
+	anim_2gfx BATTLE_ANIM_GFX_SLUDGE_BOMB, BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
 	anim_sound 6, 2, SFX_SLUDGE_BOMB
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB, 64, 92, $10
-	anim_wait 36
-	anim_call BattleAnimSub_Sludge
-	anim_wait 64
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_PROJECTILE, 64, 92, $18
+	anim_wait 38
+	anim_call BattleAnimSub_SludgeBombImpact
+	anim_wait 28
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
+	anim_ret
+
+BattleAnimSub_SludgeBombImpact:
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 136, 68, $80
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 120, 50, $80
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 124, 66, $80
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 148, 64, $80
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 152, 48, $80
+	anim_wait 4
+	anim_sound 0, 1, SFX_POISON
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 128, 60, $80
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 128, 42, $80
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 144, 56, $80
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 148, 38, $80
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 120, 54, $80
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 152, 52, $80
+	anim_wait 4
+	anim_ret
+
+BattleAnimSub_PoisonSludgeArc:
+	anim_sound 6, 2, SFX_BUBBLEBEAM
+.loop
+	anim_obj BATTLE_ANIM_OBJ_POISON_SLUDGE, 64, 92, $10
+	anim_wait 5
+	anim_loop 8, .loop
+	anim_ret
+
+BattleAnimSub_PoisonSplatter:
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 132, 36, $0
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 120, 40, $0
+	anim_wait 4
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 144, 44, $0
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 126, 49, $0
+	anim_wait 4
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 140, 53, $0
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 118, 57, $0
+	anim_wait 4
+	anim_sound 0, 1, SFX_TOXIC
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 146, 61, $0
+	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_POISON_SPLATTER, 134, 65, $0
+	anim_wait 4
 	anim_ret
 
 BattleAnim_MudSlap:
@@ -4215,12 +4369,16 @@ BattleAnim_ArmThrust:
 	anim_call BattleAnim_ShowMon_0
 	anim_ret
 
+BattleAnim_BlazeKick:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
 BattleAnim_IceBall:
 	anim_call BattleAnim_Tackle
 	anim_ret
 
 BattleAnim_PoisonFang:
-	anim_3gfx BATTLE_ANIM_GFX_CUT, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_POISON
+	anim_3gfx BATTLE_ANIM_GFX_CUT, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_POISON_BUBBLE
 	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $98
 	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $18
 	anim_wait 8
@@ -4228,21 +4386,11 @@ BattleAnim_PoisonFang:
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 144, 48, $18
 	anim_wait 16
 	anim_sound 0, 1, SFX_BITE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 128, 64, $18
-	anim_wait 16
-.loop
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 132, 72, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 116, 72, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 148, 72, $0
-	anim_wait 8
-	anim_loop 3, .loop
-	anim_ret
-	anim_wait 8
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_CrushClaw:
@@ -4293,6 +4441,10 @@ BattleAnim_BlastBurn:
 	anim_ret
 
 BattleAnim_HydroCannon:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_MeteorMash:
 	anim_call BattleAnim_Tackle
 	anim_ret
 
@@ -4558,26 +4710,42 @@ BattleAnim_BulkUp:
 	anim_ret
 
 BattleAnim_MudShot:
-	anim_1gfx BATTLE_ANIM_GFX_MUD_BALL
+	anim_1gfx BATTLE_ANIM_GFX_MUD_BALL_MEDIUM
+	anim_groundpal BATTLE_ANIM_GROUND_PAL_LOAD
 	anim_sound 6, 2, SFX_SLUDGE_BOMB
-	anim_obj BATTLE_ANIM_OBJ_MUD_BALL, 62, 92, $10
+	anim_obj BATTLE_ANIM_OBJ_MUD_BALL_MEDIUM, 64, 94, $10
 	anim_wait 12
 	anim_sound 6, 2, SFX_SLUDGE_BOMB
-	anim_obj BATTLE_ANIM_OBJ_MUD_BALL, 66, 80, $14
+	anim_obj BATTLE_ANIM_OBJ_MUD_BALL_MEDIUM, 76, 78, $14
 	anim_wait 12
 	anim_sound 6, 2, SFX_SLUDGE_BOMB
-	anim_obj BATTLE_ANIM_OBJ_MUD_BALL, 58, 86, $0c
+	anim_obj BATTLE_ANIM_OBJ_MUD_BALL_MEDIUM, 52, 86, $0c
 	anim_wait 8
 	anim_sound 0, 1, SFX_WATER_GUN
 	anim_wait 12
 	anim_sound 0, 1, SFX_WATER_GUN
 	anim_wait 12
 	anim_sound 0, 1, SFX_WATER_GUN
-	anim_wait 20
+	anim_wait 28
+	anim_groundpal BATTLE_ANIM_GROUND_PAL_RESTORE
 	anim_ret
 
 BattleAnim_PoisonTail:
-	anim_call BattleAnim_Tackle
+	anim_3gfx BATTLE_ANIM_GFX_REFLECT, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_obp0 $0
+	anim_call BattleAnimSub_PoisonMetallic
+	anim_call BattleAnim_TargetObj_1Row
+	anim_resetobp0
+	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
+	anim_wait 6
+	anim_sound 0, 1, SFX_HORN_ATTACK
+	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 136, 56, $0
+	anim_wait 8
+	anim_call BattleAnim_ShowMon_0
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_MagicalLeaf:
@@ -4696,7 +4864,14 @@ BattleAnim_ForcePalm:
 	anim_ret
 
 BattleAnim_PoisonJab:
-	anim_call BattleAnim_Tackle
+	anim_2gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_sound 6, 2, SFX_DOUBLE_KICK
+	anim_obj BATTLE_ANIM_OBJ_PUNCH_SHAKE, 136, 56, $43
+	anim_wait 3
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
 
 BattleAnim_NightSlash:
@@ -4804,7 +4979,7 @@ BattleAnim_BulletPunch:
 	anim_ret
 
 BattleAnim_ThunderFang:
-	anim_3gfx BATTLE_ANIM_GFX_CUT, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_LIGHTNING
+	anim_3gfx BATTLE_ANIM_GFX_CUT, BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_ELECTRICITY_EFFECT
 	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $98
 	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $18
 	anim_wait 8
@@ -4815,9 +4990,9 @@ BattleAnim_ThunderFang:
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 128, 64, $18
 	anim_wait 2
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $8, $2
-	anim_sound 0, 1, SFX_THUNDER
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_CENTER, 136, 68, $0
-	anim_wait 64
+	anim_sound 0, 1, SFX_THUNDERSHOCK_SHORT
+	anim_call BattleAnimSub_ElectricityEffect
+	anim_wait 12
 	anim_ret
 
 BattleAnim_IceFang:
@@ -4830,9 +5005,8 @@ BattleAnim_IceFang:
 	anim_wait 16
 	anim_sound 0, 1, SFX_BITE
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 128, 64, $18
-	anim_wait 16
 	anim_call BattleAnimSub_Ice
-	anim_wait 32
+	anim_wait 12
 	anim_ret
 
 BattleAnim_FireFang:
@@ -4845,14 +5019,12 @@ BattleAnim_FireFang:
 	anim_wait 16
 	anim_sound 0, 1, SFX_BITE
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 128, 64, $18
-	anim_wait 24
 	anim_sound 0, 1, SFX_EMBER
 	anim_firepal BATTLE_ANIM_FIRE_PAL_LOAD
 	anim_call BattleAnimSub_Fire
 	anim_wait 12
 	anim_firepal BATTLE_ANIM_FIRE_PAL_RESTORE
 	anim_ret
-
 
 BattleAnim_ShadowSneak:
 	anim_call BattleAnim_Tackle
@@ -4890,6 +5062,30 @@ BattleAnim_BugBite:
 	anim_ret
 
 BattleAnim_OminousWind:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_SludgeWave:
+	anim_1gfx BATTLE_ANIM_GFX_POISON_BUBBLE
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
+	anim_call BattleAnimSub_PoisonSludgeArc
+	anim_call BattleAnimSub_PoisonSplatter
+	anim_wait 16
+	anim_clearobjs
+	anim_call BattleAnimSub_PoisonBubblesEffect
+	anim_wait 24
+	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
+	anim_ret
+
+BattleAnim_Hex:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_WildCharge:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_DrillRun:
 	anim_call BattleAnim_Tackle
 	anim_ret
 
@@ -5971,12 +6167,27 @@ BattleAnimSub_Sludge:
 	anim_loop 5, .loop
 	anim_ret
 
-BattleAnimSub_Acid:
+BattleAnimSub_AcidSpray:
 .loop
 	anim_sound 6, 2, SFX_BUBBLEBEAM
 	anim_obj BATTLE_ANIM_OBJ_ACID, 64, 92, $10
 	anim_wait 5
 	anim_loop 8, .loop
+	anim_ret
+
+BattleAnimSub_ToxicBubbles:
+	anim_obj BATTLE_ANIM_OBJ_TOXIC_BUBBLE, 112, 68, $0
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 15
+	anim_obj BATTLE_ANIM_OBJ_TOXIC_BUBBLE, 144, 68, $0
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 15
+	anim_obj BATTLE_ANIM_OBJ_TOXIC_BUBBLE, 128, 68, $0
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 15
+	anim_obj BATTLE_ANIM_OBJ_TOXIC_BUBBLE, 160, 68, $0
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 15
 	anim_ret
 
 BattleAnimSub_Metallic:
@@ -5988,6 +6199,17 @@ BattleAnimSub_Metallic:
 	anim_obj BATTLE_ANIM_OBJ_HARDEN, 48, 84, $0
 	anim_wait 64
 	anim_incbgeffect BATTLE_BG_EFFECT_FADE_MON_TO_BLACK
+	anim_ret
+
+BattleAnimSub_PoisonMetallic:
+	anim_sound 0, 0, SFX_SHINE
+	anim_bgeffect BATTLE_BG_EFFECT_POISON_METALLIC, $0, BG_EFFECT_USER, $0
+	anim_wait 8
+	anim_obj BATTLE_ANIM_OBJ_HARDEN, 48, 84, $0
+	anim_wait 32
+	anim_obj BATTLE_ANIM_OBJ_HARDEN, 48, 84, $0
+	anim_wait 64
+	anim_incbgeffect BATTLE_BG_EFFECT_POISON_METALLIC
 	anim_ret
 
 BattleAnimSub_SandOrMud:
@@ -6057,6 +6279,26 @@ BattleAnimSub_FocusEnergy:
 	anim_wait 5
 	anim_incobj 1
 	anim_wait 1
+	anim_ret
+
+BattleAnimSub_PoisonBubblesEffect:
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 146, 66, $80
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 6
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 156, 36, $80
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 6
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 116, 71, $80
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 6
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 136, 56, $80
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 6
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 116, 36, $80
+	anim_sound 0, 1, SFX_TOXIC
+	anim_wait 6
+	anim_obj BATTLE_ANIM_OBJ_POISON_BUBBLE, 152, 48, $80
+	anim_sound 0, 1, SFX_TOXIC
 	anim_ret
 
 BattleAnim_TargetObj_1Row:

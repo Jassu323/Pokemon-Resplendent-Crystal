@@ -141,6 +141,53 @@ SwapBattleAnimObjectCacheEntries:
 	jr nz, .loop
 	ret
 
+GetBattleAnimSmallExtOAMPointer:
+; Cache tiny extended OAM sets that are cheap to store but expensive to farcall
+; when many copies are active.  Poison Powder uses eight 2-OAM frames.
+; Input: e = BATTLE_ANIM_EXT_OAMSET_* id
+; Output carry clear: hl = cached OAM data, c = OAM count, de = wShadowOAM pointer
+; Output carry set: use the normal extended OAM renderer
+	ld a, e
+	cp BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_1
+	jr c, .not_cached
+	cp BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8 + 1
+	jr nc, .not_cached
+	sub BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_1
+	ld c, a
+	ld l, a
+	ld h, 0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld d, 0
+	ld e, c
+	add hl, de
+	ld de, wBattleAnimSmallExtOAMCache
+	add hl, de
+	ld a, c
+	add BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_1
+	cp [hl]
+	jr z, .hit
+	push hl
+	ld c, a
+	ld d, h
+	ld e, l
+	farcall BattleAnimExt_LoadSmallOAMCacheEntry
+	pop hl
+
+.hit
+	inc hl
+	ld c, BATTLEANIM_SMALL_EXT_OAM_CACHE_OAMS
+	ld a, [wBattleAnimOAMPointerLo]
+	ld e, a
+	ld d, HIGH(wShadowOAM)
+	and a
+	ret
+
+.not_cached
+	scf
+	ret
+
 BattleAnimOAMUpdate:
 	call InitBattleAnimBuffer
 	call GetBattleAnimFrame
@@ -179,6 +226,8 @@ BattleAnimOAMUpdate:
 	jr .loop
 
 .extended_oam
+	call GetBattleAnimSmallExtOAMPointer
+	jr nc, .loop
 	farcall BattleAnimExtOAMUpdate
 	pop bc
 	ret c

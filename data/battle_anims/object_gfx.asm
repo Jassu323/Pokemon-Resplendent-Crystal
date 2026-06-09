@@ -49,14 +49,24 @@ AnimObjGFX:
 	anim_obj_gfx 24, AnimObjAeroblastGFX
 	anim_obj_gfx  1, NULL
 	anim_obj_gfx  1, NULL
-	anim_obj_gfx  5, AnimObjMudBallGFX
+	anim_obj_gfx  5, AnimObjMudBallSmallGFX
+	anim_obj_gfx 24, AnimObjMudBallMediumGFX
 	anim_obj_gfx  8, AnimObjThundershockGFX
 	anim_obj_gfx 12, AnimObjElectricityEffectGFX
-	anim_obj_gfx 79, AnimObjThunderGFX
+	anim_obj_gfx 51, AnimObjThunderGFX
 	anim_obj_gfx 16, AnimObjThunderboltGFX
 	anim_obj_gfx 40, AnimObjThunderboltAftereffectGFX
 	anim_obj_gfx 48, AnimObjWaterColumnGFX
 	anim_obj_gfx 40, AnimObjVineWhipGFX
 	anim_obj_gfx 15, AnimObjEmberGFX
 	anim_obj_gfx 33, AnimObjDragonClawGFX
+	anim_obj_gfx 12, AnimObjPoisonBubbleGFX
+	anim_obj_gfx 16, AnimObjShadowBallGFX
+	anim_obj_gfx 16, AnimObjSludgeBombGFX
+	anim_obj_gfx  9, AnimObjSludgeBombSplatter2GFX
+	anim_obj_gfx 16, AnimObjSludgeBombSplatter3GFX
+	anim_obj_gfx 16, AnimObjSharpTeethGFX
+	anim_obj_gfx 35, AnimObjHyperFangGFX
+	anim_obj_gfx 18, AnimObjToxicBubbleGFX
+	anim_obj_gfx 16, AnimObjPoisonPowderGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

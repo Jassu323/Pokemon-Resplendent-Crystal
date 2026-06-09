@@ -189,8 +189,10 @@ BattleAnimFrameData:
 	dw .Frameset_Hail                ; BATTLE_ANIM_FRAMESET_HAIL
 	dw .Frameset_EnergyBall          ; BATTLE_ANIM_FRAMESET_ENERGY_BALL
 	dw .Frameset_SeismicTossLight    ; BATTLE_ANIM_FRAMESET_SEISMIC_TOSS_LIGHT
-	dw .Frameset_MudBall             ; BATTLE_ANIM_FRAMESET_MUD_BALL
+	dw .Frameset_MudBallSmall        ; BATTLE_ANIM_FRAMESET_MUD_BALL_SMALL
+	dw .Frameset_MudBallMedium       ; BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM
 	dw .Frameset_MudSplash           ; BATTLE_ANIM_FRAMESET_MUD_SPLASH
+	dw .Frameset_MudSplashMedium     ; BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
 	dw .Frameset_ThundershockStrike  ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
 	dw .Frameset_ElectricityEffect   ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT
 	dw .Frameset_ElectricityEffectXFlip ; BATTLE_ANIM_FRAMESET_ELECTRICITY_EFFECT_XFLIP
@@ -210,6 +212,7 @@ BattleAnimFrameData:
 	dw .Frameset_OverheatFlame       ; BATTLE_ANIM_FRAMESET_OVERHEAT_FLAME
 	dw .Frameset_LavaPlumeEruption   ; BATTLE_ANIM_FRAMESET_LAVA_PLUME_ERUPTION
 	dw .Frameset_OutrageFlame        ; BATTLE_ANIM_FRAMESET_OUTRAGE_FLAME
+	dw .Frameset_PoisonSludge        ; BATTLE_ANIM_FRAMESET_POISON_SLUDGE
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -962,6 +965,10 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_95,  8
 	oamend
 
+.Frameset_PoisonSludge:
+	oamframe BATTLE_ANIM_OAMSET_7F,  8
+	oamend
+
 .Frameset_PayDay:
 	oamframe BATTLE_ANIM_OAMSET_96,  8
 	oamend
@@ -1289,13 +1296,22 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT,  8
 	oamend
 
-.Frameset_MudBall:
+.Frameset_MudBallSmall:
 	oamframe BATTLE_ANIM_OAMSET_14,  8
+	oamend
+
+.Frameset_MudBallMedium:
+	oamframe BATTLE_ANIM_OAMSET_MUD_BALL_MEDIUM,  8
 	oamend
 
 .Frameset_MudSplash:
 	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_2,  8
 	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_1,  8
+	oamdelete
+
+.Frameset_MudSplashMedium:
+	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_1,  8
+	oamframe BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_2,  8
 	oamdelete
 
 .Frameset_ThundershockStrike:

@@ -3660,6 +3660,13 @@ wBattleAnimObjCache2Data:: ds BATTLEANIMOBJ_LENGTH
 wBattleAnimObjCache3ID:: db
 wBattleAnimObjCache3Data:: ds BATTLEANIMOBJ_LENGTH
 
+wBattleAnimSmallExtOAMCache::
+for n, 1, BATTLEANIM_SMALL_EXT_OAM_CACHE_SLOTS + 1
+wBattleAnimSmallExtOAMCache{d:n}ID:: db
+wBattleAnimSmallExtOAMCache{d:n}Data:: ds BATTLEANIM_SMALL_EXT_OAM_CACHE_OAMS * 4
+endr
+wBattleAnimSmallExtOAMCacheEnd::
+
 
 SECTION "Mobile RAM and Pokedex Listings", WRAMX
 

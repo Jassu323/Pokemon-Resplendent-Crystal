@@ -32,6 +32,10 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_SacredFireHit
 	dw BattleAnimFunc_LavaPlumeEruption
 	dw BattleAnimFunc_DragonClawFlame
+	dw BattleAnimFunc_PoisonBubble
+	dw BattleAnimFunc_SludgeBomb
+	dw BattleAnimFunc_AcidBubble
+	dw BattleAnimFunc_AcidDroplet
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -162,6 +166,15 @@ BattleAnimExtFrameData:
 	dw .Frameset_VineWhip ; BATTLE_ANIM_FRAMESET_VINE_WHIP
 	dw .Frameset_DragonClawSlash ; BATTLE_ANIM_FRAMESET_DRAGON_CLAW_SLASH
 	dw .Frameset_DragonClawSlashXFlip ; BATTLE_ANIM_FRAMESET_DRAGON_CLAW_SLASH_XFLIP
+	dw .Frameset_PoisonBubble ; BATTLE_ANIM_FRAMESET_POISON_BUBBLE
+	dw .Frameset_HyperFang ; BATTLE_ANIM_FRAMESET_HYPER_FANG
+	dw .Frameset_SludgeBomb ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB
+	dw .Frameset_SludgeBombSplatter ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB_SPLATTER
+	dw .Frameset_SludgeBombTargetSplatter ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB_TARGET_SPLATTER
+	dw .Frameset_AcidBubble ; BATTLE_ANIM_FRAMESET_ACID_BUBBLE
+	dw .Frameset_AcidDroplet ; BATTLE_ANIM_FRAMESET_ACID_DROPLET
+	dw .Frameset_ToxicBubble ; BATTLE_ANIM_FRAMESET_TOXIC_BUBBLE
+	dw .Frameset_PoisonPowder ; BATTLE_ANIM_FRAMESET_POISON_POWDER
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -352,6 +365,94 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_5, 4, B_OAM_XFLIP
 	oamdelete
 
+.Frameset_PoisonBubble:
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_BUBBLE, 20
+	oamdelete
+
+.Frameset_HyperFang:
+	oamframe BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_1, 8
+	oamframe BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_2, 16
+	oamframe BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_3, 4
+	oamframe BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_4, 4
+	oamdelete
+
+.Frameset_SludgeBomb:
+	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB, 8
+	oamend
+
+.Frameset_SludgeBombSplatter:
+	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_SMALL, 6
+	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_MEDIUM, 6
+	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_LARGE, 14
+	oamdelete
+
+.Frameset_SludgeBombTargetSplatter:
+	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_TARGET_SPLATTER, 20
+	oamdelete
+
+.Frameset_AcidBubble:
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_BUBBLE, 8
+	oamend
+
+.Frameset_AcidDroplet:
+	oamframe BATTLE_ANIM_EXT_OAMSET_ACID_DROPLET, 8
+	oamend
+
+.Frameset_ToxicBubble:
+	oamframe BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_1, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_2, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_4, 5
+	oamdelete
+
+.Frameset_PoisonPowder:
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_1, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_2, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_4, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_5, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_6, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_7, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8, 5
+	oamrestart
+
+BattleAnimExt_LoadSmallOAMCacheEntry:
+; Input: c = BATTLE_ANIM_EXT_OAMSET_* id, de = cache slot
+; Copies one 2-OAM extended set into WRAM with the tile offset baked into
+; each tile id, so bank 51 can render repeated tiny sets without farcalling.
+	ld a, c
+	ld [de], a
+	inc de
+	ld l, c
+	ld h, 0
+	ld bc, BattleAnimExtOAMData
+	add hl, hl
+	add hl, hl
+	add hl, bc
+	ld b, [hl] ; tile offset
+	inc hl
+	inc hl ; skip OAM count; the tactical cache only handles 2-OAM sets
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+rept BATTLEANIM_SMALL_EXT_OAM_CACHE_OAMS
+	ld a, [hli] ; y
+	ld [de], a
+	inc de
+	ld a, [hli] ; x
+	ld [de], a
+	inc de
+	ld a, [hli] ; tile id
+	add b
+	ld [de], a
+	inc de
+	ld a, [hli] ; attributes
+	ld [de], a
+	inc de
+endr
+	ret
+
 BattleAnimExtOAMUpdate:
 	ld l, e
 	ld h, 0
@@ -457,26 +558,26 @@ BattleAnimExtOAMUpdate:
 BattleAnimExtOAMData:
 ; entries correspond to BATTLE_ANIM_EXT_OAMSET_* constants
 	table_width 4
-	battleanimoam $00, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_0
-	battleanimoam $04, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_1
-	battleanimoam $08, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_2
-	battleanimoam $04, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_3
-	battleanimoam $10, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_0
-	battleanimoam $14, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_1
-	battleanimoam $18, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_2
-	battleanimoam $14, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_3
-	battleanimoam $20, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_0
-	battleanimoam $24, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_1
-	battleanimoam $28, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_2
-	battleanimoam $24, 8, .OAMData_ThunderWideSection   ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_3
-	battleanimoam $30, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_0
-	battleanimoam $34, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_1
-	battleanimoam $38, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_2
-	battleanimoam $34, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_3
-	battleanimoam $40, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_0
-	battleanimoam $44, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_1
-	battleanimoam $48, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_2
-	battleanimoam $44, 4, .OAMData_ThunderNarrowSection ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_3
+	battleanimoam $00,  3, .OAMData_ThunderYellow1A ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_0
+	battleanimoam $00,  4, .OAMData_ThunderYellow1B ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_1
+	battleanimoam $00,  4, .OAMData_ThunderYellow1C ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_2
+	battleanimoam $00,  4, .OAMData_ThunderYellow1B ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_3
+	battleanimoam $00,  8, .OAMData_ThunderPurpleA ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_0
+	battleanimoam $00,  8, .OAMData_ThunderPurpleB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_1
+	battleanimoam $00,  8, .OAMData_ThunderPurpleC ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_2
+	battleanimoam $00,  8, .OAMData_ThunderPurpleB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_3
+	battleanimoam $00,  6, .OAMData_ThunderYellow2A ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_0
+	battleanimoam $00,  8, .OAMData_ThunderYellow2B ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_1
+	battleanimoam $00,  8, .OAMData_ThunderYellow2C ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_2
+	battleanimoam $00,  8, .OAMData_ThunderYellow2B ; BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_3
+	battleanimoam $00,  4, .OAMData_ThunderOrangeA ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_0
+	battleanimoam $00,  4, .OAMData_ThunderOrangeB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_1
+	battleanimoam $00,  4, .OAMData_ThunderOrangeC ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_2
+	battleanimoam $00,  4, .OAMData_ThunderOrangeB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_3
+	battleanimoam $00,  2, .OAMData_ThunderRedA ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_0
+	battleanimoam $00,  3, .OAMData_ThunderRedB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_1
+	battleanimoam $00,  4, .OAMData_ThunderRedC ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_2
+	battleanimoam $00,  3, .OAMData_ThunderRedB ; BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_3
 	battleanimoam $00,  2, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_1
 	battleanimoam $00,  4, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_2
 	battleanimoam $00,  6, .OAMData_ThunderboltStrike ; BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_3
@@ -518,23 +619,234 @@ BattleAnimExtOAMData:
 	battleanimoam $05,  8, .OAMData_DragonClawSlash3 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_3
 	battleanimoam $0d, 10, .OAMData_DragonClawSlash4 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_4
 	battleanimoam $17, 10, .OAMData_DragonClawSlash5 ; BATTLE_ANIM_EXT_OAMSET_DRAGON_CLAW_SLASH_5
+	battleanimoam $00, 4, .OAMData_PoisonBubble ; BATTLE_ANIM_EXT_OAMSET_POISON_BUBBLE
+	battleanimoam $00,  7, .OAMData_HyperFangFrame1 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_1
+	battleanimoam $00, 10, .OAMData_HyperFangFrame2 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_2
+	battleanimoam $00, 11, .OAMData_HyperFangFrame3 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_3
+	battleanimoam $00,  7, .OAMData_HyperFangFrame4 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_4
+	battleanimoam $00, 16, .OAMData_SludgeBomb ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB
+	battleanimoam $00,  4, .OAMData_SludgeBombSplatterSmall ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_SMALL
+	battleanimoam $00,  9, .OAMData_SludgeBombSplatterMedium ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_MEDIUM
+	battleanimoam $00, 16, .OAMData_SludgeBombSplatterLarge ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_LARGE
+	battleanimoam $08,  4, .OAMData_PoisonBubble ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_TARGET_SPLATTER
+	battleanimoam $04,  4, .OAMData_PoisonBubble ; BATTLE_ANIM_EXT_OAMSET_ACID_DROPLET
+	battleanimoam $00,  2, .OAMData_ToxicBubble1 ; BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_1
+	battleanimoam $02,  4, .OAMData_ToxicBubble2 ; BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_2
+	battleanimoam $06,  6, .OAMData_ToxicBubble3 ; BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_3
+	battleanimoam $0c,  6, .OAMData_ToxicBubble3 ; BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_4
+	battleanimoam $00,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_1
+	battleanimoam $02,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_2
+	battleanimoam $04,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_3
+	battleanimoam $06,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_4
+	battleanimoam $08,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_5
+	battleanimoam $0a,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_6
+	battleanimoam $0c,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_7
+	battleanimoam $0e,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
-.OAMData_ThunderNarrowSection:
+.OAMData_HyperFangFrame1:
+	dbsprite -2, -2, 0, 0, $00, $0
+	dbsprite -1, -2, 0, 0, $01, $0
+	dbsprite  0, -2, 0, 0, $02, $0
+	dbsprite -2, -1, 0, 0, $03, $0
+	dbsprite  1,  0, 0, 0, $04, $0
+	dbsprite  0,  1, 0, 0, $05, $0
+	dbsprite  1,  1, 0, 0, $06, $0
+
+.OAMData_HyperFangFrame2:
+	dbsprite -2, -2, 0, 0, $07, $0
+	dbsprite -1, -2, 0, 0, $08, $0
+	dbsprite  0, -2, 0, 0, $09, $0
+	dbsprite -2, -1, 0, 0, $0a, $0
+	dbsprite -1, -1, 0, 0, $0b, $0
+	dbsprite  0, -1, 0, 0, $0c, $0
+	dbsprite -1,  0, 0, 0, $0d, $0
+	dbsprite  1,  0, 0, 0, $0e, $0
+	dbsprite  0,  1, 0, 0, $0f, $0
+	dbsprite  1,  1, 0, 0, $10, $0
+
+.OAMData_HyperFangFrame3:
+	dbsprite -2, -2, 0, 0, $11, $0
+	dbsprite -1, -2, 0, 0, $12, $0
+	dbsprite  0, -2, 0, 0, $13, $0
+	dbsprite -2, -1, 0, 0, $14, $0
+	dbsprite -1, -1, 0, 0, $15, $0
+	dbsprite  0, -1, 0, 0, $16, $0
+	dbsprite -1,  0, 0, 0, $17, $0
+	dbsprite  1,  0, 0, 0, $18, $0
+	dbsprite -1,  1, 0, 0, $19, $0
+	dbsprite  0,  1, 0, 0, $1a, $0
+	dbsprite  1,  1, 0, 0, $1b, $0
+
+.OAMData_HyperFangFrame4:
+	dbsprite  0, -2, 0, 0, $1c, $0
+	dbsprite -2, -1, 0, 0, $1d, $0
+	dbsprite -1, -1, 0, 0, $1e, $0
+	dbsprite  0, -1, 0, 0, $1f, $0
+	dbsprite -2,  0, 0, 0, $20, $0
+	dbsprite  0,  0, 0, 0, $21, $0
+	dbsprite -1,  1, 0, 0, $22, $0
+
+.OAMData_SludgeBomb:
+	dbsprite -2, -2, 0, 0, $00, $0
+	dbsprite -1, -2, 0, 0, $01, $0
+	dbsprite  0, -2, 0, 0, $02, $0
+	dbsprite  1, -2, 0, 0, $03, $0
+	dbsprite -2, -1, 0, 0, $04, $0
+	dbsprite -1, -1, 0, 0, $05, $0
+	dbsprite  0, -1, 0, 0, $06, $0
+	dbsprite  1, -1, 0, 0, $07, $0
+	dbsprite -2,  0, 0, 0, $08, $0
+	dbsprite -1,  0, 0, 0, $09, $0
+	dbsprite  0,  0, 0, 0, $0a, $0
+	dbsprite  1,  0, 0, 0, $0b, $0
+	dbsprite -2,  1, 0, 0, $0c, $0
+	dbsprite -1,  1, 0, 0, $0d, $0
+	dbsprite  0,  1, 0, 0, $0e, $0
+	dbsprite  1,  1, 0, 0, $0f, $0
+
+.OAMData_SludgeBombSplatterSmall:
+	dbsprite -1, -1, 0, 0, $18, $0
+	dbsprite  0, -1, 0, 0, $19, $0
+	dbsprite -1,  0, 0, 0, $1a, $0
+	dbsprite  0,  0, 0, 0, $1b, $0
+
+.OAMData_SludgeBombSplatterMedium:
+	dbsprite -2, -2, 4, 4, $1c, $0
+	dbsprite -1, -2, 4, 4, $1d, $0
+	dbsprite  0, -2, 4, 4, $1e, $0
+	dbsprite -2, -1, 4, 4, $1f, $0
+	dbsprite -1, -1, 4, 4, $20, $0
+	dbsprite  0, -1, 4, 4, $21, $0
+	dbsprite -2,  0, 4, 4, $22, $0
+	dbsprite -1,  0, 4, 4, $23, $0
+	dbsprite  0,  0, 4, 4, $24, $0
+
+.OAMData_SludgeBombSplatterLarge:
+	dbsprite -2, -2, 0, 0, $25, $0
+	dbsprite -1, -2, 0, 0, $26, $0
+	dbsprite  0, -2, 0, 0, $27, $0
+	dbsprite  1, -2, 0, 0, $28, $0
+	dbsprite -2, -1, 0, 0, $29, $0
+	dbsprite -1, -1, 0, 0, $2a, $0
+	dbsprite  0, -1, 0, 0, $2b, $0
+	dbsprite  1, -1, 0, 0, $2c, $0
+	dbsprite -2,  0, 0, 0, $2d, $0
+	dbsprite -1,  0, 0, 0, $2e, $0
+	dbsprite  0,  0, 0, 0, $2f, $0
+	dbsprite  1,  0, 0, 0, $30, $0
+	dbsprite -2,  1, 0, 0, $31, $0
+	dbsprite -1,  1, 0, 0, $32, $0
+	dbsprite  0,  1, 0, 0, $33, $0
+	dbsprite  1,  1, 0, 0, $34, $0
+
+.OAMData_ThunderYellow1A:
+	dbsprite   0, 0, 0, 0, $00, $0
+	dbsprite  -1, 1, 0, 0, $01, $0
+	dbsprite   0, 1, 0, 0, $02, $0
+
+.OAMData_ThunderYellow1B:
 	dbsprite  -1, 0, 0, 0, $01, $0
 	dbsprite   0, 0, 0, 0, $02, $0
+	dbsprite  -1, 1, 0, 0, $03, $0
+	dbsprite   0, 1, 0, 0, $04, $0
+
+.OAMData_ThunderYellow1C:
+	dbsprite  -1, 0, 0, 0, $03, $0
+	dbsprite   0, 0, 0, 0, $04, $0
 	dbsprite  -1, 1, 0, 0, $05, $0
 	dbsprite   0, 1, 0, 0, $06, $0
 
-.OAMData_ThunderWideSection:
-	dbsprite  -2, 0, 0, 0, $00, $0
-	dbsprite  -1, 0, 0, 0, $01, $0
-	dbsprite   0, 0, 0, 0, $02, $0
-	dbsprite   1, 0, 0, 0, $03, $0
-	dbsprite  -2, 1, 0, 0, $04, $0
-	dbsprite  -1, 1, 0, 0, $05, $0
-	dbsprite   0, 1, 0, 0, $06, $0
-	dbsprite   1, 1, 0, 0, $07, $0
+.OAMData_ThunderPurpleA:
+	dbsprite  -2, 0, 0, 0, $07, $0
+	dbsprite  -1, 0, 0, 0, $08, $0
+	dbsprite   0, 0, 0, 0, $09, $0
+	dbsprite   1, 0, 0, 0, $0a, $0
+	dbsprite  -2, 1, 0, 0, $0b, $0
+	dbsprite  -1, 1, 0, 0, $0c, $0
+	dbsprite   0, 1, 0, 0, $0d, $0
+	dbsprite   1, 1, 0, 0, $0e, $0
+
+.OAMData_ThunderPurpleB:
+	dbsprite  -2, 0, 0, 0, $0b, $0
+	dbsprite  -1, 0, 0, 0, $0c, $0
+	dbsprite   0, 0, 0, 0, $0d, $0
+	dbsprite   1, 0, 0, 0, $0e, $0
+	dbsprite  -2, 1, 0, 0, $0f, $0
+	dbsprite  -1, 1, 0, 0, $10, $0
+	dbsprite   0, 1, 0, 0, $11, $0
+	dbsprite   1, 1, 0, 0, $12, $0
+
+.OAMData_ThunderPurpleC:
+	dbsprite  -2, 0, 0, 0, $0f, $0
+	dbsprite  -1, 0, 0, 0, $10, $0
+	dbsprite   0, 0, 0, 0, $11, $0
+	dbsprite   1, 0, 0, 0, $12, $0
+	dbsprite  -2, 1, 0, 0, $13, $0
+	dbsprite  -1, 1, 0, 0, $14, $0
+	dbsprite   0, 1, 0, 0, $15, $0
+	dbsprite   1, 1, 0, 0, $16, $0
+
+.OAMData_ThunderYellow2A:
+	dbsprite  -1, 0, 0, 0, $17, $0
+	dbsprite   0, 0, 0, 0, $18, $0
+	dbsprite  -2, 1, 0, 0, $19, $0
+	dbsprite  -1, 1, 0, 0, $1a, $0
+	dbsprite   0, 1, 0, 0, $1b, $0
+	dbsprite   1, 1, 0, 0, $1c, $0
+
+.OAMData_ThunderYellow2B:
+	dbsprite  -2, 0, 0, 0, $19, $0
+	dbsprite  -1, 0, 0, 0, $1a, $0
+	dbsprite   0, 0, 0, 0, $1b, $0
+	dbsprite   1, 0, 0, 0, $1c, $0
+	dbsprite  -2, 1, 0, 0, $1d, $0
+	dbsprite  -1, 1, 0, 0, $1e, $0
+	dbsprite   0, 1, 0, 0, $1f, $0
+	dbsprite   1, 1, 0, 0, $20, $0
+
+.OAMData_ThunderYellow2C:
+	dbsprite  -2, 0, 0, 0, $1d, $0
+	dbsprite  -1, 0, 0, 0, $1e, $0
+	dbsprite   0, 0, 0, 0, $1f, $0
+	dbsprite   1, 0, 0, 0, $20, $0
+	dbsprite  -2, 1, 0, 0, $21, $0
+	dbsprite  -1, 1, 0, 0, $22, $0
+	dbsprite   0, 1, 0, 0, $23, $0
+	dbsprite   1, 1, 0, 0, $24, $0
+
+.OAMData_ThunderOrangeA:
+	dbsprite  -1, 0, 0, 0, $25, $0
+	dbsprite   0, 0, 0, 0, $26, $0
+	dbsprite  -1, 1, 0, 0, $27, $0
+	dbsprite   0, 1, 0, 0, $28, $0
+
+.OAMData_ThunderOrangeB:
+	dbsprite  -1, 0, 0, 0, $27, $0
+	dbsprite   0, 0, 0, 0, $28, $0
+	dbsprite  -1, 1, 0, 0, $29, $0
+	dbsprite   0, 1, 0, 0, $2a, $0
+
+.OAMData_ThunderOrangeC:
+	dbsprite  -1, 0, 0, 0, $29, $0
+	dbsprite   0, 0, 0, 0, $2a, $0
+	dbsprite  -1, 1, 0, 0, $2b, $0
+	dbsprite   0, 1, 0, 0, $2c, $0
+
+.OAMData_ThunderRedA:
+	dbsprite  -1, 0, 0, 0, $2d, $0
+	dbsprite  -1, 1, 0, 0, $2e, $0
+
+.OAMData_ThunderRedB:
+	dbsprite  -1, 0, 0, 0, $2e, $0
+	dbsprite  -1, 1, 0, 0, $2f, $0
+	dbsprite   0, 1, 0, 0, $30, $0
+
+.OAMData_ThunderRedC:
+	dbsprite  -1, 0, 0, 0, $2f, $0
+	dbsprite   0, 0, 0, 0, $30, $0
+	dbsprite  -1, 1, 0, 0, $31, $0
+	dbsprite   0, 1, 0, 0, $32, $0
 
 .OAMData_ThunderboltStrike:
 	dbsprite  -1, -7, 0, 0, $00, $0
@@ -748,6 +1060,34 @@ BattleAnimExtOAMData:
 	dbsprite   1,  0, 0, 0, $07, $0
 	dbsprite   0,  1, 0, 0, $08, $0
 	dbsprite   1,  1, 0, 0, $09, $0
+
+.OAMData_PoisonBubble:
+	dbsprite -1, -1, 0, 0, $00, $0
+	dbsprite  0, -1, 0, 0, $01, $0
+	dbsprite -1,  0, 0, 0, $02, $0
+	dbsprite  0,  0, 0, 0, $03, $0
+
+.OAMData_ToxicBubble1:
+	dbsprite -1,  0, 0, 0, $00, $0
+	dbsprite  0,  0, 0, 0, $01, $0
+
+.OAMData_ToxicBubble2:
+	dbsprite -1, -1, 0, 0, $00, $0
+	dbsprite  0, -1, 0, 0, $01, $0
+	dbsprite -1,  0, 0, 0, $02, $0
+	dbsprite  0,  0, 0, 0, $03, $0
+
+.OAMData_ToxicBubble3:
+	dbsprite -1, -2, 0, 0, $00, $0
+	dbsprite  0, -2, 0, 0, $01, $0
+	dbsprite -1, -1, 0, 0, $02, $0
+	dbsprite  0, -1, 0, 0, $03, $0
+	dbsprite -1,  0, 0, 0, $04, $0
+	dbsprite  0,  0, 0, 0, $05, $0
+
+.OAMData_PoisonPowder:
+	dbsprite  0, -1, 0, 0, $00, $0
+	dbsprite  0,  0, 0, 0, $01, $0
 
 BattleAnimExt_LoadIndigoFirePal:
 	ld hl, .IndigoFirePal
@@ -972,38 +1312,58 @@ BattleAnimExt_LoadThunderPal:
 	RGB 19, 00, 00
 	RGB 19, 00, 00
 
-BattleAnimExt_LoadThunderboltPal:
+BattleAnimExt_LoadCustomPal:
 	ld a, e
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_LOAD
 	jr z, .load_water_column
 	cp BATTLE_ANIM_GRASS_PAL_LOAD
 	jr z, .load_grass
 	cp BATTLE_ANIM_FIRE_PAL_LOAD
-	jr z, .load_fire
+	jp z, .load_fire
 	cp BATTLE_ANIM_DRAGON_PAL_LOAD
-	jr z, .load_dragon
+	jp z, .load_dragon
 	cp BATTLE_ANIM_FIRE_BLUE_PAL_LOAD
-	jr z, .load_fire_blue
+	jp z, .load_fire_blue
 	cp BATTLE_ANIM_DRAGON_CLAW_PAL_LOAD
-	jr z, .load_dragon_claw
+	jp z, .load_dragon_claw
 	cp BATTLE_ANIM_DRAGON_BLUE_PAL_LOAD
 	jr z, .load_dragon_blue
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
-	jr z, .restore_blue
+	jp z, .restore_blue
 	cp BATTLE_ANIM_GRASS_PAL_RESTORE
-	jr z, .restore_green
+	jp z, .restore_green
 	cp BATTLE_ANIM_FIRE_PAL_RESTORE
-	jr z, .restore_red
+	jp z, .restore_red
 	cp BATTLE_ANIM_DRAGON_PAL_RESTORE
-	jr z, .restore_red
+	jp z, .restore_red
 	cp BATTLE_ANIM_FIRE_BLUE_PAL_RESTORE
-	jr z, .restore_blue
+	jp z, .restore_blue
 	cp BATTLE_ANIM_DRAGON_CLAW_PAL_RESTORE
-	jr z, .restore_red
+	jp z, .restore_red
 	cp BATTLE_ANIM_DRAGON_BLUE_PAL_RESTORE
-	jr z, .restore_blue
+	jp z, .restore_blue
 	cp BATTLE_ANIM_THUNDERBOLT_PAL_RESTORE
-	jr z, .restore_blue
+	jp z, .restore_blue
+	cp BATTLE_ANIM_GROUND_PAL_LOAD
+	jr z, .load_ground
+	cp BATTLE_ANIM_GROUND_PAL_RESTORE
+	jp z, .restore_brown
+	cp BATTLE_ANIM_POISON_PAL_LOAD
+	jr z, .load_poison
+	cp BATTLE_ANIM_POISON_PAL_RESTORE
+	jp z, .restore_blue
+	cp BATTLE_ANIM_POISON_POWDER_PAL_LOAD
+	jr z, .load_poison_powder
+	cp BATTLE_ANIM_POISON_POWDER_PAL_RESTORE
+	jp z, .restore_blue
+	cp BATTLE_ANIM_SHADOW_BALL_PAL_LOAD
+	jp z, .load_shadow_ball
+	cp BATTLE_ANIM_SHADOW_BALL_PAL_RESTORE
+	jp z, .restore_green
+	cp BATTLE_ANIM_HYPER_FANG_PAL_LOAD
+	jp z, .load_hyper_fang
+	cp BATTLE_ANIM_HYPER_FANG_PAL_RESTORE
+	jp z, .restore_brown
 	ld hl, .ThunderboltPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .load_custom_pal
@@ -1038,6 +1398,31 @@ BattleAnimExt_LoadThunderboltPal:
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .load_custom_pal
 
+.load_ground
+	ld hl, .GroundPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
+	jr .load_custom_pal
+
+.load_poison
+	ld hl, .PoisonPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_poison_powder
+	ld hl, .PoisonPowderPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_shadow_ball
+	ld hl, .ShadowBallPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	jr .load_custom_pal
+
+.load_hyper_fang
+	ld hl, .HyperFangPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
+	jr .load_custom_pal
+
 .load_dragon_claw
 	ld hl, .DragonClawPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
@@ -1063,6 +1448,11 @@ BattleAnimExt_LoadThunderboltPal:
 .restore_green
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_GREEN
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	jr .restore_pal
+
+.restore_brown
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_BROWN
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
 	jr .restore_pal
 
 .restore_red
@@ -1130,6 +1520,36 @@ BattleAnimExt_LoadThunderboltPal:
 	RGB 07, 12, 15
 	RGB 31, 05, 00
 	RGB 07, 00, 00
+
+.GroundPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 30, 30, 30 ; white highlight
+	RGB 17, 09, 05 ; light brown fill
+	RGB 13, 06, 03 ; dark brown border
+
+.PoisonPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 30, 30, 30 ; white highlight
+	RGB 28, 10, 28 ; light purple
+	RGB 25, 00, 25 ; mid purple
+
+.PoisonPowderPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 17, 12, 24 ; lavender
+	RGB 28, 10, 28 ; light purple
+	RGB 25, 00, 25 ; mid purple
+
+.ShadowBallPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 04, 06, 25 ; light indigo
+	RGB 03, 04, 17 ; mid indigo
+	RGB 03, 02, 10 ; dark indigo
+
+.HyperFangPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 31, 31, 05 ; yellow
+	RGB 31, 14, 02 ; orange
+	RGB 25, 03, 00 ; red
 
 BattleAnimFunc_Thunder:
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -1439,9 +1859,191 @@ BattleAnimFunc_MudShot:
 	add hl, bc
 	add [hl]
 	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld a, [hl]
 	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH  ; D=0 (regular bank), E=index
+	cp LOW(BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM)
+	jr nz, .reinit_splash
+	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
+.reinit_splash
 	farcall ReinitBattleAnimFrameset
 .splash
+	ret
+
+BattleAnimFunc_SludgeBomb:
+; Slow arcing sludge projectile that turns into a three-stage splatter at impact.
+; Obj Param: arc height.
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+	dw .splash
+
+.init
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	call BattleAnimExt_IncAnonJumptableIndex
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	add $48
+	ld d, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	cp d
+	jr nc, .impact
+	add $2
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	dec a
+	ld e, a
+	ld d, 0
+	ld hl, .ArcFrames
+	add hl, de
+	ld a, [hl]
+	push af
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld d, [hl]
+	pop af
+	call BattleAnimExt_Sine
+	xor $ff
+	inc a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.impact
+	call BattleAnimExt_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld a, [hl]
+	ld [hl], $0
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	add [hl]
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	ld [hl], $0
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	add [hl]
+	ld [hl], a
+	call BattleAnimExt_Deinit
+.splash
+	ret
+
+.ArcFrames:
+	db $00, $01, $02, $03, $04, $05, $05, $06, $07, $08, $09, $0a
+	db $0b, $0c, $0d, $0e, $0f, $10, $10, $11, $12, $13, $14, $15
+	db $16, $17, $18, $19, $1a, $1b, $1b, $1c, $1d, $1e, $1f, $20
+
+BattleAnimFunc_AcidBubble:
+; Obj Param: $0 = center, $1 = target +24px X, $2 = target -24px X.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 40
+	jr nc, .done
+	ld e, a
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	ld d, a
+	and a
+	jr z, .center
+	cp $1
+	jr z, .right
+	ld a, e
+	cp $8
+	ld a, $2
+	jr c, .got_x_step
+	dec a
+	jr .got_x_step
+
+.center
+	ld a, e
+	cp $20
+	ld a, $2
+	jr c, .got_x_step
+	dec a
+	jr .got_x_step
+
+.right
+	ld a, e
+	cp $10
+	ld a, $3
+	jr c, .got_x_step
+	dec a
+
+.got_x_step
+	ld d, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	dec [hl]
+	ld d, $10
+	call BattleAnimExt_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_AcidDroplet:
+; Obj Param: duration in frames.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp d
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_AromatherapyFlower:
@@ -1982,6 +2584,37 @@ BattleAnimFunc_DragonClawFlame:
 	db  34, 76
 	db  44, 88
 	db  54, 100
+
+BattleAnimFunc_PoisonBubble:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	add $03
+	ld [hl], a
+	ld d, $4
+	call BattleAnimExt_Sine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld d, [hl]
+	ld a, d
+	and a
+	jr nz, .got_y_speed
+	ld d, $30
+.got_y_speed
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ret nc
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
 
 BattleAnimExt_Deinit:
 	ld hl, BATTLEANIMSTRUCT_INDEX

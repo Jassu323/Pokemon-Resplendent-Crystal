@@ -225,6 +225,10 @@ BattleAnimOAMData:
 	battleanimoam $00, 12, .OAMData_d7 ; BATTLE_ANIM_OAMSET_D7
 	battleanimoam $00, 13, .OAMData_Hail ; BATTLE_ANIM_OAMSET_HAIL
 	battleanimoam $05,  6, .OAMData_SeismicTossLight ; BATTLE_ANIM_OAMSET_SEISMIC_TOSS_LIGHT
+	battleanimoam $00,  4, .OAMData_MudBallMedium ; BATTLE_ANIM_OAMSET_MUD_BALL_MEDIUM
+	battleanimoam $06,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_1
+	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_2
+	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_OAMSET_MUD_SPLASH_MEDIUM_3
 	battleanimoam $01,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_1
 	battleanimoam $03,  4, .OAMData_04 ; BATTLE_ANIM_OAMSET_MUD_SPLASH_2
 	battleanimoam $00,  2, .OAMData_ThundershockStrike ; BATTLE_ANIM_OAMSET_THUNDERSHOCK_STRIKE_1
@@ -259,6 +263,23 @@ BattleAnimOAMData:
 	dbsprite   0,  -1, 0, 0, $01, $0
 	dbsprite  -1,   0, 0, 0, $02, $0
 	dbsprite   0,   0, 0, 0, $03, $0
+
+.OAMData_MudBallMedium:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite  -1,   0, 0, 0, $03, $0
+	dbsprite   0,   0, 0, 0, $04, $0
+
+.OAMData_MudSplashMedium:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite   1,  -1, 0, 0, $02, $0
+	dbsprite  -1,   0, 0, 0, $03, $0
+	dbsprite   0,   0, 0, 0, $04, $0
+	dbsprite   1,   0, 0, 0, $05, $0
+	dbsprite  -1,   1, 0, 0, $06, $0
+	dbsprite   0,   1, 0, 0, $07, $0
+	dbsprite   1,   1, 0, 0, $08, $0
 
 .OAMData_02:
 	dbsprite  -1,  -1, 0, 0, $00, $0

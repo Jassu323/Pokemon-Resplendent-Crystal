@@ -268,11 +268,13 @@ MoveDescriptions1:
 	dw BrickBreakDescription
 	dw YawnDescription
 	dw ArmThrustDescription
+	dw BlazeKickDescription
 	dw IceBallDescription
 	dw PoisonFangDescription
 	dw CrushClawDescription
 	dw BlastBurnDescription
 	dw HydroCannonDescription
+	dw MeteorMashDescription
 	dw AromatherapyDescription
 	dw AirCutterDescription
 	dw OverheatDescription
@@ -316,6 +318,10 @@ MoveDescriptions1:
 	dw StoneEdgeDescription
 	dw BugBiteDescription
 	dw OminousWindDescription
+	dw SludgeWaveDescription
+	dw HexDescription
+	dw WildChargeDescription
+	dw DrillRunDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1361,6 +1367,9 @@ YawnDescription:
 ArmThrustDescription:
 	db   "Placeholder@"
 
+BlazeKickDescription:
+	db   "Placeholder@"
+
 IceBallDescription:
 	db   "Placeholder@"
 
@@ -1374,6 +1383,9 @@ BlastBurnDescription:
 	db   "Placeholder@"
 
 HydroCannonDescription:
+	db   "Placeholder@"
+
+MeteorMashDescription:
 	db   "Placeholder@"
 
 AromatherapyDescription:
@@ -1503,4 +1515,16 @@ BugBiteDescription:
 	db   "Placeholder@"
 
 OminousWindDescription:
+	db   "Placeholder@"
+
+SludgeWaveDescription:
+	db   "Placeholder@"
+
+HexDescription:
+	db   "Placeholder@"
+
+WildChargeDescription:
+	db   "Placeholder@"
+
+DrillRunDescription:
 	db   "Placeholder@"

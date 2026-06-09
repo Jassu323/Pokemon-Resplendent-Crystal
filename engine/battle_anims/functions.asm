@@ -95,6 +95,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Cotton
 	dw BattleAnimFunc_Flamethrower
 	dw BattleAnimFunc_OutrageFlame
+	dw BattleAnimFunc_PoisonPowder
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EXT_NULL
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WISH_STAR
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SEISMIC_TOSS_LIGHT
@@ -109,6 +110,10 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SACRED_FIRE_HIT
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_LAVA_PLUME_ERUPTION
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_DRAGON_CLAW_FLAME
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_POISON_BUBBLE
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SLUDGE_BOMB
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_BUBBLE
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_DROPLET
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:
@@ -1618,6 +1623,124 @@ BattleAnimFunc_Powder:
 	ld [hl], a
 	ret
 
+BattleAnimFunc_PoisonPowder:
+	ld hl, BATTLEANIMSTRUCT_JUMPTABLE_INDEX
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr nz, .one
+	ld [hl], 117
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	xor a
+	ld [hli], a
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .one
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add $30
+	ld [hl], a
+
+.one
+	call .GetData
+	ld a, [hli]
+	push hl
+	ld e, a
+	ld d, 0
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld l, [hl]
+	ld h, a
+	add hl, de
+	ld e, l
+	ld d, h
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], d
+	pop hl
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	push af
+	bit 7, e
+	jr z, .got_amplitude
+	ld a, e
+	xor $ff
+	inc a
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	ld d, e
+	call BattleAnim_Sine
+	xor $ff
+	inc a
+	jr .got_x_offset
+
+.got_amplitude
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	ld d, e
+	call BattleAnim_Sine
+
+.got_x_offset
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_JUMPTABLE_INDEX
+	add hl, bc
+	dec [hl]
+	ret nz
+	call DeinitBattleAnimation
+	ret
+
+.GetData:
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $0f
+	ld e, a
+	add a
+	add e
+	ld e, a
+	ld d, 0
+	ld hl, .Data
+	add hl, de
+	ret
+
+.Data:
+; y velocity, wave amplitude, wave speed
+	db  80,   5, 1
+	db  80,  -5, 1
+	db 112,   5, 3
+	db  80,  -5, 1
+	db  96,   5, 1
+	db  69,  -5, 1
+	db 112,   5, 2
+	db  80,  -5, 1
+	db  96,   7, 2
+	db  90,  -8, 0
+	db  80,  -5, 1
+	db  89,   5, 2
+	db 112,  -8, 2
+	db  80,   5, 1
+
 BattleAnimFunc_Recover:
 ; Obj moves in an ever shrinking circle. Obj Param defines initial position in the circle
 	call BattleAnim_AnonJumptable
@@ -1800,6 +1923,17 @@ BattleAnimFunc_Bite:
 ; Claps two objects together (vertically), twice
 ; Second object's frameset and position relative to first are both defined via this function
 ; Obj Param: Distance from center (masked with $7F). Bit 7 flips object vertically by switching to a different frameset
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .run
+	dec [hl]
+	jr nz, .run
+	call DeinitBattleAnimation
+	ret
+
+.run
 	call BattleAnim_AnonJumptable
 .anon_dw
 	dw .zero
@@ -1812,6 +1946,9 @@ BattleAnimFunc_Bite:
 
 .zero
 	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], $20
 	ld hl, BATTLEANIMSTRUCT_PARAM
 	add hl, bc
 	bit 7, [hl]
@@ -3082,13 +3219,13 @@ BattleAnimFunc_PoisonGas:
 	call BattleAnim_AnonJumptable
 .anon_dw
 	dw .zero
-	dw BattleAnimFunc_SpiralDescent
+	dw .descent
 
 .zero:
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
 	ld a, [hl]
-	cp $84
+	cp $83
 	jr nc, .next
 	inc [hl]
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -3112,6 +3249,47 @@ BattleAnimFunc_PoisonGas:
 
 .next
 	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.descent:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld d, $18
+	push af
+	push de
+	call BattleAnim_Sine
+	sra a
+	sra a
+	sra a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	add [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	and $7
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp $0d
+	jr nc, .delete
+	inc [hl]
+	ret
+
+.delete
+	call DeinitBattleAnimation
 	ret
 
 BattleAnimFunc_SmokeFlameWheel:

@@ -259,49 +259,69 @@ MACRO anim_0xf6
 	db \1
 ENDM
 
-	const anim_thunderboltpal_command ; $f7
+	const anim_custompal_command ; $f7
 MACRO anim_thunderboltpal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_watercolumnpal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_vinewhippal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_grasspal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_firepal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_dragonpal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_dragonclawpal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_dragonbluepal
-	db anim_thunderboltpal_command
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_groundpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_poisonpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_shadowballpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_hyperfangpal
+	db anim_custompal_command
 	db \1
 ENDM
 
 MACRO anim_0xf7
-	db anim_thunderboltpal_command
+	db anim_custompal_command
 	db \1
 ENDM
 

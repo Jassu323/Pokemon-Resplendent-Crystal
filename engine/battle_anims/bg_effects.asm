@@ -137,6 +137,7 @@ BattleBGEffects:
 	dw BattleBGEffect_CycleGreenOBPal
 	dw BattleBGEffect_CycleIndigoFireOBPal
 	dw BattleBGEffect_FireBGPals
+	dw BattleBGEffect_PoisonMetallic
 	assert_table_length NUM_BATTLE_BG_EFFECTS
 
 BattleBGEffect_End:
@@ -593,6 +594,175 @@ BattleBGEffect_FireBGPals:
 	RGB 31, 19, 24
 	RGB 30, 10, 06
 	RGB 00, 00, 00
+
+BattleBGEffect_PoisonMetallic:
+; BG_EFFECT_STRUCT_BATTLE_TURN = BG_EFFECT_TARGET or BG_EFFECT_USER
+	call BattleBGEffects_AnonJumptable
+.anon_dw
+	dw .apply
+	dw .hold
+	dw .restore
+
+.apply
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg_apply
+	call BGEffect_CheckBattleTurn
+	jr nz, .player_apply
+	call .LoadEnemyPoisonMetallicPals
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld [hl], 0
+	call BattleBGEffects_IncAnonJumptableIndex
+	ret
+
+.player_apply
+	call .LoadPlayerPoisonMetallicPals
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld [hl], 0
+	call BattleBGEffects_IncAnonJumptableIndex
+	ret
+
+.dmg_apply
+	call BattleBGEffects_IncAnonJumptableIndex
+	ret
+
+.hold
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg_hold
+	call BGEffect_CheckBattleTurn
+	jr nz, .player_hold
+	call .LoadEnemyPoisonMetallicPalsMidTimer
+	ret
+
+.player_hold
+	call .LoadPlayerPoisonMetallicPalsMidTimer
+	ret
+
+.dmg_hold
+	ret
+
+.restore
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg_restore
+	call BGEffect_CheckBattleTurn
+	jr nz, .player_restore
+	ld a, $e4
+	call BGEffects_LoadEnemyPals
+	call EndBattleBGEffect
+	ret
+
+.player_restore
+	ld a, $e4
+	call BGEffects_LoadPlayerPals
+	call EndBattleBGEffect
+	ret
+
+.dmg_restore
+	call EndBattleBGEffect
+	ret
+
+.LoadPlayerPoisonMetallicPals:
+	ld hl, .PoisonMetallicPal
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER
+	call .CopyPoisonMetallicPal
+	ld hl, .PoisonMetallicPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_PLAYER
+	call .CopyPoisonMetallicPal
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.LoadEnemyPoisonMetallicPals:
+	ld hl, .PoisonMetallicPal
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY
+	call .CopyPoisonMetallicPal
+	ld hl, .PoisonMetallicPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_ENEMY
+	call .CopyPoisonMetallicPal
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.LoadEnemyPoisonMetallicPalsMidTimer:
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	cp 9
+	jr z, .done
+	inc [hl]
+	ld a, [hl]
+	cp 8
+	ret nz
+	call .LoadEnemyPoisonMetallicPalsMid
+	ld [hl], 9
+	ret
+
+.done
+	ret
+
+.LoadEnemyPoisonMetallicPalsMid:
+	ld hl, .PoisonMetallicMidPal
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY
+	call .CopyPoisonMetallicPal
+	ld hl, .PoisonMetallicMidPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_ENEMY
+	call .CopyPoisonMetallicPal
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.LoadPlayerPoisonMetallicPalsMidTimer:
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	cp 9
+	jr z, .done
+	inc [hl]
+	ld a, [hl]
+	cp 8
+	ret nz
+	call .LoadPlayerPoisonMetallicPalsMid
+	ld [hl], 9
+	ret
+
+.CopyPoisonMetallicPal:
+	push bc
+	ld b, 1 palettes
+.loop
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .loop
+	pop bc
+	ret
+
+.PoisonMetallicPal:
+	RGB 31, 31, 31
+	RGB 28, 10, 28
+	RGB 25, 00, 25
+	RGB 08, 00, 08
+
+.PoisonMetallicMidPal:
+	RGB 31, 31, 31
+	RGB 25, 00, 25
+	RGB 18, 00, 18
+	RGB 08, 00, 08
+
+.LoadPlayerPoisonMetallicPalsMid:
+	ld hl, .PoisonMetallicMidPal
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER
+	call .CopyPoisonMetallicPal
+	ld hl, .PoisonMetallicMidPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_PLAYER
+	call .CopyPoisonMetallicPal
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
 
 BattleBGEffect_CycleBGPals_Inverted:
 	ld de, .Pals

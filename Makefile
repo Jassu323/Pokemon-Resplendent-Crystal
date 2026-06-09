@@ -253,23 +253,46 @@ gfx/battle_anims/objects.2bpp: tools/gfx += --remove-whitespace --remove-xflip
 gfx/battle_anims/pokeball.2bpp: tools/gfx += --remove-xflip --keep-whitespace
 
 transparent_gray_battle_anim_colors := '\#none,\#606060,\#909090,\#c8c8c8'
-mud_ball_battle_anim_colors := '\#none,\#ffffff,\#70543e,\#000000'
+mud_ball_battle_anim_colors := '\#ffffff,\#f0f0f0,\#884828,\#683018'
 thunder_battle_anim_colors := '\#none,\#c8c8c8,\#686868,\#ffffff'
 ember_transparent_battle_anim_colors := '\#none,\#a0a0a0,\#606060,\#282828'
 ember_opaque_battle_anim_colors := '\#ffffff,\#a0a0a0,\#606060,\#282828'
 water_column_battle_anim_colors := '\#none,\#0838f8,\#08a0f8,\#60e8f8'
 claw_battle_anim_colors := '\#ffffff,\#606060,\#a0a0a0,\#282828'
+poison_bubble_battle_anim_colors := '\#ffffff,\#f0f0f0,\#e050e0,\#c800c8'
+poison_powder_battle_anim_colors := '\#ffffff,\#8860c0,\#e050e0,\#c800c8'
+shadow_ball_battle_anim_colors := '\#ffffff,\#2030c8,\#182088,\#181050'
+sludge_bomb_battle_anim_colors := '\#ffffff,\#f0f0f0,\#e050e0,\#c800c8'
+sharp_teeth_battle_anim_colors := '\#ffffff,\#f0f0f0,\#606060,\#000000'
+hyper_fang_battle_anim_colors := '\#ffffff,\#f8f828,\#f87010,\#c81800'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
 	$$(RGBGFX) $$(RGBGFXFLAGS) --colors $$($(2)) -o $$@ $$<
 endef
 
+# like battle_anim_rgbgfx_rule, but strips blank tiles afterward; the consuming
+# OAM data must be authored against the whitespace-removed tile layout
+define battle_anim_rgbgfx_rw_rule
+$(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
+	$$(RGBGFX) $$(RGBGFXFLAGS) --colors $$($(2)) -o $$@ $$<
+	tools/gfx --remove-whitespace -o $$@ $$@
+endef
+
 $(call battle_anim_2bpp,electricity_effect thundershock thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
 	$(RGBGFX) $(RGBGFXFLAGS) --colors $(transparent_gray_battle_anim_colors) -o $@ $<
 
-$(eval $(call battle_anim_rgbgfx_rule,mud_ball,mud_ball_battle_anim_colors))
-$(eval $(call battle_anim_rgbgfx_rule,thunder,thunder_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,mud_ball_small,mud_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,mud_ball_medium,mud_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rw_rule,thunder,thunder_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,poison_bubble,poison_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,toxic_bubble,poison_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,shadow_ball,shadow_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb,sludge_bomb_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb_splatter_2,sludge_bomb_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb_splatter_3,sludge_bomb_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sharp_teeth,sharp_teeth_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rw_rule,hyper_fang,hyper_fang_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \
@@ -287,6 +310,13 @@ $(call battle_anim_2bpp,water_column): $(call battle_anim_chunk_pngs,water_colum
 	done
 	cat $(call battle_anim_chunk_tmps,1 2 3 4) > $@
 	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4)
+
+$(call battle_anim_2bpp,poison_powder): $(call battle_anim_chunk_pngs,poison_powder,1 2 3 4 5 6 7 8)
+	for chunk in 1 2 3 4 5 6 7 8; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(poison_powder_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/poison_powder_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5 6 7 8) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5 6 7 8)
 
 $(call battle_anim_2bpp,claw): $(call battle_anim_chunk_pngs,claw,1 2 3 4 5)
 	for chunk in 1 2 3 4 5; do \
