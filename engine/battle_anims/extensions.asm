@@ -169,7 +169,6 @@ BattleAnimExtFrameData:
 	dw .Frameset_PoisonBubble ; BATTLE_ANIM_FRAMESET_POISON_BUBBLE
 	dw .Frameset_HyperFang ; BATTLE_ANIM_FRAMESET_HYPER_FANG
 	dw .Frameset_SludgeBomb ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB
-	dw .Frameset_SludgeBombSplatter ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB_SPLATTER
 	dw .Frameset_SludgeBombTargetSplatter ; BATTLE_ANIM_FRAMESET_SLUDGE_BOMB_TARGET_SPLATTER
 	dw .Frameset_AcidBubble ; BATTLE_ANIM_FRAMESET_ACID_BUBBLE
 	dw .Frameset_AcidDroplet ; BATTLE_ANIM_FRAMESET_ACID_DROPLET
@@ -177,9 +176,7 @@ BattleAnimExtFrameData:
 	dw .Frameset_PoisonPowder ; BATTLE_ANIM_FRAMESET_POISON_POWDER
 	dw .Frameset_Hail ; BATTLE_ANIM_FRAMESET_HAIL
 	dw .Frameset_SeismicTossLight ; BATTLE_ANIM_FRAMESET_SEISMIC_TOSS_LIGHT
-	dw .Frameset_MudBallSmall ; BATTLE_ANIM_FRAMESET_MUD_BALL_SMALL
 	dw .Frameset_MudBallMedium ; BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM
-	dw .Frameset_MudSplash ; BATTLE_ANIM_FRAMESET_MUD_SPLASH
 	dw .Frameset_MudSplashMedium ; BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
 	dw .Frameset_ThundershockStrike ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
@@ -387,12 +384,6 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB, 8
 	oamend
 
-.Frameset_SludgeBombSplatter:
-	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_SMALL, 6
-	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_MEDIUM, 6
-	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_LARGE, 14
-	oamdelete
-
 .Frameset_SludgeBombTargetSplatter:
 	oamframe BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_TARGET_SPLATTER, 20
 	oamdelete
@@ -431,18 +422,9 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_SEISMIC_TOSS_LIGHT, 8
 	oamend
 
-.Frameset_MudBallSmall:
-	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_BALL_SMALL, 8
-	oamend
-
 .Frameset_MudBallMedium:
 	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_BALL_MEDIUM, 8
 	oamend
-
-.Frameset_MudSplash:
-	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_2, 8
-	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_1, 8
-	oamdelete
 
 .Frameset_MudSplashMedium:
 	oamframe BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_1, 8
@@ -670,9 +652,6 @@ BattleAnimExtOAMData:
 	battleanimoam $00, 11, .OAMData_HyperFangFrame3 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_3
 	battleanimoam $00,  7, .OAMData_HyperFangFrame4 ; BATTLE_ANIM_EXT_OAMSET_HYPER_FANG_4
 	battleanimoam $00, 16, .OAMData_SludgeBomb ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB
-	battleanimoam $00,  4, .OAMData_SludgeBombSplatterSmall ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_SMALL
-	battleanimoam $00,  9, .OAMData_SludgeBombSplatterMedium ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_MEDIUM
-	battleanimoam $00, 16, .OAMData_SludgeBombSplatterLarge ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_SPLATTER_LARGE
 	battleanimoam $08,  4, .OAMData_PoisonBubble ; BATTLE_ANIM_EXT_OAMSET_SLUDGE_BOMB_TARGET_SPLATTER
 	battleanimoam $04,  4, .OAMData_PoisonBubble ; BATTLE_ANIM_EXT_OAMSET_ACID_DROPLET
 	battleanimoam $00,  2, .OAMData_ToxicBubble1 ; BATTLE_ANIM_EXT_OAMSET_TOXIC_BUBBLE_1
@@ -689,10 +668,7 @@ BattleAnimExtOAMData:
 	battleanimoam $0e,  2, .OAMData_PoisonPowder ; BATTLE_ANIM_EXT_OAMSET_POISON_POWDER_8
 	battleanimoam $00, 13, .OAMData_Hail ; BATTLE_ANIM_EXT_OAMSET_HAIL
 	battleanimoam $05,  6, .OAMData_SeismicTossLight ; BATTLE_ANIM_EXT_OAMSET_SEISMIC_TOSS_LIGHT
-	battleanimoam $00,  1, .OAMData_MudBallSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_BALL_SMALL
 	battleanimoam $00,  4, .OAMData_MudBallMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_BALL_MEDIUM
-	battleanimoam $01,  4, .OAMData_MudSplashSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_1
-	battleanimoam $03,  4, .OAMData_MudSplashSmall ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_2
 	battleanimoam $06,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_1
 	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_2
 	battleanimoam $0f,  9, .OAMData_MudSplashMedium ; BATTLE_ANIM_EXT_OAMSET_MUD_SPLASH_MEDIUM_3
@@ -767,41 +743,6 @@ BattleAnimExtOAMData:
 	dbsprite -1,  1, 0, 0, $0d, $0
 	dbsprite  0,  1, 0, 0, $0e, $0
 	dbsprite  1,  1, 0, 0, $0f, $0
-
-.OAMData_SludgeBombSplatterSmall:
-	dbsprite -1, -1, 0, 0, $18, $0
-	dbsprite  0, -1, 0, 0, $19, $0
-	dbsprite -1,  0, 0, 0, $1a, $0
-	dbsprite  0,  0, 0, 0, $1b, $0
-
-.OAMData_SludgeBombSplatterMedium:
-	dbsprite -2, -2, 4, 4, $1c, $0
-	dbsprite -1, -2, 4, 4, $1d, $0
-	dbsprite  0, -2, 4, 4, $1e, $0
-	dbsprite -2, -1, 4, 4, $1f, $0
-	dbsprite -1, -1, 4, 4, $20, $0
-	dbsprite  0, -1, 4, 4, $21, $0
-	dbsprite -2,  0, 4, 4, $22, $0
-	dbsprite -1,  0, 4, 4, $23, $0
-	dbsprite  0,  0, 4, 4, $24, $0
-
-.OAMData_SludgeBombSplatterLarge:
-	dbsprite -2, -2, 0, 0, $25, $0
-	dbsprite -1, -2, 0, 0, $26, $0
-	dbsprite  0, -2, 0, 0, $27, $0
-	dbsprite  1, -2, 0, 0, $28, $0
-	dbsprite -2, -1, 0, 0, $29, $0
-	dbsprite -1, -1, 0, 0, $2a, $0
-	dbsprite  0, -1, 0, 0, $2b, $0
-	dbsprite  1, -1, 0, 0, $2c, $0
-	dbsprite -2,  0, 0, 0, $2d, $0
-	dbsprite -1,  0, 0, 0, $2e, $0
-	dbsprite  0,  0, 0, 0, $2f, $0
-	dbsprite  1,  0, 0, 0, $30, $0
-	dbsprite -2,  1, 0, 0, $31, $0
-	dbsprite -1,  1, 0, 0, $32, $0
-	dbsprite  0,  1, 0, 0, $33, $0
-	dbsprite  1,  1, 0, 0, $34, $0
 
 .OAMData_ThunderYellow1A:
 	dbsprite   0, 0, 0, 0, $00, $0
@@ -1175,20 +1116,11 @@ BattleAnimExtOAMData:
 	dbsprite  12,   0, 0, 6, $00, $0
 	dbsprite  15,  -1, 0, 0, $00, $0
 
-.OAMData_MudBallSmall:
-	dbsprite  -1,  -1, 4, 4, $00, $0
-
 .OAMData_MudBallMedium:
 	dbsprite  -1,  -1, 0, 0, $00, $0
 	dbsprite   0,  -1, 0, 0, $01, $0
 	dbsprite  -1,   0, 0, 0, $03, $0
 	dbsprite   0,   0, 0, 0, $04, $0
-
-.OAMData_MudSplashSmall:
-	dbsprite  -1,  -1, 0, 0, $00, $0
-	dbsprite   0,  -1, 0, 0, $00, OAM_XFLIP
-	dbsprite  -1,   0, 0, 0, $01, $0
-	dbsprite   0,   0, 0, 0, $01, OAM_XFLIP
 
 .OAMData_MudSplashMedium:
 	dbsprite  -1,  -1, 0, 0, $00, $0
@@ -1983,14 +1915,7 @@ BattleAnimFunc_MudShot:
 	add hl, bc
 	add [hl]
 	ld [hl], a
-	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
-	add hl, bc
-	ld a, [hl]
-	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH
-	cp LOW(BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM)
-	jr nz, .reinit_splash
 	ld de, BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
-.reinit_splash
 	farcall ReinitBattleAnimFrameset
 .splash
 	ret

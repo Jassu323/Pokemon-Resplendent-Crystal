@@ -49,7 +49,6 @@ AnimObjGFX:
 	anim_obj_gfx 24, AnimObjAeroblastGFX
 	anim_obj_gfx  1, NULL
 	anim_obj_gfx  1, NULL
-	anim_obj_gfx  5, AnimObjMudBallSmallGFX
 	anim_obj_gfx 24, AnimObjMudBallMediumGFX
 	anim_obj_gfx  8, AnimObjThundershockGFX
 	anim_obj_gfx 12, AnimObjElectricityEffectGFX
@@ -63,8 +62,6 @@ AnimObjGFX:
 	anim_obj_gfx 12, AnimObjPoisonBubbleGFX
 	anim_obj_gfx 16, AnimObjShadowBallGFX
 	anim_obj_gfx 16, AnimObjSludgeBombGFX
-	anim_obj_gfx  9, AnimObjSludgeBombSplatter2GFX
-	anim_obj_gfx 16, AnimObjSludgeBombSplatter3GFX
 	anim_obj_gfx 16, AnimObjSharpTeethGFX
 	anim_obj_gfx 35, AnimObjHyperFangGFX
 	anim_obj_gfx 18, AnimObjToxicBubbleGFX

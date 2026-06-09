@@ -3036,17 +3036,19 @@ BattleAnim_Lick:
 	anim_ret
 
 BattleAnim_TriAttack:
-	anim_3gfx BATTLE_ANIM_GFX_EMBER, BATTLE_ANIM_GFX_ICE, BATTLE_ANIM_GFX_LIGHTNING
+	anim_3gfx BATTLE_ANIM_GFX_EMBER, BATTLE_ANIM_GFX_ICE, BATTLE_ANIM_GFX_THUNDER
 	anim_firepal BATTLE_ANIM_FIRE_PAL_LOAD
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_LOAD
 	anim_call BattleAnimSub_Fire
 	anim_wait 16
 	anim_call BattleAnimSub_Ice
 	anim_wait 16
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $4, $4
 	anim_sound 0, 1, SFX_THUNDER
-	anim_obj BATTLE_ANIM_OBJ_THUNDER_RIGHT, 152, 68, $0
+	anim_call BattleAnimSub_ThunderStrikeCenter
 	anim_wait 16
 	anim_firepal BATTLE_ANIM_FIRE_PAL_RESTORE
+	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Withdraw:
@@ -6151,28 +6153,6 @@ BattleAnimSub_Ice:
 	anim_wait 6
 	anim_sound 0, 1, SFX_SHINE
 	anim_obj BATTLE_ANIM_OBJ_ICE, 128, 70, $0
-	anim_ret
-
-BattleAnimSub_Sludge:
-.loop
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 132, 72, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 116, 72, $0
-	anim_wait 8
-	anim_sound 0, 1, SFX_TOXIC
-	anim_obj BATTLE_ANIM_OBJ_SLUDGE, 148, 72, $0
-	anim_wait 8
-	anim_loop 5, .loop
-	anim_ret
-
-BattleAnimSub_AcidSpray:
-.loop
-	anim_sound 6, 2, SFX_BUBBLEBEAM
-	anim_obj BATTLE_ANIM_OBJ_ACID, 64, 92, $10
-	anim_wait 5
-	anim_loop 8, .loop
 	anim_ret
 
 BattleAnimSub_ToxicBubbles:

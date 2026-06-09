@@ -282,15 +282,12 @@ endef
 $(call battle_anim_2bpp,electricity_effect thundershock thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
 	$(RGBGFX) $(RGBGFXFLAGS) --colors $(transparent_gray_battle_anim_colors) -o $@ $<
 
-$(eval $(call battle_anim_rgbgfx_rule,mud_ball_small,mud_ball_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,mud_ball_medium,mud_ball_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rw_rule,thunder,thunder_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,poison_bubble,poison_bubble_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,toxic_bubble,poison_bubble_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,shadow_ball,shadow_ball_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,sludge_bomb,sludge_bomb_battle_anim_colors))
-$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb_splatter_2,sludge_bomb_battle_anim_colors))
-$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb_splatter_3,sludge_bomb_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,sharp_teeth,sharp_teeth_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rw_rule,hyper_fang,hyper_fang_battle_anim_colors))
 

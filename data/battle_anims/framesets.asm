@@ -15,7 +15,6 @@ BattleAnimFrameData:
 	dw .Frameset_PokeBall3           ; BATTLE_ANIM_FRAMESET_POKE_BALL_3
 	dw .Frameset_PokeBall4           ; BATTLE_ANIM_FRAMESET_POKE_BALL_4
 	dw .Frameset_PokeBall5           ; BATTLE_ANIM_FRAMESET_POKE_BALL_5
-	dw .Frameset_DragonRage          ; BATTLE_ANIM_FRAMESET_DRAGON_RAGE
 	dw .Frameset_Flamethrower        ; BATTLE_ANIM_FRAMESET_FLAMETHROWER
 	dw .Frameset_Ember               ; BATTLE_ANIM_FRAMESET_EMBER
 	dw .Frameset_Burned              ; BATTLE_ANIM_FRAMESET_BURNED
@@ -30,10 +29,7 @@ BattleAnimFrameData:
 	dw .Frameset_SmallRock           ; BATTLE_ANIM_FRAMESET_SMALL_ROCK
 	dw .Frameset_Strength            ; BATTLE_ANIM_FRAMESET_STRENGTH
 	dw .Frameset_SkullCrossbone      ; BATTLE_ANIM_FRAMESET_SKULL_CROSSBONE
-	dw .Frameset_Acid                ; BATTLE_ANIM_FRAMESET_ACID
 	dw .Frameset_PoisonDropletUnused ; BATTLE_ANIM_FRAMESET_POISON_DROPLET_UNUSED
-	dw .Frameset_SludgeBubble        ; BATTLE_ANIM_FRAMESET_SLUDGE_BUBBLE
-	dw .Frameset_SludgeBubbleBurst   ; BATTLE_ANIM_FRAMESET_SLUDGE_BUBBLE_BURST
 	dw .Frameset_SmallBubble         ; BATTLE_ANIM_FRAMESET_SMALL_BUBBLE
 	dw .Frameset_PulsingBubble       ; BATTLE_ANIM_FRAMESET_PULSING_BUBBLE
 	dw .Frameset_Surf                ; BATTLE_ANIM_FRAMESET_SURF
@@ -50,15 +46,11 @@ BattleAnimFrameData:
 	dw .Frameset_IceBuildup          ; BATTLE_ANIM_FRAMESET_ICE_BUILDUP
 	dw .Frameset_Frozen              ; BATTLE_ANIM_FRAMESET_FROZEN
 	dw .Frameset_CirclingSparkle     ; BATTLE_ANIM_FRAMESET_CIRCLING_SPARKLE
-	dw .Frameset_ThunderCenter       ; BATTLE_ANIM_FRAMESET_THUNDER_CENTER
-	dw .Frameset_ThunderLeft         ; BATTLE_ANIM_FRAMESET_THUNDER_LEFT
-	dw .Frameset_ThunderRight        ; BATTLE_ANIM_FRAMESET_THUNDER_RIGHT
 	dw .Frameset_ThunderWaveDisable  ; BATTLE_ANIM_FRAMESET_THUNDER_WAVE_DISABLE
 	dw .Frameset_ThunderWaveExtra    ; BATTLE_ANIM_FRAMESET_THUNDER_WAVE_EXTRA
 	dw .Frameset_ThunderBoltSparks   ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_SPARKS
 	dw .Frameset_ThunderBoltCore     ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_CORE
 	dw .Frameset_ThunderShockSparks  ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_SPARKS
-	dw .Frameset_ThunderShockCore    ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_CORE
 	dw .Frameset_Clamp               ; BATTLE_ANIM_FRAMESET_CLAMP
 	dw .Frameset_ClampFlipped        ; BATTLE_ANIM_FRAMESET_CLAMP_FLIPPED
 	dw .Frameset_Bite1               ; BATTLE_ANIM_FRAMESET_BITE_1
@@ -71,8 +63,6 @@ BattleAnimFrameData:
 	dw .Frameset_ChargeOrb1          ; BATTLE_ANIM_FRAMESET_CHARGE_ORB_1
 	dw .Frameset_AbsorbCenter        ; BATTLE_ANIM_FRAMESET_ABSORB_CENTER
 	dw .Frameset_Gust                ; BATTLE_ANIM_FRAMESET_GUST
-	dw .Frameset_VineWhip1           ; BATTLE_ANIM_FRAMESET_VINE_WHIP_1
-	dw .Frameset_VineWhip2           ; BATTLE_ANIM_FRAMESET_VINE_WHIP_2
 	dw .Frameset_RazorWind1          ; BATTLE_ANIM_FRAMESET_RAZOR_WIND_1
 	dw .Frameset_RazorWind2          ; BATTLE_ANIM_FRAMESET_RAZOR_WIND_2
 	dw .Frameset_SonicboomJP         ; BATTLE_ANIM_FRAMESET_SONICBOOM_JP
@@ -352,10 +342,6 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_0A,  7
 	oamend
 
-.Frameset_DragonRage:
-	oamframe BATTLE_ANIM_OAMSET_0A,  8
-	oamend
-
 .Frameset_Flamethrower:
 	oamframe BATTLE_ANIM_OAMSET_0A,  4
 	oamframe BATTLE_ANIM_OAMSET_0E,  4
@@ -465,24 +451,9 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_0A,  8
 	oamdelete
 
-.Frameset_Acid:
-	oamframe BATTLE_ANIM_OAMSET_1D,  8
-	oamend
-
 .Frameset_PoisonDropletUnused:
 	oamframe BATTLE_ANIM_OAMSET_17,  8
 	oamend
-
-.Frameset_SludgeBubble:
-	oamframe BATTLE_ANIM_OAMSET_0F,  3
-	oamframe BATTLE_ANIM_OAMSET_10,  3
-	oamframe BATTLE_ANIM_OAMSET_1E,  3
-	oamend
-
-.Frameset_SludgeBubbleBurst:
-	oamframe BATTLE_ANIM_OAMSET_1F, 16
-	oamframe BATTLE_ANIM_OAMSET_20,  3
-	oamdelete
 
 .Frameset_SmallBubble:
 	oamframe BATTLE_ANIM_OAMSET_20,  8
@@ -572,27 +543,6 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_15,  4
 	oamrestart
 
-.Frameset_ThunderCenter:
-	oamframe BATTLE_ANIM_OAMSET_36,  2
-	oamframe BATTLE_ANIM_OAMSET_37,  2
-	oamframe BATTLE_ANIM_OAMSET_38,  2
-	oamframe BATTLE_ANIM_OAMSET_39, 32
-	oamdelete
-
-.Frameset_ThunderLeft:
-	oamframe BATTLE_ANIM_OAMSET_3A,  2
-	oamframe BATTLE_ANIM_OAMSET_3B,  2
-	oamframe BATTLE_ANIM_OAMSET_3C,  2
-	oamframe BATTLE_ANIM_OAMSET_3D, 32
-	oamdelete
-
-.Frameset_ThunderRight:
-	oamframe BATTLE_ANIM_OAMSET_3A,  2, B_OAM_XFLIP
-	oamframe BATTLE_ANIM_OAMSET_3B,  2, B_OAM_XFLIP
-	oamframe BATTLE_ANIM_OAMSET_3C,  2, B_OAM_XFLIP
-	oamframe BATTLE_ANIM_OAMSET_3D, 32, B_OAM_XFLIP
-	oamdelete
-
 .Frameset_ThunderWaveDisable:
 	oamframe BATTLE_ANIM_OAMSET_3E,  8
 	oamframe BATTLE_ANIM_OAMSET_3F,  8
@@ -625,11 +575,6 @@ BattleAnimFrameData:
 .Frameset_ThunderShockSparks:
 	oamframe BATTLE_ANIM_OAMSET_46,  4
 	oamframe BATTLE_ANIM_OAMSET_47,  4
-	oamrestart
-
-.Frameset_ThunderShockCore:
-	oamframe BATTLE_ANIM_OAMSET_18,  2
-	oamwait 2
 	oamrestart
 
 .Frameset_Clamp:
@@ -689,16 +634,6 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_15,  0
 	oamframe BATTLE_ANIM_OAMSET_16,  0
 	oamrestart
-
-.Frameset_VineWhip1:
-	oamframe BATTLE_ANIM_OAMSET_56,  2
-	oamframe BATTLE_ANIM_OAMSET_57,  4
-	oamdelete
-
-.Frameset_VineWhip2:
-	oamframe BATTLE_ANIM_OAMSET_56,  2, B_OAM_XFLIP, B_OAM_YFLIP
-	oamframe BATTLE_ANIM_OAMSET_57,  4, B_OAM_XFLIP, B_OAM_YFLIP
-	oamdelete
 
 .Frameset_RazorWind1:
 	oamframe BATTLE_ANIM_OAMSET_56,  1

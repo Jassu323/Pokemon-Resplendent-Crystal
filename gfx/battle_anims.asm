@@ -38,8 +38,6 @@ AnimObjShineGFX:     INCBIN "gfx/battle_anims/shine.2bpp.lz"
 AnimObjAngelsGFX:    INCBIN "gfx/battle_anims/angels.2bpp.lz"
 AnimObjWaveGFX:      INCBIN "gfx/battle_anims/wave.2bpp.lz"
 AnimObjAeroblastGFX: INCBIN "gfx/battle_anims/aeroblast.2bpp.lz"
-AnimObjMudBallSmallGFX:
-	INCBIN "gfx/battle_anims/mud_ball_small.2bpp.lz"
 AnimObjMudBallMediumGFX:
 	INCBIN "gfx/battle_anims/mud_ball_medium.2bpp.lz"
 AnimObjThundershockGFX:
@@ -66,10 +64,6 @@ AnimObjShadowBallGFX:
 	INCBIN "gfx/battle_anims/shadow_ball.2bpp.lz"
 AnimObjSludgeBombGFX:
 	INCBIN "gfx/battle_anims/sludge_bomb.2bpp.lz"
-AnimObjSludgeBombSplatter2GFX:
-	INCBIN "gfx/battle_anims/sludge_bomb_splatter_2.2bpp.lz"
-AnimObjSludgeBombSplatter3GFX:
-	INCBIN "gfx/battle_anims/sludge_bomb_splatter_3.2bpp.lz"
 AnimObjSharpTeethGFX:
 	INCBIN "gfx/battle_anims/sharp_teeth.2bpp.lz"
 AnimObjHyperFangGFX:

@@ -70,7 +70,6 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_PresentSmokescreen
 	dw BattleAnimFunc_StrengthSeismicToss
 	dw BattleAnimFunc_SpeedLine
-	dw BattleAnimFunc_Sludge
 	dw BattleAnimFunc_MetronomeHand
 	dw BattleAnimFunc_MetronomeSparkleSketch
 	dw BattleAnimFunc_Agility
@@ -4019,40 +4018,6 @@ BattleAnimFunc_SpeedLine:
 
 .inverted
 	ld hl, BATTLEANIMSTRUCT_XOFFSET
-	add hl, bc
-	dec [hl]
-	ret
-
-BattleAnimFunc_Sludge:
-; Object moves upward for $c frames and switches to BATTLE_ANIM_FRAMESET_SLUDGE_BUBBLE_BURST
-	call BattleAnim_AnonJumptable
-.anon_dw
-	dw .zero
-	dw .one
-	dw .two
-
-.zero
-	call BattleAnim_IncAnonJumptableIndex
-	ld hl, BATTLEANIMSTRUCT_VAR1
-	add hl, bc
-	ld [hl], $c
-	ret
-
-.one
-	ld hl, BATTLEANIMSTRUCT_VAR1
-	add hl, bc
-	ld a, [hl]
-	and a
-	jr z, .done
-	dec [hl]
-	ret
-
-.done
-	call BattleAnim_IncAnonJumptableIndex
-	ld de, BATTLE_ANIM_FRAMESET_SLUDGE_BUBBLE_BURST
-	call ReinitBattleAnimFrameset
-.two
-	ld hl, BATTLEANIMSTRUCT_YOFFSET
 	add hl, bc
 	dec [hl]
 	ret
