@@ -62,7 +62,7 @@ AnimObjGFX:
 	anim_obj_gfx 12, AnimObjPoisonBubbleGFX
 	anim_obj_gfx 16, AnimObjShadowBallGFX
 	anim_obj_gfx 16, AnimObjSludgeBombGFX
-	anim_obj_gfx 16, AnimObjSharpTeethGFX
+	anim_obj_gfx 12, AnimObjSharpTeethGFX
 	anim_obj_gfx 35, AnimObjHyperFangGFX
 	anim_obj_gfx 18, AnimObjToxicBubbleGFX
 	anim_obj_gfx 16, AnimObjPoisonPowderGFX

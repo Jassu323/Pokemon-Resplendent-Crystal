@@ -2472,7 +2472,7 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
-  	anim_1gfx BATTLE_ANIM_GFX_HIT
+/*   	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
@@ -2480,6 +2480,8 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0
+	anim_ret */
+	anim_call BattleAnim_RockSmash
 	anim_ret
 
 BattleAnim_BodySlam:
@@ -5702,19 +5704,26 @@ BattleAnim_Synthesis:
 	anim_ret
 
 BattleAnim_Crunch:
-	anim_2gfx BATTLE_ANIM_GFX_CUT, BATTLE_ANIM_GFX_HIT
-	anim_bgp $1b
-	anim_obp0 $c0
+	anim_2gfx BATTLE_ANIM_GFX_SHARP_TEETH, BATTLE_ANIM_GFX_ROCKS
+	anim_sound 0, 1, SFX_BITE
+	anim_obj BATTLE_ANIM_OBJ_SHARP_TEETH_UPPER, 136, 48, $0
+	anim_obj BATTLE_ANIM_OBJ_SHARP_TEETH_LOWER, 136, 66, $1
+	anim_wait 7
+	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $0, $8, $3
+	anim_wait 6
 	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $2, $0
-	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $a8
-	anim_obj BATTLE_ANIM_OBJ_BITE, 136, 56, $28
-	anim_wait 8
-	anim_sound 0, 1, SFX_BITE
-	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 144, 48, $18
-	anim_wait 16
-	anim_sound 0, 1, SFX_BITE
-	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 128, 64, $18
-	anim_wait 8
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $1
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $2
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $3
+	anim_wait 4
+	anim_sound 0, 1, SFX_SPARK
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $4
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $5
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $6
+	anim_obj BATTLE_ANIM_OBJ_CRUNCH_ROCK, 136, 56, $7
+	anim_wait 24
 	anim_ret
 
 BattleAnim_Moonlight:
@@ -5992,7 +6001,7 @@ BattleAnim_FutureSight:
 BattleAnim_RockSmash:
 	anim_2gfx BATTLE_ANIM_GFX_ROCKS, BATTLE_ANIM_GFX_HIT
 	anim_sound 0, 1, SFX_SPARK
-	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 128, 56, $0
+	anim_obj BATTLE_ANIM_OBJ_PUNCH_SHAKE, 128, 56, $0
 	anim_sound 0, 1, SFX_SPARK
 	anim_obj BATTLE_ANIM_OBJ_ROCK_SMASH, 128, 64, $28
 	anim_obj BATTLE_ANIM_OBJ_ROCK_SMASH, 128, 64, $5c

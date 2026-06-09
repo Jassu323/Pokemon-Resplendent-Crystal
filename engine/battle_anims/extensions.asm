@@ -36,6 +36,8 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_SludgeBomb
 	dw BattleAnimFunc_AcidBubble
 	dw BattleAnimFunc_AcidDroplet
+	dw BattleAnimFunc_CrunchJaw
+	dw BattleAnimFunc_CrunchRock
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -2094,6 +2096,191 @@ BattleAnimFunc_AcidDroplet:
 .done
 	call BattleAnimExt_Deinit
 	ret
+
+BattleAnimFunc_CrunchJaw:
+; Obj Param: $0 = scripted upper jaw, $1 = scripted lower jaw.
+; Enemy turn flips the rendered role.
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+	dw .delete
+
+.init
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $1
+	ld e, a
+	ldh a, [hBattleTurn]
+	and 1
+	xor e
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], 12
+	call BattleAnimExt_IncAnonJumptableIndex
+
+	ld a, e
+	and a
+	jr z, .move_upper
+
+	ld de, BATTLE_ANIM_FRAMESET_SHARP_TEETH_FLIPPED
+	call .reinit_frameset
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], 36
+	ret
+
+.move_upper
+	ld de, BATTLE_ANIM_FRAMESET_SHARP_TEETH
+	call .reinit_frameset
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], -36
+	ret
+
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .delete
+	dec [hl]
+
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .move_upper_step
+
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	sub 3
+	ld [hl], a
+	jr .clamp_zero
+
+.move_upper_step
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	add 3
+	ld [hl], a
+
+.clamp_zero
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	and a
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], 0
+	ret
+
+.delete
+	call BattleAnimExt_Deinit
+	ret
+
+.reinit_frameset
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld [hl], e
+	inc hl
+	ld [hl], d
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], 0
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	ld [hl], -1
+	ret
+
+BattleAnimFunc_CrunchRock:
+; Obj Param: lower 3 bits select one of eight centered burst vectors.
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+
+.init
+	call BattleAnimExt_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], 12
+	ret
+
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .done
+	dec [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Vectors
+	add hl, de
+
+	ld a, [hli]
+	ld d, a
+	ld a, [hl]
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	bit 0, [hl]
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	ld e, a
+	ldh a, [hBattleTurn]
+	and a
+	ld a, e
+	jr nz, .enemy_gravity
+	inc a
+	jr .store_gravity
+
+.enemy_gravity
+	dec a
+
+.store_gravity
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.Vectors:
+	db -2, -2 ; $0 upper-left
+	db  2, -2 ; $1 upper-right
+	db -2,  2 ; $2 lower-left
+	db  2,  2 ; $3 lower-right
+	db -3,  0 ; $4 left
+	db  3,  0 ; $5 right
+	db  0, -3 ; $6 up
+	db  0,  3 ; $7 down
 
 BattleAnimFunc_AromatherapyFlower:
 ; Object curves down into a horizontal drift.

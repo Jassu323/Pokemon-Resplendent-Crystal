@@ -196,6 +196,8 @@ BattleAnimFrameData:
 	dw .Frameset_LavaPlumeEruption   ; BATTLE_ANIM_FRAMESET_LAVA_PLUME_ERUPTION
 	dw .Frameset_OutrageFlame        ; BATTLE_ANIM_FRAMESET_OUTRAGE_FLAME
 	dw .Frameset_PoisonSludge        ; BATTLE_ANIM_FRAMESET_POISON_SLUDGE
+	dw .Frameset_SharpTeeth          ; BATTLE_ANIM_FRAMESET_SHARP_TEETH
+	dw .Frameset_SharpTeethFlipped   ; BATTLE_ANIM_FRAMESET_SHARP_TEETH_FLIPPED
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -592,6 +594,14 @@ BattleAnimFrameData:
 .Frameset_Bite2:
 	oamframe BATTLE_ANIM_OAMSET_4A,  8
 	oamend
+
+.Frameset_SharpTeeth:
+	oamframe BATTLE_ANIM_OAMSET_SHARP_TEETH, 16
+	oamdelete
+
+.Frameset_SharpTeethFlipped:
+	oamframe BATTLE_ANIM_OAMSET_SHARP_TEETH_FLIPPED, 16
+	oamdelete
 
 .Frameset_ChargeOrb1:
 	oamframe BATTLE_ANIM_OAMSET_20, 16

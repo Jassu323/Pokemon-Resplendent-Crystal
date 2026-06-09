@@ -113,6 +113,8 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SLUDGE_BOMB
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_BUBBLE
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_DROPLET
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_JAW
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_ROCK
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:

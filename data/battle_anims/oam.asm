@@ -222,6 +222,8 @@ BattleAnimOAMData:
 	battleanimoam $03,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_3
 	battleanimoam $07,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_4
 	battleanimoam $0b,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_5
+	battleanimoam $00, 12, .OAMData_SharpTeeth ; BATTLE_ANIM_OAMSET_SHARP_TEETH
+	battleanimoam $00, 12, .OAMData_SharpTeethFlipped ; BATTLE_ANIM_OAMSET_SHARP_TEETH_FLIPPED
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_11:
@@ -1063,3 +1065,31 @@ BattleAnimOAMData:
 	dbsprite   6,  -2, 4, 0, $00, $0
 	dbsprite   8,  -4, 4, 0, $00, $0
 	dbsprite  10,  -2, 4, 0, $00, $0
+
+.OAMData_SharpTeeth:
+	dbsprite  -3,  -1, 0, 0, $00, $0
+	dbsprite  -2,  -1, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $02, $0
+	dbsprite   0,  -1, 0, 0, $03, $0
+	dbsprite   1,  -1, 0, 0, $04, $0
+	dbsprite   2,  -1, 0, 0, $05, $0
+	dbsprite  -3,   0, 0, 0, $06, $0
+	dbsprite  -2,   0, 0, 0, $07, $0
+	dbsprite  -1,   0, 0, 0, $08, $0
+	dbsprite   0,   0, 0, 0, $09, $0
+	dbsprite   1,   0, 0, 0, $0a, $0
+	dbsprite   2,   0, 0, 0, $0b, $0
+
+.OAMData_SharpTeethFlipped:
+	dbsprite  -3,  -1, 0, 0, $06, OAM_YFLIP
+	dbsprite  -2,  -1, 0, 0, $07, OAM_YFLIP
+	dbsprite  -1,  -1, 0, 0, $08, OAM_YFLIP
+	dbsprite   0,  -1, 0, 0, $09, OAM_YFLIP
+	dbsprite   1,  -1, 0, 0, $0a, OAM_YFLIP
+	dbsprite   2,  -1, 0, 0, $0b, OAM_YFLIP
+	dbsprite  -3,   0, 0, 0, $00, OAM_YFLIP
+	dbsprite  -2,   0, 0, 0, $01, OAM_YFLIP
+	dbsprite  -1,   0, 0, 0, $02, OAM_YFLIP
+	dbsprite   0,   0, 0, 0, $03, OAM_YFLIP
+	dbsprite   1,   0, 0, 0, $04, OAM_YFLIP
+	dbsprite   2,   0, 0, 0, $05, OAM_YFLIP
