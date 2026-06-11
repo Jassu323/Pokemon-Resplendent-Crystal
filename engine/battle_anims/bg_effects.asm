@@ -135,7 +135,7 @@ BattleBGEffects:
 	dw BattleBGEffect_WobblePlayer
 	dw BattleBGEffect_WobbleScreen
 	dw BattleBGEffect_CycleGreenOBPal
-	dw BattleBGEffect_CycleIndigoFireOBPal
+	dw BattleBGEffect_UnusedDummyForPadding
 	dw BattleBGEffect_FireBGPals
 	dw BattleBGEffect_PoisonMetallic
 	assert_table_length NUM_BATTLE_BG_EFFECTS
@@ -474,8 +474,8 @@ BattleBGEffect_LoadGreenOBPal:
 	ldh [hCGBPalUpdate], a
 	ret
 
-BattleBGEffect_CycleIndigoFireOBPal:
-	farcall BattleAnimExt_CycleIndigoFireOBPal
+BattleBGEffect_UnusedDummyForPadding:
+	call EndBattleBGEffect
 	ret
 
 BattleBGEffect_FireBGPals:

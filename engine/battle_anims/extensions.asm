@@ -38,6 +38,7 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_AcidDroplet
 	dw BattleAnimFunc_CrunchJaw
 	dw BattleAnimFunc_CrunchRock
+	dw BattleAnimFunc_WaterPulseDriftBubble
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -1147,135 +1148,6 @@ BattleAnimExtOAMData:
 	dbsprite   0,   1, 0, 0, $00, $0
 	dbsprite   0,   2, 0, 0, $01, $0
 
-BattleAnimExt_LoadIndigoFirePal:
-	ld hl, .IndigoFirePal
-	jp BattleAnimExt_LoadIndigoFireColors
-
-.IndigoFirePal:
-	RGB 04, 01, 16
-	RGB 08, 02, 26
-	RGB 15, 07, 31
-
-BattleAnimExt_CycleIndigoFireOBPal:
-	ld hl, BG_EFFECT_STRUCT_JT_INDEX
-	add hl, bc
-	ld a, [hl]
-	and a
-	jr z, .init
-	dec a
-	jr z, .cycle
-	jr .finish
-
-.init
-	inc [hl]
-	ld hl, BG_EFFECT_STRUCT_PARAM
-	add hl, bc
-	ld a, [hl]
-	and $f
-	jr nz, .got_speed
-	ld a, [hl]
-	swap a
-	and $f
-	jr nz, .got_speed
-	ld a, $4
-.got_speed
-	ld e, a
-	swap a
-	or e
-	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
-	add hl, bc
-	ld [hl], a
-	ld hl, BG_EFFECT_STRUCT_PARAM
-	add hl, bc
-	ld [hl], $1
-	ld hl, .CyclePals
-	call BattleAnimExt_LoadIndigoFireColors
-	ret
-
-.cycle
-	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
-	add hl, bc
-	ld a, [hl]
-	and $f
-	jr z, .apply_pal
-	dec [hl]
-	ret
-
-.apply_pal
-	ld a, [hl]
-	swap a
-	or [hl]
-	ld [hl], a
-	ld hl, BG_EFFECT_STRUCT_PARAM
-	add hl, bc
-	ld a, [hl]
-	ld e, a
-	inc a
-	cp 6
-	jr c, .store_step
-	xor a
-.store_step
-	ld [hl], a
-	ld a, e
-	add a
-	add e
-	add a
-	ld e, a
-	ld d, 0
-	ld hl, .CyclePals
-	add hl, de
-	call BattleAnimExt_LoadIndigoFireColors
-	ret
-
-.finish
-	call BattleAnimExt_RestoreBlueOBPal
-	ld hl, BG_EFFECT_STRUCT_FUNCTION
-	add hl, bc
-	ld [hl], 0
-	ret
-
-.CyclePals:
-	RGB 04, 01, 16
-	RGB 08, 02, 26
-	RGB 15, 07, 31
-	RGB 08, 00, 14
-	RGB 18, 01, 24
-	RGB 28, 08, 31
-	RGB 01, 02, 16
-	RGB 03, 04, 29
-	RGB 09, 11, 31
-	RGB 08, 00, 14
-	RGB 18, 01, 24
-	RGB 28, 08, 31
-	RGB 00, 03, 16
-	RGB 00, 06, 31
-	RGB 04, 16, 31
-	RGB 08, 00, 14
-	RGB 18, 01, 24
-	RGB 28, 08, 31
-
-BattleAnimExt_LoadIndigoFireColors:
-	ldh a, [hCGB]
-	and a
-	ret z
-	push bc
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wOBPals1)
-	ldh [rWBK], a
-	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE color 1
-rept 6
-	ld a, [hli]
-	ld [de], a
-	inc de
-endr
-	pop af
-	ldh [rWBK], a
-	pop bc
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ret
-
 BattleAnimExt_RestoreBlueOBPal:
 	ldh a, [hCGB]
 	and a
@@ -1373,9 +1245,9 @@ BattleAnimExt_LoadThunderPal:
 BattleAnimExt_LoadCustomPal:
 	ld a, e
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_LOAD
-	jr z, .load_water_column
+	jp z, .load_water_column
 	cp BATTLE_ANIM_GRASS_PAL_LOAD
-	jr z, .load_grass
+	jp z, .load_grass
 	cp BATTLE_ANIM_FIRE_PAL_LOAD
 	jp z, .load_fire
 	cp BATTLE_ANIM_DRAGON_PAL_LOAD
@@ -1385,7 +1257,7 @@ BattleAnimExt_LoadCustomPal:
 	cp BATTLE_ANIM_DRAGON_CLAW_PAL_LOAD
 	jp z, .load_dragon_claw
 	cp BATTLE_ANIM_DRAGON_BLUE_PAL_LOAD
-	jr z, .load_dragon_blue
+	jp z, .load_dragon_blue
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
 	jp z, .restore_blue
 	cp BATTLE_ANIM_GRASS_PAL_RESTORE
@@ -1395,7 +1267,7 @@ BattleAnimExt_LoadCustomPal:
 	cp BATTLE_ANIM_DRAGON_PAL_RESTORE
 	jp z, .restore_red
 	cp BATTLE_ANIM_FIRE_BLUE_PAL_RESTORE
-	jp z, .restore_blue
+	jp z, .restore_red
 	cp BATTLE_ANIM_DRAGON_CLAW_PAL_RESTORE
 	jp z, .restore_red
 	cp BATTLE_ANIM_DRAGON_BLUE_PAL_RESTORE
@@ -1414,6 +1286,10 @@ BattleAnimExt_LoadCustomPal:
 	jr z, .load_poison_powder
 	cp BATTLE_ANIM_POISON_POWDER_PAL_RESTORE
 	jp z, .restore_blue
+	cp BATTLE_ANIM_WATER_PAL_LOAD
+	jr z, .load_water
+	cp BATTLE_ANIM_WATER_PAL_RESTORE
+	jp z, .restore_blue
 	cp BATTLE_ANIM_SHADOW_BALL_PAL_LOAD
 	jp z, .load_shadow_ball
 	cp BATTLE_ANIM_SHADOW_BALL_PAL_RESTORE
@@ -1428,6 +1304,11 @@ BattleAnimExt_LoadCustomPal:
 
 .load_water_column
 	ld hl, .WaterColumnPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_water
+	ld hl, .WaterPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .load_custom_pal
 
@@ -1453,7 +1334,7 @@ BattleAnimExt_LoadCustomPal:
 
 .load_fire_blue
 	ld hl, .FireBluePal
-	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
 	jr .load_custom_pal
 
 .load_ground
@@ -1548,6 +1429,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 01, 07, 31
 	RGB 01, 20, 31
 	RGB 12, 29, 31
+
+.WaterPal:
+	RGB 31, 31, 31
+	RGB 17, 19, 31
+	RGB 08, 12, 31
+	RGB 01, 04, 31
 
 .GrassPal:
 	RGB 31, 31, 31
@@ -2281,6 +2168,155 @@ BattleAnimFunc_CrunchRock:
 	db  3,  0 ; $5 right
 	db  0, -3 ; $6 up
 	db  0,  3 ; $7 down
+
+BattleAnimFunc_WaterPulseDriftBubble:
+; Obj Param:
+;   $00-$07: opening scatter bubbles, absolute screen placement.
+;   $80-$87: ring-path bubbles, relative placement with short outward drift.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 7, [hl]
+	jr nz, .PathBubble
+
+; Opening scatter bubble mode.
+	call .GetScatterParams
+	ld a, [hli]
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp e
+	jr nc, .done
+
+	call .GetScatterParams
+	inc hl
+	ld a, [hli]
+	push hl
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	add [hl]
+	ld [hl], a
+	pop hl
+
+	ld d, [hl] ; sine amplitude
+	inc hl
+	ld a, [hl] ; y-move mask
+	push af
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl] ; accumulated sine angle
+	call BattleAnimExt_Sine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+
+	pop af
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and e
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.PathBubble:
+	call .GetPathParams
+	ld a, [hli]
+	ld e, a ; lifetime
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp e
+	jr nc, .done
+
+	call .GetPathParams
+	inc hl
+	ld e, [hl] ; x velocity
+	inc hl
+	ld d, [hl] ; y velocity
+
+	; Opponent-side rendering mirrors XOFFSET for RELATIVE_X objects,
+	; but it does not mirror YOFFSET. Mirror only the raw Y velocity here
+	; so ring-path bubble pairs spread outward instead of crossing inward.
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_path_velocity
+	ld a, d
+	xor $ff
+	inc a
+	ld d, a
+
+.got_path_velocity
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.GetScatterParams:
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	add a
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .ScatterParams
+	add hl, de
+	ret
+
+.GetPathParams:
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	add a
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .PathParams
+	add hl, de
+	ret
+
+.ScatterParams:
+; lifetime, sine angle step, sine amplitude, y-move mask
+	db 40, 1, 4, 1 ; $0: gentle medium
+	db 35, 1, 3, 0 ; $1: tighter, faster rise
+	db 20, 1, 5, 1 ; $2: short wider
+	db 50, 1, 4, 1 ; $3: long gentle
+	db 30, 1, 3, 0 ; $4: central fast rise
+	db 40, 1, 4, 1 ; $5: spare
+	db 35, 1, 3, 0 ; $6: spare
+	db 20, 1, 5, 1 ; $7: spare
+
+.PathParams:
+; lifetime, x velocity, y velocity, unused
+; These are small per-frame offset movements for bubbles spawned along the ring path.
+	db 20,  1, -1, 0 ; $80: drift up-right
+	db 20, -1,  1, 0 ; $81: drift down-left
+	db 20, -1, -1, 0 ; $82: drift up-left
+	db 20,  1,  1, 0 ; $83: drift down-right
+	db 20,  0, -1, 0 ; $84: drift up
+	db 20,  0,  1, 0 ; $85: drift down
+	db 20,  1,  0, 0 ; $86: drift right
+	db 20, -1,  0, 0 ; $87: drift left
 
 BattleAnimFunc_AromatherapyFlower:
 ; Object curves down into a horizontal drift.

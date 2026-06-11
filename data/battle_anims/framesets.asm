@@ -198,6 +198,10 @@ BattleAnimFrameData:
 	dw .Frameset_PoisonSludge        ; BATTLE_ANIM_FRAMESET_POISON_SLUDGE
 	dw .Frameset_SharpTeeth          ; BATTLE_ANIM_FRAMESET_SHARP_TEETH
 	dw .Frameset_SharpTeethFlipped   ; BATTLE_ANIM_FRAMESET_SHARP_TEETH_FLIPPED
+	dw .Frameset_WaterPulseRing      ; BATTLE_ANIM_FRAMESET_WATER_PULSE_RING
+	dw .Frameset_WaterPulseBubble    ; BATTLE_ANIM_FRAMESET_WATER_PULSE_BUBBLE
+	dw .Frameset_WaterPulseDriftBubble ; BATTLE_ANIM_FRAMESET_WATER_PULSE_DRIFT_BUBBLE
+	dw .Frameset_BulletSeed          ; BATTLE_ANIM_FRAMESET_BULLET_SEED
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -752,6 +756,26 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_73,  4
 	oamdelete
 
+.Frameset_WaterPulseRing:
+	oamframe BATTLE_ANIM_OAMSET_71,  5
+	oamframe BATTLE_ANIM_OAMSET_70,  5
+	oamframe BATTLE_ANIM_OAMSET_71,  5
+	oamframe BATTLE_ANIM_OAMSET_72,  5
+	oamframe BATTLE_ANIM_OAMSET_71,  5
+	oamrestart
+
+.Frameset_WaterPulseBubble:
+	oamframe BATTLE_ANIM_OAMSET_14, 24
+	oamdelete
+
+.Frameset_WaterPulseDriftBubble:
+	oamframe BATTLE_ANIM_OAMSET_14,  8
+	oamend
+
+.Frameset_BulletSeed:
+	oamframe BATTLE_ANIM_OAMSET_1B,  1
+	oamend
+
 .Frameset_ConfuseRay1:
 	oamframe BATTLE_ANIM_OAMSET_74,  4
 	oamframe BATTLE_ANIM_OAMSET_75,  4
@@ -1239,7 +1263,7 @@ BattleAnimFrameData:
 	oamdelete
 
 .Frameset_WaterfallBubble:
-	oamframe BATTLE_ANIM_OAMSET_20, 32
+	oamframe BATTLE_ANIM_OAMSET_14, 32
 	oamdelete
 
 .Frameset_Ember1:

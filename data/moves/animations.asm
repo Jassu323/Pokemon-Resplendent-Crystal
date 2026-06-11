@@ -2472,7 +2472,7 @@ BattleAnim_Headbutt:
 	anim_ret
 
 BattleAnim_Tackle:
-/*   	anim_1gfx BATTLE_ANIM_GFX_HIT
+  	anim_1gfx BATTLE_ANIM_GFX_HIT
 	anim_call BattleAnim_TargetObj_1Row
 	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
@@ -2480,9 +2480,8 @@ BattleAnim_Tackle:
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 48, $0
 	anim_wait 8
 	anim_call BattleAnim_ShowMon_0
-	anim_ret */
-	anim_call BattleAnim_RockSmash
 	anim_ret
+
 
 BattleAnim_BodySlam:
 	anim_1gfx BATTLE_ANIM_GFX_HIT
@@ -3400,7 +3399,7 @@ BattleAnim_Barrier:
 	anim_ret
 
 BattleAnim_Waterfall:
-	anim_3gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_WATER, BATTLE_ANIM_GFX_BUBBLE
+	anim_3gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_WATER, BATTLE_ANIM_GFX_SMALL_BUBBLE
 	anim_sound 0, 1, SFX_HYDRO_PUMP
 	anim_bgeffect BATTLE_BG_EFFECT_WHIRLPOOL, $0, $0, $0
 	anim_wait 36
@@ -4611,7 +4610,28 @@ BattleAnim_SandTomb:
 	anim_ret
 
 BattleAnim_BulletSeed:
-	anim_call BattleAnim_Tackle
+	anim_2gfx BATTLE_ANIM_GFX_BULLET_SEED, BATTLE_ANIM_GFX_HIT
+	anim_sound 6, 2, SFX_THROW_BALL
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $04
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $14
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $24
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $34
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $04
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $14
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $24
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $34
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $04
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_BULLET_SEED, 56, 96, $14
+	anim_wait 40
 	anim_ret
 
 BattleAnim_AerialAce:
@@ -4828,31 +4848,64 @@ BattleAnim_ShockWave:
 	anim_call BattleAnim_Tackle
 	anim_ret
 
+BattleAnimSub_WaterPulseUserBubbles:
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_DRIFT_BUBBLE, 64, 88, $0
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_DRIFT_BUBBLE, 16, 88, $1
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_DRIFT_BUBBLE, 136, 72, $2
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_DRIFT_BUBBLE, 52, 56, $3
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_DRIFT_BUBBLE, 96, 88, $4
+	anim_ret
+
 BattleAnim_WaterPulse:
-	anim_bgeffect BATTLE_BG_EFFECT_START_WATER, $0, $0, $0
-	anim_1gfx BATTLE_ANIM_GFX_PSYCHIC
-	anim_call BattleAnim_UserObj_2Row
-.loop
+	anim_3gfx BATTLE_ANIM_GFX_PSYCHIC, BATTLE_ANIM_GFX_SMALL_BUBBLE, BATTLE_ANIM_GFX_TINY_BUBBLE
+	anim_waterpal BATTLE_ANIM_WATER_PAL_LOAD
+	anim_bgeffect BATTLE_BG_EFFECT_WHIRLPOOL, $0, $0, $0
 	anim_sound 6, 2, SFX_BUBBLEBEAM
-	anim_obj BATTLE_ANIM_OBJ_WAVE, 64, 80, $2
-	anim_wait 8
-	anim_bgeffect BATTLE_BG_EFFECT_WATER, $1c, $0, $0
-	anim_sound 6, 2, SFX_BUBBLEBEAM
-	anim_obj BATTLE_ANIM_OBJ_WAVE, 64, 88, $3
-	anim_wait 8
-	anim_bgeffect BATTLE_BG_EFFECT_WATER, $8, $0, $0
-	anim_wait 16
-	anim_bgeffect BATTLE_BG_EFFECT_WATER, $30, $0, $0
-	anim_sound 6, 2, SFX_BUBBLEBEAM
-	anim_obj BATTLE_ANIM_OBJ_WAVE, 64, 96, $4
-	anim_wait 8
-	anim_bgeffect BATTLE_BG_EFFECT_SHOW_MON, $0, BG_EFFECT_USER, $0
+	anim_wait 10
+	anim_call BattleAnimSub_WaterPulseUserBubbles
+	anim_wait 50
+
+	anim_sound 0, 1, SFX_BUBBLEBEAM
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_RING, 64, 92, $2
+	anim_wait 5
+	anim_sound 0, 1, SFX_BUBBLEBEAM
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_RING, 64, 92, $2
+	anim_wait 5
+	anim_sound 0, 1, SFX_BUBBLEBEAM
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_RING, 64, 92, $2
+
+	;anim_wait 5
+	; Ring-path bubbles. These approximate Emerald's ring-spawned bubbles.
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 90, 69, $82
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 98, 85, $83
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 96, 70, $80
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 90, 84, $81
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 92, 68, $82
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 100, 83, $83
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 120, 47, $82
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 128, 77, $83
+	anim_wait 5
+	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $1, $0
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 126, 49, $80
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 118, 76, $81
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 120, 64, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 148, 60, $1
+	anim_wait 5
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 122, 46, $82
+	anim_obj BATTLE_ANIM_OBJ_WATER_PULSE_PATH_BUBBLE, 130, 78, $83
 	anim_wait 4
-	anim_loop 3, .loop
-	anim_wait 32
-	anim_call BattleAnim_ShowMon_1
-	anim_bgeffect BATTLE_BG_EFFECT_END_WATER, $0, $0, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 128, 48, $2
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 156, 52, $3
 	anim_wait 4
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 116, 40, $0
+	anim_obj BATTLE_ANIM_OBJ_WATERFALL_BUBBLE, 144, 36, $1
+	anim_wait 28
+	anim_incbgeffect BATTLE_BG_EFFECT_WHIRLPOOL
+	anim_wait 8
+	anim_waterpal BATTLE_ANIM_WATER_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Pluck:
@@ -5428,10 +5481,11 @@ BattleAnim_PainSplit:
 
 BattleAnim_SacredFire:
 	anim_1gfx BATTLE_ANIM_GFX_EMBER
+	anim_bgeffect BATTLE_BG_EFFECT_ALTERNATE_HUES, $0, $2, $0
 	anim_firepal BATTLE_ANIM_FIRE_BLUE_PAL_LOAD
 .loop1
 	anim_sound 0, 0, SFX_EMBER
-	anim_obj BATTLE_ANIM_OBJ_SACRED_FIRE_INDIGO, 48, 104, $0
+	anim_obj BATTLE_ANIM_OBJ_SACRED_FIRE, 48, 104, $0
 	anim_wait 8
 	anim_loop 8, .loop1
 	anim_wait 96
@@ -5440,9 +5494,9 @@ BattleAnim_SacredFire:
 	anim_wait 4
 .loop2
 	anim_sound 0, 1, SFX_EMBER
-	anim_obj BATTLE_ANIM_OBJ_FIRE_BLAST_INDIGO, 136, 48, $1
-	anim_obj BATTLE_ANIM_OBJ_FIRE_BLAST_INDIGO, 136, 48, $4
-	anim_obj BATTLE_ANIM_OBJ_FIRE_BLAST_INDIGO, 136, 48, $5
+	anim_obj BATTLE_ANIM_OBJ_SACRED_FIRE_HIT, 136, 48, $1
+	anim_obj BATTLE_ANIM_OBJ_SACRED_FIRE_HIT, 136, 48, $4
+	anim_obj BATTLE_ANIM_OBJ_SACRED_FIRE_HIT, 136, 48, $5
 	anim_wait 16
 	anim_loop 2, .loop2
 	anim_bgeffect BATTLE_BG_EFFECT_SHOW_MON, $0, BG_EFFECT_TARGET, $0

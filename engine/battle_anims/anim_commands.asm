@@ -421,7 +421,7 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OBP0
 	dw BattleAnimCmd_OBP1
 	dw BattleAnimCmd_KeepSprites
-	dw BattleAnimCmd_IndigoFirePal
+	dw BattleAnimCmd_UnusedDummyForPadding
 	dw BattleAnimCmd_ThunderPal
 	dw BattleAnimCmd_ThunderboltPal
 	dw BattleAnimCmd_IfParamEqual
@@ -1192,8 +1192,7 @@ BattleAnimCmd_KeepSprites:
 	set BATTLEANIM_KEEPSPRITES_F, [hl]
 	ret
 
-BattleAnimCmd_IndigoFirePal:
-	callfar BattleAnimExt_LoadIndigoFirePal
+BattleAnimCmd_UnusedDummyForPadding:
 	ret
 
 BattleAnimCmd_ThunderPal:

@@ -239,14 +239,7 @@ MACRO anim_keepsprites
 	db anim_keepsprites_command
 ENDM
 
-	const anim_indigofirepal_command ; $f5
-MACRO anim_indigofirepal
-	db anim_indigofirepal_command
-ENDM
-
-MACRO anim_0xf5
-	db anim_indigofirepal_command
-ENDM
+	const anim_unused_dummy_for_padding_command ; $f5
 
 	const anim_thunderpal_command ; $f6
 MACRO anim_thunderpal
@@ -266,6 +259,11 @@ MACRO anim_thunderboltpal
 ENDM
 
 MACRO anim_watercolumnpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_waterpal
 	db anim_custompal_command
 	db \1
 ENDM

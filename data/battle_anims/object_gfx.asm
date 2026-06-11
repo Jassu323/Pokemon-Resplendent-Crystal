@@ -66,4 +66,7 @@ AnimObjGFX:
 	anim_obj_gfx 35, AnimObjHyperFangGFX
 	anim_obj_gfx 18, AnimObjToxicBubbleGFX
 	anim_obj_gfx 16, AnimObjPoisonPowderGFX
+	anim_obj_gfx  1, AnimObjSmallBubbleGFX
+	anim_obj_gfx  1, AnimObjTinyBubbleGFX
+	anim_obj_gfx  4, AnimObjBulletSeedGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

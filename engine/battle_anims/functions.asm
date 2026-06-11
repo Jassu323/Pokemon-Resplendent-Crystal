@@ -95,6 +95,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Flamethrower
 	dw BattleAnimFunc_OutrageFlame
 	dw BattleAnimFunc_PoisonPowder
+	dw BattleAnimFunc_BulletSeed
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EXT_NULL
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WISH_STAR
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SEISMIC_TOSS_LIGHT
@@ -115,6 +116,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_DROPLET
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_JAW
 	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_ROCK
+	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WATER_PULSE_DRIFT_BUBBLE
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Extension:
@@ -1150,9 +1152,23 @@ BattleAnimFunc_RazorLeaf:
 	ret
 
 BattleAnimFunc_RazorLeaf_SpawnHit:
-; Spawn a small hit at this leaf's current position, copying the leaf's FixY and
-; X/Y offsets so the hit aligns with the leaf on both the player's and enemy's
-; turns. Preserves bc (the calling leaf object).
+; Spawn a small hit at this leaf's current position. Preserves Razor Leaf's
+; tuned enemy-side fix-y; Magical Leaf uses this path too.
+	ld a, $78
+	jr BattleAnimFunc_SpawnSmallHitAtObject
+
+BattleAnimFunc_BulletSeed_SpawnHit:
+; Spawn a small hit at this seed's current position, using the seed's own fix-y
+; so enemy-side hits line up with Bullet Seed's mirrored trajectory.
+	ld hl, BATTLEANIMSTRUCT_FIX_Y
+	add hl, bc
+	ld a, [hl]
+	jr BattleAnimFunc_SpawnSmallHitAtObject
+
+BattleAnimFunc_SpawnSmallHitAtObject:
+; Spawn a small hit at the current object's position, copying X/Y and X/Y
+; offsets. Input: a = desired fix-y for the spawned hit. Preserves bc.
+	push af
 	ld a, BATTLE_ANIM_OBJ_HIT_SMALL
 	ld [wBattleObjectTempID], a
 	ld hl, BATTLEANIMSTRUCT_XCOORD
@@ -1170,8 +1186,9 @@ BattleAnimFunc_RazorLeaf_SpawnHit:
 	jr c, .full
 	ld hl, BATTLEANIMSTRUCT_FIX_Y
 	add hl, bc
-	ld [hl], $78
 	pop de
+	pop af
+	ld [hl], a
 	ld hl, BATTLEANIMSTRUCT_XOFFSET
 	add hl, de
 	ld a, [hl]
@@ -1189,6 +1206,7 @@ BattleAnimFunc_RazorLeaf_SpawnHit:
 	ret
 .full
 	pop bc
+	pop af
 	ret
 
 BattleAnimFunc_RazorLeaf_Step:
@@ -1741,6 +1759,116 @@ BattleAnimFunc_PoisonPowder:
 	db  89,   5, 2
 	db 112,  -8, 2
 	db  80,   5, 1
+
+BattleAnimFunc_BulletSeed:
+; Seed travels to the target, then scatters in an Emerald-style impact arc.
+; Obj Param high nybble selects horizontal drift: slow right, slow left, fast right, fast left.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .travel
+	dw .init_drift
+	dw .drift
+
+.travel
+	ld a, $4
+	call BattleAnim_StepToTarget
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 20
+	ret c
+	call BattleAnimFunc_BulletSeed_SpawnHit
+	ld de, SFX_HEADBUTT
+	call PlaySFX
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.init_drift
+	xor a
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hli], a
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hli], a
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.drift
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 16
+	jr nc, .done
+	ld e, a
+
+	ld d, 0
+	ld hl, .YArc
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+
+.check_x
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	swap a
+	and $3
+	jr z, .slow_right
+	cp $1
+	jr z, .slow_left
+	cp $2
+	jr z, .move_right
+	jr .move_left
+
+.slow_right
+	ld a, e
+	and $1
+	jr nz, .next_frame
+	jr .move_right
+
+.slow_left
+	ld a, e
+	and $1
+	jr nz, .next_frame
+	jr .move_left
+
+.move_right
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	jr .set_x
+
+.move_left
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	dec [hl]
+	ld a, [hl]
+
+.set_x
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+
+.next_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call DeinitBattleAnimation
+	ret
+
+.YArc:
+	db  0, -3, -6, -8, -10, -11, -12, -11
+	db -10, -8, -6, -4,  -2,  -1,   0,   1
 
 BattleAnimFunc_Recover:
 ; Obj moves in an ever shrinking circle. Obj Param defines initial position in the circle

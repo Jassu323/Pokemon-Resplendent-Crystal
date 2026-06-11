@@ -72,3 +72,9 @@ AnimObjToxicBubbleGFX:
 	INCBIN "gfx/battle_anims/toxic_bubble.2bpp.lz"
 AnimObjPoisonPowderGFX:
 	INCBIN "gfx/battle_anims/poison_powder.2bpp.lz"
+AnimObjSmallBubbleGFX:
+	INCBIN "gfx/battle_anims/small_bubble.2bpp.lz"
+AnimObjTinyBubbleGFX:
+	INCBIN "gfx/battle_anims/tiny_bubble.2bpp.lz"
+AnimObjBulletSeedGFX:
+	INCBIN "gfx/battle_anims/bullet_seed.2bpp.lz"
