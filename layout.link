@@ -196,6 +196,8 @@ ROMX $42
 	"Credits"
 ROMX $43
 	"Title"
+	"Debug Room"
+	"Tileset Data 8"
 ROMX $44
 	"Mobile Adapter SDK"
 ROMX $45
@@ -317,8 +319,9 @@ ROMX $77
 	"Status Condition Icons"
 	"European Mail"
 ROMX $78
-	"Debug Room"
-	"Tileset Data 8"
+	"Battle Animation Function Bank"
+ROMX $79
+	"Mon Icons 2"
 ROMX $7a
 	"Night Songs 1"
 	"Night Songs 2"
@@ -326,7 +329,7 @@ ROMX $7a
 	"Night Songs 4"
 	"Night Songs 5"
 ROMX $7b
-	"Battle Tower Text"
+	"Battle Engine Overhaul Future Use"
 ROMX $7c
 	"Battle Tower Trainer Data"
 	"Pack General Item Icons"

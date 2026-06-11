@@ -684,20 +684,24 @@ SECTION "European Mail", ROMX
 INCLUDE "engine/pokemon/european_mail.asm"
 
 
-SECTION "Debug Room", ROMX
+SECTION "Debug Room", ROMX, BANK[$43]
 
 if DEF(_DEBUG)
 INCLUDE "engine/debug/debug_room.asm"
 endc
 
 
-SECTION "Battle Tower Text", ROMX
+; Reserved for battle animation function migration.
+SECTION "Battle Animation Function Bank", ROMX, BANK[$78]
 
-INCLUDE "data/battle_tower/trainer_text.asm"
+
+; Cleared out for future development use as part of the Battle Engine Overhaul branch following commit a07eb1954.
+SECTION "Battle Engine Overhaul Future Use", ROMX, BANK[$7B]
 
 
 SECTION "Battle Tower Trainer Data", ROMX
 
+INCLUDE "data/battle_tower/trainer_text.asm"
 INCLUDE "data/battle_tower/unknown.asm"
 
 
