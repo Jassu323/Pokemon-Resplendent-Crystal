@@ -272,8 +272,6 @@ MoveDescriptions1:
 	dw IceBallDescription
 	dw PoisonFangDescription
 	dw CrushClawDescription
-	dw BlastBurnDescription
-	dw HydroCannonDescription
 	dw MeteorMashDescription
 	dw AromatherapyDescription
 	dw AirCutterDescription
@@ -289,7 +287,6 @@ MoveDescriptions1:
 	dw BlockDescription
 	dw HowlDescription
 	dw DragonClawDescription
-	dw FrenzyPlantDescription
 	dw BulkUpDescription
 	dw MudShotDescription
 	dw PoisonTailDescription
@@ -1379,12 +1376,6 @@ PoisonFangDescription:
 CrushClawDescription:
 	db   "Placeholder@"
 
-BlastBurnDescription:
-	db   "Placeholder@"
-
-HydroCannonDescription:
-	db   "Placeholder@"
-
 MeteorMashDescription:
 	db   "Placeholder@"
 
@@ -1428,9 +1419,6 @@ HowlDescription:
 	db   "Placeholder@"
 
 DragonClawDescription:
-	db   "Placeholder@"
-
-FrenzyPlantDescription:
 	db   "Placeholder@"
 
 BulkUpDescription:

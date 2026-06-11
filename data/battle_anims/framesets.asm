@@ -202,6 +202,7 @@ BattleAnimFrameData:
 	dw .Frameset_WaterPulseBubble    ; BATTLE_ANIM_FRAMESET_WATER_PULSE_BUBBLE
 	dw .Frameset_WaterPulseDriftBubble ; BATTLE_ANIM_FRAMESET_WATER_PULSE_DRIFT_BUBBLE
 	dw .Frameset_BulletSeed          ; BATTLE_ANIM_FRAMESET_BULLET_SEED
+	dw .Frameset_SacredFireHitDelayed ; BATTLE_ANIM_FRAMESET_SACRED_FIRE_HIT_DELAYED
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -775,6 +776,15 @@ BattleAnimFrameData:
 .Frameset_BulletSeed:
 	oamframe BATTLE_ANIM_OAMSET_1B,  1
 	oamend
+
+.Frameset_SacredFireHitDelayed:
+	oamwait 26
+	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  3
+	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamdelete
 
 .Frameset_ConfuseRay1:
 	oamframe BATTLE_ANIM_OAMSET_74,  4

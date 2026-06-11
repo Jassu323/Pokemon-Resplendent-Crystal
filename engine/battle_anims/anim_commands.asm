@@ -421,7 +421,7 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OBP0
 	dw BattleAnimCmd_OBP1
 	dw BattleAnimCmd_KeepSprites
-	dw BattleAnimCmd_UnusedDummyForPadding
+	dw BattleAnimCmd_Batch
 	dw BattleAnimCmd_ThunderPal
 	dw BattleAnimCmd_ThunderboltPal
 	dw BattleAnimCmd_IfParamEqual
@@ -756,6 +756,10 @@ endr
 
 BattleAnimCmd_IncObj:
 	call GetBattleAnimByte
+	jr IncBattleAnimObject
+
+IncBattleAnimObject:
+	ld [wBattleAnimByte], a
 	ld e, NUM_BATTLE_ANIM_STRUCTS
 	ld bc, wActiveAnimObjects
 .loop
@@ -1192,7 +1196,67 @@ BattleAnimCmd_KeepSprites:
 	set BATTLEANIM_KEEPSPRITES_F, [hl]
 	ret
 
-BattleAnimCmd_UnusedDummyForPadding:
+BattleAnimCmd_Batch:
+	call GetBattleAnimByte
+	and a
+	jr z, .objparams
+	dec a
+	jr z, .objlist
+	dec a
+	jr z, .incobjrange
+	ret
+
+.objparams
+	call GetBattleAnimByte
+	ld [wBattleObjectTempID], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempXCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempYCoord], a
+	call GetBattleAnimByte
+	ld e, a
+.objparams_loop
+	push de
+	call GetBattleAnimByte
+	ld [wBattleObjectTempParam], a
+	call QueueBattleAnimation
+	pop de
+	dec e
+	jr nz, .objparams_loop
+	ret
+
+.objlist
+	call GetBattleAnimByte
+	ld [wBattleObjectTempID], a
+	call GetBattleAnimByte
+	ld e, a
+.objlist_loop
+	push de
+	call GetBattleAnimByte
+	ld [wBattleObjectTempXCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempYCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempParam], a
+	call QueueBattleAnimation
+	pop de
+	dec e
+	jr nz, .objlist_loop
+	ret
+
+.incobjrange
+	call GetBattleAnimByte
+	ld d, a
+	call GetBattleAnimByte
+	ld e, a
+.incobjrange_loop
+	ld a, d
+	push de
+	call IncBattleAnimObject
+	pop de
+	inc d
+	dec e
+	jr nz, .incobjrange_loop
 	ret
 
 BattleAnimCmd_ThunderPal:

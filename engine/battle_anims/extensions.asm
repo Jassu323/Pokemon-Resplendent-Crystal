@@ -39,6 +39,7 @@ BattleAnimFunc_ExtensionDispatch:
 	dw BattleAnimFunc_CrunchJaw
 	dw BattleAnimFunc_CrunchRock
 	dw BattleAnimFunc_WaterPulseDriftBubble
+	dw BattleAnimFunc_ThunderStrikeController
 	assert_table_length NUM_BATTLE_ANIM_FUNCS - FIRST_BATTLE_ANIM_EXTENSION_FUNC
 
 BattleAnimFunc_ExtNull:
@@ -162,6 +163,7 @@ BattleAnimExtFrameData:
 	dw .Frameset_ThunderRed_1     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_1
 	dw .Frameset_ThunderRed_2     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_2
 	dw .Frameset_ThunderRed_3     ; BATTLE_ANIM_FRAMESET_THUNDER_RED_3
+	dw .Frameset_ThunderStrikeController ; BATTLE_ANIM_FRAMESET_THUNDER_STRIKE_CONTROLLER
 	dw .Frameset_ThunderboltStrike ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_STRIKE
 	dw .Frameset_ThunderboltAftereffect ; BATTLE_ANIM_FRAMESET_THUNDERBOLT_AFTEREFFECT
 	dw .Frameset_HydroPumpColumn ; BATTLE_ANIM_FRAMESET_HYDRO_PUMP_COLUMN
@@ -189,15 +191,15 @@ BattleAnimExtFrameData:
 	oamdelete
 
 .Frameset_ThunderYellow1_1:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_1, 5
-	oamdelete
-
-.Frameset_ThunderYellow1_2:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_2, 5
 	oamdelete
 
+.Frameset_ThunderYellow1_2:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_0, 5
+	oamdelete
+
 .Frameset_ThunderYellow1_3:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_1_2, 5
 	oamdelete
 
 .Frameset_ThunderPurple_0:
@@ -205,15 +207,15 @@ BattleAnimExtFrameData:
 	oamdelete
 
 .Frameset_ThunderPurple_1:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_1, 5
-	oamdelete
-
-.Frameset_ThunderPurple_2:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_2, 5
 	oamdelete
 
+.Frameset_ThunderPurple_2:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_0, 5
+	oamdelete
+
 .Frameset_ThunderPurple_3:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_PURPLE_2, 5
 	oamdelete
 
 .Frameset_ThunderYellow2_0:
@@ -221,15 +223,15 @@ BattleAnimExtFrameData:
 	oamdelete
 
 .Frameset_ThunderYellow2_1:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_1, 5
-	oamdelete
-
-.Frameset_ThunderYellow2_2:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_2, 5
 	oamdelete
 
+.Frameset_ThunderYellow2_2:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_0, 5
+	oamdelete
+
 .Frameset_ThunderYellow2_3:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_YELLOW_2_2, 5
 	oamdelete
 
 .Frameset_ThunderOrange_0:
@@ -237,15 +239,15 @@ BattleAnimExtFrameData:
 	oamdelete
 
 .Frameset_ThunderOrange_1:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_1, 5
-	oamdelete
-
-.Frameset_ThunderOrange_2:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_2, 5
 	oamdelete
 
+.Frameset_ThunderOrange_2:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_0, 5
+	oamdelete
+
 .Frameset_ThunderOrange_3:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_3, 5
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_ORANGE_2, 5
 	oamdelete
 
 .Frameset_ThunderRed_0:
@@ -253,16 +255,20 @@ BattleAnimExtFrameData:
 	oamdelete
 
 .Frameset_ThunderRed_1:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_1, 5
-	oamdelete
-
-.Frameset_ThunderRed_2:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_2, 5
 	oamdelete
 
-.Frameset_ThunderRed_3:
-	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_3, 5
+.Frameset_ThunderRed_2:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_0, 5
 	oamdelete
+
+.Frameset_ThunderRed_3:
+	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDER_RED_2, 5
+	oamdelete
+
+.Frameset_ThunderStrikeController:
+	oamwait 1
+	oamrestart
 
 .Frameset_ThunderboltStrike:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERBOLT_STRIKE_1, 1
@@ -1539,6 +1545,96 @@ BattleAnimFunc_Thunder:
 .EnemyYCoords:
 	db $88 - 44, $88 - 60, $88 - 76, $88 - 92
 
+BattleAnimFunc_ThunderStrikeController:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 51
+	jr nc, .done
+	inc [hl]
+	ld e, a
+	ld d, 0
+	ld hl, .SpawnTable
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	cp $ff
+	ret z
+	ld [wBattleObjectTempID], a
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempXCoord], a
+	xor a
+	ld [wBattleObjectTempYCoord], a
+	ld a, d
+	ld [wBattleObjectTempParam], a
+	push bc
+	callfar QueueBattleAnimation
+	jr c, .spawn_failed
+	call BattleAnimFunc_Thunder
+.spawn_failed
+	pop bc
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.SpawnTable:
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, $1
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, $2
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_1, $3
+	db $ff, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_PURPLE, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_PURPLE, $1
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_PURPLE, $2
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_PURPLE, $3
+	db $ff, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, $1
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, $2
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_YELLOW_2, $3
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_ORANGE, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_ORANGE, $1
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_ORANGE, $2
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_ORANGE, $3
+	db $ff, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_RED, $0
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_RED, $1
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_RED, $2
+	db $ff, $0
+	db BATTLE_ANIM_OBJ_THUNDER_RED, $3
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+	db $ff, $0
+
 BattleAnimFunc_WaterfallBubble:
 ; Obj Param: bit 0 = drift right. bit 1 = faster horizontal drift.
 	ld hl, BATTLEANIMSTRUCT_VAR1
@@ -2760,7 +2856,32 @@ BattleAnimFunc_FlameWheelHit:
 
 BattleAnimFunc_SacredFireHit:
 ; Obj Param: Fire Blast-style directions $1 = up, $4 = down-left,
-;            $5 = down-right. Preserves the object's frameset.
+;            $5 = down-right. High nibble may delay movement.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	jr z, .move
+	cp $10
+	jr z, .delay10
+	cp $20
+	jr nz, .move
+	ld d, 26
+	jr .check_delay
+
+.delay10
+	ld d, 10
+
+.check_delay
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp d
+	jr nc, .move
+	inc [hl]
+	ret
+
+.move
 	ld hl, BATTLEANIMSTRUCT_PARAM
 	add hl, bc
 	ld a, [hl]

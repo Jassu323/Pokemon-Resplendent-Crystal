@@ -239,7 +239,43 @@ MACRO anim_keepsprites
 	db anim_keepsprites_command
 ENDM
 
-	const anim_unused_dummy_for_padding_command ; $f5
+	const anim_batch_command ; $f5
+MACRO anim_objparams
+	assert _NARG == 4 + (\4), "anim_objparams count must match number of params"
+	db anim_batch_command
+	db 0 ; subtype: same object and coordinates, param list
+	db \1 ; object
+	db \2 ; x
+	db \3 ; y
+	db \4 ; count
+	shift 4
+	rept _NARG
+		db \1 ; param
+		shift
+	endr
+ENDM
+
+MACRO anim_objlist
+	assert _NARG == 2 + 3 * (\2), "anim_objlist count must match x/y/param triples"
+	db anim_batch_command
+	db 1 ; subtype: same object, x/y/param list
+	db \1 ; object
+	db \2 ; count
+	shift 2
+	rept _NARG / 3
+		db \1 ; x
+		db \2 ; y
+		db \3 ; param
+		shift 3
+	endr
+ENDM
+
+MACRO anim_incobjrange
+	db anim_batch_command
+	db 2 ; subtype: increment contiguous object ids
+	db \1 ; first object id
+	db \2 ; count
+ENDM
 
 	const anim_thunderpal_command ; $f6
 MACRO anim_thunderpal

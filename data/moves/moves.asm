@@ -285,8 +285,6 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         30, ICE,            90, 20,   0      ;ICE_BALL #301
 	move EFFECT_NORMAL_HIT,         50, POISON,        100, 15,  30      ;POISON_FANG #305
 	move EFFECT_NORMAL_HIT,         75, NORMAL,         95, 10,  50      ;CRUSH_CLAW #306
-	move EFFECT_NORMAL_HIT,        150, FIRE,           90,  5,   0      ;BLAST_BURN #307
-	move EFFECT_NORMAL_HIT,        150, WATER,          90,  5,   0      ;HYDRO_CANNON #308
 	move EFFECT_NORMAL_HIT,        100, STEEL,          85, 10,  20      ;METEOR_MASH #309
 	move EFFECT_NORMAL_HIT,          0, GRASS,         100,  5,   0      ;AROMATHERAPY #312
 	move EFFECT_NORMAL_HIT,         55, FLYING,         95, 25,   0      ;AIR_CUTTER #314
@@ -302,7 +300,6 @@ Moves1:
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100,  5,   0      ;BLOCK #335
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 40,   0      ;HOWL #336
 	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
-	move EFFECT_NORMAL_HIT,        150, GRASS,          90,  5,   0      ;FRENZY_PLANT #338
 	move EFFECT_NORMAL_HIT,          0, FIGHTING,      100, 20,   0      ;BULK_UP #339
 	move EFFECT_NORMAL_HIT,         55, GROUND,         95, 15, 100      ;MUD_SHOT #341
 	move EFFECT_NORMAL_HIT,         50, POISON,        100, 25,  10      ;POISON_TAIL #342
