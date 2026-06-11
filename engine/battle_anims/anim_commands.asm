@@ -1461,14 +1461,6 @@ ClearBattleAnims::
 	ld [wBattleAnimObjCache1ID], a
 	ld [wBattleAnimObjCache2ID], a
 	ld [wBattleAnimObjCache3ID], a
-	ld hl, wBattleAnimSmallExtOAMCache
-	ld de, BATTLEANIM_SMALL_EXT_OAM_CACHE_ENTRY_LENGTH
-	ld b, BATTLEANIM_SMALL_EXT_OAM_CACHE_SLOTS
-.clear_small_ext_oam_cache
-	ld [hl], a
-	add hl, de
-	dec b
-	jr nz, .clear_small_ext_oam_cache
 
 	ld hl, wFXAnimID
 	ld e, [hl]
@@ -1548,29 +1540,29 @@ BattleAnim_SetOBPals:
 	ret
 
 BattleAnim_UpdateOAM_All:
+	farcall BattleAnim_UpdateFunctions_All
 	ld a, 0
 	ld [wBattleAnimOAMPointerLo], a
-	ld hl, wActiveAnimObjects
-	ld e, NUM_BATTLE_ANIM_STRUCTS
-.loop
-	ld a, [hl]
+	ld a, [wBattleAnimUpdatedCount]
 	and a
-	jr z, .next
-	ld c, l
-	ld b, h
+	jr z, .clear_oam
+	ld e, a
+	ld hl, wBattleAnimUpdatedObjects
+.loop
+	ld c, [hl]
+	inc hl
+	ld b, [hl]
+	inc hl
 	push hl
 	push de
-	call DoBattleAnimFrame
 	call BattleAnimOAMUpdate
 	pop de
 	pop hl
 	jr c, .done
-
-.next
-	ld bc, BATTLEANIMSTRUCT_LENGTH
-	add hl, bc
 	dec e
 	jr nz, .loop
+
+.clear_oam
 	ld a, [wBattleAnimOAMPointerLo]
 	ld l, a
 	ld h, HIGH(wShadowOAM)

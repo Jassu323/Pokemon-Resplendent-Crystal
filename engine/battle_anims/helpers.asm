@@ -1,18 +1,3 @@
-; Input: D = bank selector (0 = regular/bank51, 1 = ext/bank63), E = frameset index
-ReinitBattleAnimFrameset:
-	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
-	add hl, bc
-	ld [hl], e     ; write low byte (index)
-	inc hl
-	ld [hl], d     ; write high byte (bank selector)
-	ld hl, BATTLEANIMSTRUCT_DURATION
-	add hl, bc
-	ld [hl], 0
-	ld hl, BATTLEANIMSTRUCT_FRAME
-	add hl, bc
-	ld [hl], -1
-	ret
-
 GetBattleAnimFrame:
 .loop
 	ld hl, BATTLEANIMSTRUCT_DURATION
@@ -57,8 +42,8 @@ GetBattleAnimFrame:
 	pop af
 	ret
 
-.next_ext_frame
-	farcall BattleAnimExt_LoadFrame
+	.next_ext_frame
+	call BattleAnimExt_LoadFrame
 
 .return_ext_frame
 	ld hl, BATTLEANIMSTRUCT_EXT_OAMFLAGS
@@ -118,7 +103,7 @@ GetBattleAnimFrame:
 	add hl, bc
 	inc hl          ; point to high byte (bank selector)
 	ld a, [hl]
-	cp 1            ; carry set = bank 0 (regular), carry clear = bank 1+ (ext)
+	cp 1            ; carry set = regular namespace, carry clear = extended namespace
 	ret
 
 GetBattleAnimOAMPointer:

@@ -1,3 +1,65 @@
+BattleAnim_UpdateFunctions_All:
+	xor a
+	ld [wBattleAnimUpdatedCount], a
+	ld hl, wActiveAnimObjects
+	ld e, NUM_BATTLE_ANIM_STRUCTS
+.loop
+	ld a, [hl]
+	and a
+	jr z, .next
+	ld c, l
+	ld b, h
+	push hl
+	push de
+	call DoBattleAnimFrame
+	pop de
+	pop hl
+	call BattleAnim_AppendUpdatedObject
+
+.next
+	ld bc, BATTLEANIMSTRUCT_LENGTH
+	add hl, bc
+	dec e
+	jr nz, .loop
+	ret
+
+BattleAnim_AppendUpdatedObject:
+; Input: hl = original anim object struct pointer.
+; Preserves hl and de for the update loop.
+	push hl
+	push de
+	ld a, [wBattleAnimUpdatedCount]
+	ld e, a
+	inc a
+	ld [wBattleAnimUpdatedCount], a
+	ld d, 0
+	ld hl, wBattleAnimUpdatedObjects
+	add hl, de
+	add hl, de
+	pop de
+	pop bc
+	ld [hl], c
+	inc hl
+	ld [hl], b
+	ld h, b
+	ld l, c
+	ret
+
+; Input: D = frameset namespace (0 = regular, 1 = extended), E = frameset index
+ReinitBattleAnimFrameset:
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld [hl], e
+	inc hl
+	ld [hl], d
+	ld hl, BATTLEANIMSTRUCT_DURATION
+	add hl, bc
+	ld [hl], 0
+	ld hl, BATTLEANIMSTRUCT_FRAME
+	add hl, bc
+	ld [hl], -1
+	ret
+
 DoBattleAnimFrame:
 	ld hl, BATTLEANIMSTRUCT_FUNCTION
 	add hl, bc
@@ -96,33 +158,29 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_OutrageFlame
 	dw BattleAnimFunc_PoisonPowder
 	dw BattleAnimFunc_BulletSeed
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EXT_NULL
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WISH_STAR
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SEISMIC_TOSS_LIGHT
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_MUD_SHOT
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_AROMATHERAPY_FLOWER
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_OVERHEAT_FLAME
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_THUNDER
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WATERFALL_BUBBLE
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_FIRE_BLAST_MODERN
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_EMBER_GEN3
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_FLAME_WHEEL_HIT
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SACRED_FIRE_HIT
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_LAVA_PLUME_ERUPTION
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_DRAGON_CLAW_FLAME
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_POISON_BUBBLE
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_SLUDGE_BOMB
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_BUBBLE
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_ACID_DROPLET
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_JAW
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_CRUNCH_ROCK
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_WATER_PULSE_DRIFT_BUBBLE
-	dw BattleAnimFunc_Extension ; BATTLE_ANIM_FUNC_THUNDER_STRIKE_CONTROLLER
+	dw BattleAnimFunc_ExtNull
+	dw BattleAnimFunc_WishStar
+	dw BattleAnimFunc_SeismicTossLight
+	dw BattleAnimFunc_MudShot
+	dw BattleAnimFunc_AromatherapyFlower
+	dw BattleAnimFunc_OverheatFlame
+	dw BattleAnimFunc_Thunder
+	dw BattleAnimFunc_WaterfallBubble
+	dw BattleAnimFunc_FireBlastModern
+	dw BattleAnimFunc_EmberGen3
+	dw BattleAnimFunc_FlameWheelHit
+	dw BattleAnimFunc_SacredFireHit
+	dw BattleAnimFunc_LavaPlumeEruption
+	dw BattleAnimFunc_DragonClawFlame
+	dw BattleAnimFunc_PoisonBubble
+	dw BattleAnimFunc_SludgeBomb
+	dw BattleAnimFunc_AcidBubble
+	dw BattleAnimFunc_AcidDroplet
+	dw BattleAnimFunc_CrunchJaw
+	dw BattleAnimFunc_CrunchRock
+	dw BattleAnimFunc_WaterPulseDriftBubble
+	dw BattleAnimFunc_ThunderStrikeController
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
-
-BattleAnimFunc_Extension:
-	farcall BattleAnimFunc_ExtensionDispatch
-	ret
 
 BattleAnimFunc_Null:
 	call BattleAnim_AnonJumptable
@@ -130,14 +188,14 @@ BattleAnimFunc_Null:
 	dw .zero
 	dw .one
 .one
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 .zero
 	ret
 
 BattleAnimFunc_ThrowFromUserToTargetAndDisappear:
 	call BattleAnimFunc_ThrowFromUserToTarget
 	ret c
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_ThrowFromUserToTarget:
@@ -179,7 +237,7 @@ BattleAnimFunc_MoveWaveToTarget:
 	ld a, [hl]
 	cp $88
 	jr c, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -267,7 +325,7 @@ BattleAnimFunc_MoveInCircle:
 	add hl, bc
 	dec [hl]
 	ret nz
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Flamethrower:
@@ -369,7 +427,7 @@ BattleAnimFunc_OutrageFlame:
 	jr .done
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .PlayerVectors:
@@ -400,7 +458,7 @@ BattleAnimFunc_MoveFromUserToTarget:
 	dw .zero
 	dw .one
 .one
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .zero
@@ -429,7 +487,7 @@ BattleAnimFunc_MoveFromUserToTargetAndDisappear:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_PokeBall:
@@ -546,7 +604,7 @@ BattleAnimFunc_PokeBall:
 	ret
 
 .eleven
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_PokeBallBlocked:
@@ -586,7 +644,7 @@ BattleAnimFunc_PokeBallBlocked:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 GetBallAnimPal:
@@ -649,7 +707,7 @@ BattleAnimFunc_Ember:
 	ret
 
 .two
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .three
@@ -704,7 +762,7 @@ BattleAnimFunc_Drop:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_MoveFromUserToTargetSpinAround:
@@ -790,7 +848,7 @@ BattleAnimFunc_MoveFromUserToTargetSpinAround:
 	ld a, [hl]
 	cp $b0
 	jr c, .retain
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .retain
@@ -867,7 +925,7 @@ BattleAnimFunc_Shake:
 	ret
 
 .two
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_FireBlast:
@@ -936,7 +994,7 @@ BattleAnimFunc_FireBlast:
 	ret
 
 .nine
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .one
@@ -1065,7 +1123,7 @@ BattleAnimFunc_RazorLeaf:
 	ld a, [hl]
 	cp $20
 	jr nz, .sine_cosine_2
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .sine_cosine_2
@@ -1183,7 +1241,7 @@ BattleAnimFunc_SpawnSmallHitAtObject:
 	xor a
 	ld [wBattleObjectTempParam], a
 	push bc
-	call QueueBattleAnimation
+	callfar QueueBattleAnimation
 	jr c, .full
 	ld hl, BATTLEANIMSTRUCT_FIX_Y
 	add hl, bc
@@ -1303,7 +1361,7 @@ BattleAnimFunc_RockSmash:
 	ld a, [hl]
 	cp $30
 	jr nc, .sine_cosine
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .sine_cosine
@@ -1496,7 +1554,7 @@ BattleAnimFunc_Surf:
 	ldh [hLYOverrideStart], a
 	ldh [hLYOverrideEnd], a
 .four
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move_down
@@ -1532,7 +1590,7 @@ BattleAnimFunc_Sing:
 	ld a, [hl]
 	cp $b8
 	jr c, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -1616,7 +1674,7 @@ BattleAnimFunc_Powder:
 	ld a, [hl]
 	cp $38
 	jr c, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -1648,118 +1706,23 @@ BattleAnimFunc_PoisonPowder:
 	add hl, bc
 	ld a, [hl]
 	and a
-	jr nz, .one
-	ld [hl], 117
+	jr nz, .active
+	inc [hl]
 	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
 	xor a
-	ld [hli], a
 	ld [hl], a
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .one
-	ld hl, BATTLEANIMSTRUCT_YCOORD
-	add hl, bc
-	ld a, [hl]
-	add $30
-	ld [hl], a
-
-.one
-	call .GetData
-	ld a, [hli]
-	push hl
-	ld e, a
-	ld d, 0
-	ld hl, BATTLEANIMSTRUCT_YOFFSET
-	add hl, bc
-	ld a, [hl]
-	ld hl, BATTLEANIMSTRUCT_VAR1
-	add hl, bc
-	ld l, [hl]
-	ld h, a
-	add hl, de
-	ld e, l
-	ld d, h
-	ld hl, BATTLEANIMSTRUCT_VAR1
-	add hl, bc
-	ld [hl], e
-	ld hl, BATTLEANIMSTRUCT_YOFFSET
-	add hl, bc
-	ld [hl], d
-	pop hl
-	ld a, [hli]
-	ld e, a
-	ld a, [hl]
-	push af
-	bit 7, e
-	jr z, .got_amplitude
-	ld a, e
-	xor $ff
-	inc a
-	ld e, a
-	ld hl, BATTLEANIMSTRUCT_VAR2
-	add hl, bc
-	ld a, [hl]
-	ld d, e
-	call BattleAnim_Sine
-	xor $ff
-	inc a
-	jr .got_x_offset
-
-.got_amplitude
-	ld hl, BATTLEANIMSTRUCT_VAR2
-	add hl, bc
-	ld a, [hl]
-	ld d, e
-	call BattleAnim_Sine
-
-.got_x_offset
-	ld hl, BATTLEANIMSTRUCT_XOFFSET
-	add hl, bc
-	ld [hl], a
-	pop de
-	ld hl, BATTLEANIMSTRUCT_VAR2
-	add hl, bc
-	ld a, [hl]
-	add d
-	ld [hl], a
-	ld hl, BATTLEANIMSTRUCT_JUMPTABLE_INDEX
-	add hl, bc
-	dec [hl]
-	ret nz
-	call DeinitBattleAnimation
 	ret
 
-.GetData:
-	ld hl, BATTLEANIMSTRUCT_PARAM
+.active
+	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
+	inc [hl]
 	ld a, [hl]
-	and $0f
-	ld e, a
-	add a
-	add e
-	ld e, a
-	ld d, 0
-	ld hl, .Data
-	add hl, de
+	cp POISON_POWDER_CONTROLLER_LIFETIME
+	ret c
+	call BattleAnimExt_Deinit
 	ret
-
-.Data:
-; y velocity, wave amplitude, wave speed
-	db  80,   5, 1
-	db  80,  -5, 1
-	db 112,   5, 3
-	db  80,  -5, 1
-	db  96,   5, 1
-	db  69,  -5, 1
-	db 112,   5, 2
-	db  80,  -5, 1
-	db  96,   7, 2
-	db  90,  -8, 0
-	db  80,  -5, 1
-	db  89,   5, 2
-	db 112,  -8, 2
-	db  80,   5, 1
 
 BattleAnimFunc_BulletSeed:
 ; Seed travels to the target, then scatters in an Emerald-style impact arc.
@@ -1864,7 +1827,7 @@ BattleAnimFunc_BulletSeed:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .YArc:
@@ -1906,7 +1869,7 @@ BattleAnimFunc_Recover:
 	ld a, [hl]
 	and a
 	jr nz, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -1957,7 +1920,7 @@ BattleAnimFunc_ThunderWave:
 	ret
 
 .three
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Clamp_Encore:
@@ -2060,7 +2023,7 @@ BattleAnimFunc_Bite:
 	jr z, .run
 	dec [hl]
 	jr nz, .run
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .run
@@ -2197,7 +2160,7 @@ BattleAnimFunc_SolarBeam:
 	ret
 
 .zero_radius
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Gust:
@@ -2234,7 +2197,7 @@ BattleAnimFunc_Gust:
 	ld a, [hl]
 	cp $b8
 	jr c, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -2334,7 +2297,7 @@ BattleAnimFunc_Absorb:
 	ld a, [hl]
 	cp $30
 	jr nc, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -2721,7 +2684,7 @@ BattleAnimFunc_Egg:
 
 .five
 	; Clears Egg Bomb object via anim_incobj
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .seven
@@ -2832,7 +2795,7 @@ BattleAnimFunc_MoveUp:
 	jr z, .move
 	cp $d8
 	jr nc, .move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move
@@ -2892,7 +2855,7 @@ BattleAnimFunc_Sound:
 	ret
 
 .done_anim
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .SoundWaveMotion:
@@ -3118,7 +3081,7 @@ BattleAnimFunc_Amnesia:
 
 .two
 	; anim_incobj forces obj to deinit
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .AmnesiaOffsets: ; Hardcoded Y Offsets for each Obj Param
@@ -3300,7 +3263,7 @@ BattleAnimFunc_SpiralDescent:
 	ret
 
 .delete
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_PetalDance:
@@ -3342,7 +3305,7 @@ BattleAnimFunc_PetalDance:
 	ret
 
 .end
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_PoisonGas:
@@ -3419,7 +3382,7 @@ BattleAnimFunc_PoisonGas:
 	ret
 
 .delete
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_SmokeFlameWheel:
@@ -3463,7 +3426,7 @@ BattleAnimFunc_SmokeFlameWheel:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_SacredFire:
@@ -3508,7 +3471,7 @@ BattleAnimFunc_SacredFire:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_PresentSmokescreen:
@@ -3568,7 +3531,7 @@ BattleAnimFunc_PresentSmokescreen:
 	ret
 
 .two
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Horn:
@@ -3610,7 +3573,7 @@ BattleAnimFunc_Horn:
 	ld a, [hl]
 	cp $20
 	jr c, .three
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .three
@@ -3683,7 +3646,7 @@ BattleAnimFunc_Needle:
 	ld a, [hl]
 	cp $84
 	jr c, .move_to_target
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move_to_target
@@ -3804,7 +3767,7 @@ BattleAnimFunc_AbsorbCircle:
 	ret
 
 .end
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Conversion:
@@ -3845,7 +3808,7 @@ BattleAnimFunc_Conversion:
 	dec [hl]
 	and a
 	ret nz
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Bonemerang:
@@ -3976,7 +3939,7 @@ BattleAnimFunc_SkyAttack:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .SkyAttack_CyclePalette:
@@ -4115,7 +4078,7 @@ BattleAnimFunc_StrengthSeismicToss:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_SpeedLine:
@@ -4182,7 +4145,7 @@ BattleAnimFunc_MetronomeSparkleSketch:
 	ld a, [hl]
 	cp $20
 	jr c, .do_move
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .do_move
@@ -4224,7 +4187,7 @@ BattleAnimFunc_Agility:
 	ret
 
 .one
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_SafeguardProtect:
@@ -4326,7 +4289,7 @@ BattleAnimFunc_LockOnMindReader:
 	dec [hl]
 	and a
 	ret nz
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_HealBellNotes:
@@ -4375,7 +4338,7 @@ BattleAnimFunc_HealBellNotes:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_BatonPass:
@@ -4439,7 +4402,7 @@ BattleAnimFunc_EncoreBellyDrum:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_SwaggerMorningSun:
@@ -4510,7 +4473,7 @@ BattleAnimFunc_HiddenPower:
 	jr .step_circle
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .step_circle
@@ -4541,7 +4504,7 @@ BattleAnimFunc_Curse:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 .zero:
 	ret
 
@@ -4588,7 +4551,7 @@ BattleAnimFunc_RapidSpin:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_BetaPursuit:
@@ -4625,7 +4588,7 @@ BattleAnimFunc_BetaPursuit:
 	ret
 
 .three
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 .move_up
@@ -4763,7 +4726,7 @@ BattleAnimFunc_AncientPower:
 	ret
 
 .done
-	call DeinitBattleAnimation
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnim_StepCircle:

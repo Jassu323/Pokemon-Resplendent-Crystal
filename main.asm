@@ -428,8 +428,8 @@ SECTION "Move Animations", ROMX
 
 INCLUDE "engine/battle_anims/anim_commands.asm"
 INCLUDE "engine/battle_anims/core.asm"
-INCLUDE "engine/battle_anims/functions.asm"
 INCLUDE "engine/battle_anims/helpers.asm"
+INCLUDE "engine/battle_anims/extension_frame_oam.asm"
 
 
 SECTION "Pic Animations 1", ROMX
@@ -693,6 +693,9 @@ endc
 
 ; Reserved for battle animation function migration.
 SECTION "Battle Animation Function Bank", ROMX, BANK[$78]
+
+INCLUDE "engine/battle_anims/functions.asm"
+INCLUDE "engine/battle_anims/extension_functions.asm"
 
 
 ; Cleared out for future development use as part of the Battle Engine Overhaul branch following commit a07eb1954.

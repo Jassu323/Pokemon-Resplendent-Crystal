@@ -1410,19 +1410,19 @@ BattleAnim_Thunder:
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_obj BATTLE_ANIM_OBJ_THUNDER_STRIKE_CONTROLLER, 152, 0, $0
-	anim_wait 51
+	anim_wait 42
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_obj BATTLE_ANIM_OBJ_THUNDER_STRIKE_CONTROLLER, 120, 0, $0
-	anim_wait 51
+	anim_wait 42
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_obj BATTLE_ANIM_OBJ_THUNDER_STRIKE_CONTROLLER, 152, 0, $0
-	anim_wait 63
+	anim_wait 54
 	anim_bgeffect BATTLE_BG_EFFECT_FLASH_INVERTED, $1, $6, $4
 	anim_sound 0, 1, SFX_THUNDER
 	anim_obj BATTLE_ANIM_OBJ_THUNDER_STRIKE_CONTROLLER, 136, 0, $0
-	anim_wait 51
+	anim_wait 42
 	anim_thunderpal BATTLE_ANIM_THUNDER_PAL_RESTORE
 	anim_wait 8
 	anim_ret
@@ -1592,50 +1592,40 @@ BattleAnim_Sing:
 BattleAnim_Poisonpowder:
 	anim_1gfx BATTLE_ANIM_GFX_POISON_POWDER
 	anim_poisonpal BATTLE_ANIM_POISON_POWDER_PAL_LOAD
-	anim_sound 0, 1, SFX_POWDER
-	anim_objlist BATTLE_ANIM_OBJ_POISON_POWDER, 3, 106, 34, $00, 146, 34, $01, 111, 34, $02
-	anim_wait 10
-	anim_sound 0, 1, SFX_POWDER
-	anim_wait 5
-	anim_objlist BATTLE_ANIM_OBJ_POISON_POWDER, 4, 131, 34, $03, 141, 34, $04, 136, 34, $05, 121, 34, $06
-	anim_wait 5
-	anim_sound 0, 1, SFX_POWDER
-	anim_wait 10
-	anim_sound 0, 1, SFX_POWDER
-	anim_wait 10
-	anim_sound 0, 1, SFX_POWDER
-	anim_wait 5
-	anim_objlist BATTLE_ANIM_OBJ_POISON_POWDER, 3, 151, 34, $07, 126, 34, $08, 131, 34, $09
-	anim_wait 5
-	anim_sound 0, 1, SFX_POWDER
-	anim_wait 15
-	anim_objlist BATTLE_ANIM_OBJ_POISON_POWDER, 4, 126, 34, $0a, 136, 34, $0b, 156, 34, $0c, 141, 34, $0d
-	anim_wait 120
+	anim_call BattleAnimSub_PowderController
 	anim_poisonpal BATTLE_ANIM_POISON_POWDER_PAL_RESTORE
 	anim_ret
 
-BattleAnim_SleepPowder:
-BattleAnim_Spore:
 BattleAnim_StunSpore:
-	anim_1gfx BATTLE_ANIM_GFX_POWDER
+	anim_1gfx BATTLE_ANIM_GFX_POISON_POWDER
+	anim_poisonpal BATTLE_ANIM_STUN_SPORE_PAL_LOAD
+	anim_call BattleAnimSub_PowderController
+	anim_poisonpal BATTLE_ANIM_STUN_SPORE_PAL_RESTORE
+	anim_ret
+
+BattleAnim_SleepPowder:
+	anim_1gfx BATTLE_ANIM_GFX_POISON_POWDER
+	anim_poisonpal BATTLE_ANIM_SLEEP_POWDER_PAL_LOAD
+	anim_call BattleAnimSub_PowderController
+	anim_poisonpal BATTLE_ANIM_SLEEP_POWDER_PAL_RESTORE
+	anim_ret
+
+BattleAnim_Spore:
+	anim_1gfx BATTLE_ANIM_GFX_POISON_POWDER
+	anim_poisonpal BATTLE_ANIM_SPORE_PAL_LOAD
+	anim_call BattleAnimSub_PowderController
+	anim_poisonpal BATTLE_ANIM_SPORE_PAL_RESTORE
+	anim_ret
+
+BattleAnimSub_PowderController:
+	anim_sound 0, 1, SFX_POWDER
+	anim_obj BATTLE_ANIM_OBJ_POISON_POWDER, 0, 0, $0
+	; Five repeats after the opening sound produce SFX at frames 10, 20, 30, 40, and 50.
 .loop
+	anim_wait 10
 	anim_sound 0, 1, SFX_POWDER
-	anim_obj BATTLE_ANIM_OBJ_POWDER, 104, 16, $0
-	anim_wait 4
-	anim_sound 0, 1, SFX_POWDER
-	anim_obj BATTLE_ANIM_OBJ_POWDER, 136, 16, $0
-	anim_wait 4
-	anim_sound 0, 1, SFX_POWDER
-	anim_obj BATTLE_ANIM_OBJ_POWDER, 112, 16, $0
-	anim_wait 4
-	anim_sound 0, 1, SFX_POWDER
-	anim_obj BATTLE_ANIM_OBJ_POWDER, 128, 16, $0
-	anim_wait 4
-	anim_sound 0, 1, SFX_POWDER
-	anim_obj BATTLE_ANIM_OBJ_POWDER, 120, 16, $0
-	anim_wait 4
-	anim_loop 2, .loop
-	anim_wait 96
+	anim_loop 5, .loop
+	anim_wait 135
 	anim_ret
 
 BattleAnim_HyperBeam:
@@ -3047,6 +3037,7 @@ BattleAnim_Barrier:
 
 BattleAnim_Waterfall:
 	anim_3gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_WATER, BATTLE_ANIM_GFX_SMALL_BUBBLE
+	anim_waterpal BATTLE_ANIM_WATER_PAL_LOAD
 	anim_sound 0, 1, SFX_HYDRO_PUMP
 	anim_bgeffect BATTLE_BG_EFFECT_WHIRLPOOL, $0, $0, $0
 	anim_wait 36
@@ -3088,6 +3079,7 @@ BattleAnim_Waterfall:
 	anim_wait 29
 	anim_incbgeffect BATTLE_BG_EFFECT_WHIRLPOOL
 	anim_wait 12
+	anim_waterpal BATTLE_ANIM_WATER_PAL_RESTORE
 	anim_ret
 
 BattleAnim_PsychicM:
@@ -3596,7 +3588,7 @@ BattleAnimSub_SludgeBombImpact:
 	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 148, 64, $80
 	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 152, 48, $80
 	anim_wait 4
-	anim_sound 0, 1, SFX_POISON
+	anim_sound 0, 1, SFX_TOXIC
 	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_SPLATTER, 128, 60, $80
 	anim_obj BATTLE_ANIM_OBJ_SLUDGE_BOMB_TARGET_BUBBLE, 128, 42, $80
 	anim_wait 4
