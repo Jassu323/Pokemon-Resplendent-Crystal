@@ -291,12 +291,12 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        140, FIRE,           90,  5, 100      ;OVERHEAT #315
 	move EFFECT_NORMAL_HIT,         50, ROCK,           80, 10, 100      ;ROCK_TOMB #317
 	move EFFECT_NORMAL_HIT,         60, BUG,           100,  5,  10      ;SILVER_WIND #318
+	move EFFECT_ALWAYS_HIT,         60, GHOST,         100, 20,   0      ;SHADOW_PUNCH #325
 	move EFFECT_NORMAL_HIT,         80, PSYCHIC_TYPE,  100, 30,  10      ;EXTRASENSORY #326
 	move EFFECT_NORMAL_HIT,         85, FIGHTING,       90, 15,   0      ;SKY_UPPERCUT #327
 	move EFFECT_NORMAL_HIT,         15, GROUND,         70, 15, 100      ;SAND_TOMB #328
 	move EFFECT_NORMAL_HIT,         10, GRASS,         100, 30,   0      ;BULLET_SEED #331
 	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;AERIAL_ACE #332
-	move EFFECT_NORMAL_HIT,         10, ICE,           100, 30,   0      ;ICICLE_SPEAR #333
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100,  5,   0      ;BLOCK #335
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 40,   0      ;HOWL #336
 	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
@@ -319,17 +319,17 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         60, FIGHTING,      100,  5,   0      ;DRAIN_PUNCH #409
 	move EFFECT_NORMAL_HIT,         80, GRASS,         100, 10,  10      ;ENERGY_BALL #412
 	move EFFECT_NORMAL_HIT,         40, STEEL,         100, 30,   0      ;BULLET_PUNCH #418
+	move EFFECT_NORMAL_HIT,         70, GHOST,         100, 15,   0      ;SHADOW_CLAW #421
 	move EFFECT_NORMAL_HIT,         65, ELECTRIC,       95, 15,  10      ;THUNDER_FANG #422
 	move EFFECT_NORMAL_HIT,         65, ICE,            95, 15,  10      ;ICE_FANG #423
 	move EFFECT_NORMAL_HIT,         65, FIRE,           95, 15,  10      ;FIRE_FANG #424
-	move EFFECT_NORMAL_HIT,         40, GHOST,         100, 30,   0      ;SHADOW_SNEAK #425
 	move EFFECT_NORMAL_HIT,         65, GROUND,         85, 10,  30      ;MUD_BOMB #426
 	move EFFECT_NORMAL_HIT,         80, FIRE,          100, 15,  30      ;LAVA_PLUME #436
 	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
 	move EFFECT_NORMAL_HIT,         60, BUG,           100, 20,   0      ;BUG_BITE #450
-	move EFFECT_NORMAL_HIT,         60, GHOST,         100,  5,  10      ;OMINOUS_WIND #466
 	move EFFECT_NORMAL_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
 	move EFFECT_NORMAL_HIT,         50, GHOST,         100, 10,   0      ;HEX #506
 	move EFFECT_NORMAL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
 	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
+	move EFFECT_FLINCH_HIT,         85, ICE,            90, 10,  30      ;ICICLE_CRASH #556
 .IndirectEnd::

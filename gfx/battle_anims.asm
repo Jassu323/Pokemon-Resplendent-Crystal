@@ -78,3 +78,7 @@ AnimObjTinyBubbleGFX:
 	INCBIN "gfx/battle_anims/tiny_bubble.2bpp.lz"
 AnimObjBulletSeedGFX:
 	INCBIN "gfx/battle_anims/bullet_seed.2bpp.lz"
+AnimObjSilverWindGFX:
+	INCBIN "gfx/battle_anims/silver_wind.2bpp.lz"
+AnimObjIceChunkGFX:
+	INCBIN "gfx/battle_anims/ice_chunk.2bpp.lz"

@@ -279,12 +279,12 @@
 	const OVERHEAT     ; 10f
 	const ROCK_TOMB    ; 110
 	const SILVER_WIND  ; 111
-	const EXTRASENSORY ; 112
-	const SKY_UPPERCUT ; 113
-	const SAND_TOMB    ; 114
-	const BULLET_SEED  ; 115
-	const AERIAL_ACE   ; 116
-	const ICICLE_SPEAR ; 117
+	const SHADOW_PUNCH ; 112
+	const EXTRASENSORY ; 113
+	const SKY_UPPERCUT ; 114
+	const SAND_TOMB    ; 115
+	const BULLET_SEED  ; 116
+	const AERIAL_ACE   ; 117
 	const BLOCK        ; 118
 	const HOWL         ; 119
 	const DRAGON_CLAW  ; 11a
@@ -307,19 +307,19 @@
 	const DRAIN_PUNCH  ; 12b
 	const ENERGY_BALL  ; 12c
 	const BULLET_PUNCH ; 12d
-	const THUNDER_FANG ; 12e
-	const ICE_FANG     ; 12f
-	const FIRE_FANG    ; 130
-	const SHADOW_SNEAK ; 131
+	const SHADOW_CLAW  ; 12e
+	const THUNDER_FANG ; 12f
+	const ICE_FANG     ; 130
+	const FIRE_FANG    ; 131
 	const MUD_BOMB     ; 132
 	const LAVA_PLUME   ; 133
 	const STONE_EDGE   ; 134
 	const BUG_BITE     ; 135
-	const OMINOUS_WIND ; 136
-	const SLUDGE_WAVE  ; 137
-	const HEX          ; 138
-	const WILD_CHARGE  ; 139
-	const DRILL_RUN    ; 13a
+	const SLUDGE_WAVE  ; 136
+	const HEX          ; 137
+	const WILD_CHARGE  ; 138
+	const DRILL_RUN    ; 139
+	const ICICLE_CRASH ; 13a
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff

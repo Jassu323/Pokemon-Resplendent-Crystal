@@ -278,12 +278,12 @@ MoveDescriptions1:
 	dw OverheatDescription
 	dw RockTombDescription
 	dw SilverWindDescription
+	dw ShadowPunchDescription
 	dw ExtrasensoryDescription
 	dw SkyUppercutDescription
 	dw SandTombDescription
 	dw BulletSeedDescription
 	dw AerialAceDescription
-	dw IcicleSpearDescription
 	dw BlockDescription
 	dw HowlDescription
 	dw DragonClawDescription
@@ -306,19 +306,19 @@ MoveDescriptions1:
 	dw DrainPunchDescription
 	dw EnergyBallDescription
 	dw BulletPunchDescription
+	dw ShadowClawDescription
 	dw ThunderFangDescription
 	dw IceFangDescription
 	dw FireFangDescription
-	dw ShadowSneakDescription
 	dw MudBombDescription
 	dw LavaPlumeDescription
 	dw StoneEdgeDescription
 	dw BugBiteDescription
-	dw OminousWindDescription
 	dw SludgeWaveDescription
 	dw HexDescription
 	dw WildChargeDescription
 	dw DrillRunDescription
+	dw IcicleCrashDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1394,6 +1394,9 @@ RockTombDescription:
 SilverWindDescription:
 	db   "Placeholder@"
 
+ShadowPunchDescription:
+	db   "Placeholder@"
+
 ExtrasensoryDescription:
 	db   "Placeholder@"
 
@@ -1407,9 +1410,6 @@ BulletSeedDescription:
 	db   "Placeholder@"
 
 AerialAceDescription:
-	db   "Placeholder@"
-
-IcicleSpearDescription:
 	db   "Placeholder@"
 
 BlockDescription:
@@ -1478,6 +1478,9 @@ EnergyBallDescription:
 BulletPunchDescription:
 	db   "Placeholder@"
 
+ShadowClawDescription:
+	db   "Placeholder@"
+
 ThunderFangDescription:
 	db   "Placeholder@"
 
@@ -1485,9 +1488,6 @@ IceFangDescription:
 	db   "Placeholder@"
 
 FireFangDescription:
-	db   "Placeholder@"
-
-ShadowSneakDescription:
 	db   "Placeholder@"
 
 MudBombDescription:
@@ -1502,9 +1502,6 @@ StoneEdgeDescription:
 BugBiteDescription:
 	db   "Placeholder@"
 
-OminousWindDescription:
-	db   "Placeholder@"
-
 SludgeWaveDescription:
 	db   "Placeholder@"
 
@@ -1515,4 +1512,7 @@ WildChargeDescription:
 	db   "Placeholder@"
 
 DrillRunDescription:
+	db   "Placeholder@"
+
+IcicleCrashDescription:
 	db   "Placeholder@"

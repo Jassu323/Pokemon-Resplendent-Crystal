@@ -203,6 +203,9 @@ BattleAnimFrameData:
 	dw .Frameset_WaterPulseDriftBubble ; BATTLE_ANIM_FRAMESET_WATER_PULSE_DRIFT_BUBBLE
 	dw .Frameset_BulletSeed          ; BATTLE_ANIM_FRAMESET_BULLET_SEED
 	dw .Frameset_SacredFireHitDelayed ; BATTLE_ANIM_FRAMESET_SACRED_FIRE_HIT_DELAYED
+	dw .Frameset_SilverWind          ; BATTLE_ANIM_FRAMESET_SILVER_WIND
+	dw .Frameset_IceChunkSolid       ; BATTLE_ANIM_FRAMESET_ICE_CHUNK_SOLID
+	dw .Frameset_IceChunkShatter     ; BATTLE_ANIM_FRAMESET_ICE_CHUNK_SHATTER
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -784,6 +787,24 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_EMBER_3,  3
 	oamframe BATTLE_ANIM_OAMSET_EMBER_4,  3
 	oamframe BATTLE_ANIM_OAMSET_EMBER_5,  4
+	oamdelete
+
+.Frameset_SilverWind:
+	oamframe BATTLE_ANIM_OAMSET_21, 4
+	oamframe BATTLE_ANIM_OAMSET_1B, 4
+	oamframe BATTLE_ANIM_OAMSET_21, 4
+	oamframe BATTLE_ANIM_OAMSET_7F, 4
+	oamframe BATTLE_ANIM_OAMSET_21, 4
+	oamrestart
+
+.Frameset_IceChunkSolid:
+	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_1, 1
+	oamrestart
+
+.Frameset_IceChunkShatter:
+	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_2, 4
+	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_3, 4
+	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_4, 4
 	oamdelete
 
 .Frameset_ConfuseRay1:

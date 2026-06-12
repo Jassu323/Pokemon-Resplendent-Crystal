@@ -266,6 +266,8 @@ sludge_bomb_battle_anim_colors := '\#ffffff,\#f0f0f0,\#e050e0,\#c800c8'
 sharp_teeth_battle_anim_colors := '\#ffffff,\#f0f0f0,\#606060,\#000000'
 hyper_fang_battle_anim_colors := '\#ffffff,\#f8f828,\#f87010,\#c81800'
 bullet_seed_battle_anim_colors := '\#ffffff,\#c8b870,\#807038,\#483800'
+silver_wind_battle_anim_colors := '\#ffffff,\#d0d8c8,\#b8c0a0,\#a0a878'
+ice_chunk_battle_anim_colors := '\#ffffff,\#08f8f8,\#08a0f8,\#0820f8'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
@@ -292,6 +294,8 @@ $(eval $(call battle_anim_rgbgfx_rule,sludge_bomb,sludge_bomb_battle_anim_colors
 $(eval $(call battle_anim_rgbgfx_rule,sharp_teeth,sharp_teeth_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rw_rule,hyper_fang,hyper_fang_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,bullet_seed,bullet_seed_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,silver_wind,silver_wind_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ice_chunk,ice_chunk_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \

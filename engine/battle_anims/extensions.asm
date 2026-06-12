@@ -150,6 +150,14 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_spore
 	cp BATTLE_ANIM_SPORE_PAL_RESTORE
 	jp z, .restore_blue
+	cp BATTLE_ANIM_SILVER_WIND_PAL_LOAD
+	jp z, .load_silver_wind
+	cp BATTLE_ANIM_SILVER_WIND_PAL_RESTORE
+	jp z, .restore_blue
+	cp BATTLE_ANIM_ICE_PAL_LOAD
+	jp z, .load_ice
+	cp BATTLE_ANIM_ICE_PAL_RESTORE
+	jp z, .restore_blue
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -164,12 +172,12 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .restore_brown
 	ld hl, .ThunderboltPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_water_column
 	ld hl, .WaterColumnPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_water
 	ld hl, .WaterPal
@@ -228,6 +236,16 @@ BattleAnimExt_LoadCustomPal:
 
 .load_spore
 	ld hl, .SporePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_silver_wind
+	ld hl, .SilverWindPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jr .load_custom_pal
+
+.load_ice
+	ld hl, .IcePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .load_custom_pal
 
@@ -380,6 +398,18 @@ BattleAnimExt_LoadCustomPal:
 	RGB 06, 13, 24 ; source lavender -> deep blue
 	RGB 10, 22, 31 ; source light purple -> bright cyan-blue
 	RGB 08, 17, 28 ; source dark purple -> mid blue
+
+.SilverWindPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 26, 27, 25 ; bright silver
+	RGB 23, 24, 20 ; mid silver
+	RGB 20, 21, 15 ; dark silver
+
+.IcePal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 01, 31, 31 ; bright cyan
+	RGB 01, 20, 31 ; mid blue
+	RGB 01, 04, 31 ; dark blue
 
 .ShadowBallPal:
 	RGB 31, 31, 31 ; transparent (bg)

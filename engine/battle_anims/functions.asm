@@ -180,6 +180,10 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_CrunchRock
 	dw BattleAnimFunc_WaterPulseDriftBubble
 	dw BattleAnimFunc_ThunderStrikeController
+	dw BattleAnimFunc_SilverWind
+	dw BattleAnimFunc_IceChunk
+	dw BattleAnimFunc_StoneEdgeRock
+	dw BattleAnimFunc_ShockWaveOrb
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -1833,6 +1837,273 @@ BattleAnimFunc_BulletSeed:
 .YArc:
 	db  0, -3, -6, -8, -10, -11, -12, -11
 	db -10, -8, -6, -4,  -2,  -1,   0,   1
+
+BattleAnimFunc_SilverWind:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+
+.init
+	call .GetPath
+	ld a, [hli]
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld e, a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_y
+	ld hl, BATTLEANIMSTRUCT_FIX_Y
+	add hl, bc
+	ld a, [hl]
+	sub e
+	sub 12
+	ld e, a
+.got_y
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], e
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_init_x
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, (-10 * TILE_WIDTH) + 4
+	sub [hl]
+	ld [hl], a
+.got_init_x
+	call .GetPath
+	inc hl
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	swap a
+	ld d, a
+	ld a, [hl]
+	or d
+	ld d, a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_path_params
+	set 7, d
+.got_path_params
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld [hl], d
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], e
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 72
+	jr nc, .done
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	bit 7, e
+	jr nz, .move_left
+	ld a, [hl]
+	add 2
+	ld [hl], a
+	jr .got_x
+.move_left
+	ld a, [hl]
+	sub 2
+	ld [hl], a
+.got_x
+	ld a, e
+	swap a
+	and $7
+	ld d, a
+	push de
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	ld a, e
+	and $f
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.GetPath
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $7
+	add a
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Paths
+	add hl, de
+	ret
+
+.Paths:
+; y offset, sine angle, amplitude, angle step
+	db -40, $00, 4, 1
+	db -28, $10, 5, 1
+	db -16, $20, 4, 1
+	db  -4, $30, 6, 2
+	db   8, $08, 5, 1
+	db  20, $18, 6, 1
+	db -34, $28, 5, 1
+	db  26, $38, 4, 1
+
+BattleAnimFunc_IceChunk:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .fall
+	dw .shatter
+
+.init
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], $30
+	inc hl
+	ld [hl], $60
+	call BattleAnim_IncAnonJumptableIndex
+
+.fall
+	call .ApplyYOffset
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	and $3f
+	cp 1
+	jr z, .start_shatter
+	ret
+
+.start_shatter
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], $20
+	inc hl
+	ld [hl], $0c
+	ld de, BATTLE_ANIM_FRAMESET_ICE_CHUNK_SHATTER
+	call ReinitBattleAnimFrameset
+.shatter
+	call .ApplyYOffset
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.ApplyYOffset
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hli]
+	ld d, [hl]
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+BattleAnimFunc_StoneEdgeRock:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .rise
+
+.init
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .player_target
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add 12
+	ld [hl], a
+	jr .got_start_y
+.player_target
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], 72
+.got_start_y
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.rise
+	call .MoveUp
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 4
+	jr z, .spawn_hit
+	cp 24
+	jr nc, .done
+	ret
+
+.spawn_hit
+	call BattleAnimFunc_BulletSeed_SpawnHit
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.MoveUp
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub 3
+	ld [hl], a
+	ret
+
+BattleAnimFunc_ShockWaveOrb:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr nz, .move
+	ld [hl], $18
+
+.move
+	ld a, [hl]
+	cp $80
+	jr nc, .done
+	ld d, a
+	add $8
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	call BattleAnim_StepCircle
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
 
 BattleAnimFunc_Recover:
 ; Obj moves in an ever shrinking circle. Obj Param defines initial position in the circle

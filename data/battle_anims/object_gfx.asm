@@ -69,4 +69,6 @@ AnimObjGFX:
 	anim_obj_gfx  1, AnimObjSmallBubbleGFX
 	anim_obj_gfx  1, AnimObjTinyBubbleGFX
 	anim_obj_gfx  4, AnimObjBulletSeedGFX
+	anim_obj_gfx 12, AnimObjSilverWindGFX
+	anim_obj_gfx 64, AnimObjIceChunkGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

@@ -224,7 +224,29 @@ BattleAnimOAMData:
 	battleanimoam $0b,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_5
 	battleanimoam $00, 12, .OAMData_SharpTeeth ; BATTLE_ANIM_OAMSET_SHARP_TEETH
 	battleanimoam $00, 12, .OAMData_SharpTeethFlipped ; BATTLE_ANIM_OAMSET_SHARP_TEETH_FLIPPED
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_1
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_3
+	battleanimoam $30, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_4
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
+
+.OAMData_IceChunk:
+	dbsprite  -2,  -2, 0, 0, $00, $0
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite   1,  -2, 0, 0, $03, $0
+	dbsprite  -2,  -1, 0, 0, $04, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   1,  -1, 0, 0, $07, $0
+	dbsprite  -2,   0, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+	dbsprite  -2,   1, 0, 0, $0c, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+	dbsprite   1,   1, 0, 0, $0f, $0
 
 .OAMData_11:
 	dbsprite  -1,  -1, 4, 0, $00, $0
