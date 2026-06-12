@@ -62,6 +62,8 @@ BattleAnimFunc_ThunderStrikeController:
 	cp $ff
 	ret z
 	ld [wBattleObjectTempID], a
+	xor a
+	ld [wBattleObjectTempNamespace], a
 	ld d, [hl]
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
@@ -245,6 +247,8 @@ BattleAnimFunc_WishStar_SpawnGlimmer:
 	ret nz
 	ld a, BATTLE_ANIM_OBJ_WISH_GLIMMER
 	ld [wBattleObjectTempID], a
+	xor a
+	ld [wBattleObjectTempNamespace], a
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
 	ld a, [hl]

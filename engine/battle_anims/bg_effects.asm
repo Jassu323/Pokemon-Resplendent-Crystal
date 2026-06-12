@@ -976,6 +976,8 @@ BattleBGEffect_BattlerObj_2Row:
 	ret
 
 _QueueBattleAnimation:
+	xor a
+	ld [wBattleObjectTempNamespace], a
 	callfar QueueBattleAnimation
 	ret
 

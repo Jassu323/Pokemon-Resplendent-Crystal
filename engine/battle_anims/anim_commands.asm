@@ -654,8 +654,7 @@ BattleAnimCmd_IfParamAnd:
 
 BattleAnimCmd_Obj:
 ; index, x, y, param
-	call GetBattleAnimByte
-	ld [wBattleObjectTempID], a
+	call BattleAnimCmd_ReadObjectID
 	call GetBattleAnimByte
 	ld [wBattleObjectTempXCoord], a
 	call GetBattleAnimByte
@@ -663,6 +662,22 @@ BattleAnimCmd_Obj:
 	call GetBattleAnimByte
 	ld [wBattleObjectTempParam], a
 	call QueueBattleAnimation
+	ret
+
+BattleAnimCmd_ReadObjectID:
+	call GetBattleAnimByte
+	cp BATTLE_ANIM_OBJ_EXT1_PREFIX
+	jr z, .extended
+	ld [wBattleObjectTempID], a
+	xor a ; BATTLE_ANIM_OBJ_NAMESPACE_REGULAR
+	ld [wBattleObjectTempNamespace], a
+	ret
+
+.extended
+	call GetBattleAnimByte
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
 	ret
 
 BattleAnimCmd_BGEffect:
@@ -1207,8 +1222,7 @@ BattleAnimCmd_Batch:
 	ret
 
 .objparams
-	call GetBattleAnimByte
-	ld [wBattleObjectTempID], a
+	call BattleAnimCmd_ReadObjectID
 	call GetBattleAnimByte
 	ld [wBattleObjectTempXCoord], a
 	call GetBattleAnimByte
@@ -1226,8 +1240,7 @@ BattleAnimCmd_Batch:
 	ret
 
 .objlist
-	call GetBattleAnimByte
-	ld [wBattleObjectTempID], a
+	call BattleAnimCmd_ReadObjectID
 	call GetBattleAnimByte
 	ld e, a
 .objlist_loop

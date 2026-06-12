@@ -24,6 +24,23 @@ MACRO anim_obj
 	endc
 ENDM
 
+MACRO anim_extobj
+	db anim_obj_command
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	if _NARG <= 4
+		db \1 ; extended object
+		db \2 ; x
+		db \3 ; y
+		db \4 ; param
+	else
+	; LEGACY: Support the tile+offset format
+		db \1 ; extended object
+		db (\2) * TILE_WIDTH + (\3) ; x_tile, x
+		db (\4) * TILE_WIDTH + (\5) ; y_tile, y
+		db \6 ; param
+	endc
+ENDM
+
 	const anim_1gfx_command ; $d1
 MACRO anim_1gfx
 	db anim_1gfx_command
@@ -255,11 +272,43 @@ MACRO anim_objparams
 	endr
 ENDM
 
+MACRO anim_extobjparams
+	assert _NARG == 4 + (\4), "anim_extobjparams count must match number of params"
+	db anim_batch_command
+	db 0 ; subtype: same object and coordinates, param list
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	db \1 ; extended object
+	db \2 ; x
+	db \3 ; y
+	db \4 ; count
+	shift 4
+	rept _NARG
+		db \1 ; param
+		shift
+	endr
+ENDM
+
 MACRO anim_objlist
 	assert _NARG == 2 + 3 * (\2), "anim_objlist count must match x/y/param triples"
 	db anim_batch_command
 	db 1 ; subtype: same object, x/y/param list
 	db \1 ; object
+	db \2 ; count
+	shift 2
+	rept _NARG / 3
+		db \1 ; x
+		db \2 ; y
+		db \3 ; param
+		shift 3
+	endr
+ENDM
+
+MACRO anim_extobjlist
+	assert _NARG == 2 + 3 * (\2), "anim_extobjlist count must match x/y/param triples"
+	db anim_batch_command
+	db 1 ; subtype: same object, x/y/param list
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	db \1 ; extended object
 	db \2 ; count
 	shift 2
 	rept _NARG / 3

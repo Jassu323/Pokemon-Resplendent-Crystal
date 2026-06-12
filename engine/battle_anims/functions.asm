@@ -1234,6 +1234,8 @@ BattleAnimFunc_SpawnSmallHitAtObject:
 	push af
 	ld a, BATTLE_ANIM_OBJ_HIT_SMALL
 	ld [wBattleObjectTempID], a
+	xor a
+	ld [wBattleObjectTempNamespace], a
 	ld hl, BATTLEANIMSTRUCT_XCOORD
 	add hl, bc
 	ld a, [hl]

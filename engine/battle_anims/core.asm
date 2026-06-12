@@ -77,55 +77,75 @@ InitBattleAnimation:
 	ret
 
 GetBattleAnimObjectCached:
-	ld a, [wBattleObjectTempID]
-	ld hl, wBattleAnimObjCache1ID
-	cp [hl]
+	ld hl, wBattleAnimObjCache1Namespace
+	call BattleAnimObjectCacheMatches
 	jr z, .hit_slot1
-	ld hl, wBattleAnimObjCache2ID
-	cp [hl]
+	ld hl, wBattleAnimObjCache2Namespace
+	call BattleAnimObjectCacheMatches
 	jr z, .hit_slot2
-	ld hl, wBattleAnimObjCache3ID
-	cp [hl]
+	ld hl, wBattleAnimObjCache3Namespace
+	call BattleAnimObjectCacheMatches
 	jr z, .hit_slot3
 
-	ld hl, wBattleAnimObjCache2ID
-	ld de, wBattleAnimObjCache3ID
+	ld hl, wBattleAnimObjCache2Namespace
+	ld de, wBattleAnimObjCache3Namespace
 	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
 	call CopyBytes
-	ld hl, wBattleAnimObjCache1ID
-	ld de, wBattleAnimObjCache2ID
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
 	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
 	call CopyBytes
+	ld a, [wBattleObjectTempNamespace]
+	ld [wBattleAnimObjCache1Namespace], a
 	ld a, [wBattleObjectTempID]
 	ld [wBattleAnimObjCache1ID], a
 	ld e, a
 	ld d, 0
+	ld a, [wBattleObjectTempNamespace]
+	and a
+	jr z, .regular_object
+	ld hl, BattleAnimExtObjects
+	ld a, BANK(BattleAnimExtObjects)
+	jr .got_object_table
+
+.regular_object
 	ld hl, BattleAnimObjects
+	ld a, BANK(BattleAnimObjects)
+
+.got_object_table
 rept BATTLEANIMOBJ_LENGTH
 	add hl, de
 endr
 	ld de, wBattleAnimObjCache1Data
 	ld bc, BATTLEANIMOBJ_LENGTH
-	ld a, BANK(BattleAnimObjects)
 	call FarCopyBytes
 .hit_slot1
 	ld de, wBattleAnimObjCache1Data
 	ret
 
 .hit_slot2
-	ld hl, wBattleAnimObjCache1ID
-	ld de, wBattleAnimObjCache2ID
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
 	call SwapBattleAnimObjectCacheEntries
 	jr .hit_slot1
 
 .hit_slot3
-	ld hl, wBattleAnimObjCache2ID
-	ld de, wBattleAnimObjCache3ID
+	ld hl, wBattleAnimObjCache2Namespace
+	ld de, wBattleAnimObjCache3Namespace
 	call SwapBattleAnimObjectCacheEntries
-	ld hl, wBattleAnimObjCache1ID
-	ld de, wBattleAnimObjCache2ID
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
 	call SwapBattleAnimObjectCacheEntries
 	jr .hit_slot1
+
+BattleAnimObjectCacheMatches:
+	ld a, [wBattleObjectTempNamespace]
+	cp [hl]
+	ret nz
+	inc hl
+	ld a, [wBattleObjectTempID]
+	cp [hl]
+	ret
 
 SwapBattleAnimObjectCacheEntries:
 	ld b, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH

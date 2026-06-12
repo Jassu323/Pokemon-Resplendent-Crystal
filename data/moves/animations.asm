@@ -4386,14 +4386,14 @@ BattleAnim_RockBlast:
 BattleAnim_ShockWave:
 	anim_3gfx BATTLE_ANIM_GFX_CHARGE, BATTLE_ANIM_GFX_ELECTRICITY_EFFECT, BATTLE_ANIM_GFX_HIT
 	anim_sound 0, 0, SFX_CHARGE
-	anim_objparams BATTLE_ANIM_OBJ_SHOCK_WAVE_CHARGE, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHOCK_WAVE_CHARGE, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
 	anim_wait 100
 	anim_clearobjs
 	anim_wait 4
 	anim_call BattleAnimSub_ElectricityEffectUser
 	anim_wait 8
 	anim_sound 0, 0, SFX_SWORDS_DANCE
-	anim_objparams BATTLE_ANIM_OBJ_SHOCK_WAVE_ORB, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHOCK_WAVE_ORB, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
 	anim_wait 22
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 56, $0
 	anim_wait 6

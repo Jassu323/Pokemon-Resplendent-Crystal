@@ -3611,6 +3611,7 @@ wBattleObjectTempID:: db
 wBattleObjectTempXCoord:: db
 wBattleObjectTempYCoord:: db
 wBattleObjectTempParam:: db
+wBattleObjectTempNamespace:: db
 
 NEXTU
 wBattleBGEffectTempID:: db
@@ -3653,10 +3654,13 @@ wSurfWaveBGEffect:: ds $40
 wSurfWaveBGEffectEnd::
 ENDU
 
+wBattleAnimObjCache1Namespace:: db
 wBattleAnimObjCache1ID:: db
 wBattleAnimObjCache1Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache2Namespace:: db
 wBattleAnimObjCache2ID:: db
 wBattleAnimObjCache2Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache3Namespace:: db
 wBattleAnimObjCache3ID:: db
 wBattleAnimObjCache3Data:: ds BATTLEANIMOBJ_LENGTH
 
