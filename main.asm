@@ -416,7 +416,6 @@ SECTION "bank32", ROMX
 
 INCLUDE "engine/battle_anims/bg_effects.asm"
 INCLUDE "gfx/battle_anims.asm"
-INCLUDE "engine/events/poisonstep_pals.asm"
 
 
 SECTION "Battle Animation Scripts", ROMX
@@ -722,6 +721,7 @@ SECTION "Crystal Events", ROMX
 
 INCLUDE "engine/events/battle_tower/load_trainer.asm"
 INCLUDE "engine/events/odd_egg.asm"
+INCLUDE "engine/events/poisonstep_pals.asm"
 
 
 SECTION "Stadium 2 Checksums", ROMX[$7DE0], BANK[$7F]

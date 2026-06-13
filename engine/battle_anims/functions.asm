@@ -184,6 +184,10 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_IceChunk
 	dw BattleAnimFunc_StoneEdgeRock
 	dw BattleAnimFunc_ShockWaveOrb
+	dw BattleAnimFunc_BlockX
+	dw BattleAnimFunc_ForcePalm
+	dw BattleAnimFunc_IngrainRoot
+	dw BattleAnimFunc_IngrainOrb
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -2101,6 +2105,367 @@ BattleAnimFunc_ShockWaveOrb:
 	add hl, bc
 	ld a, [hl]
 	call BattleAnim_StepCircle
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_BlockX:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .fall
+	dw .bounce_big
+	dw .bounce_small
+	dw .hold
+	dw .flicker
+
+.init
+	ldh a, [hBattleTurn]
+	and a
+	ld a, -96
+	jr z, .got_start_y
+	ld a, -120
+.got_start_y
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.fall
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld a, [hl]
+	add 10
+	ld [hl], a
+	bit 7, a
+	ret nz
+	xor a
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.bounce_big
+	ld d, 16
+	ld e, 4
+	call .bounce
+	ret c
+	jr .bounce_done
+
+.bounce_small
+	ld d, 8
+	ld e, 6
+	call .bounce
+	ret c
+
+.bounce_done
+	xor a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.bounce
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	push af
+	call BattleAnim_Sine
+	xor $ff
+	inc a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop af
+	cp $80
+	ret
+
+.hold
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 9
+	ret c
+	xor a
+	ld [hl], a
+	inc hl
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.flicker
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 8
+	ret c
+	xor a
+	ld [hli], a
+	inc [hl]
+	ld a, [hl]
+	cp 7
+	jp z, BattleAnimExt_Deinit
+	and 1
+	ld de, BATTLE_ANIM_FRAMESET_BLOCK_X
+	jr z, .set_flicker_frameset
+	ld de, BATTLE_ANIM_FRAMESET_BLOCK_X_HIDDEN
+.set_flicker_frameset
+	call ReinitBattleAnimFrameset
+	ret
+
+BattleAnimFunc_ForcePalm:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .approach
+	dw .pause
+	dw .exit
+
+.init
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_orientation
+	ld hl, BATTLEANIMSTRUCT_OAMFLAGS
+	add hl, bc
+	set B_OAM_XFLIP, [hl]
+.got_orientation
+	xor a
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.approach
+	call .MoveForward
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 8
+	ret c
+	xor a
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.pause
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 6
+	ret c
+	xor a
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.exit
+	call .MoveForward
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 12
+	ret c
+	call BattleAnimExt_Deinit
+	ret
+
+.MoveForward
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld a, [hl]
+	add 6
+	ld [hl], a
+	ret
+
+BattleAnimFunc_IngrainRoot:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .update
+
+.init
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	add a
+	add a
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .RootData
+	add hl, de
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_side_data
+	inc hl
+	inc hl
+	inc hl
+	inc hl
+.got_side_data
+	ld a, [hli]
+	ld e, a
+	ld d, 0
+	push hl
+	call ReinitBattleAnimFrameset
+	ld a, e
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld [hl], a
+	pop de
+	ld a, [de]
+	inc de
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld a, [de]
+	inc de
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld a, [de]
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.update
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp d
+	jr z, .done
+	jr c, .done
+	sub 10
+	cp d
+	ret nc
+	ld a, d
+	and 2
+	jr z, .show
+	ld de, BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_HIDDEN
+	call ReinitBattleAnimFrameset
+	ret
+
+.show
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld e, [hl]
+	ld d, 0
+	call ReinitBattleAnimFrameset
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.RootData:
+	; player frameset, x offset, y offset, lifetime, enemy frameset, x offset, y offset, lifetime
+	db BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_2,        14, 18, 126, BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_2,       -14, 18, 126
+	db BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_1_XFLIP, -24, -8, 126, BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_1_XFLIP,  24, -8, 126
+	db BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_0,        22, -8, 126, BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_0,       -22, -8, 126
+	db BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_3_XFLIP, -16, 14, 126, BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_3_XFLIP,  16, 14, 126
+
+BattleAnimFunc_IngrainOrb:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld e, [hl]
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	cp 1
+	jr z, .path1
+	cp 2
+	jr z, .path2
+
+.path0
+	ld a, e
+	cp 30
+	jr nc, .done
+	ld a, 24
+	sub e
+	call .SetXOffset
+	ld a, e
+	add a
+	ld d, 3
+	call BattleAnim_Sine
+	add -4
+	call .SetYOffset
+	ret
+
+.path1
+	ld a, e
+	cp 30
+	jr nc, .done
+	ld a, -32
+	add e
+	call .SetXOffset
+	ld a, e
+	add a
+	add $10
+	ld d, 2
+	call BattleAnim_Sine
+	add -6
+	call .SetYOffset
+	ret
+
+.path2
+	ld a, e
+	cp 18
+	jr nc, .done
+	add a
+	ld d, a
+	ld a, 32
+	sub d
+	call .SetXOffset
+	ld a, e
+	add a
+	add $20
+	ld d, 3
+	call BattleAnim_Sine
+	add -10
+	call .SetYOffset
+	ret
+
+.SetXOffset
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.SetYOffset
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
 	ret
 
 .done

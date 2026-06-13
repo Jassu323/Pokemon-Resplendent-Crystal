@@ -158,6 +158,10 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_ice
 	cp BATTLE_ANIM_ICE_PAL_RESTORE
 	jp z, .restore_blue
+	cp BATTLE_ANIM_BUG_PAL_LOAD
+	jp z, .load_bug
+	cp BATTLE_ANIM_BUG_PAL_RESTORE
+	jp z, .restore_gray
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -182,12 +186,12 @@ BattleAnimExt_LoadCustomPal:
 .load_water
 	ld hl, .WaterPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_grass
 	ld hl, .GrassPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_fire
 	ld hl, .FirePal
@@ -249,6 +253,11 @@ BattleAnimExt_LoadCustomPal:
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .load_custom_pal
 
+.load_bug
+	ld hl, .BugPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GRAY
+	jr .load_custom_pal
+
 .load_shadow_ball
 	ld hl, .ShadowBallPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
@@ -294,6 +303,11 @@ BattleAnimExt_LoadCustomPal:
 .restore_red
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_RED
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jr .restore_pal
+
+.restore_gray
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_GRAY
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GRAY
 
 .restore_pal
 	ldh a, [hCGB]
@@ -410,6 +424,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 01, 31, 31 ; bright cyan
 	RGB 01, 20, 31 ; mid blue
 	RGB 01, 04, 31 ; dark blue
+
+.BugPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 23, 24, 13
+	RGB 17, 20, 03
+	RGB 00, 00, 00
 
 .ShadowBallPal:
 	RGB 31, 31, 31 ; transparent (bg)

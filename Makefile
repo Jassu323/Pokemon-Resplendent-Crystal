@@ -268,6 +268,9 @@ hyper_fang_battle_anim_colors := '\#ffffff,\#f8f828,\#f87010,\#c81800'
 bullet_seed_battle_anim_colors := '\#ffffff,\#c8b870,\#807038,\#483800'
 silver_wind_battle_anim_colors := '\#ffffff,\#d0d8c8,\#b8c0a0,\#a0a878'
 ice_chunk_battle_anim_colors := '\#ffffff,\#08f8f8,\#08a0f8,\#0820f8'
+block_battle_anim_colors := '\#ffffff,\#000000,\#f81800,\#c00800'
+force_palm_battle_anim_colors := '\#ffffff,\#c8c8c8,\#606060,\#000000'
+ingrain_battle_anim_colors := '\#ffffff,\#909090,\#404040,\#000000'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
@@ -296,6 +299,9 @@ $(eval $(call battle_anim_rgbgfx_rw_rule,hyper_fang,hyper_fang_battle_anim_color
 $(eval $(call battle_anim_rgbgfx_rule,bullet_seed,bullet_seed_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,silver_wind,silver_wind_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,ice_chunk,ice_chunk_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,block,block_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,force_palm,force_palm_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ingrain,ingrain_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \

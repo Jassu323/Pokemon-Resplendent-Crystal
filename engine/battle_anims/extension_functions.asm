@@ -243,7 +243,15 @@ BattleAnimFunc_WishStar_SpawnGlimmer:
 	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
 	ld a, [hl]
-	and $3
+	; Spawn every 6 frames to avoid stacking too many large glimmers on
+	; the same scanlines.
+.mod_loop
+	cp 6
+	jr c, .got_mod
+	sub 6
+	jr .mod_loop
+.got_mod
+	and a
 	ret nz
 	ld a, BATTLE_ANIM_OBJ_WISH_GLIMMER
 	ld [wBattleObjectTempID], a

@@ -206,6 +206,21 @@ BattleAnimFrameData:
 	dw .Frameset_SilverWind          ; BATTLE_ANIM_FRAMESET_SILVER_WIND
 	dw .Frameset_IceChunkSolid       ; BATTLE_ANIM_FRAMESET_ICE_CHUNK_SOLID
 	dw .Frameset_IceChunkShatter     ; BATTLE_ANIM_FRAMESET_ICE_CHUNK_SHATTER
+	dw .Frameset_BlockX              ; BATTLE_ANIM_FRAMESET_BLOCK_X
+	dw .Frameset_BlockXHidden        ; BATTLE_ANIM_FRAMESET_BLOCK_X_HIDDEN
+	dw .Frameset_ForcePalm           ; BATTLE_ANIM_FRAMESET_FORCE_PALM
+	dw .Frameset_FocusPunchFist      ; BATTLE_ANIM_FRAMESET_FOCUS_PUNCH_FIST
+	dw .Frameset_IngrainRoot0        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_0
+	dw .Frameset_IngrainRoot1        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_1
+	dw .Frameset_IngrainRoot2        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_2
+	dw .Frameset_IngrainRoot3        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_3
+	dw .Frameset_IngrainRoot0XFlip   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_0_XFLIP
+	dw .Frameset_IngrainRoot1XFlip   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_1_XFLIP
+	dw .Frameset_IngrainRoot2XFlip   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_2_XFLIP
+	dw .Frameset_IngrainRoot3XFlip   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_3_XFLIP
+	dw .Frameset_IngrainRootHidden   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_HIDDEN
+	dw .Frameset_IngrainOrb          ; BATTLE_ANIM_FRAMESET_INGRAIN_ORB
+	dw .Frameset_CutLongUpRight      ; BATTLE_ANIM_FRAMESET_CUT_LONG_UP_RIGHT
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -316,6 +331,22 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP
 	oamwait 2
 	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP
+	oamdelete
+
+.Frameset_CutLongUpRight:
+	oamframe BATTLE_ANIM_OAMSET_4B,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_4C,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_4D,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_4F,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_50,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_51,  1, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP, B_OAM_YFLIP
+	oamwait 2
+	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP, B_OAM_YFLIP
+	oamwait 2
+	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP, B_OAM_YFLIP
+	oamwait 2
+	oamframe BATTLE_ANIM_OAMSET_52,  2, B_OAM_XFLIP, B_OAM_YFLIP
 	oamdelete
 
 .Frameset_BallPoof:
@@ -805,6 +836,22 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_2, 4
 	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_3, 4
 	oamframe BATTLE_ANIM_OAMSET_ICE_CHUNK_4, 4
+	oamdelete
+
+.Frameset_BlockX:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
+	oamrestart
+
+.Frameset_BlockXHidden:
+	oamwait 8
+	oamrestart
+
+.Frameset_ForcePalm:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
+	oamrestart
+
+.Frameset_FocusPunchFist:
+	oamframe BATTLE_ANIM_OAMSET_FOCUS_PUNCH_FIST, 44
 	oamdelete
 
 .Frameset_ConfuseRay1:
@@ -1398,3 +1445,63 @@ BattleAnimFrameData:
 .Frameset_PlayerHead2Row:
 	oamframe BATTLE_ANIM_OAMSET_D7,  8
 	oamend
+
+.Frameset_IngrainRoot0:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3,  7
+	oamend
+
+.Frameset_IngrainRoot1:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3,  7
+	oamend
+
+.Frameset_IngrainRoot2:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7
+	oamend
+
+.Frameset_IngrainRoot3:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7
+	oamend
+
+.Frameset_IngrainRoot0XFlip:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3,  7, B_OAM_XFLIP
+	oamend
+
+.Frameset_IngrainRoot1XFlip:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3,  7, B_OAM_XFLIP
+	oamend
+
+.Frameset_IngrainRoot2XFlip:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7, B_OAM_XFLIP
+	oamend
+
+.Frameset_IngrainRoot3XFlip:
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1,  7, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2,  7, B_OAM_XFLIP
+	oamend
+
+.Frameset_IngrainRootHidden:
+	oamwait 8
+	oamend
+
+.Frameset_IngrainOrb:
+	oamframe BATTLE_ANIM_OAMSET_1B,  4
+	oamrestart

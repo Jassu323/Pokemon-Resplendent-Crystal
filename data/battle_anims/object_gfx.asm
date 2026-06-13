@@ -71,4 +71,9 @@ AnimObjGFX:
 	anim_obj_gfx  4, AnimObjBulletSeedGFX
 	anim_obj_gfx 12, AnimObjSilverWindGFX
 	anim_obj_gfx 64, AnimObjIceChunkGFX
+	anim_obj_gfx 16, AnimObjBlockGFX
+	anim_obj_gfx 16, AnimObjForcePalmGFX
+	anim_obj_gfx 12, AnimObjFocusPunchGFX
+	anim_obj_gfx 36, AnimObjIngrainGFX
+	anim_obj_gfx  4, AnimObjMediumBubbleGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

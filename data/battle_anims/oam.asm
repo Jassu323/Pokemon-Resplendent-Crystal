@@ -228,6 +228,12 @@ BattleAnimOAMData:
 	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_2
 	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_3
 	battleanimoam $30, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_4
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_BLOCK_X
+	battleanimoam $00, 12, .OAMData_FocusPunchFist ; BATTLE_ANIM_OAMSET_FOCUS_PUNCH_FIST
+	battleanimoam $00,  3, .OAMData_IngrainRoot0 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0
+	battleanimoam $00,  8, .OAMData_IngrainRoot1 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1
+	battleanimoam $00,  8, .OAMData_IngrainRoot2 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2
+	battleanimoam $00,  8, .OAMData_IngrainRoot3 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_IceChunk:
@@ -247,6 +253,55 @@ BattleAnimOAMData:
 	dbsprite  -1,   1, 0, 0, $0d, $0
 	dbsprite   0,   1, 0, 0, $0e, $0
 	dbsprite   1,   1, 0, 0, $0f, $0
+
+.OAMData_FocusPunchFist:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite   0,  -1, 0, 0, $02, $0
+	dbsprite   1,  -1, 0, 0, $03, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+	dbsprite  -1,   0, 0, 0, $05, $0
+	dbsprite   0,   0, 0, 0, $06, $0
+	dbsprite   1,   0, 0, 0, $07, $0
+	dbsprite  -2,   1, 0, 0, $08, $0
+	dbsprite  -1,   1, 0, 0, $09, $0
+	dbsprite   0,   1, 0, 0, $0a, $0
+	dbsprite   1,   1, 0, 0, $0b, $0
+
+.OAMData_IngrainRoot0:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+
+.OAMData_IngrainRoot1:
+	dbsprite  -2,  -1, 0, 0, $08, $0
+	dbsprite  -1,  -1, 0, 0, $09, $0
+	dbsprite   0,  -1, 0, 0, $0a, $0
+	dbsprite  -2,   0, 0, 0, $0c, $0
+	dbsprite  -1,   0, 0, 0, $0d, $0
+	dbsprite   0,   0, 0, 0, $0e, $0
+	dbsprite   1,   0, 0, 0, $0f, $0
+	dbsprite  -2,   1, 0, 0, $10, $0
+
+.OAMData_IngrainRoot2:
+	dbsprite  -2,  -1, 0, 0, $14, $0
+	dbsprite  -1,  -1, 0, 0, $15, $0
+	dbsprite   0,  -1, 0, 0, $16, $0
+	dbsprite   1,  -1, 0, 0, $17, $0
+	dbsprite  -2,   0, 0, 0, $18, $0
+	dbsprite  -1,   0, 0, 0, $19, $0
+	dbsprite   0,   0, 0, 0, $1a, $0
+	dbsprite   1,   0, 0, 0, $1b, $0
+
+.OAMData_IngrainRoot3:
+	dbsprite  -2,   0, 0, 0, $1c, $0
+	dbsprite  -1,   0, 0, 0, $1d, $0
+	dbsprite   0,   0, 0, 0, $1e, $0
+	dbsprite   1,   0, 0, 0, $1f, $0
+	dbsprite  -2,   1, 0, 0, $20, $0
+	dbsprite  -1,   1, 0, 0, $21, $0
+	dbsprite   0,   1, 0, 0, $22, $0
+	dbsprite   1,   1, 0, 0, $23, $0
 
 .OAMData_11:
 	dbsprite  -1,  -1, 4, 0, $00, $0

@@ -82,3 +82,13 @@ AnimObjSilverWindGFX:
 	INCBIN "gfx/battle_anims/silver_wind.2bpp.lz"
 AnimObjIceChunkGFX:
 	INCBIN "gfx/battle_anims/ice_chunk.2bpp.lz"
+AnimObjBlockGFX:
+	INCBIN "gfx/battle_anims/block.2bpp.lz"
+AnimObjForcePalmGFX:
+	INCBIN "gfx/battle_anims/force_palm.2bpp.lz"
+AnimObjFocusPunchGFX:
+	INCBIN "gfx/battle_anims/punch.2bpp.lz"
+AnimObjIngrainGFX:
+	INCBIN "gfx/battle_anims/ingrain.2bpp.lz"
+AnimObjMediumBubbleGFX:
+	INCBIN "gfx/battle_anims/medium_bubble.2bpp.lz"
