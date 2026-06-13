@@ -144,6 +144,7 @@ ROMX $2e
 	"bank2E"
 ROMX $2f
 	"Phone Scripts 2"
+	"Battle Animation GFX 2"
 ROMX $30
 	"Sprites 1"
 ROMX $31

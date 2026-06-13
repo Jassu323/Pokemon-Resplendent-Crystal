@@ -412,6 +412,11 @@ INCLUDE "engine/phone/scripts/generic_callee.asm"
 INCLUDE "engine/events/trainer_scripts.asm"
 
 
+SECTION "Battle Animation GFX 2", ROMX
+
+INCLUDE "gfx/battle_anims_bank2f.asm"
+
+
 SECTION "bank32", ROMX
 
 INCLUDE "engine/battle_anims/bg_effects.asm"
@@ -707,6 +712,7 @@ INCLUDE "data/battle_tower/trainer_text.asm"
 INCLUDE "data/battle_tower/unknown.asm"
 
 
+; Clear this whole bank out in a future branch for future development needs.
 SECTION "Mobile News Data", ROMX
 
 INCLUDE "mobile/news/news.asm"
