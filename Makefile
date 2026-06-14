@@ -271,6 +271,10 @@ ice_chunk_battle_anim_colors := '\#ffffff,\#08f8f8,\#08a0f8,\#0820f8'
 block_battle_anim_colors := '\#ffffff,\#000000,\#f81800,\#c00800'
 force_palm_battle_anim_colors := '\#ffffff,\#c8c8c8,\#606060,\#000000'
 ingrain_battle_anim_colors := '\#ffffff,\#909090,\#404040,\#000000'
+taunt_bubble_battle_anim_colors := '\#ffffff,\#e8e8e8,\#a090b8,\#9078a8'
+taunt_finger_battle_anim_colors := '\#ffffff,\#f8e0e0,\#f8a898,\#000000'
+taunt_anger_battle_anim_colors := '\#ffffff,\#f86010,\#f83008,\#000000'
+ghost_flame_battle_anim_colors := '\#ffffff,\#e030f8,\#b030f8,\#6830f8'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
@@ -302,6 +306,13 @@ $(eval $(call battle_anim_rgbgfx_rule,ice_chunk,ice_chunk_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,block,block_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,force_palm,force_palm_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,ingrain,ingrain_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_1,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_2,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_3,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_4,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,taunt_finger,taunt_finger_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,anger,taunt_anger_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ghost_flame,ghost_flame_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \

@@ -188,6 +188,10 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_ForcePalm
 	dw BattleAnimFunc_IngrainRoot
 	dw BattleAnimFunc_IngrainOrb
+	dw BattleAnimFunc_TauntPlaced
+	dw BattleAnimFunc_HexMeanLook
+	dw BattleAnimFunc_HexGhostFlame
+	dw BattleAnimFunc_DragonDanceOrb
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -2470,6 +2474,297 @@ BattleAnimFunc_IngrainOrb:
 
 .done
 	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_TauntPlaced:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .done
+
+.init
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr z, .thought_head
+	cp 1
+	jr z, .anger_left
+	cp 3
+	jr z, .finger_head
+; anger right
+	ld de, .EnemyTargetAngerRight
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_coords
+	ld de, .PlayerTargetAngerRight
+	jr .got_coords
+
+.anger_left
+	ld de, .EnemyTargetAngerLeft
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_coords
+	ld de, .PlayerTargetAngerLeft
+	jr .got_coords
+
+.thought_head
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy_thought_head
+	call .UsePlayerThoughtFrameset
+	ld de, .PlayerUserHead
+	jr .got_coords
+
+.enemy_thought_head
+	ld de, .EnemyUserHead
+	jr .got_coords
+
+.UsePlayerThoughtFrameset:
+	ld hl, BATTLEANIMSTRUCT_FRAMESET_ID
+	add hl, bc
+	ld a, [hl]
+	cp BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_1
+	jr z, .thought1_xflip
+	cp BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_LARGE
+	jr z, .thought_large_xflip
+	cp BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_HOLD
+	jr z, .thought_hold_xflip
+	ret
+
+.thought1_xflip
+	ld de, BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_1_XFLIP
+	jp ReinitBattleAnimFrameset
+
+.thought_large_xflip
+	ld de, BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_LARGE_XFLIP
+	jp ReinitBattleAnimFrameset
+
+.thought_hold_xflip
+	ld de, BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_HOLD_XFLIP
+	jp ReinitBattleAnimFrameset
+
+.finger_head
+	ld de, .PlayerUserFinger
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_coords
+	ld de, .EnemyUserFinger
+	ld hl, BATTLEANIMSTRUCT_OAMFLAGS
+	add hl, bc
+	set B_OAM_XFLIP, [hl]
+
+.got_coords
+	ld a, [de]
+	inc de
+	ld h, b
+	ld l, c
+	push de
+	ld de, BATTLEANIMSTRUCT_XCOORD
+	add hl, de
+	pop de
+	ld [hl], a
+	ld a, [de]
+	ld h, b
+	ld l, c
+	ld de, BATTLEANIMSTRUCT_YCOORD
+	add hl, de
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+
+.done
+	ret
+
+.PlayerUserHead:
+	db 92, 56
+.EnemyUserHead:
+	db 92, 56
+.PlayerUserFinger:
+	db 92, 56
+.EnemyUserFinger:
+	db 92, 56
+.EnemyTargetAngerLeft:
+	db 116, 28
+.EnemyTargetAngerRight:
+	db 156, 28
+.PlayerTargetAngerLeft:
+	db 40, 64
+.PlayerTargetAngerRight:
+	db 68, 64
+
+BattleAnimFunc_HexMeanLook:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .done
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add 8
+	ld [hl], a
+
+.done
+	ret
+
+BattleAnimFunc_HexGhostFlame:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .orbit
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .orbit
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add 8
+	ld [hl], a
+
+.orbit
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 160
+	jr c, .set_offsets
+	call BattleAnimExt_Deinit
+	ret
+
+.set_offsets
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld d, 24
+	push af
+	push de
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	inc a
+	ld [hl], a
+	ret
+
+BattleAnimFunc_DragonDanceOrb:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .update
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld [hl], 1
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add 8
+	ld [hl], a
+
+.update
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 81
+	jr c, .set_radius
+	call BattleAnimExt_Deinit
+	ret
+
+.set_radius
+	cp 61
+	jr c, .tight_orbit
+	sub 60
+	sla a
+	sla a
+	add 24
+	ld d, a
+	jr .set_offsets
+
+.tight_orbit
+	ld d, 24
+
+.set_offsets
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	push af
+	push de
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	call .UpdateSpeed
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	sub e
+	ld [hl], a
+	ret
+
+.UpdateSpeed:
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp 6
+	jr z, .increase_speed
+	cp 12
+	jr z, .increase_speed
+	cp 18
+	ret nz
+
+.increase_speed
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	inc [hl]
 	ret
 
 BattleAnimFunc_Recover:

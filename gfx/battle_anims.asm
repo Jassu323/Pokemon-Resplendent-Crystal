@@ -92,3 +92,6 @@ AnimObjIngrainGFX:
 	INCBIN "gfx/battle_anims/ingrain.2bpp.lz"
 AnimObjMediumBubbleGFX:
 	INCBIN "gfx/battle_anims/medium_bubble.2bpp.lz"
+
+; Additional custom animation graphics are in bank 47 / $2f.
+; Add them there and not in this bank 50 / $32 graphics section.

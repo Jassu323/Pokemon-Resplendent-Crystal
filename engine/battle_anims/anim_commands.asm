@@ -1403,7 +1403,7 @@ endr
 ; +pitch, +length
 	dw $0000, $00c0
 	dw $0000, $0040
-	dw $0000, $0000
+	dw $0003, $0000
 	dw $0000, $0000
 
 PlayHitSound:

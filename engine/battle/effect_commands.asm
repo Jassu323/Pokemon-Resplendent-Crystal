@@ -2080,26 +2080,24 @@ BattleCommand_StatUpAnim:
 	and a
 	jp nz, BattleCommand_MoveDelay
 
+	ld a, ANIM_STAT_UP - BATTLE_AFTERANIMS
+	ld [wBattleAfterAnim], a
 	xor a
-	jr BattleCommand_StatUpDownAnim
+	ld [wBattleAnimParam], a
+	jr BattleCommand_PlayCurrentMoveAnim
 
 BattleCommand_StatDownAnim:
 	ld a, [wAttackMissed]
 	and a
 	jp nz, BattleCommand_MoveDelay
 
-	ldh a, [hBattleTurn]
-	and a
-	ld a, ANIM_ENEMY_STAT_DOWN - BATTLE_AFTERANIMS
-	jr z, BattleCommand_StatUpDownAnim
-	ld a, ANIM_WOBBLE - BATTLE_AFTERANIMS
-
-	; fallthrough
-
-BattleCommand_StatUpDownAnim:
+	ld a, ANIM_STAT_DOWN - BATTLE_AFTERANIMS
 	ld [wBattleAfterAnim], a
-	xor a
+	ld a, [wLoweredStat]
+	and $10
 	ld [wBattleAnimParam], a
+
+BattleCommand_PlayCurrentMoveAnim:
 	ld a, BATTLE_VARS_MOVE_ANIM
 	call GetBattleVar
 	call SetMoveAnimationID

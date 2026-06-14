@@ -76,4 +76,11 @@ AnimObjGFX:
 	anim_obj_gfx 12, AnimObjFocusPunchGFX
 	anim_obj_gfx 36, AnimObjIngrainGFX
 	anim_obj_gfx  4, AnimObjMediumBubbleGFX
+	anim_obj_gfx  4, AnimObjThoughtBubble1GFX
+	anim_obj_gfx 16, AnimObjThoughtBubble2GFX
+	anim_obj_gfx 16, AnimObjThoughtBubble3GFX
+	anim_obj_gfx 16, AnimObjThoughtBubble4GFX
+	anim_obj_gfx 48, AnimObjTauntFingerGFX
+	anim_obj_gfx  4, AnimObjTauntAngerGFX
+	anim_obj_gfx 32, AnimObjGhostFlameGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

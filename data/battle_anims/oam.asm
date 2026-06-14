@@ -234,6 +234,13 @@ BattleAnimOAMData:
 	battleanimoam $00,  8, .OAMData_IngrainRoot1 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1
 	battleanimoam $00,  8, .OAMData_IngrainRoot2 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2
 	battleanimoam $00,  8, .OAMData_IngrainRoot3 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_1
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_3
+	battleanimoam $00,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_1
+	battleanimoam $08,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_2
+	battleanimoam $10,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_3
+	battleanimoam $18,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_4
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_IceChunk:
@@ -267,6 +274,16 @@ BattleAnimOAMData:
 	dbsprite  -1,   1, 0, 0, $09, $0
 	dbsprite   0,   1, 0, 0, $0a, $0
 	dbsprite   1,   1, 0, 0, $0b, $0
+
+.OAMData_GhostFlame:
+	dbsprite  -1,  -2, 0, 0, $00, $0
+	dbsprite   0,  -2, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $02, $0
+	dbsprite   0,  -1, 0, 0, $03, $0
+	dbsprite  -1,   0, 0, 0, $04, $0
+	dbsprite   0,   0, 0, 0, $05, $0
+	dbsprite  -1,   1, 0, 0, $06, $0
+	dbsprite   0,   1, 0, 0, $07, $0
 
 .OAMData_IngrainRoot0:
 	dbsprite  -2,  -1, 0, 0, $00, $0

@@ -336,8 +336,8 @@ DEF CANNOT_MOVE EQU $ff
 	const ANIM_SHAKE             ;  -2 (fffe)
 	const ANIM_WOBBLE            ;  -3 (fffd)
 	const ANIM_PLAYER_DAMAGE     ;  -4 (fffc)
-	const ANIM_PLAYER_STAT_DOWN  ;  -5 (fffb)
-	const ANIM_ENEMY_STAT_DOWN   ;  -6 (fffa)
+	const ANIM_STAT_UP           ;  -5 (fffb)
+	const ANIM_STAT_DOWN         ;  -6 (fffa)
 	const ANIM_ENEMY_DAMAGE      ;  -7 (fff9)
 	const ANIM_MISS              ;  -8 (fff8)
 	DEF BATTLE_AFTERANIMS EQU ANIM_MISS

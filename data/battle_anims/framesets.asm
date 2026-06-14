@@ -221,6 +221,15 @@ BattleAnimFrameData:
 	dw .Frameset_IngrainRootHidden   ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_HIDDEN
 	dw .Frameset_IngrainOrb          ; BATTLE_ANIM_FRAMESET_INGRAIN_ORB
 	dw .Frameset_CutLongUpRight      ; BATTLE_ANIM_FRAMESET_CUT_LONG_UP_RIGHT
+	dw .Frameset_TauntThought1       ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_1
+	dw .Frameset_TauntThoughtLarge   ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_LARGE
+	dw .Frameset_TauntThoughtHold    ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_HOLD
+	dw .Frameset_TauntThought1XFlip  ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_1_XFLIP
+	dw .Frameset_TauntThoughtLargeXFlip ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_LARGE_XFLIP
+	dw .Frameset_TauntThoughtHoldXFlip ; BATTLE_ANIM_FRAMESET_TAUNT_THOUGHT_HOLD_XFLIP
+	dw .Frameset_TauntFinger         ; BATTLE_ANIM_FRAMESET_TAUNT_FINGER
+	dw .Frameset_TauntAnger          ; BATTLE_ANIM_FRAMESET_TAUNT_ANGER
+	dw .Frameset_GhostFlame          ; BATTLE_ANIM_FRAMESET_GHOST_FLAME
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -1504,4 +1513,50 @@ BattleAnimFrameData:
 
 .Frameset_IngrainOrb:
 	oamframe BATTLE_ANIM_OAMSET_1B,  4
+	oamrestart
+
+.Frameset_TauntThought1:
+	oamframe BATTLE_ANIM_OAMSET_1B,  2
+	oamdelete
+
+.Frameset_TauntThoughtLarge:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X,  2
+	oamdelete
+
+.Frameset_TauntThoughtHold:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X,  4
+	oamrestart
+
+.Frameset_TauntThought1XFlip:
+	oamframe BATTLE_ANIM_OAMSET_1B,  2, B_OAM_XFLIP
+	oamdelete
+
+.Frameset_TauntThoughtLargeXFlip:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X,  2, B_OAM_XFLIP
+	oamdelete
+
+.Frameset_TauntThoughtHoldXFlip:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X,  4, B_OAM_XFLIP
+	oamrestart
+
+.Frameset_TauntFinger:
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_1, 10
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_3,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_1,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_2,  4
+	oamframe BATTLE_ANIM_OAMSET_TAUNT_FINGER_3,  4
+	oamdelete
+
+.Frameset_TauntAnger:
+	oamframe BATTLE_ANIM_OAMSET_1B, 16
+	oamdelete
+
+.Frameset_GhostFlame:
+	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_1, 5
+	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_2, 5
+	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_3, 5
+	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_4, 5
 	oamrestart

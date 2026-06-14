@@ -162,6 +162,10 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_bug
 	cp BATTLE_ANIM_BUG_PAL_RESTORE
 	jp z, .restore_gray
+	cp BATTLE_ANIM_GHOST_FLAME_PAL_LOAD
+	jp z, .load_ghost_flame
+	cp BATTLE_ANIM_GHOST_FLAME_PAL_RESTORE
+	jp z, .restore_red
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -268,6 +272,11 @@ BattleAnimExt_LoadCustomPal:
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
 	jr .load_custom_pal
 
+.load_ghost_flame
+	ld hl, .GhostFlamePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jr .load_custom_pal
+
 .load_dragon_claw
 	ld hl, .DragonClawPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
@@ -346,6 +355,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 17, 19, 31
 	RGB 08, 12, 31
 	RGB 01, 04, 31
+
+.GhostFlamePal:
+	RGB 31, 31, 31
+	RGB 28, 06, 31
+	RGB 22, 06, 31
+	RGB 13, 06, 31
 
 .GrassPal:
 	RGB 31, 31, 31
