@@ -21,3 +21,12 @@ AnimObjTauntAngerGFX:
 
 AnimObjGhostFlameGFX:
 	INCBIN "gfx/battle_anims/ghost_flame.2bpp.lz"
+
+AnimObjYawnGFX:
+	INCBIN "gfx/battle_anims/yawn.2bpp.lz"
+
+AnimObjSandTombFleckGFX:
+	INCBIN "gfx/battle_anims/sand_tomb_fleck.2bpp.lz"
+
+AnimObjPinkPetalGFX:
+	INCBIN "gfx/battle_anims/pink_petal.2bpp.lz"

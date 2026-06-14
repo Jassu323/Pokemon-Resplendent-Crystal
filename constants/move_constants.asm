@@ -279,31 +279,31 @@
 	const OVERHEAT     ; 10f
 	const ROCK_TOMB    ; 110
 	const SILVER_WIND  ; 111
-	const SHADOW_PUNCH ; 112
-	const EXTRASENSORY ; 113
-	const SKY_UPPERCUT ; 114
-	const SAND_TOMB    ; 115
-	const BULLET_SEED  ; 116
-	const AERIAL_ACE   ; 117
-	const BLOCK        ; 118
-	const HOWL         ; 119
-	const DRAGON_CLAW  ; 11a
-	const BULK_UP      ; 11b
-	const MUD_SHOT     ; 11c
-	const POISON_TAIL  ; 11d
-	const MAGICAL_LEAF ; 11e
-	const CALM_MIND    ; 11f
-	const DRAGON_DANCE ; 120
-	const ROCK_BLAST   ; 121
-	const SHOCK_WAVE   ; 122
-	const WATER_PULSE  ; 123
-	const PLUCK        ; 124
-	const SUCKER_PUNCH ; 125
-	const FORCE_PALM   ; 126
-	const POISON_JAB   ; 127
-	const NIGHT_SLASH  ; 128
-	const X_SCISSOR    ; 129
-	const BUG_BUZZ     ; 12a
+	const SIGNAL_BEAM  ; 112
+	const SHADOW_PUNCH ; 113
+	const EXTRASENSORY ; 114
+	const SKY_UPPERCUT ; 115
+	const SAND_TOMB    ; 116
+	const BULLET_SEED  ; 117
+	const AERIAL_ACE   ; 118
+	const BLOCK        ; 119
+	const HOWL         ; 11a
+	const DRAGON_CLAW  ; 11b
+	const BULK_UP      ; 11c
+	const MUD_SHOT     ; 11d
+	const POISON_TAIL  ; 11e
+	const MAGICAL_LEAF ; 11f
+	const CALM_MIND    ; 120
+	const DRAGON_DANCE ; 121
+	const ROCK_BLAST   ; 122
+	const SHOCK_WAVE   ; 123
+	const WATER_PULSE  ; 124
+	const PLUCK        ; 125
+	const SUCKER_PUNCH ; 126
+	const FORCE_PALM   ; 127
+	const POISON_JAB   ; 128
+	const NIGHT_SLASH  ; 129
+	const X_SCISSOR    ; 12a
 	const DRAIN_PUNCH  ; 12b
 	const ENERGY_BALL  ; 12c
 	const BULLET_PUNCH ; 12d

@@ -275,6 +275,7 @@ taunt_bubble_battle_anim_colors := '\#ffffff,\#e8e8e8,\#a090b8,\#9078a8'
 taunt_finger_battle_anim_colors := '\#ffffff,\#f8e0e0,\#f8a898,\#000000'
 taunt_anger_battle_anim_colors := '\#ffffff,\#f86010,\#f83008,\#000000'
 ghost_flame_battle_anim_colors := '\#ffffff,\#e030f8,\#b030f8,\#6830f8'
+pink_petal_battle_anim_colors := '\#ffffff,\#f888a0,\#f87090,\#d06078'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
@@ -313,6 +314,7 @@ $(eval $(call battle_anim_rgbgfx_rule,thought_bubble_4,taunt_bubble_battle_anim_
 $(eval $(call battle_anim_rgbgfx_rule,taunt_finger,taunt_finger_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,anger,taunt_anger_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,ghost_flame,ghost_flame_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,pink_petal,pink_petal_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \

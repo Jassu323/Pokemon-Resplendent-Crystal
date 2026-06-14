@@ -423,6 +423,11 @@ MACRO anim_ghostflamepal
 	db \1
 ENDM
 
+MACRO anim_pinkpetalpal
+	db anim_custompal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
 	db anim_custompal_command
 	db \1

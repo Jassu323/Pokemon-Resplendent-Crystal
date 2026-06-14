@@ -83,4 +83,7 @@ AnimObjGFX:
 	anim_obj_gfx 48, AnimObjTauntFingerGFX
 	anim_obj_gfx  4, AnimObjTauntAngerGFX
 	anim_obj_gfx 32, AnimObjGhostFlameGFX
+	anim_obj_gfx 16, AnimObjYawnGFX
+	anim_obj_gfx  1, AnimObjSandTombFleckGFX
+	anim_obj_gfx  4, AnimObjPinkPetalGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

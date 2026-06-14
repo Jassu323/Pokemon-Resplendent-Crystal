@@ -291,6 +291,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        140, FIRE,           90,  5, 100      ;OVERHEAT #315
 	move EFFECT_NORMAL_HIT,         50, ROCK,           80, 10, 100      ;ROCK_TOMB #317
 	move EFFECT_NORMAL_HIT,         60, BUG,           100,  5,  10      ;SILVER_WIND #318
+	move EFFECT_NORMAL_HIT,         75, BUG,           100, 15,  10      ;SIGNAL_BEAM #324
 	move EFFECT_ALWAYS_HIT,         60, GHOST,         100, 20,   0      ;SHADOW_PUNCH #325
 	move EFFECT_NORMAL_HIT,         80, PSYCHIC_TYPE,  100, 30,  10      ;EXTRASENSORY #326
 	move EFFECT_NORMAL_HIT,         85, FIGHTING,       90, 15,   0      ;SKY_UPPERCUT #327
@@ -315,7 +316,6 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         80, POISON,        100, 20,  30      ;POISON_JAB #398
 	move EFFECT_NORMAL_HIT,         70, DARK,          100, 15,   0      ;NIGHT_SLASH #400
 	move EFFECT_NORMAL_HIT,         80, BUG,           100, 15,   0      ;X_SCISSOR #404
-	move EFFECT_NORMAL_HIT,         90, BUG,           100, 10,  10      ;BUG_BUZZ #405
 	move EFFECT_NORMAL_HIT,         60, FIGHTING,      100,  5,   0      ;DRAIN_PUNCH #409
 	move EFFECT_NORMAL_HIT,         80, GRASS,         100, 10,  10      ;ENERGY_BALL #412
 	move EFFECT_NORMAL_HIT,         40, STEEL,         100, 30,   0      ;BULLET_PUNCH #418

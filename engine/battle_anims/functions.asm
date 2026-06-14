@@ -192,6 +192,11 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_HexMeanLook
 	dw BattleAnimFunc_HexGhostFlame
 	dw BattleAnimFunc_DragonDanceOrb
+	dw BattleAnimFunc_FakeOutHand
+	dw BattleAnimFunc_YawnCloud
+	dw BattleAnimFunc_YawnBubble
+	dw BattleAnimFunc_SandTombFleck
+	dw BattleAnimFunc_AromatherapyPetal
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -2765,6 +2770,293 @@ BattleAnimFunc_DragonDanceOrb:
 	ld hl, BATTLEANIMSTRUCT_PARAM
 	add hl, bc
 	inc [hl]
+	ret
+
+BattleAnimFunc_FakeOutHand:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .slide
+	dw .hold
+
+.init
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .left_hand
+	ld a, -4
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	ld de, BATTLE_ANIM_FRAMESET_ENCORE_HAND
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .set_frameset
+	ld de, BATTLE_ANIM_FRAMESET_ENCORE_HAND_FLIPPED
+	jr .set_frameset
+
+.left_hand
+	ld a, 4
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], a
+	ld de, BATTLE_ANIM_FRAMESET_ENCORE_HAND_FLIPPED
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .set_frameset
+	ld de, BATTLE_ANIM_FRAMESET_ENCORE_HAND
+
+.set_frameset
+	call ReinitBattleAnimFrameset
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.slide
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 7
+	ret c
+	xor a
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.hold
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 6
+	ret c
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_YawnCloud:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .travel
+	dw .wait_delete
+
+.init
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy_user
+	ld a, 56
+	ld d, 80
+	ld e, 1
+	jr .set_coords
+
+.enemy_user
+	ld a, 136
+	ld d, 40
+	ld e, -1
+
+.set_coords
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hli], a
+	ld [hl], d
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], e
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.travel
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 64
+	jr nc, .start_flicker
+	push af
+	add a
+	ld d, 8
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop af
+	ld d, a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ld a, d
+	and 3
+	jr nz, .skip_extra_x
+	ld a, [hl]
+	add e
+	ld [hl], a
+
+.skip_extra_x
+	ld a, d
+	and 1
+	jr nz, .inc_frame
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .move_y_down
+	dec [hl]
+	jr .inc_frame
+
+.move_y_down
+	inc [hl]
+
+.inc_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.start_flicker
+	xor a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld de, BATTLE_ANIM_FRAMESET_YAWN_CLOUD_FLICKER
+	call ReinitBattleAnimFrameset
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.wait_delete
+	ret
+
+BattleAnimFunc_YawnBubble:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+
+.init
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and 3
+	ld e, a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_index
+	ld a, e
+	add 3
+	ld e, a
+
+.got_index
+	ld d, 0
+	ld hl, .coords
+	add hl, de
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hli], a
+	ld [hl], d
+	xor a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	cp 32
+	jr nc, .delete
+	push af
+	and 1
+	jr nz, .skip_y
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+
+.skip_y
+	pop af
+	and 7
+	ret nz
+	ret
+
+.delete
+	call BattleAnimExt_Deinit
+	ret
+
+.coords
+	; target opponent, then target player
+	db 134, 46
+	db 136, 34
+	db 138, 22
+	db  54, 72
+	db  56, 60
+	db  58, 48
+
+BattleAnimFunc_SandTombFleck:
+; Flame Wheel-style circle with upward drift, centered on the target.
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	ld d, $18
+	push af
+	push de
+	call BattleAnim_Sine
+	sra a
+	sra a
+	sra a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	add [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	inc [hl]
+	inc [hl]
+	ld a, [hl]
+	and $7
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp $e8
+	jr z, .delete
+	dec [hl]
+	ret
+
+.delete
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimFunc_Recover:

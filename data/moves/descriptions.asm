@@ -278,6 +278,7 @@ MoveDescriptions1:
 	dw OverheatDescription
 	dw RockTombDescription
 	dw SilverWindDescription
+	dw SignalBeamDescription
 	dw ShadowPunchDescription
 	dw ExtrasensoryDescription
 	dw SkyUppercutDescription
@@ -302,7 +303,6 @@ MoveDescriptions1:
 	dw PoisonJabDescription
 	dw NightSlashDescription
 	dw XScissorDescription
-	dw BugBuzzDescription
 	dw DrainPunchDescription
 	dw EnergyBallDescription
 	dw BulletPunchDescription
@@ -1394,6 +1394,9 @@ RockTombDescription:
 SilverWindDescription:
 	db   "Placeholder@"
 
+SignalBeamDescription:
+	db   "Placeholder@"
+
 ShadowPunchDescription:
 	db   "Placeholder@"
 
@@ -1464,9 +1467,6 @@ NightSlashDescription:
 	db   "Placeholder@"
 
 XScissorDescription:
-	db   "Placeholder@"
-
-BugBuzzDescription:
 	db   "Placeholder@"
 
 DrainPunchDescription:

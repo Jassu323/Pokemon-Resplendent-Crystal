@@ -1005,6 +1005,70 @@ BattleAnimFunc_AromatherapyFlower:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_AromatherapyPetal:
+; Object drifts horizontally. Obj Param: upper nybble = x speed, lower two bits = starting frameset phase.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $60
+	jr nc, .done
+	and a
+	jr nz, .got_frame
+	call .SetPhaseFrameset
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_frame
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, $b4
+	sub [hl]
+	ld [hl], a
+.got_frame
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	xor a
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	swap a
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [hl]
+	jr nz, .move_left
+	add e
+	cp $a8
+	jr nc, .done
+	jr .store_x
+.move_left
+	sub e
+	jr c, .done
+.store_x
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.SetPhaseFrameset
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	ret z
+	add BATTLE_ANIM_FRAMESET_PINK_PETAL
+	ld e, a
+	ld d, 0
+	jp ReinitBattleAnimFrameset
+
 BattleAnimFunc_OverheatFlame:
 ; Object shoots outward in a fixed fan and disappears after $1c frames.
 ; Obj Param: Lower nybble selects one of nine X/Y vectors.

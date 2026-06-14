@@ -210,6 +210,7 @@ BattleAnimFrameData:
 	dw .Frameset_BlockXHidden        ; BATTLE_ANIM_FRAMESET_BLOCK_X_HIDDEN
 	dw .Frameset_ForcePalm           ; BATTLE_ANIM_FRAMESET_FORCE_PALM
 	dw .Frameset_FocusPunchFist      ; BATTLE_ANIM_FRAMESET_FOCUS_PUNCH_FIST
+	dw .Frameset_MeteorMashFist      ; BATTLE_ANIM_FRAMESET_METEOR_MASH_FIST
 	dw .Frameset_IngrainRoot0        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_0
 	dw .Frameset_IngrainRoot1        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_1
 	dw .Frameset_IngrainRoot2        ; BATTLE_ANIM_FRAMESET_INGRAIN_ROOT_2
@@ -230,6 +231,13 @@ BattleAnimFrameData:
 	dw .Frameset_TauntFinger         ; BATTLE_ANIM_FRAMESET_TAUNT_FINGER
 	dw .Frameset_TauntAnger          ; BATTLE_ANIM_FRAMESET_TAUNT_ANGER
 	dw .Frameset_GhostFlame          ; BATTLE_ANIM_FRAMESET_GHOST_FLAME
+	dw .Frameset_YawnCloud          ; BATTLE_ANIM_FRAMESET_YAWN_CLOUD
+	dw .Frameset_YawnCloudFlicker   ; BATTLE_ANIM_FRAMESET_YAWN_CLOUD_FLICKER
+	dw .Frameset_SandTombFleck      ; BATTLE_ANIM_FRAMESET_SAND_TOMB_FLECK
+	dw .Frameset_PinkPetal          ; BATTLE_ANIM_FRAMESET_PINK_PETAL
+	dw .Frameset_PinkPetal1         ; BATTLE_ANIM_FRAMESET_PINK_PETAL_1
+	dw .Frameset_PinkPetal2         ; BATTLE_ANIM_FRAMESET_PINK_PETAL_2
+	dw .Frameset_PinkPetal3         ; BATTLE_ANIM_FRAMESET_PINK_PETAL_3
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -861,6 +869,10 @@ BattleAnimFrameData:
 
 .Frameset_FocusPunchFist:
 	oamframe BATTLE_ANIM_OAMSET_FOCUS_PUNCH_FIST, 44
+	oamdelete
+
+.Frameset_MeteorMashFist:
+	oamframe BATTLE_ANIM_OAMSET_FOCUS_PUNCH_FIST, 4
 	oamdelete
 
 .Frameset_ConfuseRay1:
@@ -1559,4 +1571,47 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_2, 5
 	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_3, 5
 	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_4, 5
+	oamrestart
+
+.Frameset_YawnCloud:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
+	oamrestart
+
+.Frameset_YawnCloudFlicker:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 2
+	oamwait 2
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 2
+	oamwait 2
+	oamdelete
+
+.Frameset_SandTombFleck:
+	oamframe BATTLE_ANIM_OAMSET_14, 1
+	oamrestart
+
+.Frameset_PinkPetal:
+	oamframe BATTLE_ANIM_OAMSET_14, 4
+	oamframe BATTLE_ANIM_OAMSET_15, 4
+	oamframe BATTLE_ANIM_OAMSET_16, 4
+	oamframe BATTLE_ANIM_OAMSET_17, 4
+	oamrestart
+
+.Frameset_PinkPetal1:
+	oamframe BATTLE_ANIM_OAMSET_15, 4
+	oamframe BATTLE_ANIM_OAMSET_16, 4
+	oamframe BATTLE_ANIM_OAMSET_17, 4
+	oamframe BATTLE_ANIM_OAMSET_14, 4
+	oamrestart
+
+.Frameset_PinkPetal2:
+	oamframe BATTLE_ANIM_OAMSET_16, 4
+	oamframe BATTLE_ANIM_OAMSET_17, 4
+	oamframe BATTLE_ANIM_OAMSET_14, 4
+	oamframe BATTLE_ANIM_OAMSET_15, 4
+	oamrestart
+
+.Frameset_PinkPetal3:
+	oamframe BATTLE_ANIM_OAMSET_17, 4
+	oamframe BATTLE_ANIM_OAMSET_14, 4
+	oamframe BATTLE_ANIM_OAMSET_15, 4
+	oamframe BATTLE_ANIM_OAMSET_16, 4
 	oamrestart

@@ -166,6 +166,10 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_ghost_flame
 	cp BATTLE_ANIM_GHOST_FLAME_PAL_RESTORE
 	jp z, .restore_red
+	cp BATTLE_ANIM_PINK_PETAL_PAL_LOAD
+	jp z, .load_pink_petal
+	cp BATTLE_ANIM_PINK_PETAL_PAL_RESTORE
+	jp z, .restore_red
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -200,7 +204,7 @@ BattleAnimExt_LoadCustomPal:
 .load_fire
 	ld hl, .FirePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_dragon
 	ld hl, .DragonPal
@@ -274,6 +278,11 @@ BattleAnimExt_LoadCustomPal:
 
 .load_ghost_flame
 	ld hl, .GhostFlamePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jr .load_custom_pal
+
+.load_pink_petal
+	ld hl, .PinkPetalPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
 	jr .load_custom_pal
 
@@ -361,6 +370,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 28, 06, 31
 	RGB 22, 06, 31
 	RGB 13, 06, 31
+
+.PinkPetalPal:
+	RGB 31, 31, 31
+	RGB 31, 17, 20
+	RGB 31, 14, 18
+	RGB 26, 12, 15
 
 .GrassPal:
 	RGB 31, 31, 31
