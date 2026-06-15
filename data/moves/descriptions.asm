@@ -291,6 +291,7 @@ MoveDescriptions1:
 	dw BulkUpDescription
 	dw MudShotDescription
 	dw PoisonTailDescription
+	dw VoltTackleDescription
 	dw MagicalLeafDescription
 	dw CalmMindDescription
 	dw DragonDanceDescription
@@ -1431,6 +1432,9 @@ MudShotDescription:
 	db   "Placeholder@"
 
 PoisonTailDescription:
+	db   "Placeholder@"
+
+VoltTackleDescription:
 	db   "Placeholder@"
 
 MagicalLeafDescription:

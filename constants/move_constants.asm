@@ -292,34 +292,35 @@
 	const BULK_UP      ; 11c
 	const MUD_SHOT     ; 11d
 	const POISON_TAIL  ; 11e
-	const MAGICAL_LEAF ; 11f
-	const CALM_MIND    ; 120
-	const DRAGON_DANCE ; 121
-	const ROCK_BLAST   ; 122
-	const SHOCK_WAVE   ; 123
-	const WATER_PULSE  ; 124
-	const PLUCK        ; 125
-	const SUCKER_PUNCH ; 126
-	const FORCE_PALM   ; 127
-	const POISON_JAB   ; 128
-	const NIGHT_SLASH  ; 129
-	const X_SCISSOR    ; 12a
-	const DRAIN_PUNCH  ; 12b
-	const ENERGY_BALL  ; 12c
-	const BULLET_PUNCH ; 12d
-	const SHADOW_CLAW  ; 12e
-	const THUNDER_FANG ; 12f
-	const ICE_FANG     ; 130
-	const FIRE_FANG    ; 131
-	const MUD_BOMB     ; 132
-	const LAVA_PLUME   ; 133
-	const STONE_EDGE   ; 134
-	const BUG_BITE     ; 135
-	const SLUDGE_WAVE  ; 136
-	const HEX          ; 137
-	const WILD_CHARGE  ; 138
-	const DRILL_RUN    ; 139
-	const ICICLE_CRASH ; 13a
+	const VOLT_TACKLE  ; 11f
+	const MAGICAL_LEAF ; 120
+	const CALM_MIND    ; 121
+	const DRAGON_DANCE ; 122
+	const ROCK_BLAST   ; 123
+	const SHOCK_WAVE   ; 124
+	const WATER_PULSE  ; 125
+	const PLUCK        ; 126
+	const SUCKER_PUNCH ; 127
+	const FORCE_PALM   ; 128
+	const POISON_JAB   ; 129
+	const NIGHT_SLASH  ; 12a
+	const X_SCISSOR    ; 12b
+	const DRAIN_PUNCH  ; 12c
+	const ENERGY_BALL  ; 12d
+	const BULLET_PUNCH ; 12e
+	const SHADOW_CLAW  ; 12f
+	const THUNDER_FANG ; 130
+	const ICE_FANG     ; 131
+	const FIRE_FANG    ; 132
+	const MUD_BOMB     ; 133
+	const LAVA_PLUME   ; 134
+	const STONE_EDGE   ; 135
+	const BUG_BITE     ; 136
+	const SLUDGE_WAVE  ; 137
+	const HEX          ; 138
+	const WILD_CHARGE  ; 139
+	const DRILL_RUN    ; 13a
+	const ICICLE_CRASH ; 13b
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff

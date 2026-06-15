@@ -276,6 +276,8 @@ taunt_finger_battle_anim_colors := '\#ffffff,\#f8e0e0,\#f8a898,\#000000'
 taunt_anger_battle_anim_colors := '\#ffffff,\#f86010,\#f83008,\#000000'
 ghost_flame_battle_anim_colors := '\#ffffff,\#e030f8,\#b030f8,\#6830f8'
 pink_petal_battle_anim_colors := '\#ffffff,\#f888a0,\#f87090,\#d06078'
+aurora_beam_battle_anim_colors := '\#ffffff,\#20e820,\#20e8e8,\#e820e8'
+signal_beam_battle_anim_colors := '\#ffffff,\#2020e8,\#e82020,\#e820e8'
 
 define battle_anim_rgbgfx_rule
 $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
@@ -290,7 +292,7 @@ $(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
 	tools/gfx --remove-whitespace -o $$@ $$@
 endef
 
-$(call battle_anim_2bpp,electricity_effect thundershock thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
+$(call battle_anim_2bpp,electricity_effect thundershock thundershock_horizontal thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
 	$(RGBGFX) $(RGBGFXFLAGS) --colors $(transparent_gray_battle_anim_colors) -o $@ $<
 
 $(eval $(call battle_anim_rgbgfx_rule,mud_ball_medium,mud_ball_battle_anim_colors))
@@ -315,6 +317,8 @@ $(eval $(call battle_anim_rgbgfx_rule,taunt_finger,taunt_finger_battle_anim_colo
 $(eval $(call battle_anim_rgbgfx_rule,anger,taunt_anger_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,ghost_flame,ghost_flame_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,pink_petal,pink_petal_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,aurora_beam,aurora_beam_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,signal_beam,signal_beam_battle_anim_colors))
 
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \

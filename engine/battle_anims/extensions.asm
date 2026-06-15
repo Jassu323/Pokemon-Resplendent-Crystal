@@ -170,6 +170,14 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_pink_petal
 	cp BATTLE_ANIM_PINK_PETAL_PAL_RESTORE
 	jp z, .restore_red
+	cp BATTLE_ANIM_AURORA_BEAM_PAL_LOAD
+	jp z, .load_aurora_beam
+	cp BATTLE_ANIM_AURORA_BEAM_PAL_RESTORE
+	jp z, .restore_blue
+	cp BATTLE_ANIM_SIGNAL_BEAM_PAL_LOAD
+	jp z, .load_signal_beam
+	cp BATTLE_ANIM_SIGNAL_BEAM_PAL_RESTORE
+	jp z, .restore_blue
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -209,84 +217,94 @@ BattleAnimExt_LoadCustomPal:
 .load_dragon
 	ld hl, .DragonPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_dragon_blue
 	ld hl, .DragonPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_fire_blue
 	ld hl, .FireBluePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_ground
 	ld hl, .GroundPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_poison
 	ld hl, .PoisonPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_poison_powder
 	ld hl, .PoisonPowderPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_stun_spore
 	ld hl, .StunSporePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_sleep_powder
 	ld hl, .SleepPowderPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_spore
 	ld hl, .SporePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_silver_wind
 	ld hl, .SilverWindPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_ice
 	ld hl, .IcePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_bug
 	ld hl, .BugPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GRAY
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_shadow_ball
 	ld hl, .ShadowBallPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_hyper_fang
 	ld hl, .HyperFangPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_ghost_flame
 	ld hl, .GhostFlamePal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
-	jr .load_custom_pal
+	jp .load_custom_pal
 
 .load_pink_petal
 	ld hl, .PinkPetalPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
-	jr .load_custom_pal
+	jp .load_custom_pal
 
-.load_dragon_claw
+.load_aurora_beam
+	ld hl, .AuroraBeamPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jp .load_custom_pal
+
+.load_signal_beam
+	ld hl, .SignalBeamPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jp .load_custom_pal
+
+	.load_dragon_claw
 	ld hl, .DragonClawPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
 
@@ -376,6 +394,18 @@ BattleAnimExt_LoadCustomPal:
 	RGB 31, 17, 20
 	RGB 31, 14, 18
 	RGB 26, 12, 15
+
+.AuroraBeamPal:
+	RGB 31, 31, 31
+	RGB 04, 29, 04
+	RGB 04, 29, 29
+	RGB 29, 04, 29
+
+.SignalBeamPal:
+	RGB 31, 31, 31
+	RGB 04, 04, 29
+	RGB 29, 04, 04
+	RGB 29, 04, 29
 
 .GrassPal:
 	RGB 31, 31, 31

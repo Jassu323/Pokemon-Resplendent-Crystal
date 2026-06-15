@@ -286,6 +286,7 @@ MoveNames::
 	li "Bulk Up"
 	li "Mud Shot"
 	li "Poison Tail"
+	li "Volt Tackle"
 	li "Magical Leaf"
 	li "Calm Mind"
 	li "Dragon Dance"

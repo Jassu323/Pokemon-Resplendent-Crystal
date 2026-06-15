@@ -172,6 +172,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_SacredFireHit
 	dw BattleAnimFunc_LavaPlumeEruption
 	dw BattleAnimFunc_DragonClawFlame
+	dw BattleAnimFunc_ShadowClawFlame
 	dw BattleAnimFunc_PoisonBubble
 	dw BattleAnimFunc_SludgeBomb
 	dw BattleAnimFunc_AcidBubble
@@ -197,6 +198,8 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_YawnBubble
 	dw BattleAnimFunc_SandTombFleck
 	dw BattleAnimFunc_AromatherapyPetal
+	dw BattleAnimFunc_AuroraBeamRing
+	dw BattleAnimFunc_VoltTackleBolt
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:

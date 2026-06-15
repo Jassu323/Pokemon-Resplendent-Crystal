@@ -241,6 +241,12 @@ BattleAnimOAMData:
 	battleanimoam $08,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_2
 	battleanimoam $10,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_3
 	battleanimoam $18,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_4
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltLeftOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT_OFF
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltLeft ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltMidLeft ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_MID_LEFT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltMidRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_MID_RIGHT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltRightOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT_OFF
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_IceChunk:
@@ -284,6 +290,66 @@ BattleAnimOAMData:
 	dbsprite   0,   0, 0, 0, $05, $0
 	dbsprite  -1,   1, 0, 0, $06, $0
 	dbsprite   0,   1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltLeftOff:
+	dbsprite -12,  -1, 0, 0, $00, $0
+	dbsprite -11,  -1, 0, 0, $01, $0
+	dbsprite -10,  -1, 0, 0, $02, $0
+	dbsprite  -9,  -1, 0, 0, $03, $0
+	dbsprite  -8,  -1, 0, 0, $04, $0
+	dbsprite  -7,  -1, 0, 0, $05, $0
+	dbsprite  -6,  -1, 0, 0, $06, $0
+	dbsprite  -5,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltLeft:
+	dbsprite  -8,  -1, 0, 0, $00, $0
+	dbsprite  -7,  -1, 0, 0, $01, $0
+	dbsprite  -6,  -1, 0, 0, $02, $0
+	dbsprite  -5,  -1, 0, 0, $03, $0
+	dbsprite  -4,  -1, 0, 0, $04, $0
+	dbsprite  -3,  -1, 0, 0, $05, $0
+	dbsprite  -2,  -1, 0, 0, $06, $0
+	dbsprite  -1,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltMidLeft:
+	dbsprite  -4,  -1, 0, 0, $00, $0
+	dbsprite  -3,  -1, 0, 0, $01, $0
+	dbsprite  -2,  -1, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $03, $0
+	dbsprite   0,  -1, 0, 0, $04, $0
+	dbsprite   1,  -1, 0, 0, $05, $0
+	dbsprite   2,  -1, 0, 0, $06, $0
+	dbsprite   3,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltMidRight:
+	dbsprite   0,  -1, 0, 0, $00, $0
+	dbsprite   1,  -1, 0, 0, $01, $0
+	dbsprite   2,  -1, 0, 0, $02, $0
+	dbsprite   3,  -1, 0, 0, $03, $0
+	dbsprite   4,  -1, 0, 0, $04, $0
+	dbsprite   5,  -1, 0, 0, $05, $0
+	dbsprite   6,  -1, 0, 0, $06, $0
+	dbsprite   7,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltRight:
+	dbsprite   4,  -1, 0, 0, $00, $0
+	dbsprite   5,  -1, 0, 0, $01, $0
+	dbsprite   6,  -1, 0, 0, $02, $0
+	dbsprite   7,  -1, 0, 0, $03, $0
+	dbsprite   8,  -1, 0, 0, $04, $0
+	dbsprite   9,  -1, 0, 0, $05, $0
+	dbsprite  10,  -1, 0, 0, $06, $0
+	dbsprite  11,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltRightOff:
+	dbsprite   8,  -1, 0, 0, $00, $0
+	dbsprite   9,  -1, 0, 0, $01, $0
+	dbsprite  10,  -1, 0, 0, $02, $0
+	dbsprite  11,  -1, 0, 0, $03, $0
+	dbsprite  12,  -1, 0, 0, $04, $0
+	dbsprite  13,  -1, 0, 0, $05, $0
+	dbsprite  14,  -1, 0, 0, $06, $0
+	dbsprite  15,  -1, 0, 0, $07, $0
 
 .OAMData_IngrainRoot0:
 	dbsprite  -2,  -1, 0, 0, $00, $0

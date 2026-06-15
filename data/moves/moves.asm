@@ -304,6 +304,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,          0, FIGHTING,      100, 20,   0      ;BULK_UP #339
 	move EFFECT_NORMAL_HIT,         55, GROUND,         95, 15, 100      ;MUD_SHOT #341
 	move EFFECT_NORMAL_HIT,         50, POISON,        100, 25,  10      ;POISON_TAIL #342
+	move EFFECT_NORMAL_HIT,        120, ELECTRIC,      100, 15,   0      ;VOLT_TACKLE #344
 	move EFFECT_NORMAL_HIT,         60, GRASS,         100, 20,   0      ;MAGICAL_LEAF #345
 	move EFFECT_NORMAL_HIT,          0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
 	move EFFECT_NORMAL_HIT,          0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349

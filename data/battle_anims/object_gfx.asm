@@ -86,4 +86,7 @@ AnimObjGFX:
 	anim_obj_gfx 16, AnimObjYawnGFX
 	anim_obj_gfx  1, AnimObjSandTombFleckGFX
 	anim_obj_gfx  4, AnimObjPinkPetalGFX
+	anim_obj_gfx  4, AnimObjAuroraBeamGFX
+	anim_obj_gfx  4, AnimObjSignalBeamGFX
+	anim_obj_gfx  8, AnimObjThundershockHorizontalGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

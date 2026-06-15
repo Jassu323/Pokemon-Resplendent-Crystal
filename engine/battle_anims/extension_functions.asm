@@ -1069,6 +1069,82 @@ BattleAnimFunc_AromatherapyPetal:
 	ld d, 0
 	jp ReinitBattleAnimFrameset
 
+BattleAnimFunc_AuroraBeamRing:
+; Object moves from user to target for 36 frames, then disappears.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 36
+	jr nc, .done
+	inc [hl]
+	ld a, $2
+	call BattleAnim_StepToTarget
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_VoltTackleBolt:
+; Obj Param: 0-4 selects horizontal bolt lane.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .wait
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ld a, 80
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	cp 5
+	jr c, .got_lane
+	xor a
+.got_lane
+	ld e, a
+	ld d, 0
+	ld hl, .PlayerYCoords
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_y_table
+	ld hl, .EnemyYCoords
+.got_y_table
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and 1
+	ld e, a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_direction
+	ld a, e
+	xor 1
+	ld e, a
+.got_direction
+	ld a, e
+	and a
+	ret z
+	ld de, BATTLE_ANIM_FRAMESET_VOLT_TACKLE_BOLT_REVERSE
+	call ReinitBattleAnimFrameset
+	ret
+
+.wait
+	ret
+
+.PlayerYCoords:
+	db 92, 80, 68, 56, 44
+.EnemyYCoords:
+	db 44, 56, 68, 80, 92
+
 BattleAnimFunc_OverheatFlame:
 ; Object shoots outward in a fixed fan and disappears after $1c frames.
 ; Obj Param: Lower nybble selects one of nine X/Y vectors.
@@ -1555,6 +1631,60 @@ BattleAnimFunc_DragonClawFlame:
 	db 146, 44
 	db 136, 56
 	db 126, 68
+
+.EnemyCoords:
+	db  54, 76
+	db  44, 88
+	db  34, 100
+	db  34, 76
+	db  44, 88
+	db  54, 100
+
+BattleAnimFunc_ShadowClawFlame:
+; Obj Param: $0-$2 = first slash trail, $3-$5 = second slash trail.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	ret nz
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	cp 6
+	ret nc
+	add a
+	ld e, a
+	ld d, 0
+
+	ld hl, .PlayerCoords
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_coords
+	ld hl, .EnemyCoords
+
+.got_coords
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], d
+	ret
+
+.PlayerCoords:
+	db 126, 44
+	db 136, 56
+	db 146, 68
+	db 142, 40
+	db 132, 52
+	db 122, 64
 
 .EnemyCoords:
 	db  54, 76

@@ -30,3 +30,12 @@ AnimObjSandTombFleckGFX:
 
 AnimObjPinkPetalGFX:
 	INCBIN "gfx/battle_anims/pink_petal.2bpp.lz"
+
+AnimObjAuroraBeamGFX:
+	INCBIN "gfx/battle_anims/aurora_beam.2bpp.lz"
+
+AnimObjSignalBeamGFX:
+	INCBIN "gfx/battle_anims/signal_beam.2bpp.lz"
+
+AnimObjThundershockHorizontalGFX:
+	INCBIN "gfx/battle_anims/thundershock_horizontal.2bpp.lz"
