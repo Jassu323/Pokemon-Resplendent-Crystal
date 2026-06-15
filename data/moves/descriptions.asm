@@ -285,6 +285,7 @@ MoveDescriptions1:
 	dw SandTombDescription
 	dw BulletSeedDescription
 	dw AerialAceDescription
+	dw IronDefenseDescription
 	dw BlockDescription
 	dw HowlDescription
 	dw DragonClawDescription
@@ -294,11 +295,13 @@ MoveDescriptions1:
 	dw VoltTackleDescription
 	dw MagicalLeafDescription
 	dw CalmMindDescription
+	dw LeafBladeDescription
 	dw DragonDanceDescription
 	dw RockBlastDescription
 	dw ShockWaveDescription
 	dw WaterPulseDescription
 	dw PluckDescription
+	dw AssuranceDescription
 	dw SuckerPunchDescription
 	dw ForcePalmDescription
 	dw PoisonJabDescription
@@ -320,6 +323,20 @@ MoveDescriptions1:
 	dw WildChargeDescription
 	dw DrillRunDescription
 	dw IcicleCrashDescription
+	dw DisarmingVoiceDescription
+	dw FairyWindDescription
+	dw MoonblastDescription
+	dw DazzlingGleamDescription
+; Custom moves. Must always be last in the list.
+	dw GlacialSlamDescription
+	dw DrainLifeDescription
+	dw VampirismDescription
+	dw DiveBombDescription
+	dw AerialCrashDescription
+	dw MeteorDiveDescription
+	dw CausticDescription
+	dw CorrosionDescription
+	dw PiledriverDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1416,6 +1433,9 @@ BulletSeedDescription:
 AerialAceDescription:
 	db   "Placeholder@"
 
+IronDefenseDescription:
+	db   "Placeholder@"
+
 BlockDescription:
 	db   "Placeholder@"
 
@@ -1443,6 +1463,9 @@ MagicalLeafDescription:
 CalmMindDescription:
 	db   "Placeholder@"
 
+LeafBladeDescription:
+	db   "Placeholder@"
+
 DragonDanceDescription:
 	db   "Placeholder@"
 
@@ -1456,6 +1479,9 @@ WaterPulseDescription:
 	db   "Placeholder@"
 
 PluckDescription:
+	db   "Placeholder@"
+
+AssuranceDescription:
 	db   "Placeholder@"
 
 SuckerPunchDescription:
@@ -1519,4 +1545,43 @@ DrillRunDescription:
 	db   "Placeholder@"
 
 IcicleCrashDescription:
+	db   "Placeholder@"
+
+DisarmingVoiceDescription:
+	db   "Placeholder@"
+
+FairyWindDescription:
+	db   "Placeholder@"
+
+MoonblastDescription:
+	db   "Placeholder@"
+
+DazzlingGleamDescription:
+	db   "Placeholder@"
+
+GlacialSlamDescription:
+	db   "Placeholder@"
+
+DrainLifeDescription:
+	db   "Placeholder@"
+
+VampirismDescription:
+	db   "Placeholder@"
+
+DiveBombDescription:
+	db   "Placeholder@"
+
+AerialCrashDescription:
+	db   "Placeholder@"
+
+MeteorDiveDescription:
+	db   "Placeholder@"
+
+CausticDescription:
+	db   "Placeholder@"
+
+CorrosionDescription:
+	db   "Placeholder@"
+
+PiledriverDescription:
 	db   "Placeholder@"

@@ -312,6 +312,7 @@ BattleAnimations::
 	dw BattleAnim_SandTomb
 	dw BattleAnim_BulletSeed
 	dw BattleAnim_AerialAce
+	dw BattleAnim_IronDefense
 	dw BattleAnim_Block
 	dw BattleAnim_Howl
 	dw BattleAnim_DragonClaw
@@ -321,11 +322,13 @@ BattleAnimations::
 	dw BattleAnim_VoltTackle
 	dw BattleAnim_MagicalLeaf
 	dw BattleAnim_CalmMind
+	dw BattleAnim_LeafBlade
 	dw BattleAnim_DragonDance
 	dw BattleAnim_RockBlast
 	dw BattleAnim_ShockWave
 	dw BattleAnim_WaterPulse
 	dw BattleAnim_Pluck
+	dw BattleAnim_Assurance
 	dw BattleAnim_SuckerPunch
 	dw BattleAnim_ForcePalm
 	dw BattleAnim_PoisonJab
@@ -347,5 +350,19 @@ BattleAnimations::
 	dw BattleAnim_WildCharge
 	dw BattleAnim_DrillRun
 	dw BattleAnim_IcicleCrash
+	dw BattleAnim_DisarmingVoice
+	dw BattleAnim_FairyWind
+	dw BattleAnim_Moonblast
+	dw BattleAnim_DazzlingGleam
+; Custom moves. Must always be last in the list.
+	dw BattleAnim_GlacialSlam
+	dw BattleAnim_DrainLife
+	dw BattleAnim_Vampirism
+	dw BattleAnim_DiveBomb
+	dw BattleAnim_AerialCrash
+	dw BattleAnim_MeteorDive
+	dw BattleAnim_Caustic
+	dw BattleAnim_Corrosion
+	dw BattleAnim_Piledriver
 	assert_table_length NUM_ATTACKS + 1
 	dw BattleAnim_SweetScent2

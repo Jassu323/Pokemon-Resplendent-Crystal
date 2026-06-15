@@ -4771,6 +4771,70 @@ BattleAnim_IcicleCrash:
 	anim_icepal BATTLE_ANIM_ICE_PAL_RESTORE
 	anim_ret
 
+BattleAnim_IronDefense:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_LeafBlade:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Assurance:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_DisarmingVoice:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_FairyWind:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Moonblast:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_DazzlingGleam:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_GlacialSlam:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_DrainLife:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Vampirism:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_DiveBomb:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_AerialCrash:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_MeteorDive:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Caustic:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Corrosion:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
+BattleAnim_Piledriver:
+	anim_call BattleAnim_Tackle
+	anim_ret
+
 BattleAnim_GigaDrain:
 	anim_2gfx BATTLE_ANIM_GFX_BUBBLE, BATTLE_ANIM_GFX_CHARGE
 	anim_call BattleAnim_TargetObj_1Row

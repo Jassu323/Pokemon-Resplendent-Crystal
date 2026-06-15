@@ -298,6 +298,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         15, GROUND,         70, 15, 100      ;SAND_TOMB #328
 	move EFFECT_NORMAL_HIT,         10, GRASS,         100, 30,   0      ;BULLET_SEED #331
 	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;AERIAL_ACE #332
+	move EFFECT_NORMAL_HIT,          0, STEEL,         100, 15,   0      ;IRON_DEFENSE #334
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100,  5,   0      ;BLOCK #335
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 40,   0      ;HOWL #336
 	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
@@ -307,11 +308,13 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        120, ELECTRIC,      100, 15,   0      ;VOLT_TACKLE #344
 	move EFFECT_NORMAL_HIT,         60, GRASS,         100, 20,   0      ;MAGICAL_LEAF #345
 	move EFFECT_NORMAL_HIT,          0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
+	move EFFECT_NORMAL_HIT,         70, GRASS,         100, 15,   0      ;LEAF_BLADE #348
 	move EFFECT_NORMAL_HIT,          0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349
 	move EFFECT_NORMAL_HIT,         25, ROCK,           80, 10,   0      ;ROCK_BLAST #350
 	move EFFECT_NORMAL_HIT,         60, ELECTRIC,      100, 20,   0      ;SHOCK_WAVE #351
 	move EFFECT_NORMAL_HIT,         60, WATER,         100, 20,  20      ;WATER_PULSE #352
 	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;PLUCK #365
+	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;ASSURANCE #372
 	move EFFECT_NORMAL_HIT,         80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
 	move EFFECT_NORMAL_HIT,         60, FIGHTING,      100, 10,  30      ;FORCE_PALM #395
 	move EFFECT_NORMAL_HIT,         80, POISON,        100, 20,  30      ;POISON_JAB #398
@@ -333,4 +336,18 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
 	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
 	move EFFECT_FLINCH_HIT,         85, ICE,            90, 10,  30      ;ICICLE_CRASH #556
+	move EFFECT_NORMAL_HIT,         40, FAIRY,         100, 15,   0      ;DISARMING_VOICE #574
+	move EFFECT_NORMAL_HIT,         40, FAIRY,         100, 30,   0      ;FAIRY_WIND #584
+	move EFFECT_NORMAL_HIT,         95, FAIRY,         100, 15,  30      ;MOONBLAST #585
+	move EFFECT_NORMAL_HIT,         80, FAIRY,         100, 10,   0      ;DAZZLING_GLEAM #605
+; Custom moves. Must always be last in the list.
+	move EFFECT_NORMAL_HIT,          1, ICE,           100, 40,   0      ;GLACIAL_SLAM
+	move EFFECT_NORMAL_HIT,          1, BUG,           100, 40,   0      ;DRAIN_LIFE
+	move EFFECT_NORMAL_HIT,          1, BUG,           100, 40,   0      ;VAMPIRISM
+	move EFFECT_NORMAL_HIT,          1, FLYING,        100, 40,   0      ;DIVE_BOMB
+	move EFFECT_NORMAL_HIT,          1, FLYING,        100, 40,   0      ;AERIAL_CRASH
+	move EFFECT_NORMAL_HIT,          1, FIGHTING,      100, 40,   0      ;METEOR_DIVE
+	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CAUSTIC
+	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CORROSION
+	move EFFECT_NORMAL_HIT,          1, ROCK,          100, 40,   0      ;PILEDRIVER
 .IndirectEnd::
