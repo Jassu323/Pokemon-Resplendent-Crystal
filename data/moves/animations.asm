@@ -569,6 +569,18 @@ BattleAnim_Brn:
 	anim_firepal BATTLE_ANIM_FIRE_PAL_RESTORE
 	anim_ret
 
+BattleAnim_BrnTarget:
+	anim_1gfx BATTLE_ANIM_GFX_EMBER
+	anim_firepal BATTLE_ANIM_FIRE_PAL_LOAD
+.loop
+	anim_sound 0, 0, SFX_BURN
+	anim_obj BATTLE_ANIM_OBJ_BURNED, 136, 56, $10
+	anim_wait 4
+	anim_loop 3, .loop
+	anim_wait 16
+	anim_firepal BATTLE_ANIM_FIRE_PAL_RESTORE
+	anim_ret
+
 BattleAnim_Psn:
 	anim_1gfx BATTLE_ANIM_GFX_POISON
 	anim_poisonpal BATTLE_ANIM_POISON_PAL_LOAD
@@ -1078,14 +1090,19 @@ BattleAnim_IceBeam:
 
 BattleAnim_Blizzard:
 	anim_1gfx BATTLE_ANIM_GFX_ICE
-.loop
-	anim_call BattleAnimSub_BlizzardSweep
-	anim_loop 3, .loop
 	anim_bgeffect BATTLE_BG_EFFECT_WHITE_HUES, $0, $8, $0
+	anim_wait 8
+	anim_sound 0, 1, SFX_SHINE
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_5A, 136, 86, $0
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_5B, 136, 86, $1
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_5C, 136, 86, $2
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_4, 136, 86, $3
 	anim_wait 32
 	anim_obj BATTLE_ANIM_OBJ_ICE_BUILDUP, 136, 74, $10
-	anim_wait 128
+.loop
 	anim_sound 0, 1, SFX_SHINE
+	anim_wait 32
+	anim_loop 4, .loop
 	anim_wait 8
 	anim_sound 0, 1, SFX_SHINE
 	anim_wait 24
@@ -2484,16 +2501,53 @@ BattleAnim_Transform:
 	anim_ret
 
 BattleAnim_PetalDance:
-	anim_sound 0, 0, SFX_MENU
-	anim_2gfx BATTLE_ANIM_GFX_FLOWER, BATTLE_ANIM_GFX_HIT
-.loop
-	anim_obj BATTLE_ANIM_OBJ_PETAL_DANCE, 48, 56, $0
-	anim_wait 11
-	anim_loop 8, .loop
-	anim_wait 192
+	anim_sound 0, 0, SFX_MORNING_SUN
+	anim_2gfx BATTLE_ANIM_GFX_PINK_PETAL, BATTLE_ANIM_GFX_HIT
+	anim_pinkpetalpal BATTLE_ANIM_PINK_PETAL_PAL_LOAD
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $00
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $12
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $21
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $33
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $40
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $52
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $61
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $73
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $80
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL, 48, 56, $92
+	anim_wait 84
 	anim_sound 0, 1, SFX_COMET_PUNCH
 	anim_obj BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 136, 56, $0
 	anim_wait 16
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $00
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $0a
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $11
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $1b
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $20
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $2a
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $31
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $3b
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $00
+	anim_wait 4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL, 136, 72, $0a
+	anim_wait 84
+	anim_pinkpetalpal BATTLE_ANIM_PINK_PETAL_PAL_RESTORE
 	anim_ret
 
 BattleAnim_Barrage:
@@ -3752,12 +3806,11 @@ BattleAnim_PerishSong:
 
 BattleAnim_IcyWind:
 	anim_1gfx BATTLE_ANIM_GFX_ICE
-.loop
-	anim_call BattleAnimSub_BlizzardSweep
-	anim_loop 2, .loop
-	anim_wait 2
+	anim_sound 0, 1, SFX_SHINE
 	anim_bgeffect BATTLE_BG_EFFECT_WHITE_HUES, $0, $8, $0
-	anim_wait 40
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_5A, 136, 86, $4
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BLIZZARD_WIND_5B, 136, 86, $5
+	anim_wait 48
 	anim_call BattleAnimSub_Ice
 	anim_wait 32
 	anim_ret
@@ -3865,20 +3918,31 @@ BattleAnim_Hail:
 	anim_ret
 
 BattleAnim_WillOWisp:
-	anim_1gfx BATTLE_ANIM_GFX_EMBER
-	anim_firepal BATTLE_ANIM_FIRE_PAL_LOAD
-.loop1
+	anim_2gfx BATTLE_ANIM_GFX_MEDIUM_BUBBLE, BATTLE_ANIM_GFX_GHOST_FLAME
+	anim_ghostflamepal BATTLE_ANIM_GHOST_FLAME_PAL_LOAD
 	anim_bgp $1b
-	anim_call BattleAnimSub_FireSpinOpener
-	anim_loop 2, .loop1
-	anim_wait 120
-.loop2
-	anim_sound 0, 0, SFX_BURN
-	anim_objparams BATTLE_ANIM_OBJ_BURNED, 136, 56, 2, $10, $90
-	anim_wait 4
-	anim_loop 3, .loop2
-	anim_wait 16
-	anim_firepal BATTLE_ANIM_FIRE_PAL_RESTORE
+	anim_obp1 $1b
+	anim_sound 0, 0, SFX_SLUDGE_BOMB
+	anim_extobj BATTLE_ANIM_EXT_OBJ_WILL_O_WISP_BUBBLE, 64, 92, $4
+	anim_wait 20
+	anim_sound 0, 0, SFX_SLUDGE_BOMB
+	anim_extobj BATTLE_ANIM_EXT_OBJ_WILL_O_WISP_BUBBLE, 64, 92, $4
+	anim_wait 20
+	anim_sound 0, 0, SFX_SLUDGE_BOMB
+	anim_extobj BATTLE_ANIM_EXT_OBJ_WILL_O_WISP_BUBBLE, 64, 92, $4
+	anim_wait 28
+	anim_sound 0, 1, SFX_BURN
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHADOW_PUNCH_FLAME, 136, 56, 4, $2, $3, $4, $5
+	anim_wait 20
+	anim_sound 0, 1, SFX_BURN
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_WILL_O_WISP_PLUS_FLAME, 136, 56, 4, $0, $1, $2, $3
+	anim_wait 20
+	anim_sound 0, 1, SFX_BURN
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHADOW_PUNCH_FLAME, 136, 56, 4, $2, $3, $4, $5
+	anim_wait 36
+	anim_bgp $e4
+	anim_call BattleAnim_BrnTarget
+	anim_ghostflamepal BATTLE_ANIM_GHOST_FLAME_PAL_RESTORE
 	anim_ret
 
 BattleAnim_FocusPunch:
@@ -5927,13 +5991,19 @@ BattleAnim_Ancientpower:
 	anim_ret
 
 BattleAnim_ShadowBall:
-	anim_2gfx BATTLE_ANIM_GFX_EGG, BATTLE_ANIM_GFX_SMOKE
+	anim_2gfx BATTLE_ANIM_GFX_CHARGE, BATTLE_ANIM_GFX_SHADOW_BALL
+	anim_ghostflamepal BATTLE_ANIM_GHOST_FLAME_PAL_LOAD
 	anim_bgp $1b
+	anim_obp1 $1b
+	anim_sound 0, 0, SFX_CHARGE
+	anim_extobj BATTLE_ANIM_EXT_OBJ_SHADOW_BALL_CHARGE_CENTER, 48, 84, $0
+	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHADOW_BALL_CHARGE, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
+	anim_wait 108
+	anim_clearobjs
 	anim_sound 6, 2, SFX_SLUDGE_BOMB
-	anim_obj BATTLE_ANIM_OBJ_SHADOW_BALL, 64, 92, $2
-	anim_wait 32
-	anim_obj BATTLE_ANIM_OBJ_BALL_POOF, 132, 56, $10
-	anim_wait 24
+	anim_obj BATTLE_ANIM_OBJ_SHADOW_BALL, 64, 92, $0
+	anim_wait 36
+	anim_ghostflamepal BATTLE_ANIM_GHOST_FLAME_PAL_RESTORE
 	anim_ret
 
 BattleAnim_FutureSight:

@@ -139,6 +139,10 @@ BattleAnimExtFrameData:
 	dw .Frameset_MudBallMedium ; BATTLE_ANIM_FRAMESET_MUD_BALL_MEDIUM
 	dw .Frameset_MudSplashMedium ; BATTLE_ANIM_FRAMESET_MUD_SPLASH_MEDIUM
 	dw .Frameset_ThundershockStrike ; BATTLE_ANIM_FRAMESET_THUNDERSHOCK_STRIKE
+	dw .Frameset_BlizzardWind5A ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_5A
+	dw .Frameset_BlizzardWind5B ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_5B
+	dw .Frameset_BlizzardWind5C ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_5C
+	dw .Frameset_BlizzardWind4 ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_4
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -399,6 +403,22 @@ BattleAnimExtFrameData:
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2, 2
 	oamframe BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1, 2
 	oamdelete
+
+.Frameset_BlizzardWind5A:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5A, 32
+	oamend
+
+.Frameset_BlizzardWind5B:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5B, 32
+	oamend
+
+.Frameset_BlizzardWind5C:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5C, 32
+	oamend
+
+.Frameset_BlizzardWind4:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_4, 32
+	oamend
 
 BattleAnimExtOAMUpdate:
 	ld a, e
@@ -920,6 +940,10 @@ BattleAnimExtOAMData:
 	battleanimoam $00,  6, .OAMData_ThundershockStrike + 4 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_3
 	battleanimoam $00,  4, .OAMData_ThundershockStrike + 6 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_2
 	battleanimoam $00,  2, .OAMData_ThundershockStrike + 8 * 4 ; BATTLE_ANIM_EXT_OAMSET_THUNDERSHOCK_STRIKE_LOWER_1
+	battleanimoam $00,  5, .OAMData_BlizzardWind5A ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5A
+	battleanimoam $00,  5, .OAMData_BlizzardWind5B ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5B
+	battleanimoam $00,  5, .OAMData_BlizzardWind5C ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5C
+	battleanimoam $00,  4, .OAMData_BlizzardWind4 ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_4
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_HyperFangFrame1:
@@ -1346,6 +1370,33 @@ BattleAnimExtOAMData:
 	dbsprite   6,  -2, 4, 0, $04, $0
 	dbsprite   8,  -4, 4, 0, $04, $0
 	dbsprite  10,  -2, 4, 0, $04, $0
+
+.OAMData_BlizzardWind5A:
+	dbsprite -18,  -8, 4, 0, $04, $0
+	dbsprite -11,  -6, 4, 0, $04, $0
+	dbsprite  -3,  -4, 4, 0, $04, $0
+	dbsprite   6,  -2, 4, 0, $04, $0
+	dbsprite  14,   1, 4, 0, $04, $0
+
+.OAMData_BlizzardWind5B:
+	dbsprite -15,  -7, 4, 0, $04, $0
+	dbsprite  -8,  -5, 4, 0, $04, $0
+	dbsprite   0,  -3, 4, 0, $04, $0
+	dbsprite   8,  -1, 4, 0, $04, $0
+	dbsprite  16,   0, 4, 0, $04, $0
+
+.OAMData_BlizzardWind5C:
+	dbsprite -20,  -6, 4, 0, $04, $0
+	dbsprite -13,  -4, 4, 0, $04, $0
+	dbsprite  -5,  -2, 4, 0, $04, $0
+	dbsprite   4,   0, 4, 0, $04, $0
+	dbsprite  12,  -7, 4, 0, $04, $0
+
+.OAMData_BlizzardWind4:
+	dbsprite -17,  -5, 4, 0, $04, $0
+	dbsprite  -9,  -3, 4, 0, $04, $0
+	dbsprite   2,  -1, 4, 0, $04, $0
+	dbsprite  15,   1, 4, 0, $04, $0
 
 .OAMData_SeismicTossLight:
 	dbsprite   0,   0, 0, 0, $00, $0

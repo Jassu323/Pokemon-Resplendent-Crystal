@@ -60,7 +60,7 @@ AnimObjGFX:
 	anim_obj_gfx 15, AnimObjEmberGFX
 	anim_obj_gfx 33, AnimObjDragonClawGFX
 	anim_obj_gfx 12, AnimObjPoisonBubbleGFX
-	anim_obj_gfx 16, AnimObjShadowBallGFX
+	anim_obj_gfx 48, AnimObjShadowBallGFX
 	anim_obj_gfx 16, AnimObjSludgeBombGFX
 	anim_obj_gfx 12, AnimObjSharpTeethGFX
 	anim_obj_gfx 35, AnimObjHyperFangGFX

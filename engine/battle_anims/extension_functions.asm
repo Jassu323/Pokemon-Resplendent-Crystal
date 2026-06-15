@@ -1145,6 +1145,238 @@ BattleAnimFunc_VoltTackleBolt:
 .EnemyYCoords:
 	db 44, 56, 68, 80, 92
 
+BattleAnimFunc_BlizzardWindSheet:
+; Obj Param: 0-3 selects speed and vertical phase.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 128
+	jr nc, .done
+	inc [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	bit 2, a
+	jr z, .blizzard_speed
+	and $3
+	ld e, a
+	ld d, 0
+	ld hl, .IcyWindSpeeds
+	jr .got_speed_table
+
+.blizzard_speed
+	and $3
+	ld e, a
+	ld d, 0
+	ld hl, .Speeds
+.got_speed_table
+	add hl, de
+	ld a, [hl]
+	ld e, a
+	ldh a, [hBattleTurn]
+	and a
+	ld a, e
+	jr z, .got_x_speed
+	xor $ff
+	inc a
+.got_x_speed
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	add [hl]
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	inc [hl]
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	add a
+	add a
+	add e
+	and $f
+	ld e, a
+	ld d, 0
+	ld hl, .YOffsets
+	add hl, de
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.Speeds:
+	db 7, 8, 7, 8
+.IcyWindSpeeds:
+	db 3, 4, 3, 4
+.YOffsets:
+	db  0, -1, -2, -3, -4, -5, -6, -7
+	db -8, -7, -6, -5, -4, -3, -2, -1
+
+BattleAnimFunc_PetalDancePetal:
+; Obj Param: low two bits select petal animation phase, upper bits select starting angle.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw BattleAnimFunc_PetalDanceOrbit
+
+.init
+	call .SetPhaseFrameset
+	jp BattleAnimFunc_PetalDanceOrbitInit
+
+.SetPhaseFrameset
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	ret z
+	add BATTLE_ANIM_FRAMESET_PINK_PETAL
+	ld e, a
+	ld d, 0
+	jp ReinitBattleAnimFrameset
+
+BattleAnimFunc_PetalDanceOrbitInit:
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $fc
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	ldh a, [hBattleTurn]
+	and a
+	jr z, BattleAnimFunc_PetalDanceOrbit
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, $48 - (5 * TILE_WIDTH)
+	sub [hl]
+	ld [hl], a
+
+BattleAnimFunc_PetalDanceOrbit:
+; Object moves downwards in a spiral around the user.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld d, $18
+	push af
+	push de
+	call BattleAnim_Sine
+	sra a
+	sra a
+	sra a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	add [hl]
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	and $1
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp $28
+	jr nc, .end
+	inc [hl]
+	ret
+
+.end
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_PetalDanceTargetPetal:
+; Obj Param: low two bits select petal animation phase, upper bits select starting angle.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw BattleAnimFunc_PetalDanceTargetOrbit
+
+.init
+	call .SetPhaseFrameset
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $fc
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+	jr BattleAnimFunc_PetalDanceTargetOrbit
+
+.SetPhaseFrameset
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	ret z
+	add BATTLE_ANIM_FRAMESET_PINK_PETAL
+	ld e, a
+	ld d, 0
+	jp ReinitBattleAnimFrameset
+
+BattleAnimFunc_PetalDanceTargetOrbit:
+; Object moves upwards in a reverse spiral around the target.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld d, $18
+	push af
+	push de
+	call BattleAnim_Sine
+	sra a
+	sra a
+	sra a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld e, a
+	ld a, [hl]
+	xor $ff
+	inc a
+	add e
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	dec [hl]
+	ld a, [hl]
+	and $1
+	ret nz
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	cp $28
+	jr nc, .end
+	inc [hl]
+	ret
+
+.end
+	call BattleAnimExt_Deinit
+	ret
+
 BattleAnimFunc_OverheatFlame:
 ; Object shoots outward in a fixed fan and disappears after $1c frames.
 ; Obj Param: Lower nybble selects one of nine X/Y vectors.
@@ -1516,6 +1748,89 @@ BattleAnimFunc_FlameWheelHit:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_WillOWispBubble:
+; Moves slowly toward the target with a gentle Y wobble.
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	cp $84
+	jr nc, .done
+	inc a
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	inc [hl]
+	ld a, [hl]
+	and $1
+	jr nz, .wobble
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+.wobble
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	add $2
+	ld [hl], a
+	ld d, $5
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_WillOWispPlusFlame:
+; Obj Param: $0 = right, $1 = left, $2 = up, $3 = down.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $c
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	cp $1
+	jr z, .left
+	cp $2
+	jr z, .up
+	cp $3
+	jr z, .down
+
+.right
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	inc [hl]
+	ret
+
+.left
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.up
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	dec [hl]
+	ret
+
+.down
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
 BattleAnimFunc_SacredFireHit:
 ; Obj Param: Fire Blast-style directions $1 = up, $4 = down-left,
 ;            $5 = down-right. High nibble may delay movement.
@@ -1723,6 +2038,29 @@ BattleAnimFunc_PoisonBubble:
 	ld hl, BATTLEANIMSTRUCT_YOFFSET
 	add hl, bc
 	dec [hl]
+	ret
+
+BattleAnimFunc_ShadowBall:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 34
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add 2
+	ld [hl], a
+
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	dec [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
 	ret
 
 BattleAnimExt_Deinit:

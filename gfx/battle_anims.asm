@@ -60,8 +60,6 @@ AnimObjDragonClawGFX:
 	INCBIN "gfx/battle_anims/claw.2bpp.lz"
 AnimObjPoisonBubbleGFX:
 	INCBIN "gfx/battle_anims/poison_bubble.2bpp.lz"
-AnimObjShadowBallGFX:
-	INCBIN "gfx/battle_anims/shadow_ball.2bpp.lz"
 AnimObjSludgeBombGFX:
 	INCBIN "gfx/battle_anims/sludge_bomb.2bpp.lz"
 AnimObjSharpTeethGFX:

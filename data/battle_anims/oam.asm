@@ -247,6 +247,8 @@ BattleAnimOAMData:
 	battleanimoam $00,  8, .OAMData_VoltTackleBoltMidRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_MID_RIGHT
 	battleanimoam $00,  8, .OAMData_VoltTackleBoltRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT
 	battleanimoam $00,  8, .OAMData_VoltTackleBoltRightOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT_OFF
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_3
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
 
 .OAMData_IceChunk:

@@ -192,6 +192,8 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_TauntPlaced
 	dw BattleAnimFunc_HexMeanLook
 	dw BattleAnimFunc_HexGhostFlame
+	dw BattleAnimFunc_WillOWispBubble
+	dw BattleAnimFunc_WillOWispPlusFlame
 	dw BattleAnimFunc_DragonDanceOrb
 	dw BattleAnimFunc_FakeOutHand
 	dw BattleAnimFunc_YawnCloud
@@ -200,6 +202,11 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_AromatherapyPetal
 	dw BattleAnimFunc_AuroraBeamRing
 	dw BattleAnimFunc_VoltTackleBolt
+	dw BattleAnimFunc_BlizzardWindSheet
+	dw BattleAnimFunc_PetalDancePetal
+	dw BattleAnimFunc_PetalDanceTargetPetal
+	dw BattleAnimFunc_ShadowBall
+	dw BattleAnimFunc_ChargeCenter
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -3342,6 +3349,7 @@ BattleAnimFunc_SolarBeam:
 
 .zero
 	call BattleAnim_IncAnonJumptableIndex
+	call BattleAnim_AdjustChargeYCoord
 	ld hl, BATTLEANIMSTRUCT_VAR1
 	add hl, bc
 	ld [hl], $28
@@ -3389,6 +3397,29 @@ BattleAnimFunc_SolarBeam:
 
 .zero_radius
 	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_ChargeCenter:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .zero
+	dw .one
+
+.zero
+	call BattleAnim_IncAnonJumptableIndex
+	call BattleAnim_AdjustChargeYCoord
+.one
+	ret
+
+BattleAnim_AdjustChargeYCoord:
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, $60
+	sub [hl]
+	ld [hl], a
 	ret
 
 BattleAnimFunc_Gust:

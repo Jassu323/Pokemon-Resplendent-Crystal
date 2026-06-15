@@ -231,6 +231,7 @@ BattleAnimFrameData:
 	dw .Frameset_TauntFinger         ; BATTLE_ANIM_FRAMESET_TAUNT_FINGER
 	dw .Frameset_TauntAnger          ; BATTLE_ANIM_FRAMESET_TAUNT_ANGER
 	dw .Frameset_GhostFlame          ; BATTLE_ANIM_FRAMESET_GHOST_FLAME
+	dw .Frameset_WillOWispBubble     ; BATTLE_ANIM_FRAMESET_WILL_O_WISP_BUBBLE
 	dw .Frameset_YawnCloud          ; BATTLE_ANIM_FRAMESET_YAWN_CLOUD
 	dw .Frameset_YawnCloudFlicker   ; BATTLE_ANIM_FRAMESET_YAWN_CLOUD_FLICKER
 	dw .Frameset_SandTombFleck      ; BATTLE_ANIM_FRAMESET_SAND_TOMB_FLECK
@@ -241,6 +242,7 @@ BattleAnimFrameData:
 	dw .Frameset_AuroraBeamRing     ; BATTLE_ANIM_FRAMESET_AURORA_BEAM_RING
 	dw .Frameset_VoltTackleBolt     ; BATTLE_ANIM_FRAMESET_VOLT_TACKLE_BOLT
 	dw .Frameset_VoltTackleBoltReverse ; BATTLE_ANIM_FRAMESET_VOLT_TACKLE_BOLT_REVERSE
+	dw .Frameset_ShadowBall         ; BATTLE_ANIM_FRAMESET_SHADOW_BALL
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -1576,6 +1578,10 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_GHOST_FLAME_4, 5
 	oamrestart
 
+.Frameset_WillOWispBubble:
+	oamframe BATTLE_ANIM_OAMSET_1B, 4
+	oamrestart
+
 .Frameset_YawnCloud:
 	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
 	oamrestart
@@ -1641,3 +1647,9 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT, 2
 	oamframe BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT_OFF, 2
 	oamdelete
+
+.Frameset_ShadowBall:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
+	oamframe BATTLE_ANIM_OAMSET_SHADOW_BALL_2, 1
+	oamframe BATTLE_ANIM_OAMSET_SHADOW_BALL_3, 1
+	oamrestart

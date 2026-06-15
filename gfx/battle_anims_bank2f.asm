@@ -39,3 +39,6 @@ AnimObjSignalBeamGFX:
 
 AnimObjThundershockHorizontalGFX:
 	INCBIN "gfx/battle_anims/thundershock_horizontal.2bpp.lz"
+
+AnimObjShadowBallGFX:
+	INCBIN "gfx/battle_anims/shadow_ball.2bpp.lz"
