@@ -207,6 +207,9 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_PetalDanceTargetPetal
 	dw BattleAnimFunc_ShadowBall
 	dw BattleAnimFunc_ChargeCenter
+	dw BattleAnimFunc_PetalDanceController
+	dw BattleAnimFunc_ThunderboltAftereffectController
+	dw BattleAnimFunc_MeteorMashController
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:

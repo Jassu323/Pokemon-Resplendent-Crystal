@@ -513,6 +513,11 @@ SECTION "Battle Animation Extensions", ROMX
 INCLUDE "engine/battle_anims/extensions.asm"
 
 
+SECTION "Battle Animation Pointers", ROMX, BANK[$3f]
+
+INCLUDE "data/moves/animation_pointers.asm"
+
+
 SECTION "TMHM Case", ROMX
 
 INCLUDE "engine/items/tmhm_case.asm"

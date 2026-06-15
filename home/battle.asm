@@ -233,7 +233,7 @@ GetBattleAnimByte::
 	inc hl
 	ld d, [hl]
 
-	ld a, BANK(BattleAnimations)
+	ld a, BANK(BattleAnimationScriptsStart)
 	rst Bankswitch
 
 	ld a, [de]

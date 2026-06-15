@@ -2063,6 +2063,417 @@ BattleAnimFunc_ShadowBall:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_PetalDanceController:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 40
+	jr nc, .done
+	ld e, a
+	and $3
+	jr nz, .next
+
+	ld a, e
+	srl a
+	srl a
+	ld e, a
+	ld d, 0
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	bit 0, [hl]
+	jr nz, .target
+
+	ld hl, .UserParams
+	add hl, de
+	ld d, [hl]
+	ld a, BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_PETAL
+	call BattleAnimController_QueueExtAtController
+	jr .next
+
+.target
+	ld hl, .TargetParams
+	add hl, de
+	ld d, [hl]
+	ld a, BATTLE_ANIM_EXT_OBJ_PETAL_DANCE_TARGET_PETAL
+	call BattleAnimController_QueueExtAtController
+
+.next
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.UserParams:
+	db $00, $12, $21, $33, $40, $52, $61, $73, $80, $92
+.TargetParams:
+	db $00, $0a, $11, $1b, $20, $2a, $31, $3b, $00, $0a
+
+BattleAnimFunc_ThunderboltAftereffectController:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 66
+	jr nc, .done
+	and a
+	jr z, .frame0
+	cp 6
+	jr z, .flash
+	cp 12
+	jr z, .burst2
+	cp 24
+	jr z, .frame24
+	cp 30
+	jr z, .flash
+	cp 36
+	jr z, .burst2
+	jr .next
+
+.frame0
+	ld de, SFX_THUNDERSHOCK_LONG
+	ld a, $1 ; anim_sound 0, 1
+	call BattleAnimController_PlayStereoSFX
+	ld hl, .Aftereffect
+	call BattleAnimController_QueueRegularFromHL
+	call .QueueFlash
+	ld hl, .Burst1
+	call BattleAnimController_QueueRegularSet6
+	jr .next
+
+.flash
+	call .QueueFlash
+	jr .next
+
+.burst2
+	ld hl, .Burst2
+	call BattleAnimController_QueueRegularSet6
+	jr .next
+
+.frame24
+	call .QueueFlash
+	ld hl, .Burst3
+	call BattleAnimController_QueueRegularSet6
+
+.next
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.QueueFlash:
+	ld d, $4
+	ld e, $2
+	jp BattleAnimController_QueueFlashInverted
+
+.Aftereffect:
+	db BATTLE_ANIM_OBJ_THUNDERBOLT_AFTEREFFECT, 136, 56, $0
+.Burst1:
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       160, 56, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 148, 40, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 124, 40, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       112, 56, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 124, 72, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 148, 72, $0
+.Burst2:
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       156, 44, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 136, 38, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 116, 44, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       116, 68, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 136, 74, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 156, 68, $0
+.Burst3:
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       160, 64, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 144, 38, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 120, 48, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT,       112, 64, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_XFLIP, 132, 74, $0
+	db BATTLE_ANIM_OBJ_ELECTRICITY_EFFECT_YFLIP, 152, 48, $0
+
+BattleAnimFunc_MeteorMashController:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 104
+	jr nc, .done
+	and a
+	jr z, .fist0
+	cp 2
+	jr z, .hit0
+	cp 20
+	jr z, .fist1
+	cp 22
+	jr z, .hit1
+	cp 40
+	jr z, .fist2
+	cp 42
+	jr z, .hit2
+	cp 60
+	jr z, .fist3
+	cp 62
+	jr z, .hit3
+	cp 80
+	jr z, .fist4
+	cp 82
+	jr z, .hit4
+	jr .next
+
+.fist0
+	ld e, 0
+	jr .fist
+.fist1
+	ld e, 1
+	jr .fist
+.fist2
+	ld e, 2
+	jr .fist
+.fist3
+	ld e, 3
+	jr .fist
+.fist4
+	ld e, 4
+.fist
+	call .SpawnFist
+	jr .next
+
+.hit0
+	ld e, 0
+	jr .hit
+.hit1
+	ld e, 1
+	jr .hit
+.hit2
+	ld e, 2
+	jr .hit
+.hit3
+	ld e, 3
+	jr .hit
+.hit4
+	ld e, 4
+.hit
+	call .SpawnHit
+
+.next
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.SpawnFist:
+	push de
+	ld de, SFX_TACKLE
+	ld a, $1 ; anim_sound 0, 1
+	call BattleAnimController_PlayStereoSFX
+	pop de
+	ld d, 0
+	ld hl, .FistObjects
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de
+	jp BattleAnimController_QueueExtFromHL
+
+.SpawnHit:
+	push de
+	ld d, 0
+	ld hl, .HitObjects
+	add hl, de
+	add hl, de
+	add hl, de
+	add hl, de
+	call BattleAnimController_QueueRegularFromHL
+	pop de
+	push de
+	ld de, SFX_METRONOME
+	ld a, $1 ; anim_sound 0, 1
+	call BattleAnimController_PlayStereoSFX
+	pop de
+	push de
+	call .SpawnStars
+	pop de
+	ld d, $8
+	ld e, $2
+	jp BattleAnimController_QueueFlashInverted
+
+.SpawnStars:
+	ld d, 0
+	ld hl, .StarCoords
+	add hl, de
+	add hl, de
+	ld d, [hl]
+	inc hl
+	ld e, [hl]
+	ld a, BATTLE_ANIM_EXT_OBJ_METEOR_MASH_STAR
+	ld h, $2
+	call BattleAnimController_QueueExtAtCoords
+	ld a, BATTLE_ANIM_EXT_OBJ_METEOR_MASH_STAR
+	ld h, $3
+	call BattleAnimController_QueueExtAtCoords
+	ld a, BATTLE_ANIM_EXT_OBJ_METEOR_MASH_STAR
+	ld h, $4
+	call BattleAnimController_QueueExtAtCoords
+	ld a, BATTLE_ANIM_EXT_OBJ_METEOR_MASH_STAR
+	ld h, $5
+	jp BattleAnimController_QueueExtAtCoords
+
+.FistObjects:
+	db BATTLE_ANIM_EXT_OBJ_METEOR_MASH_FIST, 144, 36, $0
+	db BATTLE_ANIM_EXT_OBJ_METEOR_MASH_FIST, 120, 40, $0
+	db BATTLE_ANIM_EXT_OBJ_METEOR_MASH_FIST, 144, 44, $0
+	db BATTLE_ANIM_EXT_OBJ_METEOR_MASH_FIST, 120, 48, $0
+	db BATTLE_ANIM_EXT_OBJ_METEOR_MASH_FIST, 144, 52, $0
+.HitObjects:
+	db BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 144, 40, $0
+	db BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 120, 44, $0
+	db BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 144, 48, $0
+	db BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 120, 52, $0
+	db BATTLE_ANIM_OBJ_HIT_BIG_YFIX, 144, 56, $0
+.StarCoords:
+	db 144, 40
+	db 120, 44
+	db 144, 48
+	db 120, 52
+	db 144, 56
+
+BattleAnimController_QueueExtAtController:
+; a = extended object id, d = param, bc = controller object
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
+	ld a, d
+	ld [wBattleObjectTempParam], a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempXCoord], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempYCoord], a
+	push bc
+	callfar QueueBattleAnimation
+	pop bc
+	ret
+
+BattleAnimController_QueueRegularFromHL:
+	ld a, [hli]
+	ld [wBattleObjectTempID], a
+	xor a
+	ld [wBattleObjectTempNamespace], a
+	jr BattleAnimController_QueueObjectFromHL
+
+BattleAnimController_QueueExtFromHL:
+	ld a, [hli]
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
+
+BattleAnimController_QueueObjectFromHL:
+	ld a, [hli]
+	ld [wBattleObjectTempXCoord], a
+	ld a, [hli]
+	ld [wBattleObjectTempYCoord], a
+	ld a, [hli]
+	ld [wBattleObjectTempParam], a
+	push hl
+	push bc
+	callfar QueueBattleAnimation
+	pop bc
+	pop hl
+	ret
+
+BattleAnimController_QueueRegularSet6:
+	push bc
+	ld b, 6
+.loop
+	call BattleAnimController_QueueRegularFromHL
+	dec b
+	jr nz, .loop
+	pop bc
+	ret
+
+BattleAnimController_QueueExtAtCoords:
+; a = extended object id, d = x, e = y, h = param
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
+	ld a, d
+	ld [wBattleObjectTempXCoord], a
+	ld a, e
+	ld [wBattleObjectTempYCoord], a
+	ld a, h
+	ld [wBattleObjectTempParam], a
+	push hl
+	push de
+	push bc
+	callfar QueueBattleAnimation
+	pop bc
+	pop de
+	pop hl
+	ret
+
+BattleAnimController_QueueFlashInverted:
+; d = flash turn argument, e = flash param argument
+	ld a, BATTLE_BG_EFFECT_FLASH_INVERTED
+	ld [wBattleBGEffectTempID], a
+	xor a
+	ld [wBattleBGEffectTempJumptableIndex], a
+	ld a, d
+	ld [wBattleBGEffectTempTurn], a
+	ld a, e
+	ld [wBattleBGEffectTempParam], a
+	push bc
+	callfar QueueBGEffect
+	pop bc
+	ret
+
+BattleAnimController_PlayStereoSFX:
+; a = anim_sound duration/tracks argument, de = SFX_* id
+	push hl
+	push de
+	push bc
+	push af
+	srl a
+	srl a
+	ld [wSFXDuration], a
+	pop af
+	ld c, a
+	ldh a, [hBattleTurn]
+	and a
+	ld a, c
+	jr z, .got_cry_track
+	xor 1
+
+.got_cry_track
+	maskbits NUM_NOISE_CHANS
+	ld [wCryTracks], a
+	ld e, a
+	ld d, 0
+	ld hl, .Panning
+	add hl, de
+	ld a, [hl]
+	ld [wStereoPanningMask], a
+	pop bc
+	pop de
+	push bc
+	callfar PlayStereoSFX
+	pop bc
+	pop hl
+	ret
+
+.Panning:
+	db $f0, $0f, $f0, $0f
+
 BattleAnimExt_Deinit:
 	ld hl, BATTLEANIMSTRUCT_INDEX
 	add hl, bc
