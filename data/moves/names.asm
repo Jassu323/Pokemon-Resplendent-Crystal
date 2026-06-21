@@ -314,6 +314,7 @@ MoveNames::
 	li "Stone Edge"
 	li "Bug Bite"
 	li "Sludge Wave"
+	li "Heavy Slam"
 	li "Hex"
 	li "Wild Charge"
 	li "Drill Run"

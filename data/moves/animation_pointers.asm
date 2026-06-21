@@ -346,6 +346,7 @@ BattleAnimations::
 	dw BattleAnim_StoneEdge
 	dw BattleAnim_BugBite
 	dw BattleAnim_SludgeWave
+	dw BattleAnim_HeavySlam
 	dw BattleAnim_Hex
 	dw BattleAnim_WildCharge
 	dw BattleAnim_DrillRun

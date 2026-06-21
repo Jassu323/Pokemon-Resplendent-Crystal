@@ -602,6 +602,289 @@ BattleAnimFunc_AcidDroplet:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_CausticBubble:
+; BubbleBeam-style fast launch/deceleration, then pop into one acid droplet.
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .init
+	dw .launch
+	dw .drift
+	dw .pop
+
+.init
+	call BattleAnimExt_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], 12
+	call .ApplyLaneYOffset
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub (5 * TILE_WIDTH) + 20
+	ld [hl], a
+	ret
+
+.ApplyLaneYOffset:
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	cp $90
+	jr z, .lane_high
+	cp $b0
+	jr z, .lane_mid
+	cp $f0
+	jr z, .lane_low
+	ret
+
+.lane_high
+	ld d, 0
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_high_offset
+	ld d, 12
+.got_high_offset
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub d
+	ld [hl], a
+	ret
+
+.lane_mid
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add 8
+	ld [hl], a
+	ret
+
+.lane_low
+	ld d, 4
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_low_offset
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub 8
+	ld [hl], a
+	ret
+.got_low_offset
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ret
+
+.launch
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr z, .start_drift
+	dec [hl]
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	call .StepToTarget
+	ret
+
+.StepToTarget:
+	and $f
+	ld e, a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	add [hl]
+	ld [hl], a
+	srl e
+	ret z
+	ldh a, [hBattleTurn]
+	and a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	jr nz, .step_y_down
+.step_y_up
+	dec [hl]
+	dec e
+	jr nz, .step_y_up
+	ret
+.step_y_down
+	inc [hl]
+	dec e
+	jr nz, .step_y_down
+	ret
+
+.start_drift
+	call BattleAnimExt_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], 0
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], 0
+	ret
+
+.drift
+	call .Decelerate
+	call .ReachedPopX
+	jr nc, .start_pop
+	ret
+
+.start_pop
+	call BattleAnimExt_IncAnonJumptableIndex
+	ld de, BATTLE_ANIM_FRAMESET_BUBBLE_BURST_POP
+	call ReinitBattleAnimFrameset
+	ld de, SFX_TOXIC
+	ld a, $1 ; anim_sound 0, 1
+	call BattleAnimController_PlayStereoSFX
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], 0
+	ret
+
+.pop
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 4
+	jr nc, .done
+	inc [hl]
+	ret
+
+.done
+	call .SpawnDroplet
+	call BattleAnimExt_Deinit
+	ret
+
+.Decelerate:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld h, [hl]
+	ld l, a
+	ld de, $c0
+	add hl, de
+	ld e, l
+	ld d, h
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hl], d
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	ld e, a
+	ld d, $ff
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_y_delta
+	xor a
+	sub e
+	ld e, a
+	ld d, $0
+.got_y_delta
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld h, [hl]
+	ld l, a
+	add hl, de
+	ld e, l
+	ld d, h
+	ld hl, BATTLEANIMSTRUCT_VAR2
+	add hl, bc
+	ld [hl], e
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], d
+	ret
+
+.ReachedPopX:
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $f0
+	ld d, 132
+	cp $b0
+	jr nz, .not_lane1
+	ld d, 144
+	jr .got_threshold
+.not_lane1
+	cp $f0
+	jr nz, .got_threshold
+	ld d, 156
+.got_threshold
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .player_target_threshold
+	ld a, d
+	sub 8
+	ld d, a
+	jr .compare_pop_x
+.player_target_threshold
+	ld a, d
+	sub 4
+	ld d, a
+.compare_pop_x
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	cp d
+	ret
+
+.SpawnDroplet:
+	ld a, BATTLE_ANIM_EXT_OBJ_CAUSTIC_DROPLET
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempXCoord], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	ld [wBattleObjectTempYCoord], a
+	ld a, $14
+	ld [wBattleObjectTempParam], a
+	push bc
+	callfar QueueBattleAnimation
+	pop bc
+	ret
+
+BattleAnimFunc_SolarBeamVerticalSegment:
+	call BattleAnimExt_AnonJumptable
+.anon_dw
+	dw .init
+	dw .done
+
+.init
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .next
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	sub 5 * TILE_WIDTH
+	ld [hl], a
+.next
+	call BattleAnimExt_IncAnonJumptableIndex
+.done
+	ret
+
 BattleAnimFunc_CrunchJaw:
 ; Obj Param: $0 = scripted upper jaw, $1 = scripted lower jaw.
 ; Enemy turn flips the rendered role.
@@ -1083,6 +1366,78 @@ BattleAnimFunc_AuroraBeamRing:
 
 .done
 	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_AeroblastWave:
+; Obj Param: low two bits select starting flip phase.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .move
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	jr z, .move
+	add BATTLE_ANIM_FRAMESET_AEROBLAST_WAVE
+	ld e, a
+	ld d, 0
+	call ReinitBattleAnimFrameset
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 15
+	jr nc, .done
+	inc [hl]
+	ld a, $4
+	call BattleAnim_StepToTarget
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+BattleAnimFunc_DiveBombWind:
+; Obj Param: starting angle.
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .init
+	dw .update
+
+.init
+	call BattleAnim_IncAnonJumptableIndex
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld [hl], a
+
+.update
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	push af
+	ld d, 12
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop af
+	ld d, 24
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
+	add hl, bc
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	add $2
+	ld [hl], a
 	ret
 
 BattleAnimFunc_VoltTackleBolt:
@@ -2047,16 +2402,8 @@ BattleAnimFunc_ShadowBall:
 	cp 34
 	jr nc, .done
 	inc [hl]
-
-	ld hl, BATTLEANIMSTRUCT_XCOORD
-	add hl, bc
-	ld a, [hl]
-	add 2
-	ld [hl], a
-
-	ld hl, BATTLEANIMSTRUCT_YCOORD
-	add hl, bc
-	dec [hl]
+	ld a, $2
+	call BattleAnim_StepToTarget
 	ret
 
 .done

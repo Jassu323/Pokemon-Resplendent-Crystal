@@ -138,6 +138,8 @@ BattleBGEffects:
 	dw BattleBGEffect_UnusedDummyForPadding
 	dw BattleBGEffect_FireBGPals
 	dw BattleBGEffect_PoisonMetallic
+	dw BattleBGEffect_CycleOBPalsGrayAndGreen
+	dw BattleBGEffect_CycleOBPalsGrayAndFighting
 	assert_table_length NUM_BATTLE_BG_EFFECTS
 
 BattleBGEffect_End:
@@ -309,6 +311,66 @@ BattleBGEffect_CycleOBPalsGrayAndYellow:
 	dc 3, 0, 0, 0
 	db -2
 
+BattleBGEffect_CycleOBPalsGrayAndFighting:
+	call BattleBGEffects_AnonJumptable
+.anon_dw
+	dw .init
+	dw .cycle
+	dw .finish
+
+.init
+	call BattleBGEffects_IncAnonJumptableIndex
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr nz, .got_speed
+	ld a, $2
+.got_speed
+	ld e, a
+	swap a
+	or e
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld [hl], $0
+	ld a, %11100100
+	call BattleBGEffect_LoadFightingOBPal
+	ret
+
+.cycle
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr z, .apply_pal
+	dec [hl]
+	ret
+
+.apply_pal
+	ld a, [hl]
+	swap a
+	or [hl]
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	xor $1
+	ld [hl], a
+	and a
+	ld a, %11100100
+	jr z, .load_pal
+	ld a, %10010000
+.load_pal
+	call BattleBGEffect_LoadFightingOBPal
+	ret
+
+.finish
+	ld a, %11100100
+	call BattleBGEffect_LoadFightingOBPal
+	call EndBattleBGEffect
+	ret
+
 BattleBGEffect_CycleMidOBPalsGrayAndYellow:
 	call BattleBGEffects_CheckSGB
 	jr nz, .sgb
@@ -331,6 +393,66 @@ BattleBGEffect_CycleMidOBPalsGrayAndYellow:
 	dc 3, 3, 0, 0
 	dc 3, 0, 3, 0
 	db -2
+
+BattleBGEffect_CycleOBPalsGrayAndGreen:
+	call BattleBGEffects_AnonJumptable
+.anon_dw
+	dw .init
+	dw .cycle
+	dw .finish
+
+.init
+	call BattleBGEffects_IncAnonJumptableIndex
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr nz, .got_speed
+	ld a, $2
+.got_speed
+	ld e, a
+	swap a
+	or e
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld [hl], $0
+	ld a, %11100100
+	call BattleBGEffect_LoadGreenOBPal
+	ret
+
+.cycle
+	ld hl, BG_EFFECT_STRUCT_BATTLE_TURN
+	add hl, bc
+	ld a, [hl]
+	and $f
+	jr z, .apply_pal
+	dec [hl]
+	ret
+
+.apply_pal
+	ld a, [hl]
+	swap a
+	or [hl]
+	ld [hl], a
+	ld hl, BG_EFFECT_STRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	xor $1
+	ld [hl], a
+	and a
+	ld a, %11100100
+	jr z, .load_pal
+	ld a, %10010000
+.load_pal
+	call BattleBGEffect_LoadGreenOBPal
+	ret
+
+.finish
+	ld a, %11100100
+	call BattleBGEffect_LoadGreenOBPal
+	call EndBattleBGEffect
+	ret
 
 BattleBGEffect_CycleGreenOBPal:
 	call BattleBGEffects_AnonJumptable
@@ -473,6 +595,45 @@ BattleBGEffect_LoadGreenOBPal:
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+BattleBGEffect_LoadFightingOBPal:
+	ld [wOBP0], a
+	ldh [rOBP0], a
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals1)
+	ldh [rWBK], a
+	ld a, [wOBP0]
+	push bc
+	ld hl, wOBPals2 palette PAL_BATTLE_OB_YELLOW
+	cp %10010000
+	jr z, .fighting
+	ld de, wOBPals1 palette PAL_BATTLE_OB_YELLOW
+	jr .copy_pal
+
+.fighting
+	ld de, .FightingPal
+
+.copy_pal
+	ld b, %11100100
+	ld c, 1
+	call CopyPals
+	pop bc
+	pop af
+	ldh [rWBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.FightingPal:
+	RGB 31, 31, 31
+	RGB 31, 12, 02
+	RGB 29, 06, 00
+	RGB 00, 00, 00
 
 BattleBGEffect_UnusedDummyForPadding:
 	call EndBattleBGEffect

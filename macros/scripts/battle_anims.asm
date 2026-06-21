@@ -438,6 +438,36 @@ MACRO anim_signalpal
 	db \1
 ENDM
 
+MACRO anim_fairypal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_moonblastpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_fightingpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_disarmingvoicepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_irondefensepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_corrosionpal
+	db anim_custompal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
 	db anim_custompal_command
 	db \1

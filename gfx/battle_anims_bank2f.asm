@@ -42,3 +42,24 @@ AnimObjThundershockHorizontalGFX:
 
 AnimObjShadowBallGFX:
 	INCBIN "gfx/battle_anims/shadow_ball.2bpp.lz"
+
+AnimObjFangsGFX:
+	INCBIN "gfx/battle_anims/fangs.2bpp.lz"
+
+AnimObjLeafBladeGFX:
+	INCBIN "gfx/battle_anims/leaf_blade.2bpp.lz"
+
+AnimObjFairyWindGFX:
+	INCBIN "gfx/battle_anims/fairy_wind.2bpp.lz"
+
+AnimObjBubbleBurstGFX:
+	INCBIN "gfx/battle_anims/bubble_burst.2bpp.lz"
+
+AnimObjBeamVerticalGFX:
+	INCBIN "gfx/battle_anims/beam_vertical.2bpp.lz"
+
+AnimObjAerialCrashGFX:
+	INCBIN "gfx/battle_anims/aerial_crash.2bpp.lz"
+
+AnimObjAeroblastWaveGFX:
+	INCBIN "gfx/battle_anims/aeroblast_wave.2bpp.lz"

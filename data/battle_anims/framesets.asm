@@ -243,6 +243,19 @@ BattleAnimFrameData:
 	dw .Frameset_VoltTackleBolt     ; BATTLE_ANIM_FRAMESET_VOLT_TACKLE_BOLT
 	dw .Frameset_VoltTackleBoltReverse ; BATTLE_ANIM_FRAMESET_VOLT_TACKLE_BOLT_REVERSE
 	dw .Frameset_ShadowBall         ; BATTLE_ANIM_FRAMESET_SHADOW_BALL
+	dw .Frameset_GlacialSlamIceFleck ; BATTLE_ANIM_FRAMESET_GLACIAL_SLAM_ICE_FLECK
+	dw .Frameset_LeafBlade          ; BATTLE_ANIM_FRAMESET_LEAF_BLADE
+	dw .Frameset_LeafBladeFlipped   ; BATTLE_ANIM_FRAMESET_LEAF_BLADE_FLIPPED
+	dw .Frameset_SolarBeamVertical  ; BATTLE_ANIM_FRAMESET_SOLAR_BEAM_VERTICAL
+	dw .Frameset_BubbleBurstTravel  ; BATTLE_ANIM_FRAMESET_BUBBLE_BURST_TRAVEL
+	dw .Frameset_BubbleBurstPop     ; BATTLE_ANIM_FRAMESET_BUBBLE_BURST_POP
+	dw .Frameset_AerialCrash        ; BATTLE_ANIM_FRAMESET_AERIAL_CRASH
+	dw .Frameset_CorrosionColumn    ; BATTLE_ANIM_FRAMESET_CORROSION_COLUMN
+	dw .Frameset_AeroblastWave      ; BATTLE_ANIM_FRAMESET_AEROBLAST_WAVE
+	dw .Frameset_AeroblastWave1     ; BATTLE_ANIM_FRAMESET_AEROBLAST_WAVE_1
+	dw .Frameset_AeroblastWave2     ; BATTLE_ANIM_FRAMESET_AEROBLAST_WAVE_2
+	dw .Frameset_AeroblastWave3     ; BATTLE_ANIM_FRAMESET_AEROBLAST_WAVE_3
+	dw .Frameset_DiveBombWind       ; BATTLE_ANIM_FRAMESET_DIVE_BOMB_WIND
 	assert_table_length NUM_BATTLE_ANIM_REGULAR_FRAMESETS
 
 .Frameset_HitBig:
@@ -571,6 +584,61 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_2A,  3, B_OAM_YFLIP
 	oamdelete
 
+.Frameset_CorrosionColumn:
+	oamframe BATTLE_ANIM_OAMSET_2A,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2B,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2C,  4, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2D,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2E,  3, B_OAM_YFLIP
+	rept 10
+	oamframe BATTLE_ANIM_OAMSET_2E,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_CORROSION_COLUMN_ALT,  3, B_OAM_YFLIP
+	endr
+	oamframe BATTLE_ANIM_OAMSET_2D,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2C,  4, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2B,  3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_2A,  3, B_OAM_YFLIP
+	oamdelete
+
+.Frameset_AeroblastWave:
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP, B_OAM_YFLIP
+	oamrestart
+
+.Frameset_AeroblastWave1:
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3
+	oamrestart
+
+.Frameset_AeroblastWave2:
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP
+	oamrestart
+
+.Frameset_AeroblastWave3:
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP, B_OAM_YFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_AEROBLAST_WAVE, 3, B_OAM_YFLIP
+	oamrestart
+
+.Frameset_DiveBombWind:
+	rept 3
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_1, 2
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_2, 2
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_1, 2, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_3, 2, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_2, 2
+	oamframe BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_3, 2
+	endr
+	oamdelete
+
 .Frameset_Powder:
 	oamframe BATTLE_ANIM_OAMSET_14,  1
 	oamframe BATTLE_ANIM_OAMSET_15,  1
@@ -584,6 +652,11 @@ BattleAnimFrameData:
 .Frameset_BeamTip:
 	oamframe BATTLE_ANIM_OAMSET_31,  8
 	oamend
+
+.Frameset_SolarBeamVertical:
+	oamframe BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_HEAD,  4
+	oamframe BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_BODY, 56
+	oamdelete
 
 .Frameset_IceBuildup:
 	oamframe BATTLE_ANIM_OAMSET_32, 32
@@ -869,6 +942,10 @@ BattleAnimFrameData:
 	oamrestart
 
 .Frameset_ForcePalm:
+	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
+	oamrestart
+
+.Frameset_AerialCrash:
 	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
 	oamrestart
 
@@ -1374,6 +1451,10 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_EMBER_1,  4
 	oamrestart
 
+.Frameset_GlacialSlamIceFleck:
+	oamframe BATTLE_ANIM_OAMSET_10,  4
+	oamrestart
+
 .Frameset_Ember2:
 	oamframe BATTLE_ANIM_OAMSET_EMBER_2,  4
 	oamrestart
@@ -1652,4 +1733,21 @@ BattleAnimFrameData:
 	oamframe BATTLE_ANIM_OAMSET_BLOCK_X, 1
 	oamframe BATTLE_ANIM_OAMSET_SHADOW_BALL_2, 1
 	oamframe BATTLE_ANIM_OAMSET_SHADOW_BALL_3, 1
+	oamrestart
+
+.Frameset_LeafBlade:
+	oamframe BATTLE_ANIM_OAMSET_LEAF_BLADE, 1
+	oamrestart
+
+.Frameset_LeafBladeFlipped:
+	oamframe BATTLE_ANIM_OAMSET_LEAF_BLADE, 1, B_OAM_XFLIP
+	oamrestart
+
+.Frameset_BubbleBurstTravel:
+	oamframe BATTLE_ANIM_OAMSET_1B, 1
+	oamrestart
+
+.Frameset_BubbleBurstPop:
+	oamframe BATTLE_ANIM_OAMSET_21, 2
+	oamframe BATTLE_ANIM_OAMSET_7F, 2
 	oamrestart

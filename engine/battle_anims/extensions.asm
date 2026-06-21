@@ -178,6 +178,30 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_signal_beam
 	cp BATTLE_ANIM_SIGNAL_BEAM_PAL_RESTORE
 	jp z, .restore_blue
+	cp BATTLE_ANIM_FAIRY_PAL_LOAD
+	jp z, .load_fairy
+	cp BATTLE_ANIM_FAIRY_PAL_RESTORE
+	jp z, .restore_yellow
+	cp BATTLE_ANIM_MOONBLAST_PAL_LOAD
+	jp z, .load_moonblast
+	cp BATTLE_ANIM_MOONBLAST_PAL_RESTORE
+	jp z, .restore_red
+	cp BATTLE_ANIM_FIGHTING_PAL_LOAD
+	jp z, .load_fighting
+	cp BATTLE_ANIM_FIGHTING_PAL_RESTORE
+	jp z, .restore_yellow
+	cp BATTLE_ANIM_DISARMING_VOICE_PAL_LOAD
+	jp z, .load_disarming_voice
+	cp BATTLE_ANIM_DISARMING_VOICE_PAL_RESTORE
+	jp z, .restore_yellow
+	cp BATTLE_ANIM_IRON_DEFENSE_PAL_LOAD
+	jp z, .load_iron_defense
+	cp BATTLE_ANIM_IRON_DEFENSE_PAL_RESTORE
+	jp z, .restore_blue
+	cp BATTLE_ANIM_CORROSION_PAL_LOAD
+	jp z, .load_corrosion
+	cp BATTLE_ANIM_CORROSION_PAL_RESTORE
+	jp z, .restore_green
 	cp BATTLE_ANIM_WATER_PAL_LOAD
 	jr z, .load_water
 	cp BATTLE_ANIM_WATER_PAL_RESTORE
@@ -237,6 +261,11 @@ BattleAnimExt_LoadCustomPal:
 .load_poison
 	ld hl, .PoisonPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jp .load_custom_pal
+
+.load_corrosion
+	ld hl, .CorrosionPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	jp .load_custom_pal
 
 .load_poison_powder
@@ -299,12 +328,37 @@ BattleAnimExt_LoadCustomPal:
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jp .load_custom_pal
 
-.load_signal_beam
+	.load_signal_beam
 	ld hl, .SignalBeamPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jp .load_custom_pal
 
-	.load_dragon_claw
+.load_fairy
+	ld hl, .FairyPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_YELLOW
+	jp .load_custom_pal
+
+.load_moonblast
+	ld hl, .FairyPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
+	jp .load_custom_pal
+
+.load_fighting
+	ld hl, .FightingPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_YELLOW
+	jp .load_custom_pal
+
+.load_disarming_voice
+	ld hl, .DisarmingVoicePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_YELLOW
+	jp .load_custom_pal
+
+.load_iron_defense
+	ld hl, .IronDefensePal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
+	jp .load_custom_pal
+
+		.load_dragon_claw
 	ld hl, .DragonClawPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_RED
 
@@ -326,12 +380,17 @@ BattleAnimExt_LoadCustomPal:
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BLUE
 	jr .restore_pal
 
-.restore_green
+	.restore_green
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_GREEN
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	jr .restore_pal
 
-.restore_brown
+	.restore_yellow
+	ld hl, wOBPals1 palette PAL_BATTLE_OB_YELLOW
+	ld de, wOBPals2 palette PAL_BATTLE_OB_YELLOW
+	jr .restore_pal
+
+	.restore_brown
 	ld hl, wOBPals1 palette PAL_BATTLE_OB_BROWN
 	ld de, wOBPals2 palette PAL_BATTLE_OB_BROWN
 	jr .restore_pal
@@ -407,6 +466,30 @@ BattleAnimExt_LoadCustomPal:
 	RGB 29, 04, 04
 	RGB 29, 04, 29
 
+.FairyPal:
+	RGB 31, 31, 31
+	RGB 31, 12, 31
+	RGB 27, 06, 27
+	RGB 18, 02, 20
+
+.DisarmingVoicePal:
+	RGB 31, 31, 31
+	RGB 31, 20, 31
+	RGB 29, 14, 29
+	RGB 29, 14, 29
+
+.FightingPal:
+	RGB 31, 31, 31
+	RGB 31, 12, 02
+	RGB 29, 06, 00
+	RGB 00, 00, 00
+
+.IronDefensePal:
+	RGB 31, 31, 31
+	RGB 18, 18, 18
+	RGB 18, 18, 18
+	RGB 14, 14, 14
+
 .GrassPal:
 	RGB 31, 31, 31
 	RGB 12, 28, 09
@@ -448,6 +531,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 30, 30, 30 ; white highlight
 	RGB 28, 10, 28 ; light purple
 	RGB 25, 00, 25 ; mid purple
+
+.CorrosionPal:
+	RGB 31, 31, 31 ; transparent (bg)
+	RGB 28, 10, 28 ; light purple
+	RGB 25, 00, 25 ; mid purple
+	RGB 00, 00, 00 ; black
 
 .PoisonPowderPal:
 	RGB 31, 31, 31 ; transparent (bg)

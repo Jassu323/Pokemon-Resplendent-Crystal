@@ -18,6 +18,7 @@ Moves::
 	indirect_table_end
 
 Moves1:
+	; Vanilla Pokémon Crystal moves
 	move EFFECT_NORMAL_HIT,         40, NORMAL,        100, 35,   0      ;POUND
 	move EFFECT_NORMAL_HIT,         50, FIGHTING,      100, 25,   0      ;KARATE_CHOP
 	move EFFECT_MULTI_HIT,          15, NORMAL,         85, 10,   0      ;DOUBLESLAP
@@ -269,6 +270,7 @@ Moves1:
 	move EFFECT_DEFENSE_DOWN_HIT,   20, FIGHTING,      100, 15,  50      ;ROCK_SMASH
 	move EFFECT_TRAP_TARGET,        15, WATER,          70, 15,   0      ;WHIRLPOOL
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;BEAT_UP
+	; Official later-gen moves start here.  These are ordered by their move number from Bulbapedia
 	move EFFECT_NORMAL_HIT,         40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
 	move EFFECT_NORMAL_HIT,        100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
 	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
@@ -332,6 +334,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
 	move EFFECT_NORMAL_HIT,         60, BUG,           100, 20,   0      ;BUG_BITE #450
 	move EFFECT_NORMAL_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
+	move EFFECT_NORMAL_HIT,          1, STEEL,         100, 40,   0      ;HEAVY_SLAM #484
 	move EFFECT_NORMAL_HIT,         50, GHOST,         100, 10,   0      ;HEX #506
 	move EFFECT_NORMAL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
 	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
@@ -340,7 +343,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         40, FAIRY,         100, 30,   0      ;FAIRY_WIND #584
 	move EFFECT_NORMAL_HIT,         95, FAIRY,         100, 15,  30      ;MOONBLAST #585
 	move EFFECT_NORMAL_HIT,         80, FAIRY,         100, 10,   0      ;DAZZLING_GLEAM #605
-; Custom moves. Must always be last in the list.
+	; Custom moves that do not exist in any official Pokémon title.  These must always be last in the list
 	move EFFECT_NORMAL_HIT,          1, ICE,           100, 40,   0      ;GLACIAL_SLAM
 	move EFFECT_NORMAL_HIT,          1, BUG,           100, 40,   0      ;DRAIN_LIFE
 	move EFFECT_NORMAL_HIT,          1, BUG,           100, 40,   0      ;VAMPIRISM

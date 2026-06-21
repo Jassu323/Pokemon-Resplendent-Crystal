@@ -249,7 +249,32 @@ BattleAnimOAMData:
 	battleanimoam $00,  8, .OAMData_VoltTackleBoltRightOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT_OFF
 	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_2
 	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_3
+	battleanimoam $00, 17, .OAMData_LeafBlade ; BATTLE_ANIM_OAMSET_LEAF_BLADE
+	battleanimoam $00,  9, .OAMData_SolarBeamVerticalHead ; BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_HEAD
+	battleanimoam $00,  2, .OAMData_SolarBeamVerticalBody ; BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_BODY
+	battleanimoam $03,  9, .OAMData_2e ; BATTLE_ANIM_OAMSET_CORROSION_COLUMN_ALT
+	battleanimoam $00,  8, .OAMData_AeroblastWave ; BATTLE_ANIM_OAMSET_AEROBLAST_WAVE
+	battleanimoam $00,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_1
+	battleanimoam $01,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_2
+	battleanimoam $02,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_3
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
+
+.OAMData_DiveBombWind:
+	dbsprite  -1,  -3, 4, 4, $00, $0
+	dbsprite  -1,  -2, 2, 4, $00, $0
+	dbsprite  -1,  -1, 4, 4, $00, $0
+	dbsprite  -1,   0, 6, 4, $00, $0
+	dbsprite  -1,   1, 4, 4, $00, $0
+
+.OAMData_AeroblastWave:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite   0,  -1, 0, 0, $02, $0
+	dbsprite   1,  -1, 0, 0, $03, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+	dbsprite  -1,   0, 0, 0, $05, $0
+	dbsprite   0,   0, 0, 0, $06, $0
+	dbsprite   1,   0, 0, 0, $07, $0
 
 .OAMData_IceChunk:
 	dbsprite  -2,  -2, 0, 0, $00, $0
@@ -1227,6 +1252,40 @@ BattleAnimOAMData:
 	dbsprite   6,  -2, 4, 0, $00, $0
 	dbsprite   8,  -4, 4, 0, $00, $0
 	dbsprite  10,  -2, 4, 0, $00, $0
+
+.OAMData_LeafBlade:
+	dbsprite  -2,  -4, 0, 0, $00, $0
+	dbsprite  -2,  -3, 0, 0, $04, $0
+	dbsprite  -1,  -3, 0, 0, $05, $0
+	dbsprite  -2,  -2, 0, 0, $08, $0
+	dbsprite  -1,  -2, 0, 0, $09, $0
+	dbsprite  -1,  -1, 0, 0, $0d, $0
+	dbsprite   0,  -1, 0, 0, $0e, $0
+	dbsprite   1,  -1, 0, 0, $0f, $0
+	dbsprite  -2,   0, 0, 0, $10, $0
+	dbsprite  -1,   0, 0, 0, $11, $0
+	dbsprite   0,   0, 0, 0, $12, $0
+	dbsprite   1,   0, 0, 0, $13, $0
+	dbsprite  -2,   1, 0, 0, $14, $0
+	dbsprite  -1,   1, 0, 0, $15, $0
+	dbsprite   0,   1, 0, 0, $16, $0
+	dbsprite   0,   2, 0, 0, $1a, $0
+	dbsprite   1,   2, 0, 0, $1b, $0
+
+.OAMData_SolarBeamVerticalBody:
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite   0,   0, 0, 0, $01, $0
+
+.OAMData_SolarBeamVerticalHead:
+	dbsprite  -1,  -2, 0, 0, $03, $0
+	dbsprite   0,  -2, 0, 0, $04, $0
+	dbsprite   1,  -2, 0, 0, $05, $0
+	dbsprite  -1,  -1, 0, 0, $06, $0
+	dbsprite   0,  -1, 0, 0, $07, $0
+	dbsprite   1,  -1, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
 
 .OAMData_SharpTeeth:
 	dbsprite  -3,  -1, 0, 0, $00, $0

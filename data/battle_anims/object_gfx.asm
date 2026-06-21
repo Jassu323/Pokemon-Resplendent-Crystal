@@ -89,4 +89,11 @@ AnimObjGFX:
 	anim_obj_gfx  4, AnimObjAuroraBeamGFX
 	anim_obj_gfx  4, AnimObjSignalBeamGFX
 	anim_obj_gfx  8, AnimObjThundershockHorizontalGFX
+	anim_obj_gfx 24, AnimObjFangsGFX
+	anim_obj_gfx 28, AnimObjLeafBladeGFX
+	anim_obj_gfx  1, AnimObjFairyWindGFX
+	anim_obj_gfx 12, AnimObjBubbleBurstGFX
+	anim_obj_gfx 12, AnimObjBeamVerticalGFX
+	anim_obj_gfx 16, AnimObjAerialCrashGFX
+	anim_obj_gfx  8, AnimObjAeroblastWaveGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

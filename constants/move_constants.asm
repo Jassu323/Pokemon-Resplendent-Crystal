@@ -320,24 +320,25 @@
 	const STONE_EDGE   ; 138
 	const BUG_BITE     ; 139
 	const SLUDGE_WAVE  ; 13a
-	const HEX          ; 13b
-	const WILD_CHARGE  ; 13c
-	const DRILL_RUN    ; 13d
-	const ICICLE_CRASH ; 13e
-	const DISARMING_VOICE ; 13f
-	const FAIRY_WIND   ; 140
-	const MOONBLAST    ; 141
-	const DAZZLING_GLEAM ; 142
+	const HEAVY_SLAM   ; 13b
+	const HEX          ; 13c
+	const WILD_CHARGE  ; 13d
+	const DRILL_RUN    ; 13e
+	const ICICLE_CRASH ; 13f
+	const DISARMING_VOICE ; 140
+	const FAIRY_WIND   ; 141
+	const MOONBLAST    ; 142
+	const DAZZLING_GLEAM ; 143
 ; Custom moves. Must always be last in the list.
-	const GLACIAL_SLAM ; 143
-	const DRAIN_LIFE   ; 144
-	const VAMPIRISM    ; 145
-	const DIVE_BOMB    ; 146
-	const AERIAL_CRASH ; 147
-	const METEOR_DIVE  ; 148
-	const CAUSTIC      ; 149
-	const CORROSION    ; 14a
-	const PILEDRIVER   ; 14b
+	const GLACIAL_SLAM ; 144
+	const DRAIN_LIFE   ; 145
+	const VAMPIRISM    ; 146
+	const DIVE_BOMB    ; 147
+	const AERIAL_CRASH ; 148
+	const METEOR_DIVE  ; 149
+	const CAUSTIC      ; 14a
+	const CORROSION    ; 14b
+	const PILEDRIVER   ; 14c
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff

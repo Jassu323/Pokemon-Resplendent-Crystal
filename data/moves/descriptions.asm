@@ -319,6 +319,7 @@ MoveDescriptions1:
 	dw StoneEdgeDescription
 	dw BugBiteDescription
 	dw SludgeWaveDescription
+	dw HeavySlamDescription
 	dw HexDescription
 	dw WildChargeDescription
 	dw DrillRunDescription
@@ -1533,6 +1534,9 @@ BugBiteDescription:
 	db   "Placeholder@"
 
 SludgeWaveDescription:
+	db   "Placeholder@"
+
+HeavySlamDescription:
 	db   "Placeholder@"
 
 HexDescription:

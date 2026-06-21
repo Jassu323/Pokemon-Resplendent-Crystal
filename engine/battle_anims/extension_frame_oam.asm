@@ -143,6 +143,12 @@ BattleAnimExtFrameData:
 	dw .Frameset_BlizzardWind5B ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_5B
 	dw .Frameset_BlizzardWind5C ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_5C
 	dw .Frameset_BlizzardWind4 ; BATTLE_ANIM_FRAMESET_BLIZZARD_WIND_4
+	dw .Frameset_FairyWind5A ; BATTLE_ANIM_FRAMESET_FAIRY_WIND_5A
+	dw .Frameset_FairyWind5B ; BATTLE_ANIM_FRAMESET_FAIRY_WIND_5B
+	dw .Frameset_FairyWind5C ; BATTLE_ANIM_FRAMESET_FAIRY_WIND_5C
+	dw .Frameset_FairyWind4 ; BATTLE_ANIM_FRAMESET_FAIRY_WIND_4
+	dw .Frameset_VampirismFangsUpper ; BATTLE_ANIM_FRAMESET_VAMPIRISM_FANGS_UPPER
+	dw .Frameset_VampirismFangsLower ; BATTLE_ANIM_FRAMESET_VAMPIRISM_FANGS_LOWER
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -418,6 +424,30 @@ BattleAnimExtFrameData:
 
 .Frameset_BlizzardWind4:
 	oamframe BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_4, 32
+	oamend
+
+.Frameset_FairyWind5A:
+	oamframe BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5A, 32
+	oamend
+
+.Frameset_FairyWind5B:
+	oamframe BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5B, 32
+	oamend
+
+.Frameset_FairyWind5C:
+	oamframe BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5C, 32
+	oamend
+
+.Frameset_FairyWind4:
+	oamframe BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_4, 32
+	oamend
+
+.Frameset_VampirismFangsUpper:
+	oamframe BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_UPPER, 8
+	oamend
+
+.Frameset_VampirismFangsLower:
+	oamframe BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_LOWER, 8
 	oamend
 
 BattleAnimExtOAMUpdate:
@@ -944,6 +974,12 @@ BattleAnimExtOAMData:
 	battleanimoam $00,  5, .OAMData_BlizzardWind5B ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5B
 	battleanimoam $00,  5, .OAMData_BlizzardWind5C ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_5C
 	battleanimoam $00,  4, .OAMData_BlizzardWind4 ; BATTLE_ANIM_EXT_OAMSET_BLIZZARD_WIND_4
+	battleanimoam $00,  5, .OAMData_FairyWind5A ; BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5A
+	battleanimoam $00,  5, .OAMData_FairyWind5B ; BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5B
+	battleanimoam $00,  5, .OAMData_FairyWind5C ; BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_5C
+	battleanimoam $00,  4, .OAMData_FairyWind4 ; BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_4
+	battleanimoam $00, 12, .OAMData_VampirismFangs ; BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_UPPER
+	battleanimoam $0c, 12, .OAMData_VampirismFangs ; BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_LOWER
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_HyperFangFrame1:
@@ -1397,6 +1433,47 @@ BattleAnimExtOAMData:
 	dbsprite  -9,  -3, 4, 0, $04, $0
 	dbsprite   2,  -1, 4, 0, $04, $0
 	dbsprite  15,   1, 4, 0, $04, $0
+
+.OAMData_FairyWind5A:
+	dbsprite -18,  -8, 4, 0, $00, $0
+	dbsprite -11,  -6, 4, 0, $00, $0
+	dbsprite  -3,  -4, 4, 0, $00, $0
+	dbsprite   6,  -2, 4, 0, $00, $0
+	dbsprite  14,   1, 4, 0, $00, $0
+
+.OAMData_FairyWind5B:
+	dbsprite -15,  -7, 4, 0, $00, $0
+	dbsprite  -8,  -5, 4, 0, $00, $0
+	dbsprite   0,  -3, 4, 0, $00, $0
+	dbsprite   8,  -1, 4, 0, $00, $0
+	dbsprite  16,   0, 4, 0, $00, $0
+
+.OAMData_FairyWind5C:
+	dbsprite -20,  -6, 4, 0, $00, $0
+	dbsprite -13,  -4, 4, 0, $00, $0
+	dbsprite  -5,  -2, 4, 0, $00, $0
+	dbsprite   4,   0, 4, 0, $00, $0
+	dbsprite  12,  -7, 4, 0, $00, $0
+
+.OAMData_FairyWind4:
+	dbsprite -17,  -5, 4, 0, $00, $0
+	dbsprite  -9,  -3, 4, 0, $00, $0
+	dbsprite   2,  -1, 4, 0, $00, $0
+	dbsprite  15,   1, 4, 0, $00, $0
+
+.OAMData_VampirismFangs:
+	dbsprite -2, -1, 0, 0, $00, $0
+	dbsprite -1, -1, 0, 0, $01, $0
+	dbsprite  0, -1, 0, 0, $02, $0
+	dbsprite  1, -1, 0, 0, $03, $0
+	dbsprite -2,  0, 0, 0, $04, $0
+	dbsprite -1,  0, 0, 0, $05, $0
+	dbsprite  0,  0, 0, 0, $06, $0
+	dbsprite  1,  0, 0, 0, $07, $0
+	dbsprite -2,  1, 0, 0, $08, $0
+	dbsprite -1,  1, 0, 0, $09, $0
+	dbsprite  0,  1, 0, 0, $0a, $0
+	dbsprite  1,  1, 0, 0, $0b, $0
 
 .OAMData_SeismicTossLight:
 	dbsprite   0,   0, 0, 0, $00, $0

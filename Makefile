@@ -320,6 +320,9 @@ $(eval $(call battle_anim_rgbgfx_rule,pink_petal,pink_petal_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,aurora_beam,aurora_beam_battle_anim_colors))
 $(eval $(call battle_anim_rgbgfx_rule,signal_beam,signal_beam_battle_anim_colors))
 
+$(call battle_anim_2bpp,fangs): $(call battle_anim_2bpp,fangs_upper) $(call battle_anim_2bpp,fangs_lower)
+	cat $^ > $@
+
 $(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
 	for chunk in 1 2; do \
 		$(RGBGFX) $(RGBGFXFLAGS) --colors $(ember_transparent_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/ember_$$chunk.png; \
