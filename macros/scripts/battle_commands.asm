@@ -51,8 +51,8 @@ ENDM
 	command heal                    ; 2c
 	command transform               ; 2d
 	command screen                  ; 2e
-	command poison                  ; 2f
-	command paralyze                ; 30
+	command statusprecheck          ; 2f
+	command statustarget            ; 30
 	command substitute              ; 31
 	command rechargenextturn        ; 32
 	command mimic                   ; 33
@@ -64,7 +64,7 @@ ENDM
 	command charge                  ; 39
 	command checkcharge             ; 3a
 	command traptarget              ; 3b
-	command effect0x3c              ; 3c
+	command movebegin               ; 3c
 	command rampage                 ; 3d
 	command checkrampage            ; 3e
 	command constantdamage          ; 3f
@@ -97,7 +97,7 @@ ENDM
 	command endure                  ; 5a
 	command checkrollout            ; 5b
 	command rolloutpower            ; 5c
-	command effect0x5d              ; 5d
+	command secondaryeffect         ; 5d
 	command furycutter              ; 5e
 	command attract                 ; 5f
 	command happinesspower          ; 60
@@ -163,7 +163,7 @@ ENDM
 	command futuresight             ; 9c
 	command doubleminimizedamage    ; 9d
 	command skipsuncharge           ; 9e
-	command unused9f                ; 9f
+	command statfromeffect          ; 9f
 	command teleport                ; a0
 	command starthail               ; a1
 	command ragedamage              ; a2
@@ -178,6 +178,30 @@ ENDM
 	command moveanim                ; ab
 	command tristatuschance         ; ac
 	command supereffectivelooptext  ; ad
+
+PURGE statup
+MACRO statup
+	db statup_command
+	if _NARG >= 1
+		db \1
+	endc
+ENDM
+
+PURGE statdown
+MACRO statdown
+	db statdown_command
+	if _NARG >= 1
+		db \1
+	endc
+ENDM
+
+PURGE secondaryeffect
+MACRO secondaryeffect
+	db secondaryeffect_command
+	if _NARG >= 1
+		db \1
+	endc
+ENDM
 	command startloop               ; ae
 	command curl                    ; af
 DEF NUM_EFFECT_COMMANDS EQU const_value - 1

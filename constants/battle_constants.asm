@@ -45,6 +45,48 @@ DEF BASE_AI_SWITCH_SCORE EQU 10
 	const ABILITY ; used for BattleCommand_Curse
 DEF NUM_LEVEL_STATS EQU const_value
 
+; Parameter bits for statup/statdown battle commands.
+DEF STAT_PARAM_STAGE_2   EQU $10
+DEF STAT_PARAM_TARGET_OPP EQU $20
+DEF STAT_PARAM_MASK      EQU $1f
+
+DEF RECOIL_1_4 EQU 4
+DEF RECOIL_1_3 EQU 3
+
+; wBattleCommandFlags bits.
+	const_def
+	const BATTLE_CMD_FLAG_STAT_DOWN
+	const BATTLE_CMD_FLAG_SECONDARY_STAT
+	const BATTLE_CMD_FLAG_INVALID
+
+	const_def
+	const SECONDARY_FROM_EFFECT
+	const SECONDARY_POISON
+	const SECONDARY_BURN
+	const SECONDARY_FREEZE
+	const SECONDARY_PARALYZE
+	const SECONDARY_FLINCH
+	const SECONDARY_CONFUSE
+	const SECONDARY_ALL_STATS_UP
+
+	const_def
+	const STATUS_FROM_EFFECT
+	const STATUS_SLEEP
+	const STATUS_POISON
+	const STATUS_TOXIC
+	const STATUS_PARALYZE
+	const STATUS_BURN
+	const STATUS_FREEZE
+
+	const_def
+	const STATUS_CONTEXT_PRIMARY
+	const STATUS_CONTEXT_SECONDARY
+
+	const_def
+	const STATUS_BLOCK_GENERIC
+	const STATUS_BLOCK_RAIN
+	const STATUS_BLOCK_SUN
+
 ; move struct members (see data/moves/moves.asm)
 rsreset
 DEF MOVE_ANIM   rb ; 0

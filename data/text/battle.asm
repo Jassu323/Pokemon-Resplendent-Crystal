@@ -713,6 +713,16 @@ AlreadyPoisonedText:
 	line "already poisoned!"
 	prompt
 
+AlreadyBurnedText:
+	text "<TARGET>'s"
+	line "already burned!"
+	prompt
+
+AlreadyFrozenText:
+	text "<TARGET>'s"
+	line "already frozen!"
+	prompt
+
 SuckedHealthText:
 	text "Sucked health from"
 	line "<TARGET>!"
@@ -1045,6 +1055,16 @@ SafeguardProtectText:
 	text "<TARGET>"
 	line "is protected by"
 	cont "Safeguard!"
+	prompt
+
+RainPreventedBurnText:
+	text "The rain prevented"
+	line "burns!"
+	prompt
+
+SunPreventedFreezeText:
+	text "Sunlight prevented"
+	line "freezing!"
 	prompt
 
 MagnitudeText:

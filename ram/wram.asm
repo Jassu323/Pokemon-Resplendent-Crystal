@@ -435,7 +435,11 @@ wBattleScriptBufferAddress:: dw
 
 wTurnEnded:: db
 
-	ds 1
+wBattleCommandParam:: db
+wBattleCommandParam2:: db
+wBattleCommandFlags:: db
+wBattleCommandScratch:: db
+wBattleCommandAbort:: db
 
 wPlayerStats::
 wPlayerAttack::  dw

@@ -3553,7 +3553,7 @@ BattleAnim_WillOWisp:
 	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHADOW_PUNCH_FLAME, 136, 56, 4, $2, $3, $4, $5
 	anim_wait 36
 	anim_bgp $e4
-	anim_call BattleAnim_BrnTarget
+	anim_wait 8
 	anim_ghostflamepal BATTLE_ANIM_GHOST_FLAME_PAL_RESTORE
 	anim_ret
 
