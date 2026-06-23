@@ -74,6 +74,30 @@ Wish:
 	battleext BATTLE_EXTCMD_WISH
 	endmove
 
+MultiStatUp:
+	movebegin
+	battleext BATTLE_EXTCMD_MULTI_STAT_UP
+	endmove
+
+SelfStatDropHit:
+	movebegin
+	critical
+	damagestats
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	battleext BATTLE_EXTCMD_SELF_STAT_DROP_HIT
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 DoStatusOnly:
 	movebegin
 	checkhit

@@ -767,6 +767,12 @@ WontRiseAnymoreText:
 	cont "rise anymore!"
 	prompt
 
+StatsWontRiseAnymoreText:
+	text "<USER>'s stats"
+	line "won't rise"
+	cont "anymore!"
+	prompt
+
 WontDropAnymoreText:
 	text "<TARGET>'s"
 	line "@"

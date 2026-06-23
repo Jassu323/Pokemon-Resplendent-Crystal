@@ -3656,14 +3656,12 @@ BattleAnim_Superpower:
 	anim_extobj BATTLE_ANIM_EXT_OBJ_VOLT_TACKLE_CHARGE_CENTER, 48, 84, $0
 	anim_extobjparams BATTLE_ANIM_EXT_OBJ_SHOCK_WAVE_CHARGE, 48, 84, 8, $0, $8, $10, $18, $20, $28, $30, $38
 	anim_wait 24
-	anim_sound 0, 0, SFX_STRENGTH
 	anim_extobj BATTLE_ANIM_EXT_OBJ_SUPERPOWER_ROCK_CHIP, 16, 92, $0
 	anim_wait 6
 	anim_extobj BATTLE_ANIM_EXT_OBJ_SUPERPOWER_ROCK_CHIP, 136, 92, $1
 	anim_wait 6
 	anim_extobj BATTLE_ANIM_EXT_OBJ_SUPERPOWER_ROCK_CHIP, 88, 88, $2
 	anim_wait 6
-	anim_sound 0, 0, SFX_STRENGTH
 	anim_extobj BATTLE_ANIM_EXT_OBJ_SUPERPOWER_ROCK_CHIP, 112, 92, $3
 	anim_wait 6
 	anim_extobj BATTLE_ANIM_EXT_OBJ_SUPERPOWER_ROCK_CHIP, 40, 88, $4

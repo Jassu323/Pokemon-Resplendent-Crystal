@@ -79,7 +79,7 @@ MoveEffectsPointers:
 	dw SkyAttack
 	dw SecondaryHit
 	dw PoisonMultiHit
-	dw NormalHit
+	dw MultiStatUp
 	dw Substitute
 	dw HyperBeam
 	dw Rage
@@ -111,7 +111,7 @@ MoveEffectsPointers:
 	dw Nightmare
 	dw FlameWheel
 	dw Curse
-	dw NormalHit
+	dw SelfStatDropHit
 	dw Protect
 	dw Spikes
 	dw Foresight

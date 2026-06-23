@@ -48,7 +48,7 @@ SwitchOften:
 	callfar CheckAbleToSwitch
 	ld a, [wEnemySwitchMonParam]
 	and $f0
-	jp z, DontSwitch
+	jr z, DontSwitch
 
 	cp $10
 	jr nz, .not_10

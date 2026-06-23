@@ -717,6 +717,269 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_TauntExt
 	cp BATTLE_EXTCMD_WISH
 	jp z, BattleCommand_WishExt
+	cp BATTLE_EXTCMD_MULTI_STAT_UP
+	jp z, BattleCommand_MultiStatUpExt
+	cp BATTLE_EXTCMD_SELF_STAT_DROP_HIT
+	jp z, BattleCommand_SelfStatDropHitExt
+	cp BATTLE_EXTCMD_CURSE
+	jp z, BattleCommand_CurseExt
+	ret
+
+BattleCommand_MultiStatUpExt:
+	ld bc, BULK_UP
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .bulk_up
+	ld bc, CALM_MIND
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .calm_mind
+	ld bc, DRAGON_DANCE
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .dragon_dance
+	ret
+
+.bulk_up
+	lb bc, ATTACK, DEFENSE
+	jr BattleCommand_DoubleStatUpExt
+
+.calm_mind
+	lb bc, SP_ATTACK, SP_DEFENSE
+	jr BattleCommand_DoubleStatUpExt
+
+.dragon_dance
+	lb bc, ATTACK, SPEED
+	; fallthrough
+
+BattleCommand_DoubleStatUpExt:
+	push bc
+	ld a, b
+	call BattleCommand_ActorStatCanRiseExt
+	pop bc
+	jr c, .can_raise
+	push bc
+	ld a, c
+	call BattleCommand_ActorStatCanRiseExt
+	pop bc
+	jr c, .can_raise
+	farcall AnimateFailedMove
+	ld hl, StatsWontRiseAnymoreText
+	jp StdBattleTextbox
+
+.can_raise
+	push bc
+	farcall AnimateCurrentMove
+	pop bc
+	push bc
+	ld a, b
+	call BattleCommand_TryUserStatUpExt
+	pop bc
+	ld a, c
+	jp BattleCommand_TryUserStatUpExt
+
+BattleCommand_SelfStatDropHitExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	ld bc, SUPERPOWER
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .superpower
+	ld bc, OVERHEAT
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .overheat
+	ret
+
+.superpower
+	ld a, ATTACK
+	call BattleCommand_ActorStatCanFallExt
+	jr c, .superpower_anim
+	ld a, DEFENSE
+	call BattleCommand_ActorStatCanFallExt
+	jr nc, .superpower_apply
+
+.superpower_anim
+	xor a
+	call BattleCommand_PlayUserStatDownAnimExt
+
+.superpower_apply
+	ld a, ATTACK
+	call BattleCommand_TryUserStatDownExt
+	ld a, DEFENSE
+	call BattleCommand_TryUserStatDownExt
+	jp BattleCommand_ResetStatFailureExt
+
+.overheat
+	ld a, SP_ATTACK
+	call BattleCommand_ActorStatCanFallExt
+	jr nc, .overheat_apply
+	ld a, STAT_PARAM_STAGE_2
+	call BattleCommand_PlayUserStatDownAnimExt
+
+.overheat_apply
+	ld a, STAT_PARAM_STAGE_2 | SP_ATTACK
+	call BattleCommand_TryUserStatDownExt
+	jp BattleCommand_ResetStatFailureExt
+
+BattleCommand_CurseExt:
+	call BattleCommand_UserIsGhostExt
+	jr c, .ghost
+
+; Preserve Crystal behavior: non-Ghost Curse only checks Attack/Defense.
+	ld a, ATTACK
+	call BattleCommand_ActorStatCanRiseExt
+	jr c, .raise
+	ld a, DEFENSE
+	call BattleCommand_ActorStatCanRiseExt
+	jr c, .raise
+
+	ld b, ABILITY + 1
+	farcall GetStatName
+	farcall AnimateFailedMove
+	ld hl, WontRiseAnymoreText
+	jp StdBattleTextbox
+
+.raise
+	ld a, $1
+	ld [wBattleAnimParam], a
+	farcall AnimateCurrentMove
+	ld a, SPEED
+	call BattleCommand_TryUserStatDownExt
+	ld a, ATTACK
+	call BattleCommand_TryUserStatUpExt
+	ld a, DEFENSE
+	jp BattleCommand_TryUserStatUpExt
+
+.ghost
+	farcall CheckHiddenOpponent
+	jr nz, .failed
+
+	farcall CheckSubstituteOpp
+	jr nz, .failed
+
+	ld a, BATTLE_VARS_SUBSTATUS1_OPP
+	call GetBattleVarAddr
+	bit SUBSTATUS_CURSE, [hl]
+	jr nz, .failed
+
+	set SUBSTATUS_CURSE, [hl]
+	farcall AnimateCurrentMove
+	farcall GetHalfMaxHP
+	farcall SubtractHPFromUser
+	call UpdateUserInParty
+	ld hl, PutACurseText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	ret
+
+BattleCommand_CurrentMoveIsExt:
+	push bc
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	pop bc
+	ld a, h
+	cp b
+	ret nz
+	ld a, l
+	cp c
+	ret
+
+BattleCommand_GetActorStatLevelsExt:
+	ld hl, wPlayerStatLevels
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyStatLevels
+	ret
+
+BattleCommand_ActorStatCanRiseExt:
+	push af
+	call BattleCommand_GetActorStatLevelsExt
+	pop af
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	cp MAX_STAT_LEVEL
+	ret
+
+BattleCommand_ActorStatCanFallExt:
+	push af
+	call BattleCommand_GetActorStatLevelsExt
+	pop af
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	cp 2
+	ccf
+	ret
+
+BattleCommand_TryUserStatUpExt:
+	push af
+	call BattleCommand_ResetStatFailureExt
+	xor a
+	ld [wBattleCommandFlags], a
+	pop af
+	ld [wBattleCommandParam], a
+	call BattleCommand_ApplyStatParamExt
+	farcall BattleCommand_StatUpMessage
+	ret
+
+BattleCommand_TryUserStatDownExt:
+	push af
+	call BattleCommand_ResetStatFailureExt
+	ld a, 1 << BATTLE_CMD_FLAG_STAT_DOWN
+	ld [wBattleCommandFlags], a
+	pop af
+	ld [wBattleCommandParam], a
+	call BattleCommand_ApplyStatParamExt
+	farcall BattleCommand_SwitchTurn
+	farcall BattleCommand_StatDownMessage
+	farcall BattleCommand_SwitchTurn
+	ret
+
+BattleCommand_PlayUserStatDownAnimExt:
+	ld [wBattleAnimParam], a
+	xor a
+	ld [wBattleAfterAnim], a
+	call BattleCore_SwitchTurn
+	ld a, LOW(ANIM_STAT_DOWN)
+	ld [wFXAnimID], a
+	ld a, HIGH(ANIM_STAT_DOWN)
+	ld [wFXAnimID + 1], a
+	predef PlayBattleAnim
+	jp BattleCore_SwitchTurn
+
+BattleCommand_ResetStatFailureExt:
+	xor a
+	ld [wAttackMissed], a
+	ld [wFailedMessage], a
+	ret
+
+BattleCommand_UserIsGhostExt:
+	ld hl, wBattleMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .check_type_1
+	ld hl, wEnemyMonType1
+
+.check_type_1
+	ld a, [hli]
+	cp GHOST
+	jr z, .is_ghost
+	ld a, [hl]
+	cp GHOST
+	jr z, .is_ghost
+	and a
+	ret
+
+.is_ghost
+	scf
 	ret
 
 BattleCommand_TauntExt:

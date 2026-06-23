@@ -702,8 +702,12 @@ BattleBGEffect_FireBGPals:
 	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP
 	call .CopyFireBGPal
 	pop hl
+	push hl
 	ld de, wBGPals2 palette PAL_BATTLE_BG_EXP
 	call .CopyFireBGPal
+	pop hl
+	ld de, wBGPals2 palette PAL_BATTLE_BG_5 color 0
+	call .CopyFireBGColor
 	pop af
 	ldh [rWBK], a
 	pop bc
@@ -732,6 +736,9 @@ BattleBGEffect_FireBGPals:
 	ld hl, wBGPals1 palette PAL_BATTLE_BG_EXP
 	ld de, wBGPals2 palette PAL_BATTLE_BG_EXP
 	call .CopyFireBGPal
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_5
+	ld de, wBGPals2 palette PAL_BATTLE_BG_5
+	call .CopyFireBGPal
 	pop af
 	ldh [rWBK], a
 	pop bc
@@ -747,6 +754,14 @@ BattleBGEffect_FireBGPals:
 	inc de
 	dec b
 	jr nz, .copy_loop
+	ret
+
+.CopyFireBGColor:
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	ld [de], a
 	ret
 
 .FireBGPal:

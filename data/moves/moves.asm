@@ -279,7 +279,7 @@ Moves1:
 	move EFFECT_TAUNT,               0, DARK,          100, 20,   0      ;TAUNT #269
 	move EFFECT_WISH,                0, NORMAL,        100, 10,   0      ;WISH #273
 	move EFFECT_NORMAL_HIT,          0, GRASS,         100, 20,   0      ;INGRAIN #275
-	move EFFECT_NORMAL_HIT,        120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
+	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
 	move EFFECT_NORMAL_HIT,         75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;YAWN #281
 	move EFFECT_MULTI_HIT,          15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
@@ -290,7 +290,7 @@ Moves1:
 	move EFFECT_ATTACK_UP_HIT,     100, STEEL,          85, 10,  20      ;METEOR_MASH #309
 	move EFFECT_HEAL_BELL,           0, GRASS,         100,  5,   0      ;AROMATHERAPY #312
 	move EFFECT_NORMAL_HIT,         55, FLYING,         95, 25,   0      ;AIR_CUTTER #314
-	move EFFECT_NORMAL_HIT,        140, FIRE,           90,  5, 100      ;OVERHEAT #315
+	move EFFECT_SELF_STAT_DROP_HIT, 140, FIRE,          90,  5, 100      ;OVERHEAT #315
 	move EFFECT_SPEED_DOWN_HIT,     50, ROCK,           80, 10, 100      ;ROCK_TOMB #317
 	move EFFECT_ALL_UP_HIT,         60, BUG,           100,  5,  10      ;SILVER_WIND #318
 	move EFFECT_CONFUSE_HIT,        75, BUG,           100, 15,  10      ;SIGNAL_BEAM #324
@@ -304,14 +304,14 @@ Moves1:
 	move EFFECT_MEAN_LOOK,           0, NORMAL,        100,  5,   0      ;BLOCK #335
 	move EFFECT_ATTACK_UP,           0, NORMAL,        100, 40,   0      ;HOWL #336
 	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
-	move EFFECT_NORMAL_HIT,          0, FIGHTING,      100, 20,   0      ;BULK_UP #339
+	move EFFECT_MULTI_STAT_UP,       0, FIGHTING,      100, 20,   0      ;BULK_UP #339
 	move EFFECT_SPEED_DOWN_HIT,     55, GROUND,         95, 15, 100      ;MUD_SHOT #341
 	move EFFECT_POISON_HIT,         50, POISON,        100, 25,  10      ;POISON_TAIL #342
 	move EFFECT_RECOIL_HIT_1_3,    120, ELECTRIC,      100, 15,   0      ;VOLT_TACKLE #344
 	move EFFECT_ALWAYS_HIT,         60, GRASS,         100, 20,   0      ;MAGICAL_LEAF #345
-	move EFFECT_NORMAL_HIT,          0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
+	move EFFECT_MULTI_STAT_UP,       0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
 	move EFFECT_NORMAL_HIT,         70, GRASS,         100, 15,   0      ;LEAF_BLADE #348
-	move EFFECT_NORMAL_HIT,          0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349
+	move EFFECT_MULTI_STAT_UP,       0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349
 	move EFFECT_MULTI_HIT,          25, ROCK,           80, 10,   0      ;ROCK_BLAST #350
 	move EFFECT_ALWAYS_HIT,         60, ELECTRIC,      100, 20,   0      ;SHOCK_WAVE #351
 	move EFFECT_CONFUSE_HIT,        60, WATER,         100, 20,  20      ;WATER_PULSE #352
