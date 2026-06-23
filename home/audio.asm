@@ -30,6 +30,10 @@ UpdateSound::
 	push bc
 	push af
 
+	ldh a, [hSampledCryTimer]
+	and a
+	jr nz, .done
+
 	ldh a, [hROMBank]
 	push af
 	ld a, BANK(_UpdateSound)
@@ -42,6 +46,34 @@ UpdateSound::
 	ldh [hROMBank], a
 	ld [rROMB], a
 
+.done
+	pop af
+	pop bc
+	pop de
+	pop hl
+	ret
+
+ServiceSampledCryAsync::
+	push hl
+	push de
+	push bc
+	push af
+
+	ldh a, [hSampledCryTimer]
+	and a
+	jr z, .done
+
+	ldh a, [hROMBank]
+	push af
+	ldh a, [hSampledCryBank]
+	rst Bankswitch
+
+	call SampledCry_ServiceAsync
+
+	pop af
+	rst Bankswitch
+
+.done
 	pop af
 	pop bc
 	pop de
@@ -137,6 +169,17 @@ PlayCry::
 	ldh a, [hROMBank]
 	push af
 
+	ld b, d
+	ld c, e
+	ld a, BANK(TryLoadSampledCryBySpeciesIndex)
+	ld hl, TryLoadSampledCryBySpeciesIndex
+	call FarCall_hl
+	jr nc, .synth_cry
+	call PlayLoadedSampledCry
+	jr .done
+
+.synth_cry
+
 	; Cries are stuck in one bank.
 	ld a, BANK(PokemonCries)
 	ldh [hROMBank], a
@@ -166,6 +209,43 @@ endr
 	ld [rROMB], a
 
 	call _PlayCry
+
+.done
+	pop af
+	ldh [hROMBank], a
+	ld [rROMB], a
+
+	pop af
+	pop bc
+	pop de
+	pop hl
+	ret
+
+PlayLoadedSampledCry::
+; Play the sampled cry header loaded by LoadCry.
+	ld c, SAMPLED_CRY_BLOCK_PERIOD_NORMAL
+
+PlayLoadedSampledCryWithPeriod::
+; Play the sampled cry header loaded by LoadCry.
+; input: c = timer/CH3 block period
+	push hl
+	push de
+	push bc
+	push af
+
+	ldh a, [hROMBank]
+	push af
+
+	ldh a, [hSampledCryAddress]
+	ld e, a
+	ldh a, [hSampledCryAddress + 1]
+	ld d, a
+	ldh a, [hSampledCryBank]
+	ld b, a
+	ld a, BANK(StartSampledCryAsync)
+	rst Bankswitch
+	ld a, b
+	call StartSampledCryAsync
 
 	pop af
 	ldh [hROMBank], a
@@ -227,6 +307,9 @@ WaitSFX::
 	push hl
 
 .wait
+	ldh a, [hSampledCryTimer]
+	and a
+	jr nz, .wait
 	ld hl, wChannel5Flags1
 	bit SOUND_CHANNEL_ON, [hl]
 	jr nz, .wait
@@ -271,12 +354,12 @@ IsSFXPlaying::
 	ret
 
 MaxVolume::
-	ld a, MAX_VOLUME
+	ld a, NORMAL_MAX_VOLUME
 	ld [wVolume], a
 	ret
 
 LowVolume::
-	ld a, $33 ; 50%
+	ld a, NORMAL_LOW_VOLUME
 	ld [wVolume], a
 	ret
 

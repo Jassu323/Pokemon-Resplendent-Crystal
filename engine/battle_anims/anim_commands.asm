@@ -205,7 +205,12 @@ BattleAnimDelayFrame:
 .wait
 	ld a, [wVBlankOccurred]
 	and a
-	jr nz, .wait
+	jr z, .done_wait
+	call ServiceSampledCryAsync
+	jr .wait
+
+.done_wait
+	call ServiceSampledCryAsync
 	ret
 
 ClearActorHud:
@@ -1264,8 +1269,15 @@ endr
 	push hl
 	call LoadCry
 	pop hl
-	jr c, .done
+	jr nc, .synth_cry
+	and a
+	jr z, .done
+	ld a, 1
+	ld [wStereoPanningMask], a
+	call PlayLoadedSampledCry
+	jr .done
 
+.synth_cry
 	ld a, [hli]
 	ld c, a
 	ld a, [hli]
@@ -1472,12 +1484,14 @@ BattleAnim_UpdateOAM_All:
 	pop de
 	pop hl
 	jr c, .done
+	call ServiceSampledCryAsync
 
 .next
 	ld bc, BATTLEANIMSTRUCT_LENGTH
 	add hl, bc
 	dec e
 	jr nz, .loop
+	call ServiceSampledCryAsync
 	ld a, [wBattleAnimOAMPointerLo]
 	ld l, a
 	ld h, HIGH(wShadowOAM)

@@ -158,6 +158,16 @@ LoadCry::
 	call GetCryIndex
 	ret c
 
+	ld a, BANK(TryLoadSampledCryBySpeciesIndex)
+	ld hl, TryLoadSampledCryBySpeciesIndex
+	call FarCall_hl
+	jr nc, .synth_cry
+	ld a, 1
+	scf
+	ret
+
+.synth_cry
+
 	ldh a, [hROMBank]
 	push af
 	ld a, BANK(PokemonCries)
@@ -184,6 +194,7 @@ endr
 
 	pop af
 	rst Bankswitch
+	xor a
 	and a
 	ret
 
@@ -203,6 +214,7 @@ GetCryIndex::
 	ret
 
 .no
+	xor a
 	scf
 	ret
 

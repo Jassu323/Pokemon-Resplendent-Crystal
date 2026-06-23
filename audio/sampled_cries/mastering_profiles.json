@@ -1,0 +1,312 @@
+{
+  "default_profile": "17_v4_clarity_auto",
+  "alternate_profile": "14_v3_softlimit_4p0",
+  "sources": {
+    "MUDKIP": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mudkip.wav",
+    "TREECKO": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
+    "TORCHIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
+    "SHINX": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav"
+  },
+  "profiles": {
+    "mudkip_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mudkip.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "treecko_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "torchic_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shinx_17_v4_clarity_auto": {
+      "source": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "mudkip_14_v3_softlimit_4p0": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mudkip.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 4.0,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "remove_dc": true,
+      "highpass_hz": 130,
+      "preemphasis": {
+        "coeff": 0.22,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 3.0,
+        "knee_db": 6,
+        "attack_ms": 1,
+        "release_ms": 35,
+        "makeup_db": 3
+      },
+      "limiter": {
+        "mode": "sine",
+        "drive_db": 0
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.35
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "treecko_14_v3_softlimit_4p0": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 4.0,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "remove_dc": true,
+      "highpass_hz": 130,
+      "preemphasis": {
+        "coeff": 0.22,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 3.0,
+        "knee_db": 6,
+        "attack_ms": 1,
+        "release_ms": 35,
+        "makeup_db": 3
+      },
+      "limiter": {
+        "mode": "sine",
+        "drive_db": 0
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.35
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "torchic_14_v3_softlimit_4p0": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 4.0,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "remove_dc": true,
+      "highpass_hz": 130,
+      "preemphasis": {
+        "coeff": 0.22,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 3.0,
+        "knee_db": 6,
+        "attack_ms": 1,
+        "release_ms": 35,
+        "makeup_db": 3
+      },
+      "limiter": {
+        "mode": "sine",
+        "drive_db": 0
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.35
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shinx_14_v3_softlimit_4p0": {
+      "source": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 4.0,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "remove_dc": true,
+      "highpass_hz": 130,
+      "preemphasis": {
+        "coeff": 0.22,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 3.0,
+        "knee_db": 6,
+        "attack_ms": 1,
+        "release_ms": 35,
+        "makeup_db": 3
+      },
+      "limiter": {
+        "mode": "sine",
+        "drive_db": 0
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.35
+      },
+      "trim": {
+        "enabled": false
+      }
+    }
+  }
+}

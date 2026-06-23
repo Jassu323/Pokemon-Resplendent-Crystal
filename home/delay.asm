@@ -10,6 +10,7 @@ DelayFrame::
 	ld a, [wVBlankOccurred]
 	and a
 	jr nz, .halt
+	call ServiceSampledCryAsync
 	ret
 
 DelayFrames::

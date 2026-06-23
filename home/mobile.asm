@@ -1,3 +1,33 @@
+SampledCryTimer::
+	push af
+	ldh a, [hSampledCryTimer]
+	and a
+	jr nz, .sampled_cry_timer
+	pop af
+	jp MobileTimer
+
+.sampled_cry_timer
+	push bc
+	push de
+	push hl
+
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(SampledCry_AsyncTimerTick)
+	rst Bankswitch
+
+	call SampledCry_AsyncTimerTick
+
+	pop bc
+	ld a, b
+	rst Bankswitch
+
+	pop hl
+	pop de
+	pop bc
+	pop af
+	reti
+
 MobileAPI::
 ; Mobile
 	cp $2
