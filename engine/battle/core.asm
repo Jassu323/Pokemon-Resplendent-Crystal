@@ -854,33 +854,52 @@ CompareMovePriority:
 	ret
 
 GetMovePriority:
-; Return the priority (0-3) of move a.
+; Return the priority (0-12) of move a.
 
 	ld b, a
 
-	; Vital Throw goes last.
 	call GetMoveIndexFromID
-	ld a, h
-	if HIGH(VITAL_THROW)
-		cp HIGH(VITAL_THROW)
-	else
-		and a
-	endc
-	jr nz, .not_vital_throw
-	ld a, l
-	sub LOW(VITAL_THROW)
-	ret z
+	push bc
+	ld d, h
+	ld e, l
+	ld hl, MovePriorities
+.move_loop
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	ld b, a
+	cp -1
+	jr nz, .check_move
+	ld a, c
+	cp -1
+	jr z, .check_effect
 
-.not_vital_throw
+.check_move
+	ld a, d
+	cp b
+	jr nz, .next_move
+	ld a, e
+	cp c
+	jr nz, .next_move
+	ld a, [hl]
+	pop bc
+	ret
+
+.next_move
+	inc hl
+	jr .move_loop
+
+.check_effect
+	pop bc
 	call GetMoveEffect
 	ld hl, MoveEffectPriorities
-.loop
+.effect_loop
 	ld a, [hli]
 	cp b
 	jr z, .done
 	inc hl
 	cp -1
-	jr nz, .loop
+	jr nz, .effect_loop
 
 	ld a, BASE_PRIORITY
 	ret

@@ -271,7 +271,7 @@ Moves1:
 	move EFFECT_TRAP_TARGET,        15, WATER,          70, 15,   0      ;WHIRLPOOL
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;BEAT_UP
 	; Official later-gen moves start here.  These are ordered by their move number from Bulbapedia
-	move EFFECT_NORMAL_HIT,         40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
+	move EFFECT_FAKE_OUT,           40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
 	move EFFECT_BURN_HIT,          100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
 	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
 	move EFFECT_BURN,          0, FIRE,           75, 15,   0      ;WILL_O_WISP #261

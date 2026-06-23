@@ -5466,25 +5466,19 @@ BattleCommand_EndLoop:
 	ret
 
 BattleCommand_FakeOut:
-	ld a, [wAttackMissed]
+	ld hl, wPlayerTurnsTaken
+	ldh a, [hBattleTurn]
 	and a
-	ret nz
+	jr z, .got_turns
+	ld hl, wEnemyTurnsTaken
+.got_turns
+	ld a, [hl]
+	cp 1
+	ret z
 
-	call CheckSubstituteOpp
-	jr nz, .fail
-
-	ld a, BATTLE_VARS_STATUS_OPP
-	call GetBattleVar
-	and 1 << FRZ | SLP_MASK
-	jr nz, .fail
-
-	call CheckOpponentWentFirst
-	jr z, FlinchTarget
-
-.fail
-	ld a, 1
-	ld [wAttackMissed], a
-	ret
+	call AnimateFailedMove
+	call PrintButItFailed
+	jp EndMoveEffect
 
 BattleCommand_FlinchTarget:
 	call CheckSubstituteOpp
