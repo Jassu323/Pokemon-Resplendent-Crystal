@@ -723,6 +723,52 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_SelfStatDropHitExt
 	cp BATTLE_EXTCMD_CURSE
 	jp z, BattleCommand_CurseExt
+	cp BATTLE_EXTCMD_FANG_HIT
+	jp z, BattleCommand_FangHitExt
+	ret
+
+BattleCommand_FangHitExt:
+	farcall BattleCommand_EffectChance
+	ld a, [wEffectFailed]
+	and a
+	jr nz, .status
+	farcall BattleCommand_FlinchTarget
+
+.status
+	farcall BattleCommand_EffectChance
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	ld bc, THUNDER_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .paralyze
+	ld bc, ICE_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .freeze
+	ld bc, FIRE_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .burn
+	ret
+
+.paralyze
+	ld a, STATUS_PARALYZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_ParalyzeTarget
+	ret
+
+.freeze
+	ld a, STATUS_FREEZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_FreezeTarget
+	ret
+
+.burn
+	ld a, STATUS_BURN
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_BurnTarget
 	ret
 
 BattleCommand_MultiStatUpExt:

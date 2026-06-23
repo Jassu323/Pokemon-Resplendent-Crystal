@@ -160,4 +160,5 @@ MoveEffectsPointers:
 	dw DefenseCurl
 	dw RecoilHit1_3
 	dw DoStatusOnly
+	dw FangHit
 	assert_table_length NUM_MOVE_EFFECTS

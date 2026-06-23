@@ -44,6 +44,24 @@ NormalHit:
 	kingsrock
 	endmove
 
+FangHit:
+	movebegin
+	critical
+	damagestats
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	battleext BATTLE_EXTCMD_FANG_HIT
+	endmove
+
 FocusPunch:
 	focuspunch
 	critical

@@ -326,9 +326,9 @@ Moves1:
 	move EFFECT_SP_DEF_DOWN_HIT,    80, GRASS,         100, 10,  10      ;ENERGY_BALL #412
 	move EFFECT_PRIORITY_HIT,       40, STEEL,         100, 30,   0      ;BULLET_PUNCH #418
 	move EFFECT_NORMAL_HIT,         70, GHOST,         100, 15,   0      ;SHADOW_CLAW #421
-	move EFFECT_NORMAL_HIT,         65, ELECTRIC,       95, 15,  10      ;THUNDER_FANG #422
-	move EFFECT_NORMAL_HIT,         65, ICE,            95, 15,  10      ;ICE_FANG #423
-	move EFFECT_NORMAL_HIT,         65, FIRE,           95, 15,  10      ;FIRE_FANG #424
+	move EFFECT_FANG_HIT,           65, ELECTRIC,       95, 15,  10      ;THUNDER_FANG #422
+	move EFFECT_FANG_HIT,           65, ICE,            95, 15,  10      ;ICE_FANG #423
+	move EFFECT_FANG_HIT,           65, FIRE,           95, 15,  10      ;FIRE_FANG #424
 	move EFFECT_ACCURACY_DOWN_HIT,  65, GROUND,         85, 10,  30      ;MUD_BOMB #426
 	move EFFECT_BURN_HIT,           80, FIRE,          100, 15,  30      ;LAVA_PLUME #436
 	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
