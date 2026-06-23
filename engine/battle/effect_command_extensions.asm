@@ -113,6 +113,8 @@ BattleCommand_SecondaryEffectCommandExt:
 	jr z, .confuse
 	cp SECONDARY_ALL_STATS_UP
 	jr z, .all_stats_up
+	cp SECONDARY_TOXIC
+	jr z, .toxic
 	ret
 
 .poison
@@ -155,6 +157,13 @@ BattleCommand_SecondaryEffectCommandExt:
 	call BattleCommand_AllStatsUpExt
 	ret
 
+.toxic
+	ld a, STATUS_TOXIC
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	call BattleCommand_ToxicTargetExt
+	ret
+
 .stat
 	call BattleCommand_ApplyStatParamExt
 	ld a, [wBattleCommandFlags]
@@ -165,6 +174,46 @@ BattleCommand_SecondaryEffectCommandExt:
 
 .stat_down_message
 	farcall BattleCommand_StatDownMessage
+	ret
+
+BattleCommand_ToxicTargetExt:
+	farcall CheckSubstituteOpp
+	ret nz
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	and a
+	ret nz
+	farcall GetOpponentItem
+	ld a, b
+	cp HELD_PREVENT_POISON
+	ret z
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	farcall SafeCheckSafeguard
+	ret nz
+	ld a, BATTLE_VARS_SUBSTATUS5_OPP
+	call GetBattleVarAddr
+	set SUBSTATUS_TOXIC, [hl]
+	ld de, wEnemyToxicCount
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_toxic_count
+	ld de, wPlayerToxicCount
+
+.got_toxic_count
+	xor a
+	ld [de], a
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	set PSN, [hl]
+	call UpdateOpponentInParty
+	ld de, ANIM_PSN
+	farcall PlayOpponentBattleAnim
+	call RefreshBattleHuds
+	ld hl, BadlyPoisonedText
+	call StdBattleTextbox
+	farcall UseHeldStatusHealingItem
 	ret
 
 BattleCommand_AllStatsUpExt:
@@ -616,7 +665,14 @@ BattleCommand_SecondaryEffectExt:
 	ret
 
 .poison
+	ld bc, POISON_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .poison_fang
 	ld a, SECONDARY_POISON
+	jr .store_secondary
+
+.poison_fang
+	ld a, SECONDARY_TOXIC
 	jr .store_secondary
 
 .burn
