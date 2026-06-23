@@ -660,3 +660,53 @@ BattleCommand_SecondaryEffectExt:
 .store_secondary
 	ld [wBattleCommandParam2], a
 	ret
+
+BattleCommand_FocusPunchExt:
+	xor a
+	ld [wBattleCommandAbort], a
+	farcall BattleCommand_CheckObedience
+	ld a, [wBattleCommandAbort]
+	and a
+	ret nz
+	farcall BattleCommand_DoTurn
+	ld a, [wBattleCommandAbort]
+	and a
+	ret nz
+	call .check_lost_focus
+	jr nz, .lost_focus
+	farcall BattleCommand_UsedMoveText
+	ret
+
+.lost_focus
+	ld hl, LostFocusText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
+
+.check_lost_focus
+	ld hl, wFocusPunchFlags
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	bit FOCUS_PUNCH_PLAYER_LOST, [hl]
+	ret
+
+.enemy
+	bit FOCUS_PUNCH_ENEMY_LOST, [hl]
+	ret
+
+BattleCommand_BreakFocusPunchExt:
+	ld hl, wFocusPunchFlags
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .player_took_damage
+	bit FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ret z
+	set FOCUS_PUNCH_ENEMY_LOST, [hl]
+	ret
+
+.player_took_damage
+	bit FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ret z
+	set FOCUS_PUNCH_PLAYER_LOST, [hl]
+	ret

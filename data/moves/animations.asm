@@ -3558,22 +3558,7 @@ BattleAnim_WillOWisp:
 	anim_ret
 
 BattleAnim_FocusPunch:
-	anim_1gfx BATTLE_ANIM_GFX_SPEED
-	anim_battlergfx_2row
-	anim_bgeffect BATTLE_BG_EFFECT_BATTLEROBJ_1ROW, $0, BG_EFFECT_TARGET, $0
-	anim_wait 6
-	anim_bgeffect BATTLE_BG_EFFECT_FADE_MON_TO_LIGHT, $0, BG_EFFECT_USER, $40
-	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_OBPALS_GRAY_AND_YELLOW, $0, $2, $0
-.loop
-	anim_call BattleAnimSub_FocusEnergyBurst
-	anim_loop 3, .loop
-	anim_wait 8
-	anim_incbgeffect BATTLE_BG_EFFECT_FADE_MON_TO_LIGHT
-	anim_wait 1
-	anim_bgeffect BATTLE_BG_EFFECT_SHOW_MON, $0, BG_EFFECT_TARGET, $0
-	anim_wait 5
-	anim_incobj 1
-	anim_wait 1
+	anim_if_param_equal $1, .tighten_focus
 	anim_2gfx BATTLE_ANIM_GFX_FOCUS_PUNCH, BATTLE_ANIM_GFX_HIT
 	anim_extobj BATTLE_ANIM_EXT_OBJ_FOCUS_PUNCH_FIST, 136, 52, $43
 	anim_wait 4
@@ -3581,6 +3566,25 @@ BattleAnim_FocusPunch:
 	anim_wait 6
 	anim_call BattleAnimSub_FocusPunchHits
 	anim_wait 8
+	anim_ret
+
+.tighten_focus
+	anim_1gfx BATTLE_ANIM_GFX_SPEED
+	anim_battlergfx_2row
+	anim_bgeffect BATTLE_BG_EFFECT_BATTLEROBJ_1ROW, $0, BG_EFFECT_TARGET, $0
+	anim_wait 6
+	anim_bgeffect BATTLE_BG_EFFECT_FADE_MON_TO_LIGHT, $0, BG_EFFECT_USER, $40
+	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_OBPALS_GRAY_AND_YELLOW, $0, $2, $0
+.tighten_loop
+	anim_call BattleAnimSub_FocusEnergyBurst
+	anim_loop 3, .tighten_loop
+	anim_wait 8
+	anim_incbgeffect BATTLE_BG_EFFECT_FADE_MON_TO_LIGHT
+	anim_wait 1
+	anim_bgeffect BATTLE_BG_EFFECT_SHOW_MON, $0, BG_EFFECT_TARGET, $0
+	anim_wait 5
+	anim_incobj 1
+	anim_wait 1
 	anim_ret
 
 BattleAnim_Taunt:

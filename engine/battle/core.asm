@@ -178,6 +178,7 @@ BattleTurn:
 	ld [wEnemyJustGotFrozen], a
 	ld [wCurDamage], a
 	ld [wCurDamage + 1], a
+	ld [wFocusPunchFlags], a
 
 	call HandleBerserkGene
 	call UpdateBattleMonInParty
@@ -926,6 +927,7 @@ Battle_EnemyFirst:
 	ld [wEnemyGoesFirst], a
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
+	call Battle_FocusPunchMessagesEnemyFirst
 	call EnemyTurn_EndOpponentProtectEndureDestinyBond
 	call CheckMobileBattleError
 	ret c
@@ -942,6 +944,7 @@ Battle_EnemyFirst:
 	call ResidualDamage
 	jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
+	call Battle_FocusPunchMessagePlayer
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
 	call CheckMobileBattleError
 	ret c
@@ -966,6 +969,13 @@ Battle_PlayerFirst:
 	call SetEnemyTurn
 	callfar AI_SwitchOrTryItem
 	push af
+	jr c, .enemy_switched_or_used_item
+	call Battle_FocusPunchMessagesPlayerFirst
+	jr .got_enemy_action
+
+.enemy_switched_or_used_item
+	call Battle_FocusPunchMessagePlayer
+.got_enemy_action
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
 	pop bc
 	ld a, [wForcedSwitch]
@@ -1007,6 +1017,55 @@ Battle_PlayerFirst:
 	call RefreshBattleHuds
 	xor a ; BATTLEPLAYERACTION_USEMOVE
 	ld [wBattlePlayerAction], a
+	ret
+
+Battle_FocusPunchMessagesEnemyFirst:
+	call Battle_FocusPunchMessageEnemy
+	jp Battle_FocusPunchMessagePlayer
+
+Battle_FocusPunchMessagesPlayerFirst:
+	call Battle_FocusPunchMessagePlayer
+	jp Battle_FocusPunchMessageEnemy
+
+Battle_FocusPunchMessagePlayer:
+	ld hl, wFocusPunchFlags
+	bit FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ret nz
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	ret nz
+	ld a, [wPlayerMoveStruct + MOVE_EFFECT]
+	cp EFFECT_FOCUS_PUNCH
+	ret nz
+	call SetPlayerTurn
+	ld hl, wFocusPunchFlags
+	set FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ld hl, TighteningFocusText
+	call StdBattleTextbox
+	call WaitBGMap
+	jp Battle_PlayFocusPunchTightenAnim
+
+Battle_FocusPunchMessageEnemy:
+	ld hl, wFocusPunchFlags
+	bit FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ret nz
+	ld a, [wEnemyMoveStruct + MOVE_EFFECT]
+	cp EFFECT_FOCUS_PUNCH
+	ret nz
+	call SetEnemyTurn
+	ld hl, wFocusPunchFlags
+	set FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ld hl, TighteningFocusText
+	call StdBattleTextbox
+	call WaitBGMap
+	jp Battle_PlayFocusPunchTightenAnim
+
+Battle_PlayFocusPunchTightenAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	inc a
+	ld [wBattleAnimParam], a
+	farcall LoadMoveAnim
 	ret
 
 PlayerTurn_EndOpponentProtectEndureDestinyBond:

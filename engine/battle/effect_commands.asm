@@ -2272,6 +2272,18 @@ BattleCommand_ApplyDamage:
 	bit SUBSTATUS_SUBSTITUTE, a
 	ret nz
 
+	ld a, [wCurDamage]
+	ld b, a
+	ld a, [wCurDamage + 1]
+	or b
+	ret z
+
+	ld a, [wFocusPunchFlags]
+	and (1 << FOCUS_PUNCH_PLAYER_FOCUSING) | (1 << FOCUS_PUNCH_ENEMY_FOCUSING)
+	jr z, .skip_focus_break
+	farcall BattleCommand_BreakFocusPunchExt
+
+.skip_focus_break
 	ld de, wPlayerDamageTaken + 1
 	ldh a, [hBattleTurn]
 	and a
@@ -5480,6 +5492,10 @@ BattleCommand_FakeOut:
 	call PrintButItFailed
 	jp EndMoveEffect
 
+BattleCommand_FocusPunch:
+	farcall BattleCommand_FocusPunchExt
+	ret
+
 BattleCommand_FlinchTarget:
 	call CheckSubstituteOpp
 	ret nz
@@ -6514,9 +6530,6 @@ BattleCommand_SecondaryEffect:
 	call BattleCommand_ReadByte
 	ld [wBattleCommandParam2], a
 	farcall BattleCommand_SecondaryEffectCommandExt
-	ret
-
-BattleCommand_Unused5D:
 	ret
 
 INCLUDE "engine/battle/move_effects/fury_cutter.asm"

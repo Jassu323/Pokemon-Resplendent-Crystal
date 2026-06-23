@@ -317,6 +317,13 @@ DEF ALL_STATUS EQU (1 << PSN) | (1 << BRN) | (1 << FRZ) | (1 << PAR) | SLP_MASK
 	const BATTLEPLAYERACTION_USEITEM
 	const BATTLEPLAYERACTION_SWITCH
 
+; wFocusPunchFlags
+	const_def
+	const FOCUS_PUNCH_PLAYER_FOCUSING
+	const FOCUS_PUNCH_ENEMY_FOCUSING
+	const FOCUS_PUNCH_PLAYER_LOST
+	const FOCUS_PUNCH_ENEMY_LOST
+
 ; wBattleResult
 	const_def
 	const WIN

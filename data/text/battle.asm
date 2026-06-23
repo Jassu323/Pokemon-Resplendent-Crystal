@@ -909,6 +909,16 @@ ButItFailedText:
 	text "But it failed!"
 	prompt
 
+TighteningFocusText:
+	text "<USER>'s"
+	line "focus tightened!"
+	done
+
+LostFocusText:
+	text "<USER>"
+	line "lost its focus!"
+	prompt
+
 ItFailedText:
 	text "It failed!"
 	prompt

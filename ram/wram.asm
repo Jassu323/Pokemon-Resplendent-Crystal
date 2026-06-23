@@ -598,7 +598,7 @@ wEnemyFutureSightDamage:: dw
 wPlayerRageCounter:: db
 wEnemyRageCounter:: db
 
-	ds 1 ; unused
+wFocusPunchFlags:: db
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db
