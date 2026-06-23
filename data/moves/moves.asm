@@ -270,7 +270,7 @@ Moves1:
 	move EFFECT_DEFENSE_DOWN_HIT,   20, FIGHTING,      100, 15,  50      ;ROCK_SMASH
 	move EFFECT_TRAP_TARGET,        15, WATER,          70, 15,   0      ;WHIRLPOOL
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;BEAT_UP
-	; Official later-gen moves start here.  These are ordered by their move number from Bulbapedia
+	; Official later-gen moves start here.  These are ordered by their move number from Bulbapedia.
 	move EFFECT_FAKE_OUT,           40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
 	move EFFECT_BURN_HIT,          100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
 	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
@@ -317,7 +317,7 @@ Moves1:
 	move EFFECT_CONFUSE_HIT,        60, WATER,         100, 20,  20      ;WATER_PULSE #352
 	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;PLUCK #365
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;ASSURANCE #372
-	move EFFECT_NORMAL_HIT,         80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
+	move EFFECT_SUCKER_PUNCH,       80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
 	move EFFECT_PARALYZE_HIT,       60, FIGHTING,      100, 10,  30      ;FORCE_PALM #395
 	move EFFECT_POISON_HIT,         80, POISON,        100, 20,  30      ;POISON_JAB #398
 	move EFFECT_NORMAL_HIT,         70, DARK,          100, 15,   0      ;NIGHT_SLASH #400
@@ -343,7 +343,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         40, FAIRY,         100, 30,   0      ;FAIRY_WIND #584
 	move EFFECT_SP_ATK_DOWN_HIT,    95, FAIRY,         100, 15,  30      ;MOONBLAST #585
 	move EFFECT_NORMAL_HIT,         80, FAIRY,         100, 10,   0      ;DAZZLING_GLEAM #605
-	; Custom moves that do not exist in any official Pokémon title.  These must always be last in the list
+	; Custom moves that do not exist in any official Pokémon title.  These must always be last in the list.
 	move EFFECT_RECOIL_HIT,          1, ICE,           100, 40,   0      ;GLACIAL_SLAM
 	move EFFECT_LEECH_HIT,           1, BUG,           100, 40,   0      ;DRAIN_LIFE
 	move EFFECT_LEECH_HIT,           1, BUG,           100, 40,   0      ;VAMPIRISM

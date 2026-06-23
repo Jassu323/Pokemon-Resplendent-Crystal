@@ -62,6 +62,25 @@ FangHit:
 	battleext BATTLE_EXTCMD_FANG_HIT
 	endmove
 
+SuckerPunch:
+	movebegin
+	battleext BATTLE_EXTCMD_SUCKER_PUNCH
+	critical
+	damagestats
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 FocusPunch:
 	focuspunch
 	critical

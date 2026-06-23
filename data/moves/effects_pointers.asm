@@ -161,4 +161,5 @@ MoveEffectsPointers:
 	dw RecoilHit1_3
 	dw DoStatusOnly
 	dw FangHit
+	dw SuckerPunch
 	assert_table_length NUM_MOVE_EFFECTS

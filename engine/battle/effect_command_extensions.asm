@@ -781,6 +781,31 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_CurseExt
 	cp BATTLE_EXTCMD_FANG_HIT
 	jp z, BattleCommand_FangHitExt
+	cp BATTLE_EXTCMD_SUCKER_PUNCH
+	jp z, BattleCommand_SuckerPunchExt
+	ret
+
+BattleCommand_SuckerPunchExt:
+	ld a, [wEnemyGoesFirst]
+	ld b, a
+	ldh a, [hBattleTurn]
+	xor b
+	jr nz, .failed
+	ld hl, wEnemyMoveStruct + MOVE_POWER
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_power
+	ld hl, wPlayerMoveStruct + MOVE_POWER
+
+.got_power
+	ld a, [hl]
+	and a
+	ret nz
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
 	ret
 
 BattleCommand_FangHitExt:
