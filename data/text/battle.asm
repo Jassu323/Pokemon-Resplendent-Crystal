@@ -654,6 +654,17 @@ SharedPainText:
 	line "shared pain!"
 	prompt
 
+MadeWishText:
+	text "<USER>"
+	line "made a wish!"
+	prompt
+
+WishCameTrueText:
+	text_ram wStringBuffer1
+	text "'s"
+	line "wish came true!"
+	prompt
+
 TookAimText:
 	text "<USER>"
 	line "took aim!"

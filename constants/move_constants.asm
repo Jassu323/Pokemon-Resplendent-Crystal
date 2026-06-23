@@ -349,6 +349,7 @@ DEF CANNOT_MOVE EQU $ff
 
 ; Battle animations use the same constants as the moves
 	const ANIM_SWEET_SCENT_2     ; fd
+	const ANIM_WISH_HEAL
 ; Animations with negative IDs will play even when animations are disabled
 	const_def -1, -1
 	const ANIM_HIT_CONFUSION     ;  -1 (ffff)

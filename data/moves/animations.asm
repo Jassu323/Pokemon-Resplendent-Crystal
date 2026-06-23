@@ -3622,6 +3622,12 @@ BattleAnim_Wish:
 	anim_call BattleAnim_ShowMon_0
 	anim_ret
 
+BattleAnim_WishHeal:
+	anim_1gfx BATTLE_ANIM_GFX_SHINE
+	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_MID_OBPALS_GRAY_AND_YELLOW, $0, $0, $0
+	anim_call BattleAnimSub_Glimmer2
+	anim_ret
+
 BattleAnim_Ingrain:
 	anim_2gfx BATTLE_ANIM_GFX_INGRAIN, BATTLE_ANIM_GFX_MEDIUM_BUBBLE
 	anim_sound 0, 0, SFX_SCRATCH

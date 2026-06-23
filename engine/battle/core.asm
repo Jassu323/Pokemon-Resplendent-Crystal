@@ -13,6 +13,8 @@ DoBattle:
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
 	ld [wBattleEnded], a
+	ld [wPlayerWishCount], a
+	ld [wEnemyWishCount], a
 	inc a
 	ld [wBattleHasJustStarted], a
 	ld hl, wOTPartyMon1HP
@@ -278,6 +280,8 @@ HandleBetweenTurnEffects:
 	ret c
 
 .NoMoreFaintingConditions:
+	ld a, BATTLE_CORE_HOOK_BETWEEN_TURNS
+	call BattleCoreExt
 	call HandleLeftovers
 	call HandleMysteryberry
 	call HandleDefrost

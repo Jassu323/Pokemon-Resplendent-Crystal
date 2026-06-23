@@ -44,7 +44,7 @@ MoveEffectsPointers:
 	dw SuperFang
 	dw StaticDamage
 	dw TrapTarget
-	dw NormalHit
+	dw Wish
 	dw MultiHit
 	dw NormalHit
 	dw Mist

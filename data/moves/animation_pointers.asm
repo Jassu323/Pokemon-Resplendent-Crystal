@@ -367,3 +367,4 @@ BattleAnimations::
 	dw BattleAnim_Piledriver
 	assert_table_length NUM_ATTACKS + 1
 	dw BattleAnim_SweetScent2
+	dw BattleAnim_WishHeal

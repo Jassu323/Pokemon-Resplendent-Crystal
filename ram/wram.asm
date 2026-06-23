@@ -601,6 +601,10 @@ wEnemyRageCounter:: db
 wFocusPunchFlags:: db
 wPlayerTauntCount:: db
 wEnemyTauntCount:: db
+wPlayerWishCount:: db
+wEnemyWishCount:: db
+wPlayerWishHP:: dw
+wEnemyWishHP:: dw
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db
@@ -881,7 +885,10 @@ SECTION "Unused Map Buffer", WRAM0
 
 ; This was a buffer for map-related pointers in the 1997 G/S prototype.
 ; See wMapBuffer in pokegold-spaceworld's wram.asm.
-wUnusedMapBuffer:: ds 24
+wUnusedMapBuffer::
+wPlayerWishUserName:: ds MON_NAME_LENGTH
+wEnemyWishUserName:: ds MON_NAME_LENGTH
+	ds 2
 wUnusedMapBufferEnd::
 
 

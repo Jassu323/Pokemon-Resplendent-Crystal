@@ -102,10 +102,12 @@ DEF RECOIL_1_3 EQU 3
 
 	const_def
 	const BATTLE_EXTCMD_TAUNT
+	const BATTLE_EXTCMD_WISH
 
 	const_def
 	const BATTLE_CORE_HOOK_BEFORE_ACTION
 	const BATTLE_CORE_HOOK_AFTER_ACTION
+	const BATTLE_CORE_HOOK_BETWEEN_TURNS
 
 ; move struct members (see data/moves/moves.asm)
 rsreset

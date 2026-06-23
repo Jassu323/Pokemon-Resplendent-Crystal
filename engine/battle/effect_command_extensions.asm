@@ -715,6 +715,8 @@ BattleCommand_BattleExtDispatcher:
 	ld a, [wBattleCommandParam]
 	cp BATTLE_EXTCMD_TAUNT
 	jp z, BattleCommand_TauntExt
+	cp BATTLE_EXTCMD_WISH
+	jp z, BattleCommand_WishExt
 	ret
 
 BattleCommand_TauntExt:
@@ -736,12 +738,41 @@ BattleCommand_TauntExt:
 	farcall EndMoveEffect
 	ret
 
+BattleCommand_WishExt:
+	call BattleCore_GetActorWishCount
+	ld a, [hl]
+	and a
+	jr nz, .failed
+
+	push hl
+	farcall GetHalfMaxHP
+	pop hl
+	ld [hl], 2
+
+	call BattleCore_GetActorWishHP
+	ld a, b
+	ld [hli], a
+	ld [hl], c
+	call BattleCore_StoreActorWishName
+
+	farcall AnimateCurrentMove
+	ld hl, MadeWishText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
 BattleCoreHookExt:
 	ld a, [wBattleCommandParam]
 	cp BATTLE_CORE_HOOK_BEFORE_ACTION
 	jr z, BattleCore_BeforeActionExt
 	cp BATTLE_CORE_HOOK_AFTER_ACTION
 	jr z, BattleCore_AfterActionExt
+	cp BATTLE_CORE_HOOK_BETWEEN_TURNS
+	jr z, BattleCore_BetweenTurnsExt
 	and a
 	ret
 
@@ -758,6 +789,93 @@ BattleCore_AfterActionExt:
 	ret nz
 	ld hl, TauntWoreOffText
 	jp StdBattleTextbox
+
+BattleCore_BetweenTurnsExt:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+	call SetPlayerTurn
+	call BattleCore_HandleWish
+	call SetEnemyTurn
+	jp BattleCore_HandleWish
+
+.enemy_first
+	call SetEnemyTurn
+	call BattleCore_HandleWish
+	call SetPlayerTurn
+	; fallthrough
+
+BattleCore_HandleWish:
+	call BattleCore_GetActorWishCount
+	ld a, [hl]
+	and a
+	ret z
+	dec [hl]
+	ret nz
+
+	call BattleCore_CopyActorWishNameToBuffer
+	ld hl, WishCameTrueText
+	call StdBattleTextbox
+
+	call BattleCore_UserHPIsFull
+	ret z
+
+	call BattleCore_GetActorWishHP
+	ld a, [hli]
+	ld b, a
+	ld a, [hl]
+	ld c, a
+	call BattleCore_WishRecoveryAnim
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	ld hl, RegainedHealthText
+	jp StdBattleTextbox
+
+BattleCore_WishRecoveryAnim:
+	push bc
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(ANIM_WISH_HEAL)
+		ld a, HIGH(ANIM_WISH_HEAL)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(ANIM_WISH_HEAL)
+	ld [wFXAnimID], a
+	predef PlayBattleAnim
+	pop bc
+	ret
+
+BattleCore_UserHPIsFull:
+	ld hl, wBattleMonHP
+	ld de, wBattleMonMaxHP
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_hp
+	ld hl, wEnemyMonHP
+	ld de, wEnemyMonMaxHP
+
+.got_hp
+	ld a, [hli]
+	ld b, a
+	ld a, [de]
+	cp b
+	ret nz
+	inc de
+	ld a, [hl]
+	ld b, a
+	ld a, [de]
+	cp b
+	ret
+
+BattleCore_SwitchTurn:
+	ldh a, [hBattleTurn]
+	xor 1
+	ldh [hBattleTurn], a
+	ret
 
 BattleCore_CheckTauntBlock:
 	call BattleCore_GetActorTauntCount
@@ -807,3 +925,67 @@ BattleCore_GetOpponentTauntCount:
 	ret z
 	ld hl, wPlayerTauntCount
 	ret
+
+BattleCore_GetActorWishCount:
+	ld hl, wPlayerWishCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishCount
+	ret
+
+BattleCore_GetActorWishHP:
+	ld hl, wPlayerWishHP
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishHP
+	ret
+
+BattleCore_GetActorWishName:
+	ld hl, wPlayerWishUserName
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishUserName
+	ret
+
+BattleCore_StoreActorWishName:
+	call BattleCore_GetActorWishName
+	ld d, h
+	ld e, l
+	ld hl, wBattleMonNickname
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .copy
+	ld hl, wEnemyMonNickname
+
+.copy
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes
+
+BattleCore_CopyActorWishNameToBuffer:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	call BattleCore_GetActorWishName
+	ld de, wStringBuffer1
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes
+
+.enemy
+	ld hl, EnemyText
+	ld de, wStringBuffer1
+
+.copy_prefix
+	ld a, [hli]
+	cp '@'
+	jr z, .copy_name
+	ld [de], a
+	inc de
+	jr .copy_prefix
+
+.copy_name
+	call BattleCore_GetActorWishName
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes

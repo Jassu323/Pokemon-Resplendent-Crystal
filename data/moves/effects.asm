@@ -69,6 +69,11 @@ Taunt:
 	battleext BATTLE_EXTCMD_TAUNT
 	endmove
 
+Wish:
+	movebegin
+	battleext BATTLE_EXTCMD_WISH
+	endmove
+
 DoStatusOnly:
 	movebegin
 	checkhit
