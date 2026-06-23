@@ -204,7 +204,16 @@ MACRO secondaryeffect
 ENDM
 	command startloop               ; ae
 	command curl                    ; af
+	command battleext               ; b0
 DEF NUM_EFFECT_COMMANDS EQU const_value - 1
+
+PURGE battleext
+MACRO battleext
+	db battleext_command
+	if _NARG >= 1
+		db \1
+	endc
+ENDM
 
 	const_def -1, -1
 	command endmove                 ; ff

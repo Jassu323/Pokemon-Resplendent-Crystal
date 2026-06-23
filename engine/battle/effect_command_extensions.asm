@@ -710,3 +710,100 @@ BattleCommand_BreakFocusPunchExt:
 	ret z
 	set FOCUS_PUNCH_PLAYER_LOST, [hl]
 	ret
+
+BattleCommand_BattleExtDispatcher:
+	ld a, [wBattleCommandParam]
+	cp BATTLE_EXTCMD_TAUNT
+	jp z, BattleCommand_TauntExt
+	ret
+
+BattleCommand_TauntExt:
+	call BattleCore_GetOpponentTauntCount
+	ld a, [hl]
+	and a
+	jr nz, .failed
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	ld [hl], 4
+	ld hl, WasTauntedText
+	call StdBattleTextbox
+	ret
+
+.failed
+	ld hl, AlreadyTauntedText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
+
+BattleCoreHookExt:
+	ld a, [wBattleCommandParam]
+	cp BATTLE_CORE_HOOK_BEFORE_ACTION
+	jr z, BattleCore_BeforeActionExt
+	cp BATTLE_CORE_HOOK_AFTER_ACTION
+	jr z, BattleCore_AfterActionExt
+	and a
+	ret
+
+BattleCore_BeforeActionExt:
+	call BattleCore_CheckTauntBlock
+	ret
+
+BattleCore_AfterActionExt:
+	call BattleCore_GetActorTauntCount
+	ld a, [hl]
+	and a
+	ret z
+	dec [hl]
+	ret nz
+	ld hl, TauntWoreOffText
+	jp StdBattleTextbox
+
+BattleCore_CheckTauntBlock:
+	call BattleCore_GetActorTauntCount
+	ld a, [hl]
+	and a
+	jr z, .not_blocked
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	jr nz, .not_blocked
+	ld a, [wPlayerMoveStruct + MOVE_POWER]
+	jr .got_power
+
+.enemy
+	ld a, [wEnemyMoveStruct + MOVE_POWER]
+
+.got_power
+	and a
+	jr nz, .not_blocked
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	ld [wNamedObjectIndex], a
+	call GetMoveName
+	ld hl, TauntPreventedMoveText
+	call StdBattleTextbox
+	scf
+	ret
+
+.not_blocked
+	and a
+	ret
+
+BattleCore_GetActorTauntCount:
+	ld hl, wPlayerTauntCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyTauntCount
+	ret
+
+BattleCore_GetOpponentTauntCount:
+	ld hl, wEnemyTauntCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wPlayerTauntCount
+	ret

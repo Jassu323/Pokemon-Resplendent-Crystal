@@ -132,7 +132,7 @@ MoveEffectsPointers:
 	dw Pursuit
 	dw RapidSpin
 	dw FocusPunch
-	dw NormalHit
+	dw Taunt
 	dw MorningSun
 	dw Synthesis
 	dw Moonlight

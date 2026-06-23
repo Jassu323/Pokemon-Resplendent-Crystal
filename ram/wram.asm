@@ -599,6 +599,8 @@ wPlayerRageCounter:: db
 wEnemyRageCounter:: db
 
 wFocusPunchFlags:: db
+wPlayerTauntCount:: db
+wEnemyTauntCount:: db
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db

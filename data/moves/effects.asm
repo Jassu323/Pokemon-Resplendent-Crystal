@@ -62,6 +62,13 @@ FocusPunch:
 	kingsrock
 	endmove
 
+Taunt:
+	movebegin
+	checkhit
+	failuretext
+	battleext BATTLE_EXTCMD_TAUNT
+	endmove
+
 DoStatusOnly:
 	movebegin
 	checkhit

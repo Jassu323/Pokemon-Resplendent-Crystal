@@ -919,6 +919,33 @@ LostFocusText:
 	line "lost its focus!"
 	prompt
 
+WasTauntedText:
+	text "<TARGET>"
+	line "was taunted!"
+	prompt
+
+AlreadyTauntedText:
+	text "<TARGET>'s"
+	line "already taunted!"
+	prompt
+
+TauntWoreOffText:
+	text "<USER>'s"
+	line "Taunt wore off!"
+	prompt
+
+TauntBlockedText:
+	text "<USER>"
+	line "can't use that!"
+	prompt
+
+TauntPreventedMoveText:
+	text "Taunt prevented"
+	line "@"
+	text_ram wStringBuffer1
+	text "!"
+	prompt
+
 ItFailedText:
 	text "It failed!"
 	prompt

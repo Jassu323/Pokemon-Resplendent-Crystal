@@ -4282,6 +4282,12 @@ BattleCommand_StatusTarget:
 	farcall BattleCommand_StatusTargetExt
 	ret
 
+BattleCommand_BattleExt:
+	call BattleCommand_ReadByte
+	ld [wBattleCommandParam], a
+	farcall BattleCommand_BattleExtDispatcher
+	ret
+
 BattleCommand_AttackUp:
 	ld b, ATTACK
 	jr BattleCommand_StatUp

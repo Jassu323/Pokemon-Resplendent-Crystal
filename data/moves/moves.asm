@@ -274,9 +274,9 @@ Moves1:
 	move EFFECT_FAKE_OUT,           40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
 	move EFFECT_BURN_HIT,          100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
 	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
-	move EFFECT_BURN,          0, FIRE,           75, 15,   0      ;WILL_O_WISP #261
+	move EFFECT_BURN,                0, FIRE,           75, 15,   0      ;WILL_O_WISP #261
 	move EFFECT_FOCUS_PUNCH,       150, FIGHTING,      100, 20,   0      ;FOCUS_PUNCH #264
-	move EFFECT_NORMAL_HIT,          0, DARK,          100, 20,   0      ;TAUNT #269
+	move EFFECT_TAUNT,               0, DARK,          100, 20,   0      ;TAUNT #269
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;WISH #273
 	move EFFECT_NORMAL_HIT,          0, GRASS,         100, 20,   0      ;INGRAIN #275
 	move EFFECT_NORMAL_HIT,        120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276

@@ -238,21 +238,7 @@ BattleTurn:
 	ret
 
 Stubbed_Increments5_a89a:
-	ret
-	ld a, BANK(s5_a89a) ; MBC30 bank used by JP Crystal; inaccessible by MBC3
-	call OpenSRAM
-	ld hl, s5_a89a + 1 ; address of MBC30 bank
-	inc [hl]
-	jr nz, .finish
-	dec hl
-	inc [hl]
-	jr nz, .finish
-	dec [hl]
-	inc hl
-	dec [hl]
-
-.finish
-	call CloseSRAM
+	; MBC30 bank used by JP Crystal; inaccessible by MBC3.
 	ret
 
 HandleBetweenTurnEffects:
@@ -1071,14 +1057,31 @@ Battle_PlayFocusPunchTightenAnim:
 PlayerTurn_EndOpponentProtectEndureDestinyBond:
 	call SetPlayerTurn
 	call EndUserDestinyBond
+	ld a, BATTLE_CORE_HOOK_BEFORE_ACTION
+	call BattleCoreExt
+	jr c, .after_action
 	callfar DoPlayerTurn
+.after_action
+	ld a, BATTLE_CORE_HOOK_AFTER_ACTION
+	call BattleCoreExt
 	jp EndOpponentProtectEndureDestinyBond
 
 EnemyTurn_EndOpponentProtectEndureDestinyBond:
 	call SetEnemyTurn
 	call EndUserDestinyBond
+	ld a, BATTLE_CORE_HOOK_BEFORE_ACTION
+	call BattleCoreExt
+	jr c, .after_action
 	callfar DoEnemyTurn
+.after_action
+	ld a, BATTLE_CORE_HOOK_AFTER_ACTION
+	call BattleCoreExt
 	jp EndOpponentProtectEndureDestinyBond
+
+BattleCoreExt:
+	ld [wBattleCommandParam], a
+	callfar BattleCoreHookExt
+	ret
 
 EndOpponentProtectEndureDestinyBond:
 	ld a, BATTLE_VARS_SUBSTATUS1_OPP
@@ -2077,25 +2080,6 @@ GetMaxHP:
 	ld a, [hl]
 	ld [wHPBuffer1], a
 	ld c, a
-	ret
-
-GetHalfHP: ; unreferenced
-	ld hl, wBattleMonHP
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .ok
-	ld hl, wEnemyMonHP
-.ok
-	ld a, [hli]
-	ld b, a
-	ld a, [hli]
-	ld c, a
-	srl b
-	rr c
-	ld a, [hli]
-	ld [wHPBuffer1 + 1], a
-	ld a, [hl]
-	ld [wHPBuffer1], a
 	ret
 
 CheckUserHasEnoughHP:
@@ -3796,6 +3780,7 @@ endr
 	ld [wEnemyFuryCutterCount], a
 	ld [wEnemyProtectCount], a
 	ld [wEnemyRageCounter], a
+	ld [wEnemyTauntCount], a
 	ld [wEnemyDisabledMove], a
 	ld [wEnemyMinimized], a
 	ld [wPlayerWrapCount], a
@@ -4283,6 +4268,7 @@ endr
 	ld [wPlayerFuryCutterCount], a
 	ld [wPlayerProtectCount], a
 	ld [wPlayerRageCounter], a
+	ld [wPlayerTauntCount], a
 	ld [wDisabledMove], a
 	ld [wPlayerMinimized], a
 	ld [wEnemyWrapCount], a
@@ -4848,7 +4834,6 @@ CheckDanger:
 PrintPlayerHUD:
 	ld de, wBattleMonNickname
 	hlcoord 10, 7
-	call Battle_DummyFunction
 	call PlaceString
 
 	push bc
@@ -4948,7 +4933,6 @@ DrawEnemyHUD:
 	call GetBaseData
 	ld de, wEnemyMonNickname
 	hlcoord 1, 0
-	call Battle_DummyFunction
 	call PlaceString
 	ld h, b
 	ld l, c
@@ -5092,10 +5076,6 @@ UpdateHPPal:
 	cp b
 	ret z
 	jp FinishBattleAnim
-
-Battle_DummyFunction:
-; called before placing either battler's nickname in the HUD
-	ret
 
 BattleMenu:
 	xor a
@@ -5733,12 +5713,18 @@ MoveSelectionScreen:
 	ld a, [hl]
 
 .skip2
+	call CheckPlayerTauntBlockedMove
+	jr c, .move_taunted
 	ld [wCurPlayerMove], a
 	xor a
 	ret
 
 .move_disabled
 	ld hl, BattleText_TheMoveIsDisabled
+	jr .place_textbox_start_over
+
+.move_taunted
+	ld hl, TauntBlockedText
 	jr .place_textbox_start_over
 
 .no_pp_left
@@ -5871,17 +5857,30 @@ MoveInfoBox:
 
 	ld a, [wPlayerDisableCount]
 	and a
-	jr z, .not_disabled
+	jr z, .check_taunt
 
 	swap a
 	and $f
 	ld b, a
 	ld a, [wMenuCursorY]
 	cp b
-	jr nz, .not_disabled
-
-	hlcoord 1, 10
 	ld de, .Disabled
+	jr z, .place_status
+
+.check_taunt
+	ld a, [wMenuCursorY]
+	dec a
+	ld c, a
+	ld b, 0
+	ld hl, wBattleMonMoves
+	add hl, bc
+	ld a, [hl]
+	call CheckPlayerTauntBlockedMove
+	jr nc, .not_disabled
+	ld de, .Taunted
+
+.place_status
+	hlcoord 1, 10
 	call PlaceString
 	pop af
 	and a
@@ -5950,6 +5949,8 @@ MoveInfoBox:
 
 .Disabled:
 	db "Disabled!@"
+.Taunted:
+	db "Taunted!@"
 .Type:
 	db "Type/@"
 .PP:
@@ -6030,41 +6031,49 @@ CheckPlayerHasUsableMoves:
 	ld hl, STRUGGLE
 	call GetMoveIDFromIndex
 	ld [wCurPlayerMove], a
+
 	ld a, [wPlayerDisableCount]
 	and a
-	ld hl, wBattleMonPP
-	jr nz, .disabled
-
-	ld a, [hli]
-	or [hl]
-	inc hl
-	or [hl]
-	inc hl
-	or [hl]
-	and PP_MASK
-	ret nz
-	jr .force_struggle
-
-.disabled
+	jr z, .got_disabled_slot
 	swap a
 	and $f
-	ld b, a
-	ld d, NUM_MOVES + 1
-	xor a
-.loop
-	dec d
-	jr z, .done
-	ld c, [hl]
-	inc hl
-	dec b
-	jr z, .loop
-	or c
-	jr .loop
 
-.done
-; BUG: A Disabled but PP Up–enhanced move may not trigger Struggle (see docs/bugs_and_glitches.md)
+.got_disabled_slot
+	ld b, a
+	ld c, 1
+	ld hl, wBattleMonMoves
+	ld de, wBattleMonPP
+
+.loop
+	ld a, [hli]
 	and a
+	jr z, .next
+	push af
+	ld a, b
+	cp c
+	jr z, .skip_move
+	pop af
+	push hl
+	push bc
+	call CheckPlayerTauntBlockedMove
+	pop bc
+	pop hl
+	jr c, .next
+	ld a, [de]
+	and PP_MASK
 	ret nz
+	jr .next
+
+.skip_move
+	pop af
+
+.next
+	inc de
+	inc c
+	ld a, c
+	cp NUM_MOVES + 1
+	jr nz, .loop
+	jr .force_struggle
 
 .force_struggle
 	ld hl, BattleText_MonHasNoMovesLeft
@@ -6140,6 +6149,13 @@ ParseEnemyAction:
 	ld a, [wEnemyDisabledMove]
 	cp [hl]
 	jr z, .disabled
+	ld a, [hl]
+	push hl
+	push bc
+	call CheckEnemyTauntBlockedMove
+	pop bc
+	pop hl
+	jr c, .disabled
 	ld a, [de]
 	and PP_MASK
 	jr nz, .enough_pp
@@ -6172,6 +6188,10 @@ ParseEnemyAction:
 	ld a, [hl]
 	and a
 	jr z, .loop2
+	push bc
+	call CheckEnemyTauntBlockedMove
+	pop bc
+	jr c, .loop2
 	ld hl, wEnemyMonPP
 	add hl, bc
 	ld b, a
@@ -6245,6 +6265,36 @@ CheckEnemyLockedIn:
 
 	ld hl, wEnemySubStatus1
 	bit SUBSTATUS_ROLLOUT, [hl]
+	ret
+
+CheckPlayerTauntBlockedMove:
+	ld hl, wPlayerTauntCount
+	jr CheckTauntBlockedMove
+
+CheckEnemyTauntBlockedMove:
+	ld hl, wEnemyTauntCount
+
+CheckTauntBlockedMove:
+	and a
+	ret z
+	ld b, a
+	ld a, [hl]
+	and a
+	jr z, .allowed
+	ld l, b
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	and a
+	jr z, .blocked
+
+.allowed
+	ld a, b
+	and a
+	ret
+
+.blocked
+	ld a, b
+	scf
 	ret
 
 LinkBattleSendReceiveAction:
@@ -6815,17 +6865,6 @@ CheckUnownLetter:
 
 INCLUDE "data/wild/unlocked_unowns.asm"
 
-SwapBattlerLevels: ; unreferenced
-	push bc
-	ld a, [wBattleMonLevel]
-	ld b, a
-	ld a, [wEnemyMonLevel]
-	ld [wBattleMonLevel], a
-	ld a, b
-	ld [wEnemyMonLevel], a
-	pop bc
-	ret
-
 BattleWinSlideInEnemyTrainerFrontpic:
 	xor a
 	ld [wTempEnemyMonSpecies], a
@@ -7177,20 +7216,6 @@ _LoadBattleFontsHPBar:
 _LoadHPBar:
 	callfar LoadHPBar
 	ret
-
-LoadHPExpBarGFX: ; unreferenced
-	ld de, EnemyHPBarBorderGFX
-	ld hl, vTiles2 tile $6c
-	lb bc, BANK(EnemyHPBarBorderGFX), 4
-	call Get1bpp
-	ld de, HPExpBarBorderGFX
-	ld hl, vTiles2 tile $73
-	lb bc, BANK(HPExpBarBorderGFX), 6
-	call Get1bpp
-	ld de, ExpBarGFX
-	ld hl, vTiles2 tile $55
-	lb bc, BANK(ExpBarGFX), 8
-	jp Get2bpp
 
 EmptyBattleTextbox:
 	ld hl, .empty
@@ -8095,45 +8120,9 @@ GoodComeBackText:
 	text_far _GoodComeBackText
 	text_end
 
-TextJump_ComeBack: ; unreferenced
-	ld hl, ComeBackText
-	ret
-
 ComeBackText:
 	text_far _ComeBackText
 	text_end
-
-HandleSafariAngerEatingStatus: ; unreferenced
-	ld hl, wSafariMonEating
-	ld a, [hl]
-	and a
-	jr z, .angry
-	dec [hl]
-	ld hl, BattleText_WildMonIsEating
-	jr .finish
-
-.angry
-	dec hl
-	assert wSafariMonEating - 1 == wSafariMonAngerCount
-	ld a, [hl]
-	and a
-	ret z
-	dec [hl]
-	ld hl, BattleText_WildMonIsAngry
-	jr nz, .finish
-	push hl
-	ld a, [wEnemyMonSpecies]
-	ld [wCurSpecies], a
-	call GetBaseData
-	ld a, [wBaseCatchRate]
-	ld [wEnemyMonCatchRate], a
-	pop hl
-
-.finish
-	push hl
-	call SafeLoadTempTilemapToTilemap
-	pop hl
-	jp StdBattleTextbox
 
 FillInExpBar:
 	push hl
@@ -8361,10 +8350,6 @@ StartBattle:
 	scf
 	ret
 
-CallDoBattle: ; unreferenced
-	call DoBattle
-	ret
-
 BattleIntro:
 	farcall StubbedTrainerRankings_Battles ; mobile
 	call LoadTrainerOrWildMonPic
@@ -8545,54 +8530,6 @@ InitEnemyWildmon:
 	hlcoord 12, 0
 	lb bc, 7, 7
 	predef PlaceGraphic
-	ret
-
-FillEnemyMovesFromMoveIndicesBuffer: ; unreferenced
-	ld hl, wEnemyMonMoves
-	ld de, wListMoves_MoveIndicesBuffer
-	ld b, NUM_MOVES
-.loop
-	ld a, [de]
-	inc de
-	ld [hli], a
-	and a
-	jr z, .clearpp
-
-	push bc
-	push hl
-
-	push hl
-	ld l, a
-	ld a, MOVE_PP
-	call GetMoveAttribute
-	pop hl
-
-	ld bc, wEnemyMonPP - (wEnemyMonMoves + 1)
-	add hl, bc
-	ld [hl], a
-
-	pop hl
-	pop bc
-
-	dec b
-	jr nz, .loop
-	ret
-
-.clear
-	xor a
-	ld [hli], a
-
-.clearpp
-	push bc
-	push hl
-	ld bc, wEnemyMonPP - (wEnemyMonMoves + 1)
-	add hl, bc
-	xor a
-	ld [hl], a
-	pop hl
-	pop bc
-	dec b
-	jr nz, .clear
 	ret
 
 ExitBattle:

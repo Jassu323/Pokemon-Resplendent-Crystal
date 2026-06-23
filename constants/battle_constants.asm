@@ -100,6 +100,13 @@ DEF RECOIL_1_3 EQU 3
 	const STATUS_BLOCK_RAIN
 	const STATUS_BLOCK_SUN
 
+	const_def
+	const BATTLE_EXTCMD_TAUNT
+
+	const_def
+	const BATTLE_CORE_HOOK_BEFORE_ACTION
+	const BATTLE_CORE_HOOK_AFTER_ACTION
+
 ; move struct members (see data/moves/moves.asm)
 rsreset
 DEF MOVE_ANIM   rb ; 0
