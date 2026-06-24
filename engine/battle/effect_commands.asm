@@ -2302,6 +2302,8 @@ BattleCommand_FailureText:
 	cp EFFECT_PARALYZE
 	jr z, .delay
 	cp EFFECT_BURN
+	jr z, .delay
+	cp EFFECT_YAWN
 	ret nz
 
 .delay

@@ -207,6 +207,14 @@ DoStatusOnly:
 	db statustarget_command, STATUS_FROM_EFFECT
 	endmove
 
+Yawn:
+	movebegin
+	checkhit
+	failuretext
+	checksafeguard
+	battleext BATTLE_EXTCMD_YAWN
+	endmove
+
 LeechHit:
 	movebegin
 	critical

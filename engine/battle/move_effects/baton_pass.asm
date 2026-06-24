@@ -139,6 +139,12 @@ ResetBatonPassStatus:
 	; Disable isn't passed.
 	call ResetActorDisable
 
+	; Drowsiness isn't passed.
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	res SUBSTATUS_DROWSY, [hl]
+	res SUBSTATUS_DROWSY_READY, [hl]
+
 	; Attraction isn't passed.
 	ld hl, wPlayerSubStatus1
 	res SUBSTATUS_IN_LOVE, [hl]

@@ -115,6 +115,7 @@ DEF RECOIL_1_3 EQU 3
 	const BATTLE_EXTCMD_BRICK_BREAK
 	const BATTLE_EXTCMD_HEX_POWER
 	const BATTLE_EXTCMD_POISON_STEEL_OVERRIDE
+	const BATTLE_EXTCMD_YAWN
 
 	const_def
 	const BATTLE_CORE_HOOK_BEFORE_ACTION
@@ -258,6 +259,8 @@ DEF ALL_STATUS EQU (1 << PSN) | (1 << BRN) | (1 << FRZ) | (1 << PAR) | SLP_MASK
 ; wPlayerSubStatus2 or wEnemySubStatus2 bit flags
 	const_def
 	const SUBSTATUS_CURLED
+	const SUBSTATUS_DROWSY
+	const SUBSTATUS_DROWSY_READY
 
 ; wPlayerSubStatus3 or wEnemySubStatus3 bit flags
 	const_def

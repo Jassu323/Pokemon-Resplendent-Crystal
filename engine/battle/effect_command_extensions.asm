@@ -795,6 +795,8 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_HexPowerExt
 	cp BATTLE_EXTCMD_POISON_STEEL_OVERRIDE
 	jp z, BattleCommand_PoisonSteelOverrideExt
+	cp BATTLE_EXTCMD_YAWN
+	jp z, BattleCommand_YawnExt
 	ret
 
 BattleCommand_HexPowerExt:
@@ -931,6 +933,62 @@ BattleCommand_IngrainExt:
 	set SUBSTATUS_INGRAIN, [hl]
 	ld hl, PlantedRootsText
 	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_YawnExt:
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVar
+	and a
+	jr nz, .already_statused
+
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVarAddr
+	bit SUBSTATUS_DROWSY, [hl]
+	jr nz, .failed
+	bit SUBSTATUS_DROWSY_READY, [hl]
+	jr nz, .failed
+
+	farcall CheckSubstituteOpp
+	jr nz, .has_substitute
+
+	farcall GetOpponentItem
+	ld a, b
+	cp HELD_PREVENT_SLEEP
+	jr z, .protected_by_item
+
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVarAddr
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	set SUBSTATUS_DROWSY, [hl]
+	ld hl, MadeDrowsyText
+	jp StdBattleTextbox
+
+.already_statused
+	farcall PrintAlreadyStatusText
+	farcall EndMoveEffect
+	ret
+
+.has_substitute
+	farcall PrintTargetHasSubstitute
+	farcall EndMoveEffect
+	ret
+
+.protected_by_item
+	ld a, [hl]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	farcall AnimateFailedMove
+	ld hl, ProtectedByText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
 
 .failed
 	farcall AnimateFailedMove
@@ -1479,17 +1537,57 @@ BattleCore_BetweenTurnsExt:
 	call SetPlayerTurn
 	call BattleCore_HandleWish
 	call BattleCore_HandleIngrain
+	call BattleCore_HandleYawn
 	call SetEnemyTurn
 	call BattleCore_HandleWish
-	jp BattleCore_HandleIngrain
+	call BattleCore_HandleIngrain
+	jp BattleCore_HandleYawn
 
 .enemy_first
 	call SetEnemyTurn
 	call BattleCore_HandleWish
 	call BattleCore_HandleIngrain
+	call BattleCore_HandleYawn
 	call SetPlayerTurn
 	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
 	; fallthrough
+
+BattleCore_HandleYawn:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	bit SUBSTATUS_DROWSY_READY, [hl]
+	jr nz, .resolve
+	bit SUBSTATUS_DROWSY, [hl]
+	ret z
+	res SUBSTATUS_DROWSY, [hl]
+	set SUBSTATUS_DROWSY_READY, [hl]
+	ret
+
+.resolve
+	res SUBSTATUS_DROWSY_READY, [hl]
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	ld a, [hl]
+	and a
+	ret nz
+.roll_sleep
+	push hl
+	call BattleRandom
+	pop hl
+	and %11
+	cp %11
+	jr z, .roll_sleep
+	add 3
+	ld [hl], a
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	call BattleCore_YawnSleepAnim
+	ld hl, UserFellAsleepText
+	call StdBattleTextbox
+	call BattleCore_SwitchTurn
+	farcall UseHeldStatusHealingItem
+	jp BattleCore_SwitchTurn
 
 BattleCore_HandleIngrain:
 	ld a, BATTLE_VARS_SUBSTATUS5
@@ -1565,6 +1663,13 @@ BattleCore_IngrainRecoveryAnim:
 	ld a, LOW(INGRAIN)
 	ld [wFXAnimID], a
 	predef_jump PlayBattleAnim
+
+BattleCore_YawnSleepAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	ld de, ANIM_SLP
+	farcall FarPlayBattleAnimation
+	ret
 
 BattleCore_UserHPIsFull:
 	ld hl, wBattleMonHP

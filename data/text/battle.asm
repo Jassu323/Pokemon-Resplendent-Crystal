@@ -659,6 +659,16 @@ MadeWishText:
 	line "made a wish!"
 	prompt
 
+MadeDrowsyText:
+	text "<TARGET>"
+	line "grew drowsy!"
+	prompt
+
+UserFellAsleepText:
+	text "<USER>"
+	line "fell asleep!"
+	prompt
+
 PlantedRootsText:
 	text "<USER>"
 	line "planted its roots!"

@@ -166,4 +166,5 @@ MoveEffectsPointers:
 	dw Ingrain
 	dw BrickBreak
 	dw Hex
+	dw Yawn
 	assert_table_length NUM_MOVE_EFFECTS

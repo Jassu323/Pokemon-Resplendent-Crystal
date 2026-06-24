@@ -281,7 +281,7 @@ Moves1:
 	move EFFECT_INGRAIN,             0, GRASS,         100, 20,   0      ;INGRAIN #275
 	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
 	move EFFECT_BRICK_BREAK,        75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
-	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;YAWN #281
+	move EFFECT_YAWN,                0, NORMAL,        100, 10,   0      ;YAWN #281
 	move EFFECT_MULTI_HIT,          15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
 	move EFFECT_BURN_HIT,           85, FIRE,           90, 10,  10      ;BLAZE_KICK #299
 	move EFFECT_NORMAL_HIT,         30, ICE,            90, 20,   0      ;ICE_BALL #301
