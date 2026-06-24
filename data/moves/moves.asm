@@ -315,7 +315,7 @@ Moves1:
 	move EFFECT_MULTI_HIT,          25, ROCK,           80, 10,   0      ;ROCK_BLAST #350
 	move EFFECT_ALWAYS_HIT,         60, ELECTRIC,      100, 20,   0      ;SHOCK_WAVE #351
 	move EFFECT_CONFUSE_HIT,        60, WATER,         100, 20,  20      ;WATER_PULSE #352
-	move EFFECT_NORMAL_HIT,         60, FLYING,        100, 20,   0      ;PLUCK #365
+	move EFFECT_EAT_BERRY_HIT,      60, FLYING,        100, 20,   0      ;PLUCK #365
 	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;ASSURANCE #372
 	move EFFECT_SUCKER_PUNCH,       80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
 	move EFFECT_PARALYZE_HIT,       60, FIGHTING,      100, 10,  30      ;FORCE_PALM #395
@@ -332,7 +332,7 @@ Moves1:
 	move EFFECT_ACCURACY_DOWN_HIT,  65, GROUND,         85, 10,  30      ;MUD_BOMB #426
 	move EFFECT_BURN_HIT,           80, FIRE,          100, 15,  30      ;LAVA_PLUME #436
 	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
-	move EFFECT_NORMAL_HIT,         60, BUG,           100, 20,   0      ;BUG_BITE #450
+	move EFFECT_EAT_BERRY_HIT,      60, BUG,           100, 20,   0      ;BUG_BITE #450
 	move EFFECT_POISON_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
 	move EFFECT_HEAVY_SLAM,         1, STEEL,         100, 40,   0      ;HEAVY_SLAM #484
 	move EFFECT_HEX,                50, GHOST,         100, 10,   0      ;HEX #506

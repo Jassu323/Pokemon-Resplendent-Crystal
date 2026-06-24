@@ -3840,6 +3840,8 @@ DoSubstituteDamage:
 	jr z, .ok
 	cp EFFECT_TRIPLE_KICK
 	jr z, .ok
+	cp EFFECT_EAT_BERRY_HIT
+	jr z, .ok
 	xor a
 	ld [hl], a
 .ok

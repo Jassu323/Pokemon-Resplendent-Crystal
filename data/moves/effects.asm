@@ -120,6 +120,25 @@ Hex:
 	kingsrock
 	endmove
 
+EatBerryHit:
+	movebegin
+	critical
+	damagestats
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	battleext BATTLE_EXTCMD_EAT_TARGET_BERRY
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 FocusPunch:
 	focuspunch
 	critical

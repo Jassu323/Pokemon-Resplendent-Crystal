@@ -797,6 +797,8 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_PoisonSteelOverrideExt
 	cp BATTLE_EXTCMD_YAWN
 	jp z, BattleCommand_YawnExt
+	cp BATTLE_EXTCMD_EAT_TARGET_BERRY
+	jp z, BattleCommand_EatTargetBerryExt
 	ret
 
 BattleCommand_HexPowerExt:
@@ -994,6 +996,319 @@ BattleCommand_YawnExt:
 	farcall AnimateFailedMove
 	farcall PrintButItFailed
 	farcall EndMoveEffect
+	ret
+
+BattleCommand_EatTargetBerryExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+
+	farcall CheckSubstituteOpp
+	ret nz
+
+	farcall GetOpponentItem
+	ld a, [hl]
+	and a
+	ret z
+	ld [wBattleCommandParam2], a
+	ld a, b
+	ld [wBattleCommandFlags], a
+	ld a, c
+	ld [wBattleCommandScratch], a
+
+	call BattleCommand_EatTargetBerry_CheckPocket
+	ret nz
+
+	call BattleCommand_EatTargetBerry_ClearTargetItem
+	ld a, [wBattleCommandParam2]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	ld hl, AteBerryText
+	call StdBattleTextbox
+	call BattleCommand_EatTargetBerry_RecoveryAnim
+
+	ld a, [wBattleCommandFlags]
+	cp HELD_BERRY
+	jp z, BattleCommand_EatTargetBerry_RestoreHP
+	cp HELD_RESTORE_PP
+	jp z, BattleCommand_EatTargetBerry_RestorePP
+	cp HELD_HEAL_POISON
+	jr z, .heal_poison
+	cp HELD_HEAL_FREEZE
+	jr z, .heal_freeze
+	cp HELD_HEAL_BURN
+	jr z, .heal_burn
+	cp HELD_HEAL_SLEEP
+	jr z, .heal_sleep
+	cp HELD_HEAL_PARALYZE
+	jr z, .heal_paralyze
+	cp HELD_HEAL_STATUS
+	jp z, BattleCommand_EatTargetBerry_HealAllStatus
+	cp HELD_HEAL_CONFUSION
+	jp z, BattleCommand_EatTargetBerry_HealConfusion
+	ret
+
+.heal_poison
+	ld b, 1 << PSN
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_freeze
+	ld b, 1 << FRZ
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_burn
+	ld b, 1 << BRN
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_sleep
+	ld b, SLP_MASK
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_paralyze
+	ld b, 1 << PAR
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+BattleCommand_EatTargetBerry_CheckPocket:
+	ld a, [wCurItem]
+	push af
+	ld a, [wBattleCommandParam2]
+	ld [wCurItem], a
+	farcall CheckItemPocket
+	pop af
+	ld [wCurItem], a
+	ld a, [wItemAttributeValue]
+	cp BERRIES
+	ret
+
+BattleCommand_EatTargetBerry_ClearTargetItem:
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .clear_enemy
+	xor a
+	ld [wBattleMonItem], a
+	ld a, MON_ITEM
+	call BattlePartyAttr
+	xor a
+	ld [hl], a
+	ret
+
+.clear_enemy
+	xor a
+	ld [wEnemyMonItem], a
+	ld a, [wBattleMode]
+	dec a
+	ret z
+	ld a, MON_ITEM
+	call OTPartyAttr
+	xor a
+	ld [hl], a
+	ret
+
+BattleCommand_EatTargetBerry_RecoveryAnim:
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(RECOVER)
+		ld a, HIGH(RECOVER)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(RECOVER)
+	ld [wFXAnimID], a
+	predef PlayBattleAnim
+	ret
+
+BattleCommand_EatTargetBerry_RestoreHP:
+	call BattleCore_UserHPIsFull
+	ret z
+	ld b, 0
+	ld a, [wBattleCommandScratch]
+	ld c, a
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_RestorePP:
+	call BattleCommand_EatTargetBerry_GetCurrentPPMax
+	call BattleCommand_EatTargetBerry_GetActivePPAddr
+	call BattleCommand_EatTargetBerry_Restore5PPAtHL
+	call BattleCommand_EatTargetBerry_GetBackingPPAddr
+	jp BattleCommand_EatTargetBerry_Restore5PPAtHL
+
+BattleCommand_EatTargetBerry_GetCurrentPPMax:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wCurPartyMon]
+	push af
+	ld a, [wMenuCursorY]
+	push af
+	ld a, [wMonType]
+	push af
+	ld a, [wCurBattleMon]
+	ld [wCurPartyMon], a
+	ld a, [wCurMoveNum]
+	ld [wMenuCursorY], a
+	xor a ; PARTYMON
+	ld [wMonType], a
+	farcall GetMaxPPOfMove
+	pop af
+	ld [wMonType], a
+	pop af
+	ld [wMenuCursorY], a
+	pop af
+	ld [wCurPartyMon], a
+	ret
+
+.enemy
+	ld a, [wEnemyMoveStruct + MOVE_PP]
+	ld [wTempPP], a
+	ret
+
+BattleCommand_EatTargetBerry_GetActivePPAddr:
+	ld hl, wBattleMonPP
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wCurMoveNum]
+	jr z, .got_slot
+	ld hl, wEnemyMonPP
+	ld a, [wCurEnemyMoveNum]
+
+.got_slot
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ret
+
+BattleCommand_EatTargetBerry_GetBackingPPAddr:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld hl, wPartyMon1PP
+	ld a, [wCurBattleMon]
+	call GetPartyLocation
+	ld a, [wCurMoveNum]
+	jr .got_slot
+
+.enemy
+	ld a, [wBattleMode]
+	dec a
+	jr z, .wild
+	ld hl, wOTPartyMon1PP
+	ld a, [wCurOTMon]
+	call GetPartyLocation
+	ld a, [wCurEnemyMoveNum]
+	jr .got_slot
+
+.wild
+	ld hl, wWildMonPP
+	ld a, [wCurEnemyMoveNum]
+
+.got_slot
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ret
+
+BattleCommand_EatTargetBerry_Restore5PPAtHL:
+	ld a, [hl]
+	and PP_MASK
+	ld b, a
+	ld a, [wTempPP]
+	cp b
+	ret z
+	ret c
+	ld a, b
+	add 5
+	ld b, a
+	ld a, [wTempPP]
+	cp b
+	jr nc, .got_pp
+	ld b, a
+
+.got_pp
+	ld a, [hl]
+	and PP_UP_MASK
+	or b
+	ld [hl], a
+	ret
+
+BattleCommand_EatTargetBerry_HealMajorStatus:
+	call BattleCommand_EatTargetBerry_ClearMajorStatus
+	ret nc
+	call UpdateUserInParty
+	call BattleCommand_EatTargetBerry_RecalcStats
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_HealAllStatus:
+	ld d, 0
+	ld b, ALL_STATUS
+	call BattleCommand_EatTargetBerry_ClearMajorStatus
+	jr nc, .check_confusion
+	inc d
+
+.check_confusion
+	call BattleCommand_EatTargetBerry_ClearConfusion
+	jr nc, .done
+	inc d
+
+.done
+	ld a, d
+	and a
+	ret z
+	call UpdateUserInParty
+	call BattleCommand_EatTargetBerry_RecalcStats
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_HealConfusion:
+	call BattleCommand_EatTargetBerry_ClearConfusion
+	ret nc
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_ClearMajorStatus:
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	ld a, [hl]
+	and b
+	ret z
+	xor a
+	ld [hl], a
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVarAddr
+	res SUBSTATUS_TOXIC, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS1
+	call GetBattleVarAddr
+	res SUBSTATUS_NIGHTMARE, [hl]
+	scf
+	ret
+
+BattleCommand_EatTargetBerry_ClearConfusion:
+	ld a, BATTLE_VARS_SUBSTATUS3
+	call GetBattleVarAddr
+	bit SUBSTATUS_CONFUSED, [hl]
+	jr nz, .clear
+	and a
+	ret
+
+.clear
+	res SUBSTATUS_CONFUSED, [hl]
+	scf
+	ret
+
+BattleCommand_EatTargetBerry_RecalcStats:
+	ld hl, CalcPlayerStats
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_pointer
+	ld hl, CalcEnemyStats
+
+.got_pointer
+	ld a, BANK(CalcPlayerStats) ; aka BANK(CalcEnemyStats)
+	rst FarCall
 	ret
 
 BattleCommand_SuckerPunchExt:
