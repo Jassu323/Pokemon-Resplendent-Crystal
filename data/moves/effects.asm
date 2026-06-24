@@ -101,6 +101,25 @@ HeavySlam:
 	kingsrock
 	endmove
 
+Hex:
+	movebegin
+	critical
+	damagestats
+	battleext BATTLE_EXTCMD_HEX_POWER
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 FocusPunch:
 	focuspunch
 	critical

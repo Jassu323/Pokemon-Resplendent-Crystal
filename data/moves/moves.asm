@@ -335,7 +335,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         60, BUG,           100, 20,   0      ;BUG_BITE #450
 	move EFFECT_POISON_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
 	move EFFECT_HEAVY_SLAM,         1, STEEL,         100, 40,   0      ;HEAVY_SLAM #484
-	move EFFECT_NORMAL_HIT,         50, GHOST,         100, 10,   0      ;HEX #506
+	move EFFECT_HEX,                50, GHOST,         100, 10,   0      ;HEX #506
 	move EFFECT_RECOIL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
 	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
 	move EFFECT_FLINCH_HIT,         85, ICE,            90, 10,  30      ;ICICLE_CRASH #556

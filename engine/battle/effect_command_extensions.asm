@@ -791,6 +791,23 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_BrickBreakAnimExt
 	cp BATTLE_EXTCMD_BRICK_BREAK
 	jp z, BattleCommand_BrickBreakExt
+	cp BATTLE_EXTCMD_HEX_POWER
+	jp z, BattleCommand_HexPowerExt
+	ret
+
+BattleCommand_HexPowerExt:
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	ld d, a
+	push de
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVar
+	and a
+	pop de
+	ret z
+	sla d
+	ret nc
+	ld d, $ff
 	ret
 
 BattleCommand_BrickBreakAnimExt:
