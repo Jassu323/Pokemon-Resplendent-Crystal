@@ -783,6 +783,8 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_FangHitExt
 	cp BATTLE_EXTCMD_SUCKER_PUNCH
 	jp z, BattleCommand_SuckerPunchExt
+	cp BATTLE_EXTCMD_HEAVY_SLAM_POWER
+	jp z, BattleCommand_HeavySlamPowerExt
 	ret
 
 BattleCommand_SuckerPunchExt:
@@ -806,6 +808,145 @@ BattleCommand_SuckerPunchExt:
 	farcall AnimateFailedMove
 	farcall PrintButItFailed
 	farcall EndMoveEffect
+	ret
+
+BattleCommand_HeavySlamPowerExt:
+	push bc
+	push de
+	call .GetUserWeight
+	ld de, wStringBuffer1
+	call .StoreHL
+	call .GetTargetWeight
+	ld de, wStringBuffer3
+	call .StoreHL
+
+	lb bc, 5, 120
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 4, 100
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 3, 80
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 2, 60
+	call .TryWeightRatio
+	jr c, .done
+
+	ld a, 40
+	ld [wTextDecimalByte], a
+
+.done
+	pop de
+	pop bc
+	ld a, [wTextDecimalByte]
+	ld d, a
+	ret
+
+.GetUserWeight:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wBattleMonSpecies]
+	jr z, .got_species
+	ld a, [wEnemyMonSpecies]
+	jr .got_species
+
+.GetTargetWeight:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wEnemyMonSpecies]
+	jr z, .got_species
+	ld a, [wBattleMonSpecies]
+
+.got_species
+	call .GetSpeciesWeight
+	ret
+
+.GetSpeciesWeight:
+	call GetPokemonIndexFromID
+	dec hl
+	ld d, h
+	ld e, l
+	add hl, hl
+	add hl, de
+	ld de, PokedexDataPointerTable
+	add hl, de
+	ld a, BANK(PokedexDataPointerTable)
+	call GetFarByte
+	push af
+	inc hl
+	ld a, BANK(PokedexDataPointerTable)
+	call GetFarWord
+	pop de
+
+.skip_species_name
+	ld a, d
+	call GetFarByte
+	inc hl
+	cp '@'
+	jr nz, .skip_species_name
+	ld a, d
+	inc hl
+	inc hl
+	call GetFarWord
+	ret
+
+.StoreHL:
+	ld a, h
+	ld [de], a
+	inc de
+	ld a, l
+	ld [de], a
+	ret
+
+.TryWeightRatio:
+	push bc
+	call .BuildThreshold
+	call .UserAtLeastThreshold
+	pop bc
+	ret nc
+	ld a, c
+	ld [wTextDecimalByte], a
+	ld d, a
+	scf
+	ret
+
+.BuildThreshold:
+	ld a, [wStringBuffer3]
+	ld d, a
+	ld a, [wStringBuffer3 + 1]
+	ld e, a
+	ld h, d
+	ld l, e
+	dec b
+	ret z
+
+.multiply_loop
+	add hl, de
+	jr nc, .no_overflow
+	ld hl, $ffff
+	ret
+
+.no_overflow
+	dec b
+	jr nz, .multiply_loop
+	ret
+
+.UserAtLeastThreshold:
+	ld a, [wStringBuffer1]
+	cp h
+	jr c, .less
+	jr nz, .greater
+	ld a, [wStringBuffer1 + 1]
+	cp l
+	jr c, .less
+
+.greater
+	scf
+	ret
+
+.less
+	and a
 	ret
 
 BattleCommand_FangHitExt:

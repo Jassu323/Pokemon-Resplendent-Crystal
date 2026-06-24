@@ -161,7 +161,7 @@ ENDM
 	command mirrorcoat              ; 9a
 	command checkfuturesight        ; 9b
 	command futuresight             ; 9c
-	command doubleminimizedamage    ; 9d
+	command checkminimize           ; 9d
 	command skipsuncharge           ; 9e
 	command statfromeffect          ; 9f
 	command teleport                ; a0

@@ -162,4 +162,5 @@ MoveEffectsPointers:
 	dw DoStatusOnly
 	dw FangHit
 	dw SuckerPunch
+	dw HeavySlam
 	assert_table_length NUM_MOVE_EFFECTS

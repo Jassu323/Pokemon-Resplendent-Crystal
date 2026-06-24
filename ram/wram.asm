@@ -2727,8 +2727,7 @@ wCurBaseDataEnd::
 	assert wCurBaseDataEnd - wCurBaseData == BASE_DATA_SIZE
 
 wCurDamage:: dw
-
-	ds 1
+wMinimizeAccuracyBypass:: db
 
 wMornEncounterRate::  db
 wDayEncounterRate::   db

@@ -81,6 +81,26 @@ SuckerPunch:
 	kingsrock
 	endmove
 
+HeavySlam:
+	movebegin
+	critical
+	damagestats
+	battleext BATTLE_EXTCMD_HEAVY_SLAM_POWER
+	damagecalc
+	stab
+	damagevariation
+	checkminimize
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 FocusPunch:
 	focuspunch
 	critical
@@ -1270,7 +1290,7 @@ Stomp:
 	damagecalc
 	stab
 	damagevariation
-	doubleminimizedamage
+	checkminimize
 	checkhit
 	effectchance
 	moveanim

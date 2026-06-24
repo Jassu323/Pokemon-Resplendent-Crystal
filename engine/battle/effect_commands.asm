@@ -135,6 +135,7 @@ BattleCommand_CheckTurn:
 	ld [wAttackMissed], a
 	ld [wEffectFailed], a
 	ld [wBattleAnimParam], a
+	ld [wMinimizeAccuracyBypass], a
 	ld [wAlreadyDisobeyed], a
 	ld [wAlreadyFailed], a
 	ld [wSomeoneIsRampaging], a
@@ -1618,6 +1619,10 @@ BattleCommand_CheckHit:
 
 	call .FlyDigMoves
 	jp nz, .Miss
+
+	ld a, [wMinimizeAccuracyBypass]
+	and a
+	ret nz
 
 	call .WeatherAccuracy
 	ret z
@@ -5760,6 +5765,7 @@ BattleCommand_Charge:
 BattleCommand_MoveBegin:
 	xor a
 	ld [wBattleCommandAbort], a
+	ld [wMinimizeAccuracyBypass], a
 	call BattleCommand_CheckObedience
 	ld a, [wBattleCommandAbort]
 	and a
@@ -6695,7 +6701,7 @@ INCLUDE "engine/battle/move_effects/psych_up.asm"
 
 INCLUDE "engine/battle/move_effects/mirror_coat.asm"
 
-BattleCommand_DoubleMinimizeDamage:
+BattleCommand_CheckMinimize:
 	ld hl, wEnemyMinimized
 	ldh a, [hBattleTurn]
 	and a
@@ -6705,6 +6711,7 @@ BattleCommand_DoubleMinimizeDamage:
 	ld a, [hl]
 	and a
 	ret z
+	ld [wMinimizeAccuracyBypass], a
 	ld hl, wCurDamage + 1
 	sla [hl]
 	dec hl
