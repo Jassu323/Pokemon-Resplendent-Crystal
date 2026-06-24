@@ -659,6 +659,21 @@ MadeWishText:
 	line "made a wish!"
 	prompt
 
+PlantedRootsText:
+	text "<USER>"
+	line "planted its roots!"
+	prompt
+
+AbsorbedNutrientsText:
+	text "<USER>"
+	line "drew in nutrients!"
+	prompt
+
+IngrainPreventedSwitchText:
+	text "Ingrain prevented"
+	line "switching!"
+	prompt
+
 WishCameTrueText:
 	text_ram wStringBuffer1
 	text "'s"

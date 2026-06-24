@@ -5369,6 +5369,9 @@ TryPlayerSwitch:
 	ld a, [wPlayerWrapCount]
 	and a
 	jr nz, .trapped
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_INGRAIN, a
+	jr nz, .trapped
 	ld a, [wEnemySubStatus5]
 	bit SUBSTATUS_CANT_RUN, a
 	jr z, .try_switch

@@ -785,6 +785,26 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_SuckerPunchExt
 	cp BATTLE_EXTCMD_HEAVY_SLAM_POWER
 	jp z, BattleCommand_HeavySlamPowerExt
+	cp BATTLE_EXTCMD_INGRAIN
+	jp z, BattleCommand_IngrainExt
+	ret
+
+BattleCommand_IngrainExt:
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVarAddr
+	bit SUBSTATUS_INGRAIN, [hl]
+	jr nz, .failed
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	set SUBSTATUS_INGRAIN, [hl]
+	ld hl, PlantedRootsText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
 	ret
 
 BattleCommand_SuckerPunchExt:
@@ -1327,14 +1347,37 @@ BattleCore_BetweenTurnsExt:
 	jr z, .enemy_first
 	call SetPlayerTurn
 	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
 	call SetEnemyTurn
-	jp BattleCore_HandleWish
+	call BattleCore_HandleWish
+	jp BattleCore_HandleIngrain
 
 .enemy_first
 	call SetEnemyTurn
 	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
 	call SetPlayerTurn
+	call BattleCore_HandleWish
 	; fallthrough
+
+BattleCore_HandleIngrain:
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVar
+	bit SUBSTATUS_INGRAIN, a
+	ret z
+	call BattleCore_UserHPIsFull
+	ret z
+	farcall GetSixteenthMaxHP
+	push bc
+	call BattleCore_IngrainRecoveryAnim
+	pop bc
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	ld hl, AbsorbedNutrientsText
+	jp StdBattleTextbox
 
 BattleCore_HandleWish:
 	call BattleCore_GetActorWishCount
@@ -1379,6 +1422,18 @@ BattleCore_WishRecoveryAnim:
 	predef PlayBattleAnim
 	pop bc
 	ret
+
+BattleCore_IngrainRecoveryAnim:
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(INGRAIN)
+		ld a, HIGH(INGRAIN)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(INGRAIN)
+	ld [wFXAnimID], a
+	predef_jump PlayBattleAnim
 
 BattleCore_UserHPIsFull:
 	ld hl, wBattleMonHP

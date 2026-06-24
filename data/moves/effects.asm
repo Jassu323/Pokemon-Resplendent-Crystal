@@ -131,6 +131,11 @@ Wish:
 	battleext BATTLE_EXTCMD_WISH
 	endmove
 
+Ingrain:
+	movebegin
+	battleext BATTLE_EXTCMD_INGRAIN
+	endmove
+
 MultiStatUp:
 	movebegin
 	battleext BATTLE_EXTCMD_MULTI_STAT_UP

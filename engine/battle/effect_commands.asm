@@ -1352,6 +1352,7 @@ BattleCommand_Stab:
 	ld a, BATTLE_VARS_MOVE_TYPE
 	call GetBattleVar
 	ld b, a
+	call BattleCommand_AdjustGroundedTargetTypesDE
 	ld hl, TypeMatchups
 
 .TypesLoop:
@@ -1456,6 +1457,66 @@ BattleCommand_Stab:
 	ld [wTypeModifier], a
 	ret
 
+BattleCommand_AdjustGroundedTargetTypesDE:
+	ld a, b
+	cp GROUND
+	ret nz
+	call BattleCommand_TargetIsIngrained
+	ret z
+	ld a, d
+	cp FLYING
+	jr z, .type1_flying
+	ld a, e
+	cp FLYING
+	ret nz
+	ld e, d
+	ret
+
+.type1_flying
+	ld a, e
+	cp FLYING
+	jr z, .pure_flying
+	ld d, e
+	ret
+
+.pure_flying
+	ld d, NORMAL
+	ld e, NORMAL
+	ret
+
+BattleCommand_AdjustGroundedTargetTypesBC:
+	ld a, d
+	cp GROUND
+	ret nz
+	call BattleCommand_TargetIsIngrained
+	ret z
+	ld a, b
+	cp FLYING
+	jr z, .type1_flying
+	ld a, c
+	cp FLYING
+	ret nz
+	ld c, b
+	ret
+
+.type1_flying
+	ld a, c
+	cp FLYING
+	jr z, .pure_flying
+	ld b, c
+	ret
+
+.pure_flying
+	ld b, NORMAL
+	ld c, NORMAL
+	ret
+
+BattleCommand_TargetIsIngrained:
+	ld a, BATTLE_VARS_SUBSTATUS5_OPP
+	call GetBattleVar
+	and 1 << SUBSTATUS_INGRAIN
+	ret
+
 BattleCheckTypeMatchup:
 	ld hl, wEnemyMonType1
 	ldh a, [hBattleTurn]
@@ -1474,6 +1535,7 @@ CheckTypeMatchup:
 	ld b, [hl]
 	inc hl
 	ld c, [hl]
+	call BattleCommand_AdjustGroundedTargetTypesBC
 	ld a, EFFECTIVE
 	ld [wTypeMatchup], a
 	ld hl, TypeMatchups
@@ -5156,6 +5218,10 @@ BattleCommand_ForceSwitch:
 	jp z, .fail
 	cp BATTLETYPE_SUICUNE
 	jp z, .fail
+	ld a, BATTLE_VARS_SUBSTATUS5_OPP
+	call GetBattleVar
+	bit SUBSTATUS_INGRAIN, a
+	jp nz, .ingrain_fail
 	ldh a, [hBattleTurn]
 	and a
 	jp nz, .force_player_switch
@@ -5345,6 +5411,13 @@ BattleCommand_ForceSwitch:
 	call BattleCommand_MoveDelay
 	call BattleCommand_RaiseSub
 	jp PrintButItFailed
+
+.ingrain_fail
+	call BattleCommand_LowerSub
+	call BattleCommand_MoveDelay
+	call BattleCommand_RaiseSub
+	ld hl, IngrainPreventedSwitchText
+	jp StdBattleTextbox
 
 .succeed
 	push af

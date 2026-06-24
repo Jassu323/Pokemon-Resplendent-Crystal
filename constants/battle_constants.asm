@@ -110,6 +110,7 @@ DEF RECOIL_1_3 EQU 3
 	const BATTLE_EXTCMD_FANG_HIT
 	const BATTLE_EXTCMD_SUCKER_PUNCH
 	const BATTLE_EXTCMD_HEAVY_SLAM_POWER
+	const BATTLE_EXTCMD_INGRAIN
 
 	const_def
 	const BATTLE_CORE_HOOK_BEFORE_ACTION
@@ -279,7 +280,7 @@ DEF ALL_STATUS EQU (1 << PSN) | (1 << BRN) | (1 << FRZ) | (1 << PAR) | SLP_MASK
 ; wPlayerSubStatus5 or wEnemySubStatus5 bit flags
 	const_def
 	const SUBSTATUS_TOXIC
-	const_skip
+	const SUBSTATUS_INGRAIN
 	const_skip
 	const SUBSTATUS_TRANSFORMED
 	const SUBSTATUS_ENCORED

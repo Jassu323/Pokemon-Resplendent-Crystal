@@ -278,7 +278,7 @@ Moves1:
 	move EFFECT_FOCUS_PUNCH,       150, FIGHTING,      100, 20,   0      ;FOCUS_PUNCH #264
 	move EFFECT_TAUNT,               0, DARK,          100, 20,   0      ;TAUNT #269
 	move EFFECT_WISH,                0, NORMAL,        100, 10,   0      ;WISH #273
-	move EFFECT_NORMAL_HIT,          0, GRASS,         100, 20,   0      ;INGRAIN #275
+	move EFFECT_INGRAIN,             0, GRASS,         100, 20,   0      ;INGRAIN #275
 	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
 	move EFFECT_NORMAL_HIT,         75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
 	move EFFECT_NORMAL_HIT,          0, NORMAL,        100, 10,   0      ;YAWN #281
