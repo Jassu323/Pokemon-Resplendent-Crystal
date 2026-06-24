@@ -793,6 +793,8 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_BrickBreakExt
 	cp BATTLE_EXTCMD_HEX_POWER
 	jp z, BattleCommand_HexPowerExt
+	cp BATTLE_EXTCMD_POISON_STEEL_OVERRIDE
+	jp z, BattleCommand_PoisonSteelOverrideExt
 	ret
 
 BattleCommand_HexPowerExt:
@@ -809,6 +811,24 @@ BattleCommand_HexPowerExt:
 	ret nc
 	ld d, $ff
 	ret
+
+BattleCommand_PoisonSteelOverrideExt:
+	ld hl, .Moves
+	push hl
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	ld b, h
+	ld c, l
+	pop hl
+	ld de, 2
+	jp IsInWordArray
+
+.Moves:
+	dw ACID
+	dw CAUSTIC
+	dw CORROSION
+	dw -1
 
 BattleCommand_BrickBreakAnimExt:
 	ld a, [wAttackMissed]

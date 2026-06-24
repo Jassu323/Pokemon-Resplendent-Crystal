@@ -1385,11 +1385,14 @@ BattleCommand_Stab:
 	push hl
 	push bc
 	inc hl
+	ld a, b
+	call BattleCommand_GetPoisonSteelMatchup
+	ld c, a
 	ld a, [wTypeModifier]
 	and STAB_DAMAGE
 	ld b, a
 ; If the target is immune to the move, treat it as a miss and calculate the damage as 0
-	ld a, [hl]
+	ld a, c
 	and a
 	jr nz, .NotImmune
 	inc a
@@ -1455,6 +1458,34 @@ BattleCommand_Stab:
 	and STAB_DAMAGE
 	or b
 	ld [wTypeModifier], a
+	ret
+
+BattleCommand_GetPoisonSteelMatchup:
+; Input: a = current move type, hl = type-chart multiplier byte.
+; Output: a = multiplier to use.
+	cp POISON
+	jr nz, .normal
+	dec hl
+	ld a, [hli]
+	cp STEEL
+	jr nz, .normal
+	push hl
+	push bc
+	push de
+	ld a, BATTLE_EXTCMD_POISON_STEEL_OVERRIDE
+	ld [wBattleCommandParam], a
+	farcall BattleCommand_BattleExtDispatcher
+	pop de
+	pop bc
+	pop hl
+	jr c, .super_effective
+
+.normal
+	ld a, [hl]
+	ret
+
+.super_effective
+	ld a, SUPER_EFFECTIVE
 	ret
 
 BattleCommand_AdjustGroundedTargetTypesDE:
@@ -1572,7 +1603,9 @@ CheckTypeMatchup:
 	ldh [hDividend + 0], a
 	ldh [hMultiplicand + 0], a
 	ldh [hMultiplicand + 1], a
-	ld a, [hli]
+	ld a, d
+	call BattleCommand_GetPoisonSteelMatchup
+	inc hl
 	ldh [hMultiplicand + 2], a
 	ld a, [wTypeMatchup]
 	ldh [hMultiplier], a

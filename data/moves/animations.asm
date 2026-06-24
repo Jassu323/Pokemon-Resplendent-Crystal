@@ -1159,7 +1159,6 @@ BattleAnim_Acid:
 	anim_wait 5
 	anim_obj BATTLE_ANIM_OBJ_ACID_BUBBLE, 64, 92, $2
 	anim_wait 15
-	anim_bgeffect BATTLE_BG_EFFECT_SHAKE_SCREEN_X, $20, $1, $0
 	anim_call BattleAnimSub_AcidDroplets
 	anim_poisonpal BATTLE_ANIM_POISON_PAL_RESTORE
 	anim_ret
