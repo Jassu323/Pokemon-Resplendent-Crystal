@@ -223,6 +223,7 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_MeteorDiveGlobe
 	dw BattleAnimFunc_AeroblastWave
 	dw BattleAnimFunc_DiveBombWind
+	dw BattleAnimFunc_BrickBreakShard
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:

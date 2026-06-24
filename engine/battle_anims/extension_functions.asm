@@ -2103,6 +2103,124 @@ BattleAnimFunc_FlameWheelHit:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_BrickBreakShard:
+; Obj Param: $0 = bottom-right, $1 = bottom-left, $2 = top-right, $3 = top-left.
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	and a
+	jr nz, .move
+	call .init
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	inc [hl]
+	ret
+
+.move
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp 28
+	jr nc, .done
+	inc [hl]
+
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Vectors
+	add hl, de
+	ld d, [hl]
+	inc hl
+	ld e, [hl]
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld a, [hl]
+	add d
+	ld [hl], a
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld a, [hl]
+	add e
+	ld [hl], a
+	ret
+
+.done
+	call BattleAnimExt_Deinit
+	ret
+
+.Vectors:
+	db  2,  1
+	db -2,  1
+	db  2, -1
+	db -2, -1
+
+.init
+	call .set_frameset
+	ldh a, [hBattleTurn]
+	and a
+	ld hl, .OpponentTargetCoords
+	jr z, .got_coords
+	ld hl, .PlayerTargetCoords
+.got_coords
+	push hl
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	add a
+	ld e, a
+	ld d, 0
+	pop hl
+	add hl, de
+	ld a, [hli]
+	push hl
+	ld hl, BATTLEANIMSTRUCT_XCOORD
+	add hl, bc
+	ld [hl], a
+	pop hl
+	ld a, [hl]
+	ld hl, BATTLEANIMSTRUCT_YCOORD
+	add hl, bc
+	ld [hl], a
+	ret
+
+.OpponentTargetCoords:
+	db 116, 61 ; bottom-right
+	db 100, 61 ; bottom-left
+	db 116, 51 ; top-right
+	db 100, 51 ; top-left
+
+.PlayerTargetCoords:
+	db  80, 85 ; bottom-right
+	db  64, 84 ; bottom-left
+	db  80, 75 ; top-right
+	db  64, 75 ; top-left
+
+.set_frameset
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	and $3
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .Framesets
+	add hl, de
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	jp ReinitBattleAnimFrameset
+
+.Framesets:
+	dw BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD
+	dw BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP
+	dw BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_YFLIP
+	dw BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP_YFLIP
+
 BattleAnimFunc_WillOWispBubble:
 ; Moves slowly toward the target with a gentle Y wobble.
 	ld hl, BATTLEANIMSTRUCT_XCOORD

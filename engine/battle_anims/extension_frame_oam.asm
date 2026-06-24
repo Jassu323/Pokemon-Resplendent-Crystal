@@ -149,6 +149,11 @@ BattleAnimExtFrameData:
 	dw .Frameset_FairyWind4 ; BATTLE_ANIM_FRAMESET_FAIRY_WIND_4
 	dw .Frameset_VampirismFangsUpper ; BATTLE_ANIM_FRAMESET_VAMPIRISM_FANGS_UPPER
 	dw .Frameset_VampirismFangsLower ; BATTLE_ANIM_FRAMESET_VAMPIRISM_FANGS_LOWER
+	dw .Frameset_BrickBreakWall ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_WALL
+	dw .Frameset_BrickBreakShard ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD
+	dw .Frameset_BrickBreakShardXFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP
+	dw .Frameset_BrickBreakShardYFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_YFLIP
+	dw .Frameset_BrickBreakShardXFlipYFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP_YFLIP
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -449,6 +454,40 @@ BattleAnimExtFrameData:
 .Frameset_VampirismFangsLower:
 	oamframe BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_LOWER, 8
 	oamend
+
+.Frameset_BrickBreakWall:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_77, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_78, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_79, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7A, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7B, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7C, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7D, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_77, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_78, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_79, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7A, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7B, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7C, 1, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7D, 32, B_OAM_XFLIP
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7D, 32, B_OAM_XFLIP
+	oamrestart
+
+.Frameset_BrickBreakShard:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD, 28
+	oamdelete
+
+.Frameset_BrickBreakShardXFlip:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD, 28, B_OAM_XFLIP
+	oamdelete
+
+.Frameset_BrickBreakShardYFlip:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD, 28, B_OAM_YFLIP
+	oamdelete
+
+.Frameset_BrickBreakShardXFlipYFlip:
+	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD, 28, B_OAM_XFLIP, B_OAM_YFLIP
+	oamdelete
 
 BattleAnimExtOAMUpdate:
 	ld a, e
@@ -980,7 +1019,93 @@ BattleAnimExtOAMData:
 	battleanimoam $00,  4, .OAMData_FairyWind4 ; BATTLE_ANIM_EXT_OAMSET_FAIRY_WIND_4
 	battleanimoam $00, 12, .OAMData_VampirismFangs ; BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_UPPER
 	battleanimoam $0c, 12, .OAMData_VampirismFangs ; BATTLE_ANIM_EXT_OAMSET_VAMPIRISM_FANGS_LOWER
+	battleanimoam $00,  1, .OAMData_BrickBreakWall77 ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_77
+	battleanimoam $00,  3, .OAMData_BrickBreakWall78 ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_78
+	battleanimoam $00,  6, .OAMData_BrickBreakWall79 ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_79
+	battleanimoam $00,  9, .OAMData_BrickBreakWall7A ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7A
+	battleanimoam $00, 12, .OAMData_BrickBreakWall7B ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7B
+	battleanimoam $00, 14, .OAMData_BrickBreakWall7C ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7C
+	battleanimoam $00, 15, .OAMData_BrickBreakWall7D ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7D
+	battleanimoam $00,  2, .OAMData_BrickBreakShard ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
+
+.OAMData_BrickBreakWall77:
+	dbsprite   1,  -4, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall78:
+	dbsprite   1,  -4, 4, 4, $00, $0
+	dbsprite   0,  -4, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,  -3, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall79:
+	dbsprite   1,  -4, 4, 4, $01, $0
+	dbsprite   0,  -4, 4, 4, $00, $0
+	dbsprite  -1,  -4, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,  -3, 4, 4, $00, $0
+	dbsprite   0,  -3, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,  -2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall7A:
+	dbsprite  -2,  -4, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -1,  -4, 4, 4, $00, $0
+	dbsprite   0,  -4, 4, 4, $01, $0
+	dbsprite  -1,  -3, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   0,  -3, 4, 4, $00, $0
+	dbsprite   1,  -3, 4, 4, $01, $0
+	dbsprite   0,  -2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,  -2, 4, 4, $00, $0
+	dbsprite   1,  -1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall7B:
+	dbsprite  -3,  -4, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -2,  -4, 4, 4, $00, $0
+	dbsprite  -1,  -4, 4, 4, $01, $0
+	dbsprite  -2,  -3, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -1,  -3, 4, 4, $00, $0
+	dbsprite   0,  -3, 4, 4, $01, $0
+	dbsprite  -1,  -2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   0,  -2, 4, 4, $00, $0
+	dbsprite   1,  -2, 4, 4, $01, $0
+	dbsprite   0,  -1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,  -1, 4, 4, $00, $0
+	dbsprite   1,   0, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall7C:
+	dbsprite  -3,  -4, 4, 4, $00, $0
+	dbsprite  -2,  -4, 4, 4, $01, $0
+	dbsprite  -3,  -3, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -2,  -3, 4, 4, $00, $0
+	dbsprite  -1,  -3, 4, 4, $01, $0
+	dbsprite  -2,  -2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -1,  -2, 4, 4, $00, $0
+	dbsprite   0,  -2, 4, 4, $01, $0
+	dbsprite  -1,  -1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   0,  -1, 4, 4, $00, $0
+	dbsprite   1,  -1, 4, 4, $01, $0
+	dbsprite   0,   0, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,   0, 4, 4, $00, $0
+	dbsprite   1,   1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakWall7D:
+	dbsprite  -3,  -4, 4, 4, $01, $0
+	dbsprite  -3,  -3, 4, 4, $00, $0
+	dbsprite  -2,  -3, 4, 4, $01, $0
+	dbsprite  -3,  -2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -2,  -2, 4, 4, $00, $0
+	dbsprite  -1,  -2, 4, 4, $01, $0
+	dbsprite  -2,  -1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite  -1,  -1, 4, 4, $00, $0
+	dbsprite   0,  -1, 4, 4, $01, $0
+	dbsprite  -1,   0, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   0,   0, 4, 4, $00, $0
+	dbsprite   1,   0, 4, 4, $01, $0
+	dbsprite   0,   1, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+	dbsprite   1,   1, 4, 4, $00, $0
+	dbsprite   1,   2, 4, 4, $01, OAM_XFLIP | OAM_YFLIP
+
+.OAMData_BrickBreakShard:
+	dbsprite   0,   0, 0, 0, $00, $0
+	dbsprite   0,   1, 0, 0, $01, $0
 
 .OAMData_HyperFangFrame1:
 	dbsprite -2, -2, 0, 0, $00, $0

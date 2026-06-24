@@ -164,4 +164,5 @@ MoveEffectsPointers:
 	dw SuckerPunch
 	dw HeavySlam
 	dw Ingrain
+	dw BrickBreak
 	assert_table_length NUM_MOVE_EFFECTS

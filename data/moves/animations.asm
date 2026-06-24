@@ -3680,26 +3680,43 @@ BattleAnim_Superpower:
 	anim_ret
 
 BattleAnim_BrickBreak:
+	anim_if_param_equal $1, BattleAnim_BrickBreakShatter
 	anim_1gfx BATTLE_ANIM_GFX_HIT
-	anim_call BattleAnim_TargetObj_1Row
-	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_TACKLE
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 120, 48, $0
 	anim_wait 16
-	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_TACKLE
 	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 148, 64, $0
 	anim_wait 32
-	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
 	anim_wait 4
 	anim_sound 0, 1, SFX_MEGA_PUNCH
 	anim_obj BATTLE_ANIM_OBJ_PUNCH, 134, 56, $0
-	anim_wait 6
-	anim_obj BATTLE_ANIM_OBJ_PUNCH, 134, 56, $0
-	anim_wait 10
+	anim_wait 16
 	anim_call BattleAnim_ShowMon_0
+	anim_ret
+
+BattleAnim_BrickBreakShatter:
+	anim_3gfx BATTLE_ANIM_GFX_HIT, BATTLE_ANIM_GFX_REFLECT, BATTLE_ANIM_GFX_REFLECT_VERTICAL
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BRICK_BREAK_WALL, 108, 56, $0
+	anim_wait 4
+	anim_sound 0, 1, SFX_TACKLE
+	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 120, 48, $0
+	anim_wait 16
+	anim_sound 0, 1, SFX_TACKLE
+	anim_obj BATTLE_ANIM_OBJ_HIT_YFIX, 148, 64, $0
+	anim_wait 32
+	anim_clearobjs
+	anim_sound 0, 1, SFX_MEGA_PUNCH
+	anim_obj BATTLE_ANIM_OBJ_PUNCH, 134, 56, $0
+	anim_wait 4
+	anim_sound 0, 1, SFX_SHINE
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BRICK_BREAK_SHARD, 0, 0, $0
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BRICK_BREAK_SHARD, 0, 0, $1
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BRICK_BREAK_SHARD, 0, 0, $2
+	anim_extobj BATTLE_ANIM_EXT_OBJ_BRICK_BREAK_SHARD, 0, 0, $3
+	anim_wait 36
 	anim_ret
 
 BattleAnim_Yawn:

@@ -136,6 +136,25 @@ Ingrain:
 	battleext BATTLE_EXTCMD_INGRAIN
 	endmove
 
+BrickBreak:
+	movebegin
+	critical
+	damagestats
+	damagecalc
+	stab
+	checkhit
+	battleext BATTLE_EXTCMD_BRICK_BREAK_ANIM
+	failuretext
+	battleext BATTLE_EXTCMD_BRICK_BREAK
+	damagevariation
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 MultiStatUp:
 	movebegin
 	battleext BATTLE_EXTCMD_MULTI_STAT_UP

@@ -787,7 +787,101 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_HeavySlamPowerExt
 	cp BATTLE_EXTCMD_INGRAIN
 	jp z, BattleCommand_IngrainExt
+	cp BATTLE_EXTCMD_BRICK_BREAK_ANIM
+	jp z, BattleCommand_BrickBreakAnimExt
+	cp BATTLE_EXTCMD_BRICK_BREAK
+	jp z, BattleCommand_BrickBreakExt
 	ret
+
+BattleCommand_BrickBreakAnimExt:
+	ld a, [wAttackMissed]
+	and a
+	jr nz, .failed
+	ld a, [wEffectFailed]
+	and a
+	jr nz, .failed
+
+	ld hl, wEnemyScreens
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_screens
+	ld hl, wPlayerScreens
+
+.got_screens
+	xor a
+	bit SCREENS_LIGHT_SCREEN, [hl]
+	jr nz, .shatter
+	bit SCREENS_REFLECT, [hl]
+	jr z, .got_param
+
+.shatter
+	inc a
+
+.got_param
+	ld [wBattleAnimParam], a
+	farcall AnimateCurrentMoveEitherSide
+	ret
+
+.failed
+	farcall AnimateFailedMove
+	ret
+
+BattleCommand_BrickBreakExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+
+	ld hl, wEnemyScreens
+	ld de, wEnemyLightScreenCount
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_screens
+	ld hl, wPlayerScreens
+	ld de, wPlayerLightScreenCount
+
+.got_screens
+	xor a
+	ld [wBattleCommandScratch], a
+	bit SCREENS_LIGHT_SCREEN, [hl]
+	jr z, .reflect
+	res SCREENS_LIGHT_SCREEN, [hl]
+	ld [de], a
+	inc a
+	ld [wBattleCommandScratch], a
+
+.reflect
+	bit SCREENS_REFLECT, [hl]
+	jr z, .got_count
+	res SCREENS_REFLECT, [hl]
+	inc de
+	xor a
+	ld [de], a
+	ld a, [wBattleCommandScratch]
+	inc a
+	ld [wBattleCommandScratch], a
+
+.got_count
+	ld a, [wBattleCommandScratch]
+	and a
+	ret z
+
+	ld a, EFFECTIVE
+	ld [wTypeModifier], a
+	farcall BattleCommand_DamageStats
+	farcall BattleCommand_DamageCalc
+	farcall BattleCommand_Stab
+
+	ld a, [wBattleCommandScratch]
+	cp 2
+	ld hl, BarrierDestroyedText
+	jr nz, .got_text
+	ld hl, BarriersDestroyedText
+
+.got_text
+	jp StdBattleTextbox
 
 BattleCommand_IngrainExt:
 	ld a, BATTLE_VARS_SUBSTATUS5

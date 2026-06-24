@@ -63,3 +63,6 @@ AnimObjAerialCrashGFX:
 
 AnimObjAeroblastWaveGFX:
 	INCBIN "gfx/battle_anims/aeroblast_wave.2bpp.lz"
+
+AnimObjReflectVerticalGFX:
+	INCBIN "gfx/battle_anims/reflect_vertical.2bpp.lz"

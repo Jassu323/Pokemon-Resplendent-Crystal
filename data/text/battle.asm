@@ -674,6 +674,16 @@ IngrainPreventedSwitchText:
 	line "switching!"
 	prompt
 
+BarrierDestroyedText:
+	text "The barrier was"
+	line "destroyed!"
+	prompt
+
+BarriersDestroyedText:
+	text "The barriers were"
+	line "destroyed!"
+	prompt
+
 WishCameTrueText:
 	text_ram wStringBuffer1
 	text "'s"
