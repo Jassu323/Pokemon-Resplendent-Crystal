@@ -284,7 +284,7 @@ Moves1:
 	move EFFECT_YAWN,                0, NORMAL,        100, 10,   0      ;YAWN #281
 	move EFFECT_MULTI_HIT,          15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
 	move EFFECT_BURN_HIT,           85, FIRE,           90, 10,  10      ;BLAZE_KICK #299
-	move EFFECT_NORMAL_HIT,         30, ICE,            90, 20,   0      ;ICE_BALL #301
+	move EFFECT_ICE_BALL,           30, ICE,            90, 20,   0      ;ICE_BALL #301
 	move EFFECT_POISON_HIT,         50, POISON,        100, 15,  30      ;POISON_FANG #305
 	move EFFECT_DEFENSE_DOWN_HIT,   75, NORMAL,         95, 10,  50      ;CRUSH_CLAW #306
 	move EFFECT_ATTACK_UP_HIT,     100, STEEL,          85, 10,  20      ;METEOR_MASH #309

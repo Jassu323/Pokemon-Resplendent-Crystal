@@ -144,6 +144,8 @@ ResetBatonPassStatus:
 	call GetBattleVarAddr
 	res SUBSTATUS_DROWSY, [hl]
 	res SUBSTATUS_DROWSY_READY, [hl]
+	res SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
 
 	; Attraction isn't passed.
 	ld hl, wPlayerSubStatus1

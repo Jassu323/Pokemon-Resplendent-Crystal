@@ -120,6 +120,25 @@ Hex:
 	kingsrock
 	endmove
 
+IceBall:
+	movebegin
+	critical
+	damagestats
+	battleext BATTLE_EXTCMD_ICE_BALL_POWER
+	damagecalc
+	stab
+	damagevariation
+	checkhit
+	moveanim
+	failuretext
+	applydamage
+	criticaltext
+	supereffectivetext
+	checkfaint
+	buildopponentrage
+	kingsrock
+	endmove
+
 EatBerryHit:
 	movebegin
 	critical

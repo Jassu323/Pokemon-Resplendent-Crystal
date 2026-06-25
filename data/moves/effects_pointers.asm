@@ -168,4 +168,5 @@ MoveEffectsPointers:
 	dw Hex
 	dw Yawn
 	dw EatBerryHit
+	dw IceBall
 	assert_table_length NUM_MOVE_EFFECTS

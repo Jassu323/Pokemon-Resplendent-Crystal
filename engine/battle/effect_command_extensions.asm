@@ -799,6 +799,8 @@ BattleCommand_BattleExtDispatcher:
 	jp z, BattleCommand_YawnExt
 	cp BATTLE_EXTCMD_EAT_TARGET_BERRY
 	jp z, BattleCommand_EatTargetBerryExt
+	cp BATTLE_EXTCMD_ICE_BALL_POWER
+	jp z, BattleCommand_IceBallPowerExt
 	ret
 
 BattleCommand_HexPowerExt:
@@ -814,6 +816,24 @@ BattleCommand_HexPowerExt:
 	sla d
 	ret nc
 	ld d, $ff
+	ret
+
+BattleCommand_IceBallPowerExt:
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	ld d, a
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	bit SUBSTATUS_ICE_BALL_BOOST, [hl]
+	jr z, .done
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
+	sla d
+	ret nc
+	ld d, $ff
+	ret
+
+.done
+	xor a
 	ret
 
 BattleCommand_PoisonSteelOverrideExt:
@@ -1832,6 +1852,7 @@ BattleCoreHookExt:
 	ret
 
 BattleCore_BeforeActionExt:
+	call BattleCore_CheckIceBallBoost
 	call BattleCore_CheckTauntBlock
 	ret
 
@@ -2045,6 +2066,51 @@ BattleCore_CheckTauntBlock:
 
 .not_blocked
 	and a
+	ret
+
+BattleCore_CheckIceBallBoost:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
+	bit SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	jr z, .done
+	res SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	call .ActorIsUsingMove
+	jr nz, .done
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	ld a, h
+	cp HIGH(ICE_BALL)
+	jr nz, .done
+	ld a, l
+	cp LOW(ICE_BALL)
+	jr nz, .done
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	set SUBSTATUS_ICE_BALL_BOOST, [hl]
+
+.done
+	and a
+	ret
+
+.ActorIsUsingMove
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	ret
+
+.enemy
+	ld a, [wBattleAction]
+	cp BATTLEACTION_SWITCH1
+	jr nc, .not_move
+	xor a
+	ret
+
+.not_move
+	or 1
 	ret
 
 BattleCore_GetActorTauntCount:
