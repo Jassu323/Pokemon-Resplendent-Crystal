@@ -166,6 +166,23 @@ hDebugRoomMenuPage::
 endc
 hClockResetTrigger:: db
 
-	ds 19
+; Sampled cry async playback state. This uses the original 19-byte padding
+; at the end of HRAM.
+	ds 2
+hSampledCryBank:: db
+hSampledCryAddress:: dw
+hSampledCryTimer:: db
+hSampledCryBlocks:: dw
+hSampledCrySavedAUDVOL:: db
+hSampledCrySavedAUDTERM:: db
+hSampledCrySavedAUD3ENA:: db
+hSampledCrySavedAUD3LEN:: db
+hSampledCrySavedAUD3LEVEL:: db
+hSampledCrySavedAUD3LOW:: db
+hSampledCrySavedAUD3HIGH:: db
+hSampledCrySavedIE:: db
+hSampledCrySavedTAC:: db
+hSampledCrySavedTMA:: db
+hSampledCrySavedTIMA:: db
 
 ENDSECTION

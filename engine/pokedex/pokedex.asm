@@ -443,7 +443,7 @@ Pokedex_UpdateDexEntryScreen:
 	ld a, [wLastVolume]
 	and a
 	jr z, .max_volume
-	ld a, MAX_VOLUME
+	ld a, NORMAL_MAX_VOLUME
 	ld [wLastVolume], a
 
 .max_volume

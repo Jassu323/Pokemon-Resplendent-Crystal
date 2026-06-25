@@ -49,7 +49,7 @@ _InitSound::
 	or d
 	jr nz, .clearaudio
 
-	ld a, MAX_VOLUME
+	ld a, NORMAL_MAX_VOLUME
 	ld [wVolume], a
 	call MusicOn
 	pop af
@@ -83,6 +83,9 @@ MusicOff:
 
 _UpdateSound::
 ; called once per frame
+	ldh a, [hSampledCryTimer]
+	and a
+	ret nz
 	; no use updating audio if it's not playing
 	ld a, [wMusicPlaying]
 	and a
@@ -692,7 +695,7 @@ FadeMusic:
 
 .fadein
 	; are we done?
-	cp MAX_VOLUME & $f
+	cp NORMAL_MAX_VOLUME & AUDVOL_RIGHT
 	jr nc, .maxvolume
 	; inc volume
 	inc a
@@ -2018,8 +2021,27 @@ Music_Volume:
 	ret nz
 	; reload param
 	ld a, [wCurMusicByte]
+	call ClampNormalVolumeForSampledCry
 	; set volume
 	ld [wVolume], a
+	ret
+
+ClampNormalVolumeForSampledCry:
+; Preserve left/right panning while capping normal audio below sampled cries.
+	ld d, a
+	and $f0
+	cp (NORMAL_MAX_VOLUME & AUDVOL_LEFT) + $10
+	jr c, .left_ok
+	ld a, NORMAL_MAX_VOLUME & AUDVOL_LEFT
+.left_ok
+	ld e, a
+	ld a, d
+	and $0f
+	cp (NORMAL_MAX_VOLUME & AUDVOL_RIGHT) + 1
+	jr c, .right_ok
+	ld a, NORMAL_MAX_VOLUME & AUDVOL_RIGHT
+.right_ok
+	or e
 	ret
 
 Music_TempoRelative:
@@ -2460,7 +2482,7 @@ _PlayCry::
 
 	ld a, [wVolume]
 	ld [wLastVolume], a
-	ld a, MAX_VOLUME
+	ld a, NORMAL_MAX_VOLUME
 	ld [wVolume], a
 
 .end

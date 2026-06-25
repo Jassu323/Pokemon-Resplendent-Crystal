@@ -7,7 +7,6 @@ INCLUDE "audio/music/nothing.asm"
 INCLUDE "audio/cry_pointers.asm"
 INCLUDE "audio/sfx_pointers.asm"
 
-
 SECTION "Songs 1", ROMX
 
 INCLUDE "audio/music/route36.asm"
@@ -183,3 +182,9 @@ SECTION "Cries", ROMX
 INCLUDE "data/pokemon/cries.asm"
 
 INCLUDE "audio/cries.asm"
+
+
+SECTION "Sampled Cries", ROMX
+
+INCLUDE "audio/sampled_cry_player.asm"
+INCLUDE "audio/sampled_cries.asm"

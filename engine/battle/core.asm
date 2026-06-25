@@ -2447,13 +2447,70 @@ StopDangerSound:
 	ld [wLowHealthAlarm], a
 	ret
 
+PlayFaintingCry:
+	push hl
+	push de
+	push bc
+	push af
+	ld a, 1
+	ld [wStereoPanningMask], a
+	pop af
+
+	call LoadCry
+	jr nc, .synth_cry
+	and a
+	jr z, .done
+	ld c, SAMPLED_CRY_BLOCK_PERIOD_FAINTED
+	call PlayLoadedSampledCryWithPeriod
+	jr .wait
+
+.synth_cry
+	ld hl, wCryPitch
+	ld a, 90 percent
+	call .Multiply
+	ldh a, [hProduct + 2]
+	ld [hli], a
+	ldh a, [hProduct + 1]
+	ld [hli], a
+
+	ld a, 11 percent
+	call .Multiply
+	ldh a, [hProduct + 2]
+	add [hl]
+	ld [hli], a
+	ldh a, [hProduct + 1]
+	adc [hl]
+	ld [hl], a
+
+	farcall _PlayCry
+
+.wait
+	call WaitSFX
+
+.done
+	pop bc
+	pop de
+	pop hl
+	ret
+
+.Multiply
+	ldh [hMultiplier], a
+	ld a, [hli]
+	ldh [hMultiplicand + 2], a
+	ld a, [hld]
+	ldh [hMultiplicand + 1], a
+	xor a
+	ldh [hMultiplicand], a
+	ldh [hProduct], a
+	jp Multiply
+
 FaintYourPokemon:
 	call StopDangerSound
 	call WaitSFX
 	ld a, $f0
 	ld [wCryTracks], a
 	ld a, [wBattleMonSpecies]
-	call PlayStereoCry
+	call PlayFaintingCry
 	call PlayerMonFaintedAnimation
 	hlcoord 9, 7
 	lb bc, 5, 11
@@ -2463,6 +2520,10 @@ FaintYourPokemon:
 
 FaintEnemyPokemon:
 	call WaitSFX
+	ld a, $0f
+	ld [wCryTracks], a
+	ld a, [wEnemyMonSpecies]
+	call PlayFaintingCry
 	ld de, SFX_KINESIS
 	call PlaySFX
 	call EnemyMonFaintedAnimation
@@ -4369,7 +4430,7 @@ PursuitSwitch:
 	call GetMoveEffect
 	ld a, b
 	cp EFFECT_PURSUIT
-	jr nz, .done
+	jp nz, .done
 
 	ld a, [wCurBattleMon]
 	push af
@@ -4408,7 +4469,7 @@ PursuitSwitch:
 	ld a, $f0
 	ld [wCryTracks], a
 	ld a, [wBattleMonSpecies]
-	call PlayStereoCry
+	call PlayFaintingCry
 	ld a, [wLastPlayerMon]
 	ld c, a
 	ld hl, wBattleParticipantsNotFainted
@@ -4424,6 +4485,10 @@ PursuitSwitch:
 	or [hl]
 	jr nz, .done
 
+	ld a, $0f
+	ld [wCryTracks], a
+	ld a, [wEnemyMonSpecies]
+	call PlayFaintingCry
 	ld de, SFX_KINESIS
 	call PlaySFX
 	call WaitSFX
