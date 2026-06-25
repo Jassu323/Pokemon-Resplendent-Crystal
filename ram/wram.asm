@@ -3477,6 +3477,25 @@ w3_de00:: ds $200
 ENDU
 
 
+SECTION "Sampled Cry RAM", WRAMX
+
+w4_d000::
+wSampledCryDecodedBuffer::
+wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
+	ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
+wSampledCryDecodedBufferEnd::
+wSampledCryLevel0:: db
+wSampledCryLevel1:: db
+wSampledCryLevel2:: db
+wSampledCryLevel3:: db
+wSampledCryCacheCount:: db
+wSampledCryCompressedBlocks:: dw
+wSampledCryCompressedAddress:: dw
+wSampledCryCacheWriteAddress:: dw
+wSampledCryBlockPeriod:: db
+	ds $1000 - (@ - w4_d000)
+
+
 SECTION "GBC Video", WRAMX, ALIGN[8]
 
 ; eight 4-color palettes each
