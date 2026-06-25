@@ -97,4 +97,5 @@ AnimObjGFX:
 	anim_obj_gfx 16, AnimObjAerialCrashGFX
 	anim_obj_gfx  8, AnimObjAeroblastWaveGFX
 	anim_obj_gfx  2, AnimObjReflectVerticalGFX
+	anim_obj_gfx 28, AnimObjLeekSlapGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

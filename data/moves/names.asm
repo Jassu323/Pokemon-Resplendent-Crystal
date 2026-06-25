@@ -333,4 +333,5 @@ MoveNames::
 	li "Caustic"
 	li "Corrosion"
 	li "Piledriver"
+	li "Leek Slap"
 	assert_list_length NUM_ATTACKS

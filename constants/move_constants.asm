@@ -339,6 +339,7 @@
 	const CAUSTIC      ; 14a
 	const CORROSION    ; 14b
 	const PILEDRIVER   ; 14c
+	const LEEK_SLAP    ; 14d
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff

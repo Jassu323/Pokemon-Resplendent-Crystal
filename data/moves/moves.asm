@@ -279,7 +279,7 @@ Moves1:
 	move EFFECT_TAUNT,               0, DARK,          100, 20,   0      ;TAUNT #269
 	move EFFECT_WISH,                0, NORMAL,        100, 10,   0      ;WISH #273
 	move EFFECT_INGRAIN,             0, GRASS,         100, 20,   0      ;INGRAIN #275
-	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100      ;SUPERPOWER #276
+	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100     ;SUPERPOWER #276
 	move EFFECT_BRICK_BREAK,        75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
 	move EFFECT_YAWN,                0, NORMAL,        100, 10,   0      ;YAWN #281
 	move EFFECT_MULTI_HIT,          15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
@@ -334,7 +334,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
 	move EFFECT_EAT_BERRY_HIT,      60, BUG,           100, 20,   0      ;BUG_BITE #450
 	move EFFECT_POISON_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
-	move EFFECT_HEAVY_SLAM,         1, STEEL,         100, 40,   0      ;HEAVY_SLAM #484
+	move EFFECT_HEAVY_SLAM,         1, STEEL,         100, 40,   0       ;HEAVY_SLAM #484
 	move EFFECT_HEX,                50, GHOST,         100, 10,   0      ;HEX #506
 	move EFFECT_RECOIL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
 	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
@@ -353,4 +353,5 @@ Moves1:
 	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CAUSTIC
 	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CORROSION
 	move EFFECT_JUMP_KICK,           1, ROCK,          100, 40,   0      ;PILEDRIVER
+	move EFFECT_NORMAL_HIT,         50, GRASS,          90, 20,   0      ;LEEK_SLAP
 .IndirectEnd::

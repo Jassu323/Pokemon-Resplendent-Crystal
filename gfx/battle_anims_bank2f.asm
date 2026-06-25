@@ -66,3 +66,6 @@ AnimObjAeroblastWaveGFX:
 
 AnimObjReflectVerticalGFX:
 	INCBIN "gfx/battle_anims/reflect_vertical.2bpp.lz"
+
+AnimObjLeekSlapGFX:
+	INCBIN "gfx/battle_anims/leek_slap.2bpp.lz"

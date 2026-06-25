@@ -154,6 +154,7 @@ BattleAnimExtFrameData:
 	dw .Frameset_BrickBreakShardXFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP
 	dw .Frameset_BrickBreakShardYFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_YFLIP
 	dw .Frameset_BrickBreakShardXFlipYFlip ; BATTLE_ANIM_FRAMESET_BRICK_BREAK_SHARD_XFLIP_YFLIP
+	dw .Frameset_LeekSlap ; BATTLE_ANIM_FRAMESET_LEEK_SLAP
 	assert_table_length NUM_BATTLE_ANIM_EXT_FRAMESETS
 
 .Frameset_ThunderYellow1_0:
@@ -487,6 +488,13 @@ BattleAnimExtFrameData:
 
 .Frameset_BrickBreakShardXFlipYFlip:
 	oamframe BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD, 28, B_OAM_XFLIP, B_OAM_YFLIP
+	oamdelete
+
+.Frameset_LeekSlap:
+	oamframe BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_1, 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_2, 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_3, 3
+	oamframe BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_4, 6
 	oamdelete
 
 BattleAnimExtOAMUpdate:
@@ -1027,6 +1035,10 @@ BattleAnimExtOAMData:
 	battleanimoam $00, 14, .OAMData_BrickBreakWall7C ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7C
 	battleanimoam $00, 15, .OAMData_BrickBreakWall7D ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_WALL_7D
 	battleanimoam $00,  2, .OAMData_BrickBreakShard ; BATTLE_ANIM_EXT_OAMSET_BRICK_BREAK_SHARD
+	battleanimoam $00,  3, .OAMData_LeekSlap1 ; BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_1
+	battleanimoam $03,  9, .OAMData_LeekSlap2 ; BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_2
+	battleanimoam $0c, 12, .OAMData_LeekSlap3 ; BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_3
+	battleanimoam $18,  4, .OAMData_LeekSlap4 ; BATTLE_ANIM_EXT_OAMSET_LEEK_SLAP_4
 	assert_table_length NUM_BATTLE_ANIM_EXT_OAMSETS
 
 .OAMData_BrickBreakWall77:
@@ -1106,6 +1118,42 @@ BattleAnimExtOAMData:
 .OAMData_BrickBreakShard:
 	dbsprite   0,   0, 0, 0, $00, $0
 	dbsprite   0,   1, 0, 0, $01, $0
+
+.OAMData_LeekSlap1:
+	dbsprite  -2,  -2, 2, 6, $00, $0
+	dbsprite  -2,  -1, 2, 6, $01, $0
+	dbsprite  -2,   0, 2, 6, $02, $0
+
+.OAMData_LeekSlap2:
+	dbsprite  -2,  -2, 3, 5, $00, $0
+	dbsprite  -1,  -2, 3, 5, $01, $0
+	dbsprite   0,  -2, 3, 5, $02, $0
+	dbsprite  -2,  -1, 3, 5, $03, $0
+	dbsprite  -1,  -1, 3, 5, $04, $0
+	dbsprite   0,  -1, 3, 5, $05, $0
+	dbsprite  -2,   0, 3, 5, $06, $0
+	dbsprite  -1,   0, 3, 5, $07, $0
+	dbsprite   0,   0, 3, 5, $08, $0
+
+.OAMData_LeekSlap3:
+	dbsprite  -2,  -2, 2, 7, $00, $0
+	dbsprite  -1,  -2, 2, 7, $01, $0
+	dbsprite   0,  -2, 2, 7, $02, $0
+	dbsprite   1,  -2, 2, 7, $03, $0
+	dbsprite  -2,  -1, 2, 7, $04, $0
+	dbsprite  -1,  -1, 2, 7, $05, $0
+	dbsprite   0,  -1, 2, 7, $06, $0
+	dbsprite   1,  -1, 2, 7, $07, $0
+	dbsprite  -2,   0, 2, 7, $08, $0
+	dbsprite  -1,   0, 2, 7, $09, $0
+	dbsprite   0,   0, 2, 7, $0a, $0
+	dbsprite   1,   0, 2, 7, $0b, $0
+
+.OAMData_LeekSlap4:
+	dbsprite  -1,  -1, 6, 6, $00, $0
+	dbsprite   0,  -1, 6, 6, $01, $0
+	dbsprite  -1,   0, 6, 6, $02, $0
+	dbsprite   0,   0, 6, 6, $03, $0
 
 .OAMData_HyperFangFrame1:
 	dbsprite -2, -2, 0, 0, $00, $0

@@ -365,6 +365,7 @@ BattleAnimations::
 	dw BattleAnim_Caustic
 	dw BattleAnim_Corrosion
 	dw BattleAnim_Piledriver
+	dw BattleAnim_LeekSlap
 	assert_table_length NUM_ATTACKS + 1
 	dw BattleAnim_SweetScent2
 	dw BattleAnim_WishHeal

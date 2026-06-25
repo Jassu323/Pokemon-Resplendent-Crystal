@@ -100,6 +100,8 @@ BattleAnimExt_LoadCustomPal:
 	jp z, .load_water_column
 	cp BATTLE_ANIM_GRASS_PAL_LOAD
 	jp z, .load_grass
+	cp BATTLE_ANIM_LEEK_SLAP_PAL_LOAD
+	jp z, .load_leek_slap
 	cp BATTLE_ANIM_FIRE_PAL_LOAD
 	jp z, .load_fire
 	cp BATTLE_ANIM_DRAGON_PAL_LOAD
@@ -113,6 +115,8 @@ BattleAnimExt_LoadCustomPal:
 	cp BATTLE_ANIM_WATER_COLUMN_PAL_RESTORE
 	jp z, .restore_blue
 	cp BATTLE_ANIM_GRASS_PAL_RESTORE
+	jp z, .restore_green
+	cp BATTLE_ANIM_LEEK_SLAP_PAL_RESTORE
 	jp z, .restore_green
 	cp BATTLE_ANIM_FIRE_PAL_RESTORE
 	jp z, .restore_red
@@ -230,6 +234,11 @@ BattleAnimExt_LoadCustomPal:
 
 .load_grass
 	ld hl, .GrassPal
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
+	jp .load_custom_pal
+
+.load_leek_slap
+	ld hl, .LeekSlapPal
 	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN
 	jp .load_custom_pal
 
@@ -495,6 +504,12 @@ BattleAnimExt_LoadCustomPal:
 	RGB 12, 28, 09
 	RGB 07, 26, 00
 	RGB 07, 20, 00
+
+.LeekSlapPal:
+	RGB 31, 31, 31
+	RGB 17, 31, 13
+	RGB 11, 31, 03
+	RGB 10, 26, 02
 
 .FirePal:
 	RGB 31, 31, 31

@@ -338,6 +338,7 @@ MoveDescriptions1:
 	dw CausticDescription
 	dw CorrosionDescription
 	dw PiledriverDescription
+	dw LeekSlapDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1588,4 +1589,7 @@ CorrosionDescription:
 	db   "Placeholder@"
 
 PiledriverDescription:
+	db   "Placeholder@"
+
+LeekSlapDescription:
 	db   "Placeholder@"

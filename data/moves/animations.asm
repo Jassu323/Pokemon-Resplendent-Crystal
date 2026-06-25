@@ -5202,6 +5202,19 @@ BattleAnim_Piledriver:
 	anim_wait 52
 	anim_ret
 
+BattleAnim_LeekSlap:
+	anim_1gfx BATTLE_ANIM_GFX_LEEK_SLAP
+	anim_grasspal BATTLE_ANIM_LEEK_SLAP_PAL_LOAD
+	anim_call BattleAnim_TargetObj_1Row
+	anim_bgeffect BATTLE_BG_EFFECT_TACKLE, $0, BG_EFFECT_USER, $0
+	anim_wait 6
+	anim_sound 0, 1, SFX_VINE_WHIP
+	anim_extobj BATTLE_ANIM_EXT_OBJ_LEEK_SLAP, 124, 48, $0
+	anim_wait 24
+	anim_grasspal BATTLE_ANIM_LEEK_SLAP_PAL_RESTORE
+	anim_call BattleAnim_ShowMon_0
+	anim_ret
+
 BattleAnim_GigaDrain:
 	anim_1gfx BATTLE_ANIM_GFX_CHARGE
 	anim_bgeffect BATTLE_BG_EFFECT_FADE_MONS_TO_BLACK_REPEATING, $0, BG_EFFECT_TARGET, $10
