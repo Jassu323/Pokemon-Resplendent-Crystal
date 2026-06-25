@@ -26,7 +26,7 @@ AIChooseMove:
 ; Don't pick disabled moves.
 	ld a, [wEnemyDisabledMove]
 	and a
-	jr z, .CheckPP
+	jr z, .CheckTaunt
 
 	ld hl, wEnemyMonMoves
 	ld c, 0
@@ -41,6 +41,36 @@ AIChooseMove:
 	ld b, 0
 	add hl, bc
 	ld [hl], 80
+
+; Don't pick status moves while taunted.
+.CheckTaunt:
+	ld a, [wEnemyTauntCount]
+	and a
+	jr z, .CheckPP
+	ld hl, wEnemyAIMoveScores
+	ld de, wEnemyMonMoves
+	ld c, NUM_MOVES
+.CheckTauntedMove:
+	ld a, [de]
+	and a
+	jr z, .NextTauntedMove
+	push hl
+	push de
+	push bc
+	ld l, a
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	and a
+	pop bc
+	pop de
+	pop hl
+	jr nz, .NextTauntedMove
+	ld [hl], 80
+.NextTauntedMove:
+	inc hl
+	inc de
+	dec c
+	jr nz, .CheckTauntedMove
 
 ; Don't pick moves with 0 PP.
 .CheckPP:

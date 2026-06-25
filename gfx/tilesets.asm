@@ -322,7 +322,7 @@ TilesetRuinsOfAlphColl::
 INCLUDE "data/tilesets/ruins_of_alph_collision.asm"
 
 
-SECTION "Tileset Data 8", ROMX
+SECTION "Tileset Data 8", ROMX, BANK[$43]
 
 TilesetHoOhWordRoomMeta::
 INCBIN "data/tilesets/ho_oh_word_room_metatiles.bin"

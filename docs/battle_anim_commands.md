@@ -138,9 +138,9 @@ Removes all active objects.
 ## `$E6`: `anim_beatup`
 
 
-## `$E7`: `anim_0xe7`
+## `$E7`: `anim_clearhuds`
 
-Does nothing. Unused.
+Clears both battle HP boxes.
 
 
 ## `$E8`: `anim_updateactorpic`

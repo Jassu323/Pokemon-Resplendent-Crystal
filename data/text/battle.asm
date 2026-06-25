@@ -145,6 +145,11 @@ BattleText_TheSandstormRages:
 	line "rages."
 	prompt
 
+BattleText_HailContinuesToFall:
+	text "Hail continues to"
+	line "fall."
+	prompt
+
 BattleText_TheRainStopped:
 	text "The rain stopped."
 	prompt
@@ -157,6 +162,10 @@ BattleText_TheSunlightFaded:
 BattleText_TheSandstormSubsided:
 	text "The Sandstorm"
 	line "subsided."
+	prompt
+
+BattleText_TheHailStopped:
+	text "The Hail stopped."
 	prompt
 
 BattleText_EnemyMonFainted:
@@ -645,6 +654,52 @@ SharedPainText:
 	line "shared pain!"
 	prompt
 
+MadeWishText:
+	text "<USER>"
+	line "made a wish!"
+	prompt
+
+MadeDrowsyText:
+	text "<TARGET>"
+	line "grew drowsy!"
+	prompt
+
+UserFellAsleepText:
+	text "<USER>"
+	line "fell asleep!"
+	prompt
+
+PlantedRootsText:
+	text "<USER>"
+	line "planted its roots!"
+	prompt
+
+AbsorbedNutrientsText:
+	text "<USER>"
+	line "drew in nutrients!"
+	prompt
+
+IngrainPreventedSwitchText:
+	text "Ingrain prevented"
+	line "switching!"
+	prompt
+
+BarrierDestroyedText:
+	text "The barrier was"
+	line "destroyed!"
+	prompt
+
+BarriersDestroyedText:
+	text "The barriers were"
+	line "destroyed!"
+	prompt
+
+WishCameTrueText:
+	text_ram wStringBuffer1
+	text "'s"
+	line "wish came true!"
+	prompt
+
 TookAimText:
 	text "<USER>"
 	line "took aim!"
@@ -704,6 +759,16 @@ AlreadyPoisonedText:
 	line "already poisoned!"
 	prompt
 
+AlreadyBurnedText:
+	text "<TARGET>'s"
+	line "already burned!"
+	prompt
+
+AlreadyFrozenText:
+	text "<TARGET>'s"
+	line "already frozen!"
+	prompt
+
 SuckedHealthText:
 	text "Sucked health from"
 	line "<TARGET>!"
@@ -735,6 +800,12 @@ WontRiseAnymoreText:
 	text_ram wStringBuffer2
 	text " won't"
 	cont "rise anymore!"
+	prompt
+
+StatsWontRiseAnymoreText:
+	text "<USER>'s stats"
+	line "won't rise"
+	cont "anymore!"
 	prompt
 
 WontDropAnymoreText:
@@ -890,6 +961,43 @@ ButItFailedText:
 	text "But it failed!"
 	prompt
 
+TighteningFocusText:
+	text "<USER>'s"
+	line "focus tightened!"
+	done
+
+LostFocusText:
+	text "<USER>"
+	line "lost its focus!"
+	prompt
+
+WasTauntedText:
+	text "<TARGET>"
+	line "was taunted!"
+	prompt
+
+AlreadyTauntedText:
+	text "<TARGET>'s"
+	line "already taunted!"
+	prompt
+
+TauntWoreOffText:
+	text "<USER>'s"
+	line "Taunt wore off!"
+	prompt
+
+TauntBlockedText:
+	text "<USER>"
+	line "can't use that!"
+	prompt
+
+TauntPreventedMoveText:
+	text "Taunt prevented"
+	line "@"
+	text_ram wStringBuffer1
+	text "!"
+	prompt
+
 ItFailedText:
 	text "It failed!"
 	prompt
@@ -951,6 +1059,15 @@ StoleText:
 	cont "from its foe!"
 	prompt
 
+AteBerryText:
+	text "<USER>"
+	line "ate the target's  @"
+	text_pause
+	text "<SCROLL>@"
+	text_ram wStringBuffer1
+	text "!"
+	prompt
+
 CantEscapeNowText:
 	text "<TARGET>"
 	line "can't escape now!"
@@ -1007,6 +1124,16 @@ SandstormBrewedText:
 	line "brewed!"
 	prompt
 
+ItStartedToHailText:
+	text "It started"
+	line "to hail!"
+	prompt
+
+PeltedByHailText:
+	text "<USER>"
+	line "is pelted by Hail!"
+	prompt
+
 BracedItselfText:
 	text "<USER>"
 	line "braced itself!"
@@ -1026,6 +1153,16 @@ SafeguardProtectText:
 	text "<TARGET>"
 	line "is protected by"
 	cont "Safeguard!"
+	prompt
+
+RainPreventedBurnText:
+	text "The rain prevented"
+	line "burns!"
+	prompt
+
+SunPreventedFreezeText:
+	text "Sunlight prevented"
+	line "freezing!"
 	prompt
 
 MagnitudeText:
@@ -1078,12 +1215,6 @@ ForesawAttackText:
 	text "<USER>"
 	line "foresaw an attack!"
 	prompt
-
-BeatUpAttackText:
-	text_ram wStringBuffer1
-	text "'s"
-	line "attack!"
-	done
 
 PresentFailedText:
 	text "<TARGET>"

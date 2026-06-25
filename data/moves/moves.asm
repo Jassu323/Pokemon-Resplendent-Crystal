@@ -18,6 +18,7 @@ Moves::
 	indirect_table_end
 
 Moves1:
+	; Vanilla Pokémon Crystal moves
 	move EFFECT_NORMAL_HIT,         40, NORMAL,        100, 35,   0      ;POUND
 	move EFFECT_NORMAL_HIT,         50, FIGHTING,      100, 25,   0      ;KARATE_CHOP
 	move EFFECT_MULTI_HIT,          15, NORMAL,         85, 10,   0      ;DOUBLESLAP
@@ -50,7 +51,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,         65, NORMAL,        100, 25,   0      ;HORN_ATTACK
 	move EFFECT_MULTI_HIT,          15, NORMAL,         85, 20,   0      ;FURY_ATTACK
 	move EFFECT_OHKO,                1, NORMAL,         30,  5,   0      ;HORN_DRILL
-	move EFFECT_NORMAL_HIT,         35, NORMAL,         95, 35,   0      ;TACKLE
+	move EFFECT_NORMAL_HIT,         35, NORMAL,        100, 35,   0      ;TACKLE
 	move EFFECT_PARALYZE_HIT,       85, NORMAL,        100, 15,  30      ;BODY_SLAM
 	move EFFECT_TRAP_TARGET,        15, NORMAL,         85, 20,   0      ;WRAP
 	move EFFECT_RECOIL_HIT,         90, NORMAL,         85, 20,   0      ;TAKE_DOWN
@@ -76,7 +77,7 @@ Moves1:
 	move EFFECT_NORMAL_HIT,        120, WATER,          80,  5,   0      ;HYDRO_PUMP
 	move EFFECT_NORMAL_HIT,         95, WATER,         100, 15,   0      ;SURF
 	move EFFECT_FREEZE_HIT,         95, ICE,           100, 10,  10      ;ICE_BEAM
-	move EFFECT_FREEZE_HIT,        120, ICE,            70,  5,  10      ;BLIZZARD
+	move EFFECT_BLIZZARD,          120, ICE,            70,  5,  10      ;BLIZZARD
 	move EFFECT_CONFUSE_HIT,        65, PSYCHIC_TYPE,  100, 20,  10      ;PSYBEAM
 	move EFFECT_SPEED_DOWN_HIT,     65, WATER,         100, 20,  10      ;BUBBLEBEAM
 	move EFFECT_ATTACK_DOWN_HIT,    65, ICE,           100, 20,  10      ;AURORA_BEAM
@@ -268,5 +269,89 @@ Moves1:
 	move EFFECT_FUTURE_SIGHT,       80, PSYCHIC_TYPE,   90, 15,   0      ;FUTURE_SIGHT
 	move EFFECT_DEFENSE_DOWN_HIT,   20, FIGHTING,      100, 15,  50      ;ROCK_SMASH
 	move EFFECT_TRAP_TARGET,        15, WATER,          70, 15,   0      ;WHIRLPOOL
-	move EFFECT_BEAT_UP,            10, DARK,          100, 10,   0      ;BEAT_UP
+	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;BEAT_UP
+	; Official later-gen moves start here.  These are ordered by their move number from Bulbapedia.
+	move EFFECT_FAKE_OUT,           40, NORMAL,        100, 10, 100      ;FAKE_OUT #252
+	move EFFECT_BURN_HIT,          100, FIRE,           90, 10,  10      ;HEAT_WAVE #257
+	move EFFECT_HAIL,                0, ICE,           100, 10,   0      ;HAIL #258
+	move EFFECT_BURN,                0, FIRE,           75, 15,   0      ;WILL_O_WISP #261
+	move EFFECT_FOCUS_PUNCH,       150, FIGHTING,      100, 20,   0      ;FOCUS_PUNCH #264
+	move EFFECT_TAUNT,               0, DARK,          100, 20,   0      ;TAUNT #269
+	move EFFECT_WISH,                0, NORMAL,        100, 10,   0      ;WISH #273
+	move EFFECT_INGRAIN,             0, GRASS,         100, 20,   0      ;INGRAIN #275
+	move EFFECT_SELF_STAT_DROP_HIT, 120, FIGHTING,      100,  5, 100     ;SUPERPOWER #276
+	move EFFECT_BRICK_BREAK,        75, FIGHTING,      100, 15,   0      ;BRICK_BREAK #280
+	move EFFECT_YAWN,                0, NORMAL,        100, 10,   0      ;YAWN #281
+	move EFFECT_MULTI_HIT,          15, FIGHTING,      100, 20,   0      ;ARM_THRUST #292
+	move EFFECT_BURN_HIT,           85, FIRE,           90, 10,  10      ;BLAZE_KICK #299
+	move EFFECT_ICE_BALL,           30, ICE,            90, 20,   0      ;ICE_BALL #301
+	move EFFECT_POISON_HIT,         50, POISON,        100, 15,  30      ;POISON_FANG #305
+	move EFFECT_DEFENSE_DOWN_HIT,   75, NORMAL,         95, 10,  50      ;CRUSH_CLAW #306
+	move EFFECT_ATTACK_UP_HIT,     100, STEEL,          85, 10,  20      ;METEOR_MASH #309
+	move EFFECT_HEAL_BELL,           0, GRASS,         100,  5,   0      ;AROMATHERAPY #312
+	move EFFECT_NORMAL_HIT,         55, FLYING,         95, 25,   0      ;AIR_CUTTER #314
+	move EFFECT_SELF_STAT_DROP_HIT, 140, FIRE,          90,  5, 100      ;OVERHEAT #315
+	move EFFECT_SPEED_DOWN_HIT,     50, ROCK,           80, 10, 100      ;ROCK_TOMB #317
+	move EFFECT_ALL_UP_HIT,         60, BUG,           100,  5,  10      ;SILVER_WIND #318
+	move EFFECT_CONFUSE_HIT,        75, BUG,           100, 15,  10      ;SIGNAL_BEAM #324
+	move EFFECT_ALWAYS_HIT,         60, GHOST,         100, 20,   0      ;SHADOW_PUNCH #325
+	move EFFECT_FLINCH_HIT,         80, PSYCHIC_TYPE,  100, 30,  10      ;EXTRASENSORY #326
+	move EFFECT_GUST,               85, FIGHTING,       90, 15,   0      ;SKY_UPPERCUT #327
+	move EFFECT_TRAP_TARGET,        15, GROUND,         70, 15, 100      ;SAND_TOMB #328
+	move EFFECT_MULTI_HIT,          10, GRASS,         100, 30,   0      ;BULLET_SEED #331
+	move EFFECT_ALWAYS_HIT,         60, FLYING,        100, 20,   0      ;AERIAL_ACE #332
+	move EFFECT_DEFENSE_UP_2,        0, STEEL,         100, 15,   0      ;IRON_DEFENSE #334
+	move EFFECT_MEAN_LOOK,           0, NORMAL,        100,  5,   0      ;BLOCK #335
+	move EFFECT_ATTACK_UP,           0, NORMAL,        100, 40,   0      ;HOWL #336
+	move EFFECT_NORMAL_HIT,         80, DRAGON,        100, 15,   0      ;DRAGON_CLAW #337
+	move EFFECT_MULTI_STAT_UP,       0, FIGHTING,      100, 20,   0      ;BULK_UP #339
+	move EFFECT_SPEED_DOWN_HIT,     55, GROUND,         95, 15, 100      ;MUD_SHOT #341
+	move EFFECT_POISON_HIT,         50, POISON,        100, 25,  10      ;POISON_TAIL #342
+	move EFFECT_RECOIL_HIT_1_3,    120, ELECTRIC,      100, 15,   0      ;VOLT_TACKLE #344
+	move EFFECT_ALWAYS_HIT,         60, GRASS,         100, 20,   0      ;MAGICAL_LEAF #345
+	move EFFECT_MULTI_STAT_UP,       0, PSYCHIC_TYPE,  100, 20,   0      ;CALM_MIND #347
+	move EFFECT_NORMAL_HIT,         70, GRASS,         100, 15,   0      ;LEAF_BLADE #348
+	move EFFECT_MULTI_STAT_UP,       0, DRAGON,        100, 20,   0      ;DRAGON_DANCE #349
+	move EFFECT_MULTI_HIT,          25, ROCK,           80, 10,   0      ;ROCK_BLAST #350
+	move EFFECT_ALWAYS_HIT,         60, ELECTRIC,      100, 20,   0      ;SHOCK_WAVE #351
+	move EFFECT_CONFUSE_HIT,        60, WATER,         100, 20,  20      ;WATER_PULSE #352
+	move EFFECT_EAT_BERRY_HIT,      60, FLYING,        100, 20,   0      ;PLUCK #365
+	move EFFECT_NORMAL_HIT,         50, DARK,          100, 10,   0      ;ASSURANCE #372
+	move EFFECT_SUCKER_PUNCH,       80, DARK,          100,  5,   0      ;SUCKER_PUNCH #389
+	move EFFECT_PARALYZE_HIT,       60, FIGHTING,      100, 10,  30      ;FORCE_PALM #395
+	move EFFECT_POISON_HIT,         80, POISON,        100, 20,  30      ;POISON_JAB #398
+	move EFFECT_NORMAL_HIT,         70, DARK,          100, 15,   0      ;NIGHT_SLASH #400
+	move EFFECT_NORMAL_HIT,         80, BUG,           100, 15,   0      ;X_SCISSOR #404
+	move EFFECT_LEECH_HIT,          60, FIGHTING,      100,  5,   0      ;DRAIN_PUNCH #409
+	move EFFECT_SP_DEF_DOWN_HIT,    80, GRASS,         100, 10,  10      ;ENERGY_BALL #412
+	move EFFECT_PRIORITY_HIT,       40, STEEL,         100, 30,   0      ;BULLET_PUNCH #418
+	move EFFECT_NORMAL_HIT,         70, GHOST,         100, 15,   0      ;SHADOW_CLAW #421
+	move EFFECT_FANG_HIT,           65, ELECTRIC,       95, 15,  10      ;THUNDER_FANG #422
+	move EFFECT_FANG_HIT,           65, ICE,            95, 15,  10      ;ICE_FANG #423
+	move EFFECT_FANG_HIT,           65, FIRE,           95, 15,  10      ;FIRE_FANG #424
+	move EFFECT_ACCURACY_DOWN_HIT,  65, GROUND,         85, 10,  30      ;MUD_BOMB #426
+	move EFFECT_BURN_HIT,           80, FIRE,          100, 15,  30      ;LAVA_PLUME #436
+	move EFFECT_NORMAL_HIT,        100, ROCK,           80,  5,   0      ;STONE_EDGE #444
+	move EFFECT_EAT_BERRY_HIT,      60, BUG,           100, 20,   0      ;BUG_BITE #450
+	move EFFECT_POISON_HIT,         95, POISON,        100, 10,  10      ;SLUDGE_WAVE #482
+	move EFFECT_HEAVY_SLAM,         1, STEEL,         100, 40,   0       ;HEAVY_SLAM #484
+	move EFFECT_HEX,                50, GHOST,         100, 10,   0      ;HEX #506
+	move EFFECT_RECOIL_HIT,         90, ELECTRIC,      100, 15,   0      ;WILD_CHARGE #528
+	move EFFECT_NORMAL_HIT,         80, GROUND,         95, 10,   0      ;DRILL_RUN #529
+	move EFFECT_FLINCH_HIT,         85, ICE,            90, 10,  30      ;ICICLE_CRASH #556
+	move EFFECT_ALWAYS_HIT,         40, FAIRY,         100, 15,   0      ;DISARMING_VOICE #574
+	move EFFECT_NORMAL_HIT,         40, FAIRY,         100, 30,   0      ;FAIRY_WIND #584
+	move EFFECT_SP_ATK_DOWN_HIT,    95, FAIRY,         100, 15,  30      ;MOONBLAST #585
+	move EFFECT_NORMAL_HIT,         80, FAIRY,         100, 10,   0      ;DAZZLING_GLEAM #605
+	; Custom moves that do not exist in any official Pokémon title.  These must always be last in the list.
+	move EFFECT_RECOIL_HIT,          1, ICE,           100, 40,   0      ;GLACIAL_SLAM
+	move EFFECT_LEECH_HIT,           1, BUG,           100, 40,   0      ;DRAIN_LIFE
+	move EFFECT_LEECH_HIT,           1, BUG,           100, 40,   0      ;VAMPIRISM
+	move EFFECT_FLINCH_HIT,          1, FLYING,        100, 40,   0      ;DIVE_BOMB
+	move EFFECT_JUMP_KICK,           1, FLYING,        100, 40,   0      ;AERIAL_CRASH
+	move EFFECT_JUMP_KICK,           1, FIGHTING,      100, 40,   0      ;METEOR_DIVE
+	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CAUSTIC
+	move EFFECT_NORMAL_HIT,          1, POISON,        100, 40,   0      ;CORROSION
+	move EFFECT_JUMP_KICK,           1, ROCK,          100, 40,   0      ;PILEDRIVER
+	move EFFECT_NORMAL_HIT,         50, GRASS,          90, 20,   0      ;LEEK_SLAP
 .IndirectEnd::

@@ -24,6 +24,23 @@ MACRO anim_obj
 	endc
 ENDM
 
+MACRO anim_extobj
+	db anim_obj_command
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	if _NARG <= 4
+		db \1 ; extended object
+		db \2 ; x
+		db \3 ; y
+		db \4 ; param
+	else
+	; LEGACY: Support the tile+offset format
+		db \1 ; extended object
+		db (\2) * TILE_WIDTH + (\3) ; x_tile, x
+		db (\4) * TILE_WIDTH + (\5) ; y_tile, y
+		db \6 ; param
+	endc
+ENDM
+
 	const anim_1gfx_command ; $d1
 MACRO anim_1gfx
 	db anim_1gfx_command
@@ -151,14 +168,17 @@ MACRO anim_clearobjs
 	db anim_clearobjs_command
 ENDM
 
-	const anim_beatup_command ; $e6
-MACRO anim_beatup
-	db anim_beatup_command
+	const anim_0xe6_command ; $e6
+MACRO anim_0xe6
+	db anim_0xe6_command
 ENDM
 
-	const anim_0xe7_command ; $e7
+	const anim_clearhuds_command ; $e7
+MACRO anim_clearhuds
+	db anim_clearhuds_command
+ENDM
 MACRO anim_0xe7
-	db anim_0xe7_command
+	db anim_clearhuds_command
 ENDM
 
 	const anim_updateactorpic_command ; $e8
@@ -236,19 +256,221 @@ MACRO anim_keepsprites
 	db anim_keepsprites_command
 ENDM
 
-	const anim_0xf5_command ; $f5
-MACRO anim_0xf5
-	db anim_0xf5_command
+	const anim_batch_command ; $f5
+MACRO anim_objparams
+	assert _NARG == 4 + (\4), "anim_objparams count must match number of params"
+	db anim_batch_command
+	db 0 ; subtype: same object and coordinates, param list
+	db \1 ; object
+	db \2 ; x
+	db \3 ; y
+	db \4 ; count
+	shift 4
+	rept _NARG
+		db \1 ; param
+		shift
+	endr
 ENDM
 
-	const anim_0xf6_command ; $f6
+MACRO anim_extobjparams
+	assert _NARG == 4 + (\4), "anim_extobjparams count must match number of params"
+	db anim_batch_command
+	db 0 ; subtype: same object and coordinates, param list
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	db \1 ; extended object
+	db \2 ; x
+	db \3 ; y
+	db \4 ; count
+	shift 4
+	rept _NARG
+		db \1 ; param
+		shift
+	endr
+ENDM
+
+MACRO anim_objlist
+	assert _NARG == 2 + 3 * (\2), "anim_objlist count must match x/y/param triples"
+	db anim_batch_command
+	db 1 ; subtype: same object, x/y/param list
+	db \1 ; object
+	db \2 ; count
+	shift 2
+	rept _NARG / 3
+		db \1 ; x
+		db \2 ; y
+		db \3 ; param
+		shift 3
+	endr
+ENDM
+
+MACRO anim_extobjlist
+	assert _NARG == 2 + 3 * (\2), "anim_extobjlist count must match x/y/param triples"
+	db anim_batch_command
+	db 1 ; subtype: same object, x/y/param list
+	db BATTLE_ANIM_OBJ_EXT1_PREFIX
+	db \1 ; extended object
+	db \2 ; count
+	shift 2
+	rept _NARG / 3
+		db \1 ; x
+		db \2 ; y
+		db \3 ; param
+		shift 3
+	endr
+ENDM
+
+MACRO anim_incobjrange
+	db anim_batch_command
+	db 2 ; subtype: increment contiguous object ids
+	db \1 ; first object id
+	db \2 ; count
+ENDM
+
+	const anim_thunderpal_command ; $f6
+MACRO anim_thunderpal
+	db anim_thunderpal_command
+	db \1
+ENDM
+
 MACRO anim_0xf6
-	db anim_0xf6_command
+	db anim_thunderpal_command
+	db \1
 ENDM
 
-	const anim_0xf7_command ; $f7
+	const anim_custompal_command ; $f7
+MACRO anim_thunderboltpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_watercolumnpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_waterpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_vinewhippal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_grasspal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_firepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_dragonpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_dragonclawpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_dragonbluepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_groundpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_poisonpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_shadowballpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_hyperfangpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_silverwindpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_icepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_bugpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_ghostflamepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_pinkpetalpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_aurorapal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_signalpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_fairypal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_moonblastpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_fightingpal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_disarmingvoicepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_irondefensepal
+	db anim_custompal_command
+	db \1
+ENDM
+
+MACRO anim_corrosionpal
+	db anim_custompal_command
+	db \1
+ENDM
+
 MACRO anim_0xf7
-	db anim_0xf7_command
+	db anim_custompal_command
+	db \1
 ENDM
 
 	const anim_if_param_equal_command ; $f8

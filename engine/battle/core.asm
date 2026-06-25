@@ -13,6 +13,10 @@ DoBattle:
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
 	ld [wBattleEnded], a
+	ld [wPlayerWishCount], a
+	ld [wEnemyWishCount], a
+	ld [wPlayerAbility], a
+	ld [wEnemyAbility], a
 	inc a
 	ld [wBattleHasJustStarted], a
 	ld hl, wOTPartyMon1HP
@@ -178,6 +182,7 @@ BattleTurn:
 	ld [wEnemyJustGotFrozen], a
 	ld [wCurDamage], a
 	ld [wCurDamage + 1], a
+	ld [wFocusPunchFlags], a
 
 	call HandleBerserkGene
 	call UpdateBattleMonInParty
@@ -237,21 +242,7 @@ BattleTurn:
 	ret
 
 Stubbed_Increments5_a89a:
-	ret
-	ld a, BANK(s5_a89a) ; MBC30 bank used by JP Crystal; inaccessible by MBC3
-	call OpenSRAM
-	ld hl, s5_a89a + 1 ; address of MBC30 bank
-	inc [hl]
-	jr nz, .finish
-	dec hl
-	inc [hl]
-	jr nz, .finish
-	dec [hl]
-	inc hl
-	dec [hl]
-
-.finish
-	call CloseSRAM
+	; MBC30 bank used by JP Crystal; inaccessible by MBC3.
 	ret
 
 HandleBetweenTurnEffects:
@@ -291,6 +282,8 @@ HandleBetweenTurnEffects:
 	ret c
 
 .NoMoreFaintingConditions:
+	ld a, BATTLE_CORE_HOOK_BETWEEN_TURNS
+	call BattleCoreExt
 	call HandleLeftovers
 	call HandleMysteryberry
 	call HandleDefrost
@@ -854,33 +847,52 @@ CompareMovePriority:
 	ret
 
 GetMovePriority:
-; Return the priority (0-3) of move a.
+; Return the priority (0-12) of move a.
 
 	ld b, a
 
-	; Vital Throw goes last.
 	call GetMoveIndexFromID
-	ld a, h
-	if HIGH(VITAL_THROW)
-		cp HIGH(VITAL_THROW)
-	else
-		and a
-	endc
-	jr nz, .not_vital_throw
-	ld a, l
-	sub LOW(VITAL_THROW)
-	ret z
+	push bc
+	ld d, h
+	ld e, l
+	ld hl, MovePriorities
+.move_loop
+	ld a, [hli]
+	ld c, a
+	ld a, [hli]
+	ld b, a
+	cp -1
+	jr nz, .check_move
+	ld a, c
+	cp -1
+	jr z, .check_effect
 
-.not_vital_throw
+.check_move
+	ld a, d
+	cp b
+	jr nz, .next_move
+	ld a, e
+	cp c
+	jr nz, .next_move
+	ld a, [hl]
+	pop bc
+	ret
+
+.next_move
+	inc hl
+	jr .move_loop
+
+.check_effect
+	pop bc
 	call GetMoveEffect
 	ld hl, MoveEffectPriorities
-.loop
+.effect_loop
 	ld a, [hli]
 	cp b
 	jr z, .done
 	inc hl
 	cp -1
-	jr nz, .loop
+	jr nz, .effect_loop
 
 	ld a, BASE_PRIORITY
 	ret
@@ -907,6 +919,7 @@ Battle_EnemyFirst:
 	ld [wEnemyGoesFirst], a
 	callfar AI_SwitchOrTryItem
 	jr c, .switch_item
+	call Battle_FocusPunchMessagesEnemyFirst
 	call EnemyTurn_EndOpponentProtectEndureDestinyBond
 	call CheckMobileBattleError
 	ret c
@@ -923,6 +936,7 @@ Battle_EnemyFirst:
 	call ResidualDamage
 	jp z, HandleEnemyMonFaint
 	call RefreshBattleHuds
+	call Battle_FocusPunchMessagePlayer
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
 	call CheckMobileBattleError
 	ret c
@@ -947,6 +961,13 @@ Battle_PlayerFirst:
 	call SetEnemyTurn
 	callfar AI_SwitchOrTryItem
 	push af
+	jr c, .enemy_switched_or_used_item
+	call Battle_FocusPunchMessagesPlayerFirst
+	jr .got_enemy_action
+
+.enemy_switched_or_used_item
+	call Battle_FocusPunchMessagePlayer
+.got_enemy_action
 	call PlayerTurn_EndOpponentProtectEndureDestinyBond
 	pop bc
 	ld a, [wForcedSwitch]
@@ -990,17 +1011,118 @@ Battle_PlayerFirst:
 	ld [wBattlePlayerAction], a
 	ret
 
+Battle_FocusPunchMessagesEnemyFirst:
+	call Battle_FocusPunchMessageEnemy
+	jp Battle_FocusPunchMessagePlayer
+
+Battle_FocusPunchMessagesPlayerFirst:
+	call Battle_FocusPunchMessagePlayer
+	jp Battle_FocusPunchMessageEnemy
+
+Battle_FocusPunchMessagePlayer:
+	ld hl, wFocusPunchFlags
+	bit FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ret nz
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	ret nz
+	ld a, [wPlayerMoveStruct + MOVE_EFFECT]
+	cp EFFECT_FOCUS_PUNCH
+	ret nz
+	call SetPlayerTurn
+	ld hl, wFocusPunchFlags
+	set FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ld hl, TighteningFocusText
+	call StdBattleTextbox
+	call WaitBGMap
+	jp Battle_PlayFocusPunchTightenAnim
+
+Battle_FocusPunchMessageEnemy:
+	ld hl, wFocusPunchFlags
+	bit FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ret nz
+	ld a, [wEnemyMoveStruct + MOVE_EFFECT]
+	cp EFFECT_FOCUS_PUNCH
+	ret nz
+	call SetEnemyTurn
+	ld hl, wFocusPunchFlags
+	set FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ld hl, TighteningFocusText
+	call StdBattleTextbox
+	call WaitBGMap
+	jp Battle_PlayFocusPunchTightenAnim
+
+Battle_PlayFocusPunchTightenAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	inc a
+	ld [wBattleAnimParam], a
+	farcall LoadMoveAnim
+	ret
+
 PlayerTurn_EndOpponentProtectEndureDestinyBond:
 	call SetPlayerTurn
 	call EndUserDestinyBond
+	ld a, BATTLE_CORE_HOOK_BEFORE_ACTION
+	call BattleCoreExt
+	jr c, .after_action
 	callfar DoPlayerTurn
+.after_action
+	ld a, BATTLE_CORE_HOOK_AFTER_ACTION
+	call BattleCoreExt
 	jp EndOpponentProtectEndureDestinyBond
 
 EnemyTurn_EndOpponentProtectEndureDestinyBond:
 	call SetEnemyTurn
 	call EndUserDestinyBond
+	ld a, BATTLE_CORE_HOOK_BEFORE_ACTION
+	call BattleCoreExt
+	jr c, .after_action
 	callfar DoEnemyTurn
+.after_action
+	ld a, BATTLE_CORE_HOOK_AFTER_ACTION
+	call BattleCoreExt
 	jp EndOpponentProtectEndureDestinyBond
+
+BattleCoreExt:
+	ld [wBattleCommandParam], a
+	callfar BattleCoreHookExt
+	ret
+
+BattleCore_PlayerSwitchOutHook:
+	ldh a, [hBattleTurn]
+	push af
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_OUT
+	call BattleCoreExt
+	pop af
+	ldh [hBattleTurn], a
+	ret
+
+BattleCore_EnemySwitchOutHook:
+	ldh a, [hBattleTurn]
+	push af
+	call SetEnemyTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_OUT
+	call BattleCoreExt
+	pop af
+	ldh [hBattleTurn], a
+	ret
+
+BattleCore_PlayerSwitchInHook:
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_IN
+	jp BattleCoreExt
+
+BattleCore_EnemySwitchInHook:
+	call SetEnemyTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_IN
+	jp BattleCoreExt
+
+BattleCore_PlayerCanSwitchHook:
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_CAN_SWITCH
+	jp BattleCoreExt
 
 EndOpponentProtectEndureDestinyBond:
 	ld a, BATTLE_VARS_SUBSTATUS1_OPP
@@ -1740,31 +1862,50 @@ HandleWeather:
 
 	ld hl, wWeatherCount
 	dec [hl]
-	jr z, .ended
+	jp z, .ended
 
 	ld hl, .WeatherMessages
 	call .PrintWeatherMessage
 
 	ld a, [wBattleWeather]
+	cp WEATHER_RAIN
+	jr z, .rain
+	cp WEATHER_SUN
+	jr z, .sun
 	cp WEATHER_SANDSTORM
+	jr z, .damaging_weather
+	cp WEATHER_HAIL
 	ret nz
 
+.damaging_weather
 	ldh a, [hSerialConnectionStatus]
 	cp USING_EXTERNAL_CLOCK
 	jr z, .enemy_first
 
 ; player first
 	call SetPlayerTurn
-	call .SandstormDamage
+	call .WeatherDamage
 	call SetEnemyTurn
-	jr .SandstormDamage
+	jr .WeatherDamage
+
+.rain
+	ld de, ANIM_IN_RAIN
+	jr .WeatherAnim
+
+.sun
+	ld de, ANIM_IN_SUN
+
+.WeatherAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	jp Call_PlayBattleAnim
 
 .enemy_first
 	call SetEnemyTurn
-	call .SandstormDamage
+	call .WeatherDamage
 	call SetPlayerTurn
 
-.SandstormDamage:
+.WeatherDamage:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVar
 	bit SUBSTATUS_UNDERGROUND, a
@@ -1776,6 +1917,10 @@ HandleWeather:
 	jr z, .ok
 	ld hl, wEnemyMonType1
 .ok
+	ld a, [wBattleWeather]
+	cp WEATHER_HAIL
+	jr z, .hail
+
 	ld a, [hli]
 	cp ROCK
 	ret z
@@ -1792,16 +1937,37 @@ HandleWeather:
 	cp STEEL
 	ret z
 
+	ld de, ANIM_IN_SANDSTORM
+	ld hl, SandstormHitsText
+	jr .damage
+
+.hail
+	ld a, [hli]
+	cp ICE
+	ret z
+	cp STEEL
+	ret z
+
+	ld a, [hl]
+	cp ICE
+	ret z
+	cp STEEL
+	ret z
+
+	ld de, ANIM_IN_HAIL
+	ld hl, PeltedByHailText
+
+.damage
+	push hl
 	call SwitchTurnCore
 	xor a
 	ld [wBattleAfterAnim], a
-	ld de, ANIM_IN_SANDSTORM
 	call Call_PlayBattleAnim
 	call SwitchTurnCore
-	call GetEighthMaxHP
+	call GetSixteenthMaxHP
 	call SubtractHPFromUser
 
-	ld hl, SandstormHitsText
+	pop hl
 	jp StdBattleTextbox
 
 .ended
@@ -1828,12 +1994,14 @@ HandleWeather:
 	dw BattleText_RainContinuesToFall
 	dw BattleText_TheSunlightIsStrong
 	dw BattleText_TheSandstormRages
+	dw BattleText_HailContinuesToFall
 
 .WeatherEndedMessages:
 ; entries correspond to WEATHER_* constants
 	dw BattleText_TheRainStopped
 	dw BattleText_TheSunlightFaded
 	dw BattleText_TheSandstormSubsided
+	dw BattleText_TheHailStopped
 
 SubtractHPFromTarget:
 	call SubtractHP
@@ -1953,25 +2121,6 @@ GetMaxHP:
 	ld a, [hl]
 	ld [wHPBuffer1], a
 	ld c, a
-	ret
-
-GetHalfHP: ; unreferenced
-	ld hl, wBattleMonHP
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .ok
-	ld hl, wEnemyMonHP
-.ok
-	ld a, [hli]
-	ld b, a
-	ld a, [hli]
-	ld c, a
-	srl b
-	rr c
-	ld a, [hli]
-	ld [wHPBuffer1 + 1], a
-	ld a, [hl]
-	ld [wHPBuffer1], a
 	ret
 
 CheckUserHasEnoughHP:
@@ -3254,6 +3403,7 @@ CheckWhetherSwitchmonIsPredetermined:
 
 ResetEnemyBattleVars:
 ; and draw empty Textbox
+	call BattleCore_EnemySwitchOutHook
 	xor a
 	ld [wLastPlayerCounterMove], a
 	ld [wLastEnemyCounterMove], a
@@ -3563,6 +3713,7 @@ OfferSwitch:
 	call SetUpBattlePartyMenu
 	call PickSwitchMonInBattle
 	jr c, .canceled_switch
+	call BattleCore_PlayerSwitchOutHook
 	ld a, [wCurBattleMon]
 	ld [wLastPlayerMon], a
 	ld a, [wCurPartyMon]
@@ -3654,6 +3805,7 @@ ShowSetEnemyMonAndSendOutAnimation:
 
 .skip_cry
 	call UpdateEnemyHUD
+	call BattleCore_EnemySwitchInHook
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
@@ -3672,6 +3824,7 @@ endr
 	ld [wEnemyFuryCutterCount], a
 	ld [wEnemyProtectCount], a
 	ld [wEnemyRageCounter], a
+	ld [wEnemyTauntCount], a
 	ld [wEnemyDisabledMove], a
 	ld [wEnemyMinimized], a
 	ld [wPlayerWrapCount], a
@@ -3769,6 +3922,11 @@ TryToRunAwayFromBattle:
 	ld a, [wPlayerWrapCount]
 	and a
 	jp nz, .cant_escape
+
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_RUN_CHECK
+	call BattleCoreExt
+	jp c, .can_escape
 
 	push hl
 	push de
@@ -4136,6 +4294,7 @@ SendOutPlayerMon:
 
 .statused
 	call UpdatePlayerHUD
+	call BattleCore_PlayerSwitchInHook
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
@@ -4159,6 +4318,7 @@ endr
 	ld [wPlayerFuryCutterCount], a
 	ld [wPlayerProtectCount], a
 	ld [wPlayerRageCounter], a
+	ld [wPlayerTauntCount], a
 	ld [wDisabledMove], a
 	ld [wPlayerMinimized], a
 	ld [wEnemyWrapCount], a
@@ -4724,7 +4884,6 @@ CheckDanger:
 PrintPlayerHUD:
 	ld de, wBattleMonNickname
 	hlcoord 10, 7
-	call Battle_DummyFunction
 	call PlaceString
 
 	push bc
@@ -4824,7 +4983,6 @@ DrawEnemyHUD:
 	call GetBaseData
 	ld de, wEnemyMonNickname
 	hlcoord 1, 0
-	call Battle_DummyFunction
 	call PlaceString
 	ld h, b
 	ld l, c
@@ -4968,10 +5126,6 @@ UpdateHPPal:
 	cp b
 	ret z
 	jp FinishBattleAnim
-
-Battle_DummyFunction:
-; called before placing either battler's nickname in the HUD
-	ret
 
 BattleMenu:
 	xor a
@@ -5261,6 +5415,9 @@ TryPlayerSwitch:
 	ld a, [wPlayerWrapCount]
 	and a
 	jr nz, .trapped
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_INGRAIN, a
+	jr nz, .trapped
 	ld a, [wEnemySubStatus5]
 	bit SUBSTATUS_CANT_RUN, a
 	jr z, .try_switch
@@ -5271,8 +5428,11 @@ TryPlayerSwitch:
 	jp BattleMenuPKMN_Loop
 
 .try_switch
+	call BattleCore_PlayerCanSwitchHook
+	jr c, .trapped
 	call CheckIfCurPartyMonIsFitToFight
 	jp z, BattleMenuPKMN_Loop
+	call BattleCore_PlayerSwitchOutHook
 	ld a, [wCurBattleMon]
 	ld [wLastPlayerMon], a
 	ld a, BATTLEPLAYERACTION_SWITCH
@@ -5609,12 +5769,18 @@ MoveSelectionScreen:
 	ld a, [hl]
 
 .skip2
+	call CheckPlayerTauntBlockedMove
+	jr c, .move_taunted
 	ld [wCurPlayerMove], a
 	xor a
 	ret
 
 .move_disabled
 	ld hl, BattleText_TheMoveIsDisabled
+	jr .place_textbox_start_over
+
+.move_taunted
+	ld hl, TauntBlockedText
 	jr .place_textbox_start_over
 
 .no_pp_left
@@ -5747,17 +5913,30 @@ MoveInfoBox:
 
 	ld a, [wPlayerDisableCount]
 	and a
-	jr z, .not_disabled
+	jr z, .check_taunt
 
 	swap a
 	and $f
 	ld b, a
 	ld a, [wMenuCursorY]
 	cp b
-	jr nz, .not_disabled
-
-	hlcoord 1, 10
 	ld de, .Disabled
+	jr z, .place_status
+
+.check_taunt
+	ld a, [wMenuCursorY]
+	dec a
+	ld c, a
+	ld b, 0
+	ld hl, wBattleMonMoves
+	add hl, bc
+	ld a, [hl]
+	call CheckPlayerTauntBlockedMove
+	jr nc, .not_disabled
+	ld de, .Taunted
+
+.place_status
+	hlcoord 1, 10
 	call PlaceString
 	pop af
 	and a
@@ -5826,6 +6005,8 @@ MoveInfoBox:
 
 .Disabled:
 	db "Disabled!@"
+.Taunted:
+	db "Taunted!@"
 .Type:
 	db "Type/@"
 .PP:
@@ -5906,41 +6087,49 @@ CheckPlayerHasUsableMoves:
 	ld hl, STRUGGLE
 	call GetMoveIDFromIndex
 	ld [wCurPlayerMove], a
+
 	ld a, [wPlayerDisableCount]
 	and a
-	ld hl, wBattleMonPP
-	jr nz, .disabled
-
-	ld a, [hli]
-	or [hl]
-	inc hl
-	or [hl]
-	inc hl
-	or [hl]
-	and PP_MASK
-	ret nz
-	jr .force_struggle
-
-.disabled
+	jr z, .got_disabled_slot
 	swap a
 	and $f
-	ld b, a
-	ld d, NUM_MOVES + 1
-	xor a
-.loop
-	dec d
-	jr z, .done
-	ld c, [hl]
-	inc hl
-	dec b
-	jr z, .loop
-	or c
-	jr .loop
 
-.done
-; BUG: A Disabled but PP Up–enhanced move may not trigger Struggle (see docs/bugs_and_glitches.md)
+.got_disabled_slot
+	ld b, a
+	ld c, 1
+	ld hl, wBattleMonMoves
+	ld de, wBattleMonPP
+
+.loop
+	ld a, [hli]
 	and a
+	jr z, .next
+	push af
+	ld a, b
+	cp c
+	jr z, .skip_move
+	pop af
+	push hl
+	push bc
+	call CheckPlayerTauntBlockedMove
+	pop bc
+	pop hl
+	jr c, .next
+	ld a, [de]
+	and PP_MASK
 	ret nz
+	jr .next
+
+.skip_move
+	pop af
+
+.next
+	inc de
+	inc c
+	ld a, c
+	cp NUM_MOVES + 1
+	jr nz, .loop
+	jr .force_struggle
 
 .force_struggle
 	ld hl, BattleText_MonHasNoMovesLeft
@@ -6016,6 +6205,13 @@ ParseEnemyAction:
 	ld a, [wEnemyDisabledMove]
 	cp [hl]
 	jr z, .disabled
+	ld a, [hl]
+	push hl
+	push bc
+	call CheckEnemyTauntBlockedMove
+	pop bc
+	pop hl
+	jr c, .disabled
 	ld a, [de]
 	and PP_MASK
 	jr nz, .enough_pp
@@ -6048,6 +6244,10 @@ ParseEnemyAction:
 	ld a, [hl]
 	and a
 	jr z, .loop2
+	push bc
+	call CheckEnemyTauntBlockedMove
+	pop bc
+	jr c, .loop2
 	ld hl, wEnemyMonPP
 	add hl, bc
 	ld b, a
@@ -6121,6 +6321,36 @@ CheckEnemyLockedIn:
 
 	ld hl, wEnemySubStatus1
 	bit SUBSTATUS_ROLLOUT, [hl]
+	ret
+
+CheckPlayerTauntBlockedMove:
+	ld hl, wPlayerTauntCount
+	jr CheckTauntBlockedMove
+
+CheckEnemyTauntBlockedMove:
+	ld hl, wEnemyTauntCount
+
+CheckTauntBlockedMove:
+	and a
+	ret z
+	ld b, a
+	ld a, [hl]
+	and a
+	jr z, .allowed
+	ld l, b
+	ld a, MOVE_POWER
+	call GetMoveAttribute
+	and a
+	jr z, .blocked
+
+.allowed
+	ld a, b
+	and a
+	ret
+
+.blocked
+	ld a, b
+	scf
 	ret
 
 LinkBattleSendReceiveAction:
@@ -6691,17 +6921,6 @@ CheckUnownLetter:
 
 INCLUDE "data/wild/unlocked_unowns.asm"
 
-SwapBattlerLevels: ; unreferenced
-	push bc
-	ld a, [wBattleMonLevel]
-	ld b, a
-	ld a, [wEnemyMonLevel]
-	ld [wBattleMonLevel], a
-	ld a, b
-	ld [wEnemyMonLevel], a
-	pop bc
-	ret
-
 BattleWinSlideInEnemyTrainerFrontpic:
 	xor a
 	ld [wTempEnemyMonSpecies], a
@@ -7053,20 +7272,6 @@ _LoadBattleFontsHPBar:
 _LoadHPBar:
 	callfar LoadHPBar
 	ret
-
-LoadHPExpBarGFX: ; unreferenced
-	ld de, EnemyHPBarBorderGFX
-	ld hl, vTiles2 tile $6c
-	lb bc, BANK(EnemyHPBarBorderGFX), 4
-	call Get1bpp
-	ld de, HPExpBarBorderGFX
-	ld hl, vTiles2 tile $73
-	lb bc, BANK(HPExpBarBorderGFX), 6
-	call Get1bpp
-	ld de, ExpBarGFX
-	ld hl, vTiles2 tile $55
-	lb bc, BANK(ExpBarGFX), 8
-	jp Get2bpp
 
 EmptyBattleTextbox:
 	ld hl, .empty
@@ -7971,45 +8176,9 @@ GoodComeBackText:
 	text_far _GoodComeBackText
 	text_end
 
-TextJump_ComeBack: ; unreferenced
-	ld hl, ComeBackText
-	ret
-
 ComeBackText:
 	text_far _ComeBackText
 	text_end
-
-HandleSafariAngerEatingStatus: ; unreferenced
-	ld hl, wSafariMonEating
-	ld a, [hl]
-	and a
-	jr z, .angry
-	dec [hl]
-	ld hl, BattleText_WildMonIsEating
-	jr .finish
-
-.angry
-	dec hl
-	assert wSafariMonEating - 1 == wSafariMonAngerCount
-	ld a, [hl]
-	and a
-	ret z
-	dec [hl]
-	ld hl, BattleText_WildMonIsAngry
-	jr nz, .finish
-	push hl
-	ld a, [wEnemyMonSpecies]
-	ld [wCurSpecies], a
-	call GetBaseData
-	ld a, [wBaseCatchRate]
-	ld [wEnemyMonCatchRate], a
-	pop hl
-
-.finish
-	push hl
-	call SafeLoadTempTilemapToTilemap
-	pop hl
-	jp StdBattleTextbox
 
 FillInExpBar:
 	push hl
@@ -8237,10 +8406,6 @@ StartBattle:
 	scf
 	ret
 
-CallDoBattle: ; unreferenced
-	call DoBattle
-	ret
-
 BattleIntro:
 	farcall StubbedTrainerRankings_Battles ; mobile
 	call LoadTrainerOrWildMonPic
@@ -8421,54 +8586,6 @@ InitEnemyWildmon:
 	hlcoord 12, 0
 	lb bc, 7, 7
 	predef PlaceGraphic
-	ret
-
-FillEnemyMovesFromMoveIndicesBuffer: ; unreferenced
-	ld hl, wEnemyMonMoves
-	ld de, wListMoves_MoveIndicesBuffer
-	ld b, NUM_MOVES
-.loop
-	ld a, [de]
-	inc de
-	ld [hli], a
-	and a
-	jr z, .clearpp
-
-	push bc
-	push hl
-
-	push hl
-	ld l, a
-	ld a, MOVE_PP
-	call GetMoveAttribute
-	pop hl
-
-	ld bc, wEnemyMonPP - (wEnemyMonMoves + 1)
-	add hl, bc
-	ld [hl], a
-
-	pop hl
-	pop bc
-
-	dec b
-	jr nz, .loop
-	ret
-
-.clear
-	xor a
-	ld [hli], a
-
-.clearpp
-	push bc
-	push hl
-	ld bc, wEnemyMonPP - (wEnemyMonMoves + 1)
-	add hl, bc
-	xor a
-	ld [hl], a
-	pop hl
-	pop bc
-	dec b
-	jr nz, .clear
 	ret
 
 ExitBattle:

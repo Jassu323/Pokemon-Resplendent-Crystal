@@ -1,0 +1,21 @@
+AbilityNames::
+	list_start
+	li "No Ability"
+	li "Run Away"
+	li "Shed Skin"
+	li "Mesmer"
+	li "Venom Boost"
+	li "Cursed Body"
+	li "Short Fuse"
+	li "Damp"
+	li "Water Veil"
+	li "Magnetism"
+	li "Shell Armor"
+	li "Battle Armor"
+	li "Multiscale"
+	li "Natural Cure"
+	li "Thermal Wake"
+	li "Insomnia"
+	li "Static"
+	li "Dragon Skin"
+	assert_list_length NUM_ABILITIES + 1

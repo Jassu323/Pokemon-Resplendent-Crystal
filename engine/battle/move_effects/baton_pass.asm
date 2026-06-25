@@ -36,6 +36,9 @@ BattleCommand_BatonPass:
 	farcall CheckMobileBattleError
 	jp c, EndMoveEffect
 
+	ld hl, BattleCore_PlayerSwitchOutHook
+	call CallBattleCore
+
 	ld hl, PassedBattleMonEntrance
 	call CallBattleCore
 
@@ -138,6 +141,14 @@ ResetBatonPassStatus:
 
 	; Disable isn't passed.
 	call ResetActorDisable
+
+	; Drowsiness isn't passed.
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	res SUBSTATUS_DROWSY, [hl]
+	res SUBSTATUS_DROWSY_READY, [hl]
+	res SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
 
 	; Attraction isn't passed.
 	ld hl, wPlayerSubStatus1

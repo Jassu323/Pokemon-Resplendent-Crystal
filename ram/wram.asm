@@ -435,7 +435,11 @@ wBattleScriptBufferAddress:: dw
 
 wTurnEnded:: db
 
-	ds 1
+wBattleCommandParam:: db
+wBattleCommandParam2:: db
+wBattleCommandFlags:: db
+wBattleCommandScratch:: db
+wBattleCommandAbort:: db
 
 wPlayerStats::
 wPlayerAttack::  dw
@@ -594,7 +598,15 @@ wEnemyFutureSightDamage:: dw
 wPlayerRageCounter:: db
 wEnemyRageCounter:: db
 
-wBeatUpHitAtLeastOnce:: db
+wFocusPunchFlags:: db
+wPlayerTauntCount:: db
+wEnemyTauntCount:: db
+wPlayerWishCount:: db
+wEnemyWishCount:: db
+wPlayerWishHP:: dw
+wEnemyWishHP:: dw
+wPlayerAbility:: db
+wEnemyAbility:: db
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db
@@ -875,7 +887,10 @@ SECTION "Unused Map Buffer", WRAM0
 
 ; This was a buffer for map-related pointers in the 1997 G/S prototype.
 ; See wMapBuffer in pokegold-spaceworld's wram.asm.
-wUnusedMapBuffer:: ds 24
+wUnusedMapBuffer::
+wPlayerWishUserName:: ds MON_NAME_LENGTH
+wEnemyWishUserName:: ds MON_NAME_LENGTH
+	ds 2
 wUnusedMapBufferEnd::
 
 
@@ -2068,7 +2083,6 @@ SECTION UNION "Miscellaneous WRAM 1", WRAMX
 ; miscellaneous
 wTempDayOfWeek::
 wPrevPartyLevel::
-wCurBeatUpPartyMon::
 wUnownPuzzleCornerTile::
 wKeepSevenBiasChance::
 wPokeFluteCuredSleep::
@@ -2715,8 +2729,7 @@ wCurBaseDataEnd::
 	assert wCurBaseDataEnd - wCurBaseData == BASE_DATA_SIZE
 
 wCurDamage:: dw
-
-	ds 1
+wMinimizeAccuracyBypass:: db
 
 wMornEncounterRate::  db
 wDayEncounterRate::   db
@@ -3585,7 +3598,7 @@ wBattleAnimTileDict::
 	ds NUM_BATTLEANIMTILEDICT_ENTRIES * 2
 
 wActiveAnimObjects::
-; wAnimObject1 - wAnimObject10
+; wAnimObject1 - wAnimObject13
 for n, 1, NUM_BATTLE_ANIM_STRUCTS + 1
 wAnimObject{d:n}:: battle_anim_struct wAnimObject{d:n}
 endr
@@ -3612,6 +3625,7 @@ wBattleObjectTempID:: db
 wBattleObjectTempXCoord:: db
 wBattleObjectTempYCoord:: db
 wBattleObjectTempParam:: db
+wBattleObjectTempNamespace:: db
 
 NEXTU
 wBattleBGEffectTempID:: db
@@ -3653,6 +3667,19 @@ NEXTU
 wSurfWaveBGEffect:: ds $40
 wSurfWaveBGEffectEnd::
 ENDU
+
+wBattleAnimObjCache1Namespace:: db
+wBattleAnimObjCache1ID:: db
+wBattleAnimObjCache1Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache2Namespace:: db
+wBattleAnimObjCache2ID:: db
+wBattleAnimObjCache2Data:: ds BATTLEANIMOBJ_LENGTH
+wBattleAnimObjCache3Namespace:: db
+wBattleAnimObjCache3ID:: db
+wBattleAnimObjCache3Data:: ds BATTLEANIMOBJ_LENGTH
+
+wBattleAnimUpdatedCount:: db
+wBattleAnimUpdatedObjects:: ds NUM_BATTLE_ANIM_STRUCTS * 2
 
 
 SECTION "Mobile RAM and Pokedex Listings", WRAMX

@@ -1,0 +1,2840 @@
+BattleCommand_StatFromEffectCommandExt:
+	call BattleCommand_StatFromEffectExt
+	ld a, [wBattleCommandFlags]
+	bit BATTLE_CMD_FLAG_INVALID, a
+	ret nz
+	bit BATTLE_CMD_FLAG_STAT_DOWN, a
+	jr nz, .stat_down
+	ld a, [wBattleCommandParam]
+	and $f
+	cp EVASION
+	jr z, .evasion_up
+	call BattleCommand_ApplyStatParamExt
+	farcall BattleCommand_LowerSub
+	farcall BattleCommand_StatUpAnim
+	farcall BattleCommand_RaiseSub
+	call BattleCommand_StatUpMessageExt
+	call BattleCommand_StatUpFailTextExt
+	ret
+
+.evasion_up
+	farcall BattleCommand_LowerSub
+	call BattleCommand_ApplyStatParamExt
+	farcall BattleCommand_StatUpAnim
+	farcall BattleCommand_LowerSubNoAnim
+	farcall BattleCommand_RaiseSub
+	call BattleCommand_StatUpMessageExt
+	call BattleCommand_StatUpFailTextExt
+	ret
+
+.stat_down
+	farcall BattleCommand_CheckHit
+	call BattleCommand_ApplyStatParamExt
+	ld a, [wBattleCommandAbort]
+	and a
+	ret nz
+	farcall BattleCommand_LowerSub
+	farcall BattleCommand_StatDownAnim
+	farcall BattleCommand_RaiseSub
+	call BattleCommand_StatDownMessageExt
+	call BattleCommand_StatDownFailTextExt
+	ret
+
+BattleCommand_ApplyStatParamExt:
+	ld a, [wBattleCommandFlags]
+	bit BATTLE_CMD_FLAG_INVALID, a
+	ret nz
+	bit BATTLE_CMD_FLAG_STAT_DOWN, a
+	jr nz, .stat_down
+
+	ld a, [wBattleCommandParam]
+	ld b, a
+	ld a, [wBattleCommandParam]
+	bit 5, a ; STAT_PARAM_TARGET_OPP
+	jr z, .raise_user
+	ld a, b
+	and STAT_PARAM_MASK
+	ld b, a
+	farcall BattleCommand_SwitchTurn
+	call BattleCommand_StatUpExt
+	farcall BattleCommand_SwitchTurn
+	ret
+
+.raise_user
+	ld a, b
+	and STAT_PARAM_MASK
+	ld b, a
+	call BattleCommand_StatUpExt
+	ret
+
+.stat_down
+	ld a, [wBattleCommandParam]
+	bit 5, a ; STAT_PARAM_TARGET_OPP
+	jr z, .lower_user
+	call BattleCommand_CheckCottonSporeGrassImmunityExt
+	jr c, .blocked_by_powder
+	call BattleCommand_StatDownFromParamExt
+	ret
+
+.lower_user
+	call LowerStatFromParam
+	ret
+
+.blocked_by_powder
+	farcall AnimateFailedMove
+	farcall PrintDoesntAffect
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_StatUpExt:
+	call RaiseStat
+	ld a, [wFailedMessage]
+	and a
+	ret nz
+	jp MinimizeDropSubExt
+
+RaiseStat:
+	ld a, b
+	ld [wLoweredStat], a
+	ld hl, wPlayerStatLevels
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_stat_levels
+	ld hl, wEnemyStatLevels
+.got_stat_levels
+	ld a, [wAttackMissed]
+	and a
+	jp nz, .stat_raise_failed
+	ld a, [wEffectFailed]
+	and a
+	jp nz, .stat_raise_failed
+	ld a, [wLoweredStat]
+	and $f
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld b, [hl]
+	inc b
+	ld a, MAX_STAT_LEVEL
+	cp b
+	jp c, .cant_raise_stat
+	ld a, [wLoweredStat]
+	and $f0
+	jr z, .got_num_stages
+	inc b
+	ld a, MAX_STAT_LEVEL
+	cp b
+	jr nc, .got_num_stages
+	ld b, a
+.got_num_stages
+	ld [hl], b
+	push hl
+	ld a, c
+	cp ACCURACY
+	jr nc, .done_calcing_stats
+	ld hl, wBattleMonStats + 1
+	ld de, wPlayerStats
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_stats_pointer
+	ld hl, wEnemyMonStats + 1
+	ld de, wEnemyStats
+.got_stats_pointer
+	push bc
+	sla c
+	ld b, 0
+	add hl, bc
+	ld a, c
+	add e
+	ld e, a
+	jr nc, .no_carry
+	inc d
+.no_carry
+	pop bc
+	ld a, [hld]
+	sub LOW(MAX_STAT_VALUE)
+	jr nz, .not_already_max
+	ld a, [hl]
+	sbc HIGH(MAX_STAT_VALUE)
+	jp z, .stats_already_max
+.not_already_max
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .calc_player_stats
+	farcall CalcEnemyStats
+	jr .done_calcing_stats
+
+.calc_player_stats
+	farcall CalcPlayerStats
+.done_calcing_stats
+	pop hl
+	xor a
+	ld [wFailedMessage], a
+	ret
+
+.stats_already_max
+	pop hl
+	dec [hl]
+	; fallthrough
+
+.cant_raise_stat
+	ld a, $2
+	ld [wFailedMessage], a
+	ld a, $1
+	ld [wAttackMissed], a
+	ret
+
+.stat_raise_failed
+	ld a, $1
+	ld [wFailedMessage], a
+	ret
+
+MinimizeDropSubExt:
+; Lower the substitute if we're minimizing.
+	ld de, wPlayerMinimized
+	ld hl, DropPlayerSub
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .do_player
+	ld de, wEnemyMinimized
+	ld hl, DropEnemySub
+.do_player
+	push hl
+	ld a, BATTLE_VARS_MOVE_ANIM
+	call GetBattleVar
+	call GetMoveIndexFromID
+	ld a, h
+	cp HIGH(MINIMIZE)
+	jr nz, .not_minimize
+	ld a, l
+	cp LOW(MINIMIZE)
+.not_minimize
+	pop hl
+	ret nz
+
+	ld a, $1
+	ld [de], a
+	push hl
+	push de
+	push bc
+	farcall CheckBattleScene
+	pop bc
+	pop de
+	pop hl
+	ret nc
+
+	xor a
+	ldh [hBGMapMode], a
+	ld a, BANK("Battle Core")
+	rst FarCall
+	call WaitBGMap
+	ld c, 40
+	jp DelayFrames
+
+BattleCommand_StatDownFromParamExt:
+	ld a, [wBattleCommandParam]
+	and STAT_PARAM_MASK
+	; fallthrough
+
+BattleCommand_StatDownGotParamExt:
+	ld [wLoweredStat], a
+
+	call CheckMistExt
+	jp nz, .Mist
+
+	call BattleAbility_StatDropPrecheckExt
+	jp c, .Failed
+
+	ld hl, wEnemyStatLevels
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .GetStatLevel
+	ld hl, wPlayerStatLevels
+
+.GetStatLevel:
+; Attempt to lower the stat.
+	ld a, [wLoweredStat]
+	and $f
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld b, [hl]
+	dec b
+	jp z, .CantLower
+
+; Sharply lower the stat if applicable.
+	ld a, [wLoweredStat]
+	and $f0
+	jr z, .ComputerMiss
+	dec b
+	jr nz, .ComputerMiss
+	inc b
+
+.ComputerMiss:
+; Computer opponents have a 25% chance of failing.
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .DidntMiss
+
+	ld a, [wLinkMode]
+	and a
+	jr nz, .DidntMiss
+
+	ld a, [wInBattleTowerBattle]
+	and a
+	jr nz, .DidntMiss
+
+; Lock-On still always works.
+	ld a, [wPlayerSubStatus5]
+	bit SUBSTATUS_LOCK_ON, a
+	jr nz, .DidntMiss
+
+; Attacking moves that also lower accuracy are unaffected.
+	ld a, BATTLE_VARS_MOVE_EFFECT
+	call GetBattleVar
+	cp EFFECT_ACCURACY_DOWN_HIT
+	jr z, .DidntMiss
+
+	call BattleRandom
+	cp 25 percent + 1 ; 25% chance AI fails
+	jr c, .Failed
+
+.DidntMiss:
+	farcall CheckSubstituteOpp
+	jr nz, .Failed
+
+	ld a, [wAttackMissed]
+	and a
+	jr nz, .Failed
+
+	ld a, [wEffectFailed]
+	and a
+	jr nz, .Failed
+
+	farcall CheckHiddenOpponent
+	jr nz, .Failed
+
+; Accuracy/Evasion reduction don't involve stats.
+	ld [hl], b
+	ld a, c
+	cp ACCURACY
+	jr nc, .Hit
+
+	push hl
+	ld hl, wEnemyMonAttack + 1
+	ld de, wEnemyStats
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .do_enemy
+	ld hl, wBattleMonAttack + 1
+	ld de, wPlayerStats
+.do_enemy
+	call TryLowerStat
+	pop hl
+	jr z, .CouldntLower
+
+.Hit:
+	xor a
+	ld [wFailedMessage], a
+	ret
+
+.CouldntLower:
+	inc [hl]
+.CantLower:
+	ld a, 3
+	ld [wFailedMessage], a
+	ld a, 1
+	ld [wAttackMissed], a
+	ret
+
+.Failed:
+	ld a, 1
+	ld [wFailedMessage], a
+	ld [wAttackMissed], a
+	ret
+
+.Mist:
+	ld a, 2
+	ld [wFailedMessage], a
+	ld a, 1
+	ld [wAttackMissed], a
+	ret
+
+BattleCommand_StatDownExt:
+	ld a, [wBattleCommandParam]
+	jp BattleCommand_StatDownGotParamExt
+
+CheckMistExt:
+	ld a, BATTLE_VARS_MOVE_EFFECT
+	call GetBattleVar
+	cp EFFECT_ATTACK_DOWN
+	jr c, .dont_check_mist
+	cp EFFECT_EVASION_DOWN + 1
+	jr c, .check_mist
+	cp EFFECT_ATTACK_DOWN_2
+	jr c, .dont_check_mist
+	cp EFFECT_EVASION_DOWN_2 + 1
+	jr c, .check_mist
+	cp EFFECT_ATTACK_DOWN_HIT
+	jr c, .dont_check_mist
+	cp EFFECT_EVASION_DOWN_HIT + 1
+	jr c, .check_mist
+.dont_check_mist
+	xor a
+	ret
+
+.check_mist
+	ld a, BATTLE_VARS_SUBSTATUS4_OPP
+	call GetBattleVar
+	bit SUBSTATUS_MIST, a
+	ret
+
+BattleCommand_StatUpMessageExt:
+	ld a, [wFailedMessage]
+	and a
+	ret nz
+	ld a, [wLoweredStat]
+	and $f
+	ld b, a
+	inc b
+	call GetStatName
+	ld hl, .stat
+	jp BattleTextbox
+
+.stat
+	text_far Text_BattleEffectActivate
+	text_asm
+	ld hl, .BattleStatWentUpText
+	ld a, [wLoweredStat]
+	and $f0
+	ret z
+	ld hl, .BattleStatWentWayUpText
+	ret
+
+.BattleStatWentWayUpText:
+	text_far _BattleStatWentWayUpText
+	text_end
+
+.BattleStatWentUpText:
+	text_far _BattleStatWentUpText
+	text_end
+
+BattleCommand_StatDownMessageExt:
+	ld a, [wFailedMessage]
+	and a
+	ret nz
+	ld a, [wLoweredStat]
+	and $f
+	ld b, a
+	inc b
+	call GetStatName
+	ld hl, .stat
+	jp BattleTextbox
+
+.stat
+	text_far Text_BattleFoeEffectActivate
+	text_asm
+	ld hl, .BattleStatFellText
+	ld a, [wLoweredStat]
+	and $f0
+	ret z
+	ld hl, .BattleStatSharplyFellText
+	ret
+
+.BattleStatSharplyFellText:
+	text_far _BattleStatSharplyFellText
+	text_end
+
+.BattleStatFellText:
+	text_far _BattleStatFellText
+	text_end
+
+TryLowerStat:
+; Lower stat c from stat struct hl (buffer de).
+	push bc
+	sla c
+	ld b, 0
+	add hl, bc
+	ld a, c
+	add e
+	ld e, a
+	jr nc, .no_carry
+	inc d
+.no_carry
+	pop bc
+
+; The lowest possible stat is 1.
+	ld a, [hld]
+	sub 1
+	jr nz, .not_min
+	ld a, [hl]
+	and a
+	ret z
+
+.not_min
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .Player
+
+	farcall BattleCommand_SwitchTurn
+	farcall CalcPlayerStats
+	farcall BattleCommand_SwitchTurn
+	jr .end
+
+.Player:
+	farcall BattleCommand_SwitchTurn
+	farcall CalcEnemyStats
+	farcall BattleCommand_SwitchTurn
+.end
+	ld a, 1
+	and a
+	ret
+
+BattleCommand_StatUpFailTextExt:
+	ld a, [wFailedMessage]
+	and a
+	ret z
+	push af
+	ld c, 40
+	call DelayFrames
+	pop af
+	dec a
+	jr nz, .cant_raise
+	farcall TryPrintButItFailed
+	ret
+
+.cant_raise
+	ld a, [wLoweredStat]
+	and $f
+	ld b, a
+	inc b
+	call GetStatName
+	ld hl, WontRiseAnymoreText
+	jp StdBattleTextbox
+
+BattleCommand_StatDownFailTextExt:
+	ld a, [wFailedMessage]
+	and a
+	ret z
+	push af
+	ld c, 40
+	call DelayFrames
+	pop af
+	dec a
+	jr nz, .not_failed
+	farcall TryPrintButItFailed
+	ret
+
+.not_failed
+	dec a
+	ld hl, ProtectedByMistText
+	jp z, StdBattleTextbox
+	ld a, [wLoweredStat]
+	and $f
+	ld b, a
+	inc b
+	call GetStatName
+	ld hl, WontDropAnymoreText
+	jp StdBattleTextbox
+
+GetStatName:
+	ld hl, StatNames
+	ld c, '@'
+.CheckName:
+	dec b
+	jr z, .Copy
+.GetName:
+	ld a, [hli]
+	cp c
+	jr z, .CheckName
+	jr .GetName
+
+.Copy:
+	ld de, wStringBuffer2
+	ld bc, STRING_BUFFER_LENGTH
+	jp CopyBytes
+
+INCLUDE "data/battle/stat_names.asm"
+
+LowerStatFromParam:
+	ld a, [wBattleCommandParam]
+	and STAT_PARAM_MASK
+	; fallthrough
+
+LowerStat:
+	ld [wLoweredStat], a
+
+	ld hl, wPlayerStatLevels
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_target
+	ld hl, wEnemyStatLevels
+
+.got_target
+	ld a, [wLoweredStat]
+	and $f
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld b, [hl]
+	dec b
+	jr z, .cant_lower_anymore
+
+	ld a, [wLoweredStat]
+	and $f0
+	jr z, .got_num_stages
+	dec b
+	jr nz, .got_num_stages
+	inc b
+
+.got_num_stages
+	ld [hl], b
+	ld a, c
+	cp ACCURACY
+	jr nc, .accuracy_evasion
+
+	push hl
+	ld hl, wBattleMonStats + 1
+	ld de, wPlayerStats
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_target_2
+	ld hl, wEnemyMonStats + 1
+	ld de, wEnemyStats
+
+.got_target_2
+	call TryLowerStat
+	pop hl
+	jr z, .failed
+
+.accuracy_evasion
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .player
+
+	farcall CalcEnemyStats
+	jr .finish
+
+.player
+	farcall CalcPlayerStats
+
+.finish
+	xor a
+	ld [wFailedMessage], a
+	ret
+
+.failed
+	inc [hl]
+
+.cant_lower_anymore
+	ld a, 2
+	ld [wFailedMessage], a
+	ret
+
+BattleCommand_SecondaryEffectCommandExt:
+	ld a, [wBattleCommandParam2]
+	and a
+	jr nz, .got_effect
+	call BattleCommand_SecondaryEffectExt
+	ld a, [wBattleCommandFlags]
+	bit BATTLE_CMD_FLAG_INVALID, a
+	ret nz
+	bit BATTLE_CMD_FLAG_SECONDARY_STAT, a
+	jr nz, .stat
+	ld a, [wBattleCommandParam2]
+
+.got_effect
+	call BattleAbility_SecondaryPrecheckExt
+	ret c
+	cp SECONDARY_POISON
+	jr z, .poison
+	cp SECONDARY_BURN
+	jr z, .burn
+	cp SECONDARY_FREEZE
+	jr z, .freeze
+	cp SECONDARY_PARALYZE
+	jr z, .paralyze
+	cp SECONDARY_FLINCH
+	jr z, .flinch
+	cp SECONDARY_CONFUSE
+	jr z, .confuse
+	cp SECONDARY_ALL_STATS_UP
+	jr z, .all_stats_up
+	cp SECONDARY_TOXIC
+	jr z, .toxic
+	ret
+
+.poison
+	ld a, STATUS_POISON
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_PoisonTarget
+	ret
+
+.burn
+	ld a, STATUS_BURN
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_BurnTarget
+	ret
+
+.freeze
+	ld a, STATUS_FREEZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_FreezeTarget
+	ret
+
+.paralyze
+	ld a, STATUS_PARALYZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_ParalyzeTarget
+	ret
+
+.flinch
+	farcall BattleCommand_FlinchTarget
+	ret
+
+.confuse
+	farcall BattleCommand_ConfuseTarget
+	ret
+
+.all_stats_up
+	call BattleCommand_AllStatsUpExt
+	ret
+
+.toxic
+	ld a, STATUS_TOXIC
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	call BattleCommand_ToxicTargetExt
+	ret
+
+.stat
+	call BattleCommand_ApplyStatParamExt
+	ld a, [wBattleCommandFlags]
+	bit BATTLE_CMD_FLAG_STAT_DOWN, a
+	jr nz, .stat_down_message
+	call BattleCommand_StatUpMessageExt
+	ret
+
+.stat_down_message
+	call BattleCommand_StatDownMessageExt
+	ret
+
+BattleCommand_ToxicTargetExt:
+	farcall CheckSubstituteOpp
+	ret nz
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	and a
+	ret nz
+	farcall GetOpponentItem
+	ld a, b
+	cp HELD_PREVENT_POISON
+	ret z
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	farcall SafeCheckSafeguard
+	ret nz
+	ld a, BATTLE_VARS_SUBSTATUS5_OPP
+	call GetBattleVarAddr
+	set SUBSTATUS_TOXIC, [hl]
+	ld de, wEnemyToxicCount
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_toxic_count
+	ld de, wPlayerToxicCount
+
+.got_toxic_count
+	xor a
+	ld [de], a
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVarAddr
+	set PSN, [hl]
+	call UpdateOpponentInParty
+	ld de, ANIM_PSN
+	farcall PlayOpponentBattleAnim
+	call RefreshBattleHuds
+	ld hl, BadlyPoisonedText
+	call StdBattleTextbox
+	farcall UseHeldStatusHealingItem
+	ret
+
+BattleCommand_AllStatsUpExt:
+; Attack
+	call .ResetMiss
+	ld b, ATTACK
+	call BattleCommand_StatUpExt
+	call BattleCommand_StatUpMessageExt
+
+; Defense
+	call .ResetMiss
+	ld b, DEFENSE
+	call BattleCommand_StatUpExt
+	call BattleCommand_StatUpMessageExt
+
+; Speed
+	call .ResetMiss
+	ld b, SPEED
+	call BattleCommand_StatUpExt
+	call BattleCommand_StatUpMessageExt
+
+; Special Attack
+	call .ResetMiss
+	ld b, SP_ATTACK
+	call BattleCommand_StatUpExt
+	call BattleCommand_StatUpMessageExt
+
+; Special Defense
+	call .ResetMiss
+	ld b, SP_DEFENSE
+	call BattleCommand_StatUpExt
+	call BattleCommand_StatUpMessageExt
+	ret
+
+.ResetMiss:
+	xor a
+	ld [wAttackMissed], a
+	ret
+
+BattleCommand_TriStatusChanceExt:
+	farcall BattleCommand_EffectChance
+.loop
+	; 1/3 chance of each status
+	call BattleRandom
+	swap a
+	and %11
+	jr z, .loop
+	dec a
+	ld hl, .StatusCommands
+	rst JumpTable
+	ret
+
+.StatusCommands:
+	dw .paralyze
+	dw .freeze
+	dw .burn
+
+.paralyze
+	ld a, STATUS_PARALYZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_ParalyzeTarget
+	ret
+
+.freeze
+	ld a, STATUS_FREEZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_FreezeTarget
+	ret
+
+.burn
+	ld a, STATUS_BURN
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_BurnTarget
+	ret
+
+BattleCommand_SecondaryStatusPrecheckExt:
+	ld [wBattleCommandParam], a
+	ld a, STATUS_CONTEXT_SECONDARY
+	ld [wBattleCommandScratch], a
+	call BattleCommand_StatusPrecheckExt
+	ret
+
+BattleCommand_StatusPrecheckExt:
+	ld a, [wBattleCommandScratch]
+	cp STATUS_CONTEXT_SECONDARY
+	jr z, .got_status
+	call BattleCommand_StatusFromEffectExt
+
+.got_status
+	xor a ; STATUS_BLOCK_GENERIC
+	ld [wBattleCommandParam2], a
+	ld a, [wBattleCommandScratch]
+	cp STATUS_CONTEXT_SECONDARY
+	jr z, .check_regular_immunity
+	call BattleCommand_CheckPowderGrassImmunityExt
+	jr c, .blocked
+
+.check_regular_immunity
+	call BattleAbility_StatusPrecheckExt
+	jr c, .blocked
+	call BattleCommand_CheckStatusImmunityExt
+	jr c, .blocked
+	and a
+	ret
+
+.blocked
+	ld a, [wBattleCommandScratch]
+	cp STATUS_CONTEXT_SECONDARY
+	jr z, .secondary_blocked
+	farcall AnimateFailedMove
+	farcall BattleCommand_PrintStatusBlockText
+	farcall EndMoveEffect
+
+.secondary_blocked
+	scf
+	ret
+
+BattleCommand_StatusTargetExt:
+	ld a, [wBattleCommandParam]
+	cp STATUS_FROM_EFFECT
+	jr nz, .got_status
+	call BattleCommand_StatusFromEffectExt
+
+.got_status
+	ld a, [wBattleCommandParam]
+	cp STATUS_SLEEP
+	jr z, .sleep
+	cp STATUS_POISON
+	jr z, .poison
+	cp STATUS_TOXIC
+	jr z, .poison
+	cp STATUS_PARALYZE
+	jr z, .paralyze
+	cp STATUS_BURN
+	jr z, .burn
+	ret
+
+.sleep
+	farcall BattleCommand_SleepTarget
+	ret
+
+.poison
+	farcall BattleCommand_Poison
+	ret
+
+.paralyze
+	farcall BattleCommand_Paralyze
+	ret
+
+.burn
+	farcall BattleCommand_Burn
+	ret
+
+BattleCommand_StatusFromEffectExt:
+	ld a, BATTLE_VARS_MOVE_EFFECT
+	call GetBattleVar
+	cp EFFECT_SLEEP
+	jr z, .sleep
+	cp EFFECT_POISON
+	jr z, .poison
+	cp EFFECT_TOXIC
+	jr z, .toxic
+	cp EFFECT_PARALYZE
+	jr z, .paralyze
+	cp EFFECT_BURN
+	jr z, .burn
+	ld a, STATUS_FROM_EFFECT
+	jr .store
+
+.sleep
+	ld a, STATUS_SLEEP
+	jr .store
+
+.poison
+	ld a, STATUS_POISON
+	jr .store
+
+.toxic
+	ld a, STATUS_TOXIC
+	jr .store
+
+.paralyze
+	ld a, STATUS_PARALYZE
+	jr .store
+
+.burn
+	ld a, STATUS_BURN
+
+.store
+	ld [wBattleCommandParam], a
+	ret
+
+BattleCommand_CheckStatusImmunityExt:
+	ld a, [wBattleCommandScratch]
+	cp STATUS_CONTEXT_SECONDARY
+	jr nz, .check_status
+	ld a, [wTypeModifier]
+	and EFFECTIVENESS_MASK
+	jr z, .blocked
+
+.check_status
+	ld a, [wBattleCommandParam]
+	cp STATUS_POISON
+	jr z, .poison
+	cp STATUS_TOXIC
+	jr z, .poison
+	cp STATUS_PARALYZE
+	jr z, .paralyze
+	cp STATUS_BURN
+	jr z, .burn
+	cp STATUS_FREEZE
+	jr z, .freeze
+	and a
+	ret
+
+.poison
+	ld c, POISON
+	call BattleCommand_TargetHasTypeExt
+	ret c
+	ld c, STEEL
+	jp BattleCommand_TargetHasTypeExt
+
+.paralyze
+	ld c, ELECTRIC
+	call BattleCommand_TargetHasTypeExt
+	ret c
+	ld c, ELECTRIC
+	call BattleCommand_MoveTypeMatchesExt
+	jr nc, .paralyze_normal
+	ld c, GROUND
+	jp BattleCommand_TargetHasTypeExt
+
+.paralyze_normal
+	ld c, NORMAL
+	call BattleCommand_MoveTypeMatchesExt
+	ret nc
+	ld c, GHOST
+	jp BattleCommand_TargetHasTypeExt
+
+.burn
+	ld c, FIRE
+	call BattleCommand_TargetHasTypeExt
+	ret c
+	ld a, [wBattleWeather]
+	cp WEATHER_RAIN
+	jr z, .rain_blocked
+	and a
+	ret
+
+.freeze
+	ld c, FIRE
+	call BattleCommand_TargetHasTypeExt
+	ret c
+	ld c, ICE
+	call BattleCommand_TargetHasTypeExt
+	ret c
+	ld a, [wBattleWeather]
+	cp WEATHER_SUN
+	jr z, .sun_blocked
+	and a
+	ret
+
+.rain_blocked
+	ld a, STATUS_BLOCK_RAIN
+	ld [wBattleCommandParam2], a
+	jr .blocked
+
+.sun_blocked
+	ld a, STATUS_BLOCK_SUN
+	ld [wBattleCommandParam2], a
+	; fallthrough
+
+.blocked
+	scf
+	ret
+
+BattleCommand_MoveTypeMatchesExt:
+	ld a, BATTLE_VARS_MOVE_TYPE
+	call GetBattleVar
+	cp c
+	jr z, .match
+	and a
+	ret
+
+.match
+	scf
+	ret
+
+BattleCommand_TargetHasTypeExt:
+	ld hl, wEnemyMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_target
+	ld hl, wBattleMonType1
+
+.got_target
+	ld a, [hli]
+	cp c
+	jr z, .match
+	ld a, [hl]
+	cp c
+	jr z, .match
+	and a
+	ret
+
+.match
+	scf
+	ret
+
+BattleCommand_CheckPowderGrassImmunityExt:
+	call BattleCommand_IsPowderMoveExt
+	ret nc
+	ld c, GRASS
+	jp BattleCommand_TargetHasTypeExt
+
+BattleCommand_CheckCottonSporeGrassImmunityExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	call BattleCommand_IsPowderMoveExt
+	ret nc
+	ld c, GRASS
+	jp BattleCommand_TargetHasTypeExt
+
+BattleCommand_IsPowderMoveExt:
+	ld b, MOVE_ATTR_POWDER
+	jr BattleCommand_CurrentMoveHasAttributeExt
+
+BattleCommand_CurrentMoveHasAttributeExt:
+	ld a, BATTLE_VARS_MOVE_ANIM
+	call GetBattleVar
+
+BattleCommand_MoveIDHasAttributeExt:
+	and a
+	ret z
+	push bc
+	call GetMoveIndexFromID
+	pop bc
+	ld de, MoveAttributeFlags
+	add hl, de
+	ld a, [hl]
+	and b
+	ret z
+	scf
+	ret
+
+BattleCommand_GetUserAbilityExt:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wPlayerAbility]
+	ret z
+	ld a, [wEnemyAbility]
+	ret
+
+BattleCommand_GetTargetAbilityExt:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wEnemyAbility]
+	ret z
+	ld a, [wPlayerAbility]
+	ret
+
+BattleCommand_UserHasAbilityExt:
+	call BattleCommand_GetUserAbilityExt
+	cp c
+	ret
+
+BattleCommand_TargetHasAbilityExt:
+	call BattleCommand_GetTargetAbilityExt
+	cp c
+	ret
+
+GetSpeciesAbilityExt:
+	and a
+	ret z
+	push de
+	call GetPokemonIndexFromID
+	ld de, SpeciesAbilities
+	add hl, de
+	ld a, [hl]
+	pop de
+	and a
+	ret
+
+BattleCore_RefreshPlayerAbilityExt:
+	ld a, [wBattleMonSpecies]
+	call GetSpeciesAbilityExt
+	ld [wPlayerAbility], a
+	ret
+
+BattleCore_RefreshEnemyAbilityExt:
+	ld a, [wEnemyMonSpecies]
+	call GetSpeciesAbilityExt
+	ld [wEnemyAbility], a
+	ret
+
+BattleCore_RefreshActorAbilityExt:
+	ldh a, [hBattleTurn]
+	and a
+	jp z, BattleCore_RefreshPlayerAbilityExt
+	jp BattleCore_RefreshEnemyAbilityExt
+
+BattleCommand_AbilityHookExt:
+	ld a, [wBattleCommandParam]
+	cp BATTLE_ABILITY_HOOK_CHECK_HIT
+	jr z, BattleAbility_CheckHitExt
+	cp BATTLE_ABILITY_HOOK_DAMAGE_MODIFIER
+	jr z, BattleAbility_DamageModifierExt
+	cp BATTLE_ABILITY_HOOK_AFTER_DAMAGE
+	jr z, BattleAbility_AfterDamageExt
+	and a
+	ret
+
+BattleAbility_CheckHitExt:
+BattleAbility_DamageModifierExt:
+BattleAbility_AfterDamageExt:
+BattleAbility_StatusPrecheckExt:
+BattleAbility_StatDropPrecheckExt:
+BattleAbility_SecondaryPrecheckExt:
+	and a
+	ret
+
+BattleCommand_StatFromEffectExt:
+	xor a
+	ld [wBattleCommandFlags], a
+	ld a, BATTLE_VARS_MOVE_EFFECT
+	call GetBattleVar
+
+	cp EFFECT_ATTACK_UP
+	jr c, .check_down_1
+	cp EFFECT_EVASION_UP + 1
+	jr nc, .check_down_1
+	sub EFFECT_ATTACK_UP
+	jr .store_up
+
+.check_down_1
+	cp EFFECT_ATTACK_DOWN
+	jr c, .check_up_2
+	cp EFFECT_EVASION_DOWN + 1
+	jr nc, .check_up_2
+	sub EFFECT_ATTACK_DOWN
+	jr .store_down
+
+.check_up_2
+	cp EFFECT_ATTACK_UP_2
+	jr c, .check_down_2
+	cp EFFECT_EVASION_UP_2 + 1
+	jr nc, .check_down_2
+	sub EFFECT_ATTACK_UP_2
+	or STAT_PARAM_STAGE_2
+	jr .store_up
+
+.check_down_2
+	cp EFFECT_ATTACK_DOWN_2
+	jr c, .invalid
+	cp EFFECT_EVASION_DOWN_2 + 1
+	jr nc, .invalid
+	sub EFFECT_ATTACK_DOWN_2
+	or STAT_PARAM_STAGE_2
+	; fallthrough
+
+.store_down
+	or STAT_PARAM_TARGET_OPP
+	ld [wBattleCommandParam], a
+	ld a, 1 << BATTLE_CMD_FLAG_STAT_DOWN
+	ld [wBattleCommandFlags], a
+	ret
+
+.store_up
+	ld [wBattleCommandParam], a
+	ret
+
+.invalid
+	ld a, 1 << BATTLE_CMD_FLAG_INVALID
+	ld [wBattleCommandFlags], a
+	ret
+
+BattleCommand_SecondaryEffectExt:
+	xor a
+	ld [wBattleCommandFlags], a
+	ld a, BATTLE_VARS_MOVE_EFFECT
+	call GetBattleVar
+
+	cp EFFECT_POISON_HIT
+	jr z, .poison
+	cp EFFECT_BURN_HIT
+	jr z, .burn
+	cp EFFECT_FREEZE_HIT
+	jr z, .freeze
+	cp EFFECT_BLIZZARD
+	jr z, .freeze
+	cp EFFECT_PARALYZE_HIT
+	jr z, .paralyze
+	cp EFFECT_THUNDER
+	jr z, .paralyze
+	cp EFFECT_FLINCH_HIT
+	jr z, .flinch
+	cp EFFECT_CONFUSE_HIT
+	jr z, .confuse
+	cp EFFECT_ALL_UP_HIT
+	jr z, .all_stats_up
+
+	cp EFFECT_ATTACK_DOWN_HIT
+	jr c, .check_stat_up_hit
+	cp EFFECT_EVASION_DOWN_HIT + 1
+	jr nc, .check_stat_up_hit
+	sub EFFECT_ATTACK_DOWN_HIT
+	or STAT_PARAM_TARGET_OPP
+	ld [wBattleCommandParam], a
+	ld a, (1 << BATTLE_CMD_FLAG_SECONDARY_STAT) | (1 << BATTLE_CMD_FLAG_STAT_DOWN)
+	ld [wBattleCommandFlags], a
+	ret
+
+.check_stat_up_hit
+	cp EFFECT_DEFENSE_UP_HIT
+	jr z, .defense_up
+	cp EFFECT_ATTACK_UP_HIT
+	jr z, .attack_up
+
+.invalid
+	ld a, 1 << BATTLE_CMD_FLAG_INVALID
+	ld [wBattleCommandFlags], a
+	ret
+
+.poison
+	ld bc, POISON_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .poison_fang
+	ld a, SECONDARY_POISON
+	jr .store_secondary
+
+.poison_fang
+	ld a, SECONDARY_TOXIC
+	jr .store_secondary
+
+.burn
+	ld a, SECONDARY_BURN
+	jr .store_secondary
+
+.freeze
+	ld a, SECONDARY_FREEZE
+	jr .store_secondary
+
+.paralyze
+	ld a, SECONDARY_PARALYZE
+	jr .store_secondary
+
+.flinch
+	ld a, SECONDARY_FLINCH
+	jr .store_secondary
+
+.confuse
+	ld a, SECONDARY_CONFUSE
+	jr .store_secondary
+
+.all_stats_up
+	ld a, SECONDARY_ALL_STATS_UP
+	jr .store_secondary
+
+.defense_up
+	ld a, DEFENSE
+	jr .store_stat_up
+
+.attack_up
+	ld a, ATTACK
+	; fallthrough
+
+.store_stat_up
+	ld [wBattleCommandParam], a
+	ld a, 1 << BATTLE_CMD_FLAG_SECONDARY_STAT
+	ld [wBattleCommandFlags], a
+	ret
+
+.store_secondary
+	ld [wBattleCommandParam2], a
+	ret
+
+BattleCommand_FocusPunchExt:
+	xor a
+	ld [wBattleCommandAbort], a
+	farcall BattleCommand_CheckObedience
+	ld a, [wBattleCommandAbort]
+	and a
+	ret nz
+	farcall BattleCommand_DoTurn
+	ld a, [wBattleCommandAbort]
+	and a
+	ret nz
+	call .check_lost_focus
+	jr nz, .lost_focus
+	farcall BattleCommand_UsedMoveText
+	ret
+
+.lost_focus
+	ld hl, LostFocusText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
+
+.check_lost_focus
+	ld hl, wFocusPunchFlags
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	bit FOCUS_PUNCH_PLAYER_LOST, [hl]
+	ret
+
+.enemy
+	bit FOCUS_PUNCH_ENEMY_LOST, [hl]
+	ret
+
+BattleCommand_BreakFocusPunchExt:
+	ld hl, wFocusPunchFlags
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .player_took_damage
+	bit FOCUS_PUNCH_ENEMY_FOCUSING, [hl]
+	ret z
+	set FOCUS_PUNCH_ENEMY_LOST, [hl]
+	ret
+
+.player_took_damage
+	bit FOCUS_PUNCH_PLAYER_FOCUSING, [hl]
+	ret z
+	set FOCUS_PUNCH_PLAYER_LOST, [hl]
+	ret
+
+BattleCommand_BattleExtDispatcher:
+	ld a, [wBattleCommandParam]
+	cp BATTLE_EXTCMD_TAUNT
+	jp z, BattleCommand_TauntExt
+	cp BATTLE_EXTCMD_WISH
+	jp z, BattleCommand_WishExt
+	cp BATTLE_EXTCMD_MULTI_STAT_UP
+	jp z, BattleCommand_MultiStatUpExt
+	cp BATTLE_EXTCMD_SELF_STAT_DROP_HIT
+	jp z, BattleCommand_SelfStatDropHitExt
+	cp BATTLE_EXTCMD_CURSE
+	jp z, BattleCommand_CurseExt
+	cp BATTLE_EXTCMD_FANG_HIT
+	jp z, BattleCommand_FangHitExt
+	cp BATTLE_EXTCMD_SUCKER_PUNCH
+	jp z, BattleCommand_SuckerPunchExt
+	cp BATTLE_EXTCMD_HEAVY_SLAM_POWER
+	jp z, BattleCommand_HeavySlamPowerExt
+	cp BATTLE_EXTCMD_INGRAIN
+	jp z, BattleCommand_IngrainExt
+	cp BATTLE_EXTCMD_BRICK_BREAK_ANIM
+	jp z, BattleCommand_BrickBreakAnimExt
+	cp BATTLE_EXTCMD_BRICK_BREAK
+	jp z, BattleCommand_BrickBreakExt
+	cp BATTLE_EXTCMD_HEX_POWER
+	jp z, BattleCommand_HexPowerExt
+	cp BATTLE_EXTCMD_POISON_STEEL_OVERRIDE
+	jp z, BattleCommand_PoisonSteelOverrideExt
+	cp BATTLE_EXTCMD_YAWN
+	jp z, BattleCommand_YawnExt
+	cp BATTLE_EXTCMD_EAT_TARGET_BERRY
+	jp z, BattleCommand_EatTargetBerryExt
+	cp BATTLE_EXTCMD_ICE_BALL_POWER
+	jp z, BattleCommand_IceBallPowerExt
+	ret
+
+BattleCommand_HexPowerExt:
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	ld d, a
+	push de
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVar
+	and a
+	pop de
+	ret z
+	sla d
+	ret nc
+	ld d, $ff
+	ret
+
+BattleCommand_IceBallPowerExt:
+	ld a, BATTLE_VARS_MOVE_POWER
+	call GetBattleVar
+	ld d, a
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	bit SUBSTATUS_ICE_BALL_BOOST, [hl]
+	jr z, .done
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
+	sla d
+	ret nc
+	ld d, $ff
+	ret
+
+.done
+	xor a
+	ret
+
+BattleCommand_PoisonSteelOverrideExt:
+	ld hl, .Moves
+	push hl
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	ld b, h
+	ld c, l
+	pop hl
+	ld de, 2
+	jp IsInWordArray
+
+.Moves:
+	dw ACID
+	dw CAUSTIC
+	dw CORROSION
+	dw -1
+
+BattleCommand_BrickBreakAnimExt:
+	ld a, [wAttackMissed]
+	and a
+	jr nz, .failed
+	ld a, [wEffectFailed]
+	and a
+	jr nz, .failed
+
+	ld hl, wEnemyScreens
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_screens
+	ld hl, wPlayerScreens
+
+.got_screens
+	xor a
+	bit SCREENS_LIGHT_SCREEN, [hl]
+	jr nz, .shatter
+	bit SCREENS_REFLECT, [hl]
+	jr z, .got_param
+
+.shatter
+	inc a
+
+.got_param
+	ld [wBattleAnimParam], a
+	farcall AnimateCurrentMoveEitherSide
+	ret
+
+.failed
+	farcall AnimateFailedMove
+	ret
+
+BattleCommand_BrickBreakExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+
+	ld hl, wEnemyScreens
+	ld de, wEnemyLightScreenCount
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_screens
+	ld hl, wPlayerScreens
+	ld de, wPlayerLightScreenCount
+
+.got_screens
+	xor a
+	ld [wBattleCommandScratch], a
+	bit SCREENS_LIGHT_SCREEN, [hl]
+	jr z, .reflect
+	res SCREENS_LIGHT_SCREEN, [hl]
+	ld [de], a
+	inc a
+	ld [wBattleCommandScratch], a
+
+.reflect
+	bit SCREENS_REFLECT, [hl]
+	jr z, .got_count
+	res SCREENS_REFLECT, [hl]
+	inc de
+	xor a
+	ld [de], a
+	ld a, [wBattleCommandScratch]
+	inc a
+	ld [wBattleCommandScratch], a
+
+.got_count
+	ld a, [wBattleCommandScratch]
+	and a
+	ret z
+
+	ld a, EFFECTIVE
+	ld [wTypeModifier], a
+	farcall BattleCommand_DamageStats
+	farcall BattleCommand_DamageCalc
+	farcall BattleCommand_Stab
+
+	ld a, [wBattleCommandScratch]
+	cp 2
+	ld hl, BarrierDestroyedText
+	jr nz, .got_text
+	ld hl, BarriersDestroyedText
+
+.got_text
+	jp StdBattleTextbox
+
+BattleCommand_IngrainExt:
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVarAddr
+	bit SUBSTATUS_INGRAIN, [hl]
+	jr nz, .failed
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	set SUBSTATUS_INGRAIN, [hl]
+	ld hl, PlantedRootsText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_YawnExt:
+	ld a, BATTLE_VARS_STATUS_OPP
+	call GetBattleVar
+	and a
+	jr nz, .already_statused
+
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVarAddr
+	bit SUBSTATUS_DROWSY, [hl]
+	jr nz, .failed
+	bit SUBSTATUS_DROWSY_READY, [hl]
+	jr nz, .failed
+
+	farcall CheckSubstituteOpp
+	jr nz, .has_substitute
+
+	farcall GetOpponentItem
+	ld a, b
+	cp HELD_PREVENT_SLEEP
+	jr z, .protected_by_item
+
+	ld a, BATTLE_VARS_SUBSTATUS2_OPP
+	call GetBattleVarAddr
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	set SUBSTATUS_DROWSY, [hl]
+	ld hl, MadeDrowsyText
+	jp StdBattleTextbox
+
+.already_statused
+	farcall PrintAlreadyStatusText
+	farcall EndMoveEffect
+	ret
+
+.has_substitute
+	farcall PrintTargetHasSubstitute
+	farcall EndMoveEffect
+	ret
+
+.protected_by_item
+	ld a, [hl]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	farcall AnimateFailedMove
+	ld hl, ProtectedByText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_EatTargetBerryExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+
+	farcall CheckSubstituteOpp
+	ret nz
+
+	farcall GetOpponentItem
+	ld a, [hl]
+	and a
+	ret z
+	ld [wBattleCommandParam2], a
+	ld a, b
+	ld [wBattleCommandFlags], a
+	ld a, c
+	ld [wBattleCommandScratch], a
+
+	call BattleCommand_EatTargetBerry_CheckPocket
+	ret nz
+
+	call BattleCommand_EatTargetBerry_ClearTargetItem
+	ld a, [wBattleCommandParam2]
+	ld [wNamedObjectIndex], a
+	call GetItemName
+	ld hl, AteBerryText
+	call StdBattleTextbox
+	call BattleCommand_EatTargetBerry_RecoveryAnim
+
+	ld a, [wBattleCommandFlags]
+	cp HELD_BERRY
+	jp z, BattleCommand_EatTargetBerry_RestoreHP
+	cp HELD_RESTORE_PP
+	jp z, BattleCommand_EatTargetBerry_RestorePP
+	cp HELD_HEAL_POISON
+	jr z, .heal_poison
+	cp HELD_HEAL_FREEZE
+	jr z, .heal_freeze
+	cp HELD_HEAL_BURN
+	jr z, .heal_burn
+	cp HELD_HEAL_SLEEP
+	jr z, .heal_sleep
+	cp HELD_HEAL_PARALYZE
+	jr z, .heal_paralyze
+	cp HELD_HEAL_STATUS
+	jp z, BattleCommand_EatTargetBerry_HealAllStatus
+	cp HELD_HEAL_CONFUSION
+	jp z, BattleCommand_EatTargetBerry_HealConfusion
+	ret
+
+.heal_poison
+	ld b, 1 << PSN
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_freeze
+	ld b, 1 << FRZ
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_burn
+	ld b, 1 << BRN
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_sleep
+	ld b, SLP_MASK
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+.heal_paralyze
+	ld b, 1 << PAR
+	jp BattleCommand_EatTargetBerry_HealMajorStatus
+
+BattleCommand_EatTargetBerry_CheckPocket:
+	ld a, [wCurItem]
+	push af
+	ld a, [wBattleCommandParam2]
+	ld [wCurItem], a
+	farcall CheckItemPocket
+	pop af
+	ld [wCurItem], a
+	ld a, [wItemAttributeValue]
+	cp BERRIES
+	ret
+
+BattleCommand_EatTargetBerry_ClearTargetItem:
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .clear_enemy
+	xor a
+	ld [wBattleMonItem], a
+	ld a, MON_ITEM
+	call BattlePartyAttr
+	xor a
+	ld [hl], a
+	ret
+
+.clear_enemy
+	xor a
+	ld [wEnemyMonItem], a
+	ld a, [wBattleMode]
+	dec a
+	ret z
+	ld a, MON_ITEM
+	call OTPartyAttr
+	xor a
+	ld [hl], a
+	ret
+
+BattleCommand_EatTargetBerry_RecoveryAnim:
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(RECOVER)
+		ld a, HIGH(RECOVER)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(RECOVER)
+	ld [wFXAnimID], a
+	predef PlayBattleAnim
+	ret
+
+BattleCommand_EatTargetBerry_RestoreHP:
+	call BattleCore_UserHPIsFull
+	ret z
+	ld b, 0
+	ld a, [wBattleCommandScratch]
+	ld c, a
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_RestorePP:
+	call BattleCommand_EatTargetBerry_GetCurrentPPMax
+	call BattleCommand_EatTargetBerry_GetActivePPAddr
+	call BattleCommand_EatTargetBerry_Restore5PPAtHL
+	call BattleCommand_EatTargetBerry_GetBackingPPAddr
+	jp BattleCommand_EatTargetBerry_Restore5PPAtHL
+
+BattleCommand_EatTargetBerry_GetCurrentPPMax:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wCurPartyMon]
+	push af
+	ld a, [wMenuCursorY]
+	push af
+	ld a, [wMonType]
+	push af
+	ld a, [wCurBattleMon]
+	ld [wCurPartyMon], a
+	ld a, [wCurMoveNum]
+	ld [wMenuCursorY], a
+	xor a ; PARTYMON
+	ld [wMonType], a
+	farcall GetMaxPPOfMove
+	pop af
+	ld [wMonType], a
+	pop af
+	ld [wMenuCursorY], a
+	pop af
+	ld [wCurPartyMon], a
+	ret
+
+.enemy
+	ld a, [wEnemyMoveStruct + MOVE_PP]
+	ld [wTempPP], a
+	ret
+
+BattleCommand_EatTargetBerry_GetActivePPAddr:
+	ld hl, wBattleMonPP
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wCurMoveNum]
+	jr z, .got_slot
+	ld hl, wEnemyMonPP
+	ld a, [wCurEnemyMoveNum]
+
+.got_slot
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ret
+
+BattleCommand_EatTargetBerry_GetBackingPPAddr:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld hl, wPartyMon1PP
+	ld a, [wCurBattleMon]
+	call GetPartyLocation
+	ld a, [wCurMoveNum]
+	jr .got_slot
+
+.enemy
+	ld a, [wBattleMode]
+	dec a
+	jr z, .wild
+	ld hl, wOTPartyMon1PP
+	ld a, [wCurOTMon]
+	call GetPartyLocation
+	ld a, [wCurEnemyMoveNum]
+	jr .got_slot
+
+.wild
+	ld hl, wWildMonPP
+	ld a, [wCurEnemyMoveNum]
+
+.got_slot
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ret
+
+BattleCommand_EatTargetBerry_Restore5PPAtHL:
+	ld a, [hl]
+	and PP_MASK
+	ld b, a
+	ld a, [wTempPP]
+	cp b
+	ret z
+	ret c
+	ld a, b
+	add 5
+	ld b, a
+	ld a, [wTempPP]
+	cp b
+	jr nc, .got_pp
+	ld b, a
+
+.got_pp
+	ld a, [hl]
+	and PP_UP_MASK
+	or b
+	ld [hl], a
+	ret
+
+BattleCommand_EatTargetBerry_HealMajorStatus:
+	call BattleCommand_EatTargetBerry_ClearMajorStatus
+	ret nc
+	call UpdateUserInParty
+	call BattleCommand_EatTargetBerry_RecalcStats
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_HealAllStatus:
+	ld d, 0
+	ld b, ALL_STATUS
+	call BattleCommand_EatTargetBerry_ClearMajorStatus
+	jr nc, .check_confusion
+	inc d
+
+.check_confusion
+	call BattleCommand_EatTargetBerry_ClearConfusion
+	jr nc, .done
+	inc d
+
+.done
+	ld a, d
+	and a
+	ret z
+	call UpdateUserInParty
+	call BattleCommand_EatTargetBerry_RecalcStats
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_HealConfusion:
+	call BattleCommand_EatTargetBerry_ClearConfusion
+	ret nc
+	jp RefreshBattleHuds
+
+BattleCommand_EatTargetBerry_ClearMajorStatus:
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	ld a, [hl]
+	and b
+	ret z
+	xor a
+	ld [hl], a
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVarAddr
+	res SUBSTATUS_TOXIC, [hl]
+	ld a, BATTLE_VARS_SUBSTATUS1
+	call GetBattleVarAddr
+	res SUBSTATUS_NIGHTMARE, [hl]
+	scf
+	ret
+
+BattleCommand_EatTargetBerry_ClearConfusion:
+	ld a, BATTLE_VARS_SUBSTATUS3
+	call GetBattleVarAddr
+	bit SUBSTATUS_CONFUSED, [hl]
+	jr nz, .clear
+	and a
+	ret
+
+.clear
+	res SUBSTATUS_CONFUSED, [hl]
+	scf
+	ret
+
+BattleCommand_EatTargetBerry_RecalcStats:
+	ld hl, CalcPlayerStats
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_pointer
+	ld hl, CalcEnemyStats
+
+.got_pointer
+	ld a, BANK(CalcPlayerStats) ; aka BANK(CalcEnemyStats)
+	rst FarCall
+	ret
+
+BattleCommand_SuckerPunchExt:
+	ld a, [wEnemyGoesFirst]
+	ld b, a
+	ldh a, [hBattleTurn]
+	xor b
+	jr nz, .failed
+	ld hl, wEnemyMoveStruct + MOVE_POWER
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_power
+	ld hl, wPlayerMoveStruct + MOVE_POWER
+
+.got_power
+	ld a, [hl]
+	and a
+	ret nz
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_HeavySlamPowerExt:
+	push bc
+	push de
+	call .GetUserWeight
+	ld de, wStringBuffer1
+	call .StoreHL
+	call .GetTargetWeight
+	ld de, wStringBuffer3
+	call .StoreHL
+
+	lb bc, 5, 120
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 4, 100
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 3, 80
+	call .TryWeightRatio
+	jr c, .done
+	lb bc, 2, 60
+	call .TryWeightRatio
+	jr c, .done
+
+	ld a, 40
+	ld [wTextDecimalByte], a
+
+.done
+	pop de
+	pop bc
+	ld a, [wTextDecimalByte]
+	ld d, a
+	ret
+
+.GetUserWeight:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wBattleMonSpecies]
+	jr z, .got_species
+	ld a, [wEnemyMonSpecies]
+	jr .got_species
+
+.GetTargetWeight:
+	ldh a, [hBattleTurn]
+	and a
+	ld a, [wEnemyMonSpecies]
+	jr z, .got_species
+	ld a, [wBattleMonSpecies]
+
+.got_species
+	call .GetSpeciesWeight
+	ret
+
+.GetSpeciesWeight:
+	call GetPokemonIndexFromID
+	dec hl
+	ld d, h
+	ld e, l
+	add hl, hl
+	add hl, de
+	ld de, PokedexDataPointerTable
+	add hl, de
+	ld a, BANK(PokedexDataPointerTable)
+	call GetFarByte
+	push af
+	inc hl
+	ld a, BANK(PokedexDataPointerTable)
+	call GetFarWord
+	pop de
+
+.skip_species_name
+	ld a, d
+	call GetFarByte
+	inc hl
+	cp '@'
+	jr nz, .skip_species_name
+	ld a, d
+	inc hl
+	inc hl
+	call GetFarWord
+	ret
+
+.StoreHL:
+	ld a, h
+	ld [de], a
+	inc de
+	ld a, l
+	ld [de], a
+	ret
+
+.TryWeightRatio:
+	push bc
+	call .BuildThreshold
+	call .UserAtLeastThreshold
+	pop bc
+	ret nc
+	ld a, c
+	ld [wTextDecimalByte], a
+	ld d, a
+	scf
+	ret
+
+.BuildThreshold:
+	ld a, [wStringBuffer3]
+	ld d, a
+	ld a, [wStringBuffer3 + 1]
+	ld e, a
+	ld h, d
+	ld l, e
+	dec b
+	ret z
+
+.multiply_loop
+	add hl, de
+	jr nc, .no_overflow
+	ld hl, $ffff
+	ret
+
+.no_overflow
+	dec b
+	jr nz, .multiply_loop
+	ret
+
+.UserAtLeastThreshold:
+	ld a, [wStringBuffer1]
+	cp h
+	jr c, .less
+	jr nz, .greater
+	ld a, [wStringBuffer1 + 1]
+	cp l
+	jr c, .less
+
+.greater
+	scf
+	ret
+
+.less
+	and a
+	ret
+
+BattleCommand_FangHitExt:
+	farcall BattleCommand_EffectChance
+	ld a, [wEffectFailed]
+	and a
+	jr nz, .status
+	farcall BattleCommand_FlinchTarget
+
+.status
+	farcall BattleCommand_EffectChance
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	ld bc, THUNDER_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .paralyze
+	ld bc, ICE_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .freeze
+	ld bc, FIRE_FANG
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .burn
+	ret
+
+.paralyze
+	ld a, STATUS_PARALYZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_ParalyzeTarget
+	ret
+
+.freeze
+	ld a, STATUS_FREEZE
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_FreezeTarget
+	ret
+
+.burn
+	ld a, STATUS_BURN
+	call BattleCommand_SecondaryStatusPrecheckExt
+	ret c
+	farcall BattleCommand_BurnTarget
+	ret
+
+BattleCommand_MultiStatUpExt:
+	ld bc, BULK_UP
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .bulk_up
+	ld bc, CALM_MIND
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .calm_mind
+	ld bc, DRAGON_DANCE
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .dragon_dance
+	ret
+
+.bulk_up
+	lb bc, ATTACK, DEFENSE
+	jr BattleCommand_DoubleStatUpExt
+
+.calm_mind
+	lb bc, SP_ATTACK, SP_DEFENSE
+	jr BattleCommand_DoubleStatUpExt
+
+.dragon_dance
+	lb bc, ATTACK, SPEED
+	; fallthrough
+
+BattleCommand_DoubleStatUpExt:
+	push bc
+	ld a, b
+	call BattleCommand_ActorStatCanRiseExt
+	pop bc
+	jr c, .can_raise
+	push bc
+	ld a, c
+	call BattleCommand_ActorStatCanRiseExt
+	pop bc
+	jr c, .can_raise
+	farcall AnimateFailedMove
+	ld hl, StatsWontRiseAnymoreText
+	jp StdBattleTextbox
+
+.can_raise
+	push bc
+	farcall AnimateCurrentMove
+	pop bc
+	push bc
+	ld a, b
+	call BattleCommand_TryUserStatUpExt
+	pop bc
+	ld a, c
+	jp BattleCommand_TryUserStatUpExt
+
+BattleCommand_SelfStatDropHitExt:
+	ld a, [wAttackMissed]
+	and a
+	ret nz
+	ld a, [wEffectFailed]
+	and a
+	ret nz
+	ld bc, SUPERPOWER
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .superpower
+	ld bc, OVERHEAT
+	call BattleCommand_CurrentMoveIsExt
+	jr z, .overheat
+	ret
+
+.superpower
+	ld a, ATTACK
+	call BattleCommand_ActorStatCanFallExt
+	jr c, .superpower_anim
+	ld a, DEFENSE
+	call BattleCommand_ActorStatCanFallExt
+	jr nc, .superpower_apply
+
+.superpower_anim
+	xor a
+	call BattleCommand_PlayUserStatDownAnimExt
+
+.superpower_apply
+	ld a, ATTACK
+	call BattleCommand_TryUserStatDownExt
+	ld a, DEFENSE
+	call BattleCommand_TryUserStatDownExt
+	jp BattleCommand_ResetStatFailureExt
+
+.overheat
+	ld a, SP_ATTACK
+	call BattleCommand_ActorStatCanFallExt
+	jr nc, .overheat_apply
+	ld a, STAT_PARAM_STAGE_2
+	call BattleCommand_PlayUserStatDownAnimExt
+
+.overheat_apply
+	ld a, STAT_PARAM_STAGE_2 | SP_ATTACK
+	call BattleCommand_TryUserStatDownExt
+	jp BattleCommand_ResetStatFailureExt
+
+BattleCommand_CurseExt:
+	call BattleCommand_UserIsGhostExt
+	jr c, .ghost
+
+; Preserve Crystal behavior: non-Ghost Curse only checks Attack/Defense.
+	ld a, ATTACK
+	call BattleCommand_ActorStatCanRiseExt
+	jr c, .raise
+	ld a, DEFENSE
+	call BattleCommand_ActorStatCanRiseExt
+	jr c, .raise
+
+	ld b, ABILITY + 1
+	call GetStatName
+	farcall AnimateFailedMove
+	ld hl, WontRiseAnymoreText
+	jp StdBattleTextbox
+
+.raise
+	ld a, $1
+	ld [wBattleAnimParam], a
+	farcall AnimateCurrentMove
+	ld a, SPEED
+	call BattleCommand_TryUserStatDownExt
+	ld a, ATTACK
+	call BattleCommand_TryUserStatUpExt
+	ld a, DEFENSE
+	jp BattleCommand_TryUserStatUpExt
+
+.ghost
+	farcall CheckHiddenOpponent
+	jr nz, .failed
+
+	farcall CheckSubstituteOpp
+	jr nz, .failed
+
+	ld a, BATTLE_VARS_SUBSTATUS1_OPP
+	call GetBattleVarAddr
+	bit SUBSTATUS_CURSE, [hl]
+	jr nz, .failed
+
+	set SUBSTATUS_CURSE, [hl]
+	farcall AnimateCurrentMove
+	farcall GetHalfMaxHP
+	farcall SubtractHPFromUser
+	call UpdateUserInParty
+	ld hl, PutACurseText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	ret
+
+BattleCommand_CurrentMoveIsExt:
+	push bc
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	pop bc
+	ld a, h
+	cp b
+	ret nz
+	ld a, l
+	cp c
+	ret
+
+BattleCommand_GetActorStatLevelsExt:
+	ld hl, wPlayerStatLevels
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyStatLevels
+	ret
+
+BattleCommand_ActorStatCanRiseExt:
+	push af
+	call BattleCommand_GetActorStatLevelsExt
+	pop af
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	cp MAX_STAT_LEVEL
+	ret
+
+BattleCommand_ActorStatCanFallExt:
+	push af
+	call BattleCommand_GetActorStatLevelsExt
+	pop af
+	ld c, a
+	ld b, 0
+	add hl, bc
+	ld a, [hl]
+	cp 2
+	ccf
+	ret
+
+BattleCommand_TryUserStatUpExt:
+	push af
+	call BattleCommand_ResetStatFailureExt
+	xor a
+	ld [wBattleCommandFlags], a
+	pop af
+	ld [wBattleCommandParam], a
+	call BattleCommand_ApplyStatParamExt
+	call BattleCommand_StatUpMessageExt
+	ret
+
+BattleCommand_TryUserStatDownExt:
+	push af
+	call BattleCommand_ResetStatFailureExt
+	ld a, 1 << BATTLE_CMD_FLAG_STAT_DOWN
+	ld [wBattleCommandFlags], a
+	pop af
+	ld [wBattleCommandParam], a
+	call BattleCommand_ApplyStatParamExt
+	farcall BattleCommand_SwitchTurn
+	call BattleCommand_StatDownMessageExt
+	farcall BattleCommand_SwitchTurn
+	ret
+
+BattleCommand_PlayUserStatDownAnimExt:
+	ld [wBattleAnimParam], a
+	xor a
+	ld [wBattleAfterAnim], a
+	call BattleCore_SwitchTurn
+	ld a, LOW(ANIM_STAT_DOWN)
+	ld [wFXAnimID], a
+	ld a, HIGH(ANIM_STAT_DOWN)
+	ld [wFXAnimID + 1], a
+	predef PlayBattleAnim
+	jp BattleCore_SwitchTurn
+
+BattleCommand_ResetStatFailureExt:
+	xor a
+	ld [wAttackMissed], a
+	ld [wFailedMessage], a
+	ret
+
+BattleCommand_UserIsGhostExt:
+	ld hl, wBattleMonType1
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .check_type_1
+	ld hl, wEnemyMonType1
+
+.check_type_1
+	ld a, [hli]
+	cp GHOST
+	jr z, .is_ghost
+	ld a, [hl]
+	cp GHOST
+	jr z, .is_ghost
+	and a
+	ret
+
+.is_ghost
+	scf
+	ret
+
+BattleCommand_TauntExt:
+	call BattleCore_GetOpponentTauntCount
+	ld a, [hl]
+	and a
+	jr nz, .failed
+	push hl
+	farcall AnimateCurrentMove
+	pop hl
+	ld [hl], 4
+	ld hl, WasTauntedText
+	call StdBattleTextbox
+	ret
+
+.failed
+	ld hl, AlreadyTauntedText
+	call StdBattleTextbox
+	farcall EndMoveEffect
+	ret
+
+BattleCommand_WishExt:
+	call BattleCore_GetActorWishCount
+	ld a, [hl]
+	and a
+	jr nz, .failed
+
+	push hl
+	farcall GetHalfMaxHP
+	pop hl
+	ld [hl], 2
+
+	call BattleCore_GetActorWishHP
+	ld a, b
+	ld [hli], a
+	ld [hl], c
+	call BattleCore_StoreActorWishName
+
+	farcall AnimateCurrentMove
+	ld hl, MadeWishText
+	jp StdBattleTextbox
+
+.failed
+	farcall AnimateFailedMove
+	farcall PrintButItFailed
+	farcall EndMoveEffect
+	ret
+
+BattleCoreHookExt:
+	ld a, [wBattleCommandParam]
+	cp BATTLE_CORE_HOOK_BEFORE_ACTION
+	jr z, BattleCore_BeforeActionExt
+	cp BATTLE_CORE_HOOK_AFTER_ACTION
+	jr z, BattleCore_AfterActionExt
+	cp BATTLE_CORE_HOOK_BETWEEN_TURNS
+	jr z, BattleCore_BetweenTurnsExt
+	cp BATTLE_CORE_HOOK_SWITCH_OUT
+	jr z, BattleCore_SwitchOutExt
+	cp BATTLE_CORE_HOOK_SWITCH_IN
+	jr z, BattleCore_SwitchInExt
+	cp BATTLE_CORE_HOOK_CAN_SWITCH
+	jr z, BattleCore_CanSwitchExt
+	cp BATTLE_CORE_HOOK_RUN_CHECK
+	jr z, BattleCore_RunCheckExt
+	and a
+	ret
+
+BattleCore_SwitchOutExt:
+	and a
+	ret
+
+BattleCore_SwitchInExt:
+	call BattleCore_RefreshActorAbilityExt
+	and a
+	ret
+
+BattleCore_CanSwitchExt:
+BattleCore_RunCheckExt:
+	and a
+	ret
+
+BattleCore_BeforeActionExt:
+	call BattleCore_CheckIceBallBoost
+	call BattleCore_CheckTauntBlock
+	ret
+
+BattleCore_AfterActionExt:
+	call BattleCore_GetActorTauntCount
+	ld a, [hl]
+	and a
+	ret z
+	dec [hl]
+	ret nz
+	ld hl, TauntWoreOffText
+	jp StdBattleTextbox
+
+BattleCore_BetweenTurnsExt:
+	ldh a, [hSerialConnectionStatus]
+	cp USING_EXTERNAL_CLOCK
+	jr z, .enemy_first
+	call SetPlayerTurn
+	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
+	call BattleCore_HandleYawn
+	call SetEnemyTurn
+	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
+	jp BattleCore_HandleYawn
+
+.enemy_first
+	call SetEnemyTurn
+	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
+	call BattleCore_HandleYawn
+	call SetPlayerTurn
+	call BattleCore_HandleWish
+	call BattleCore_HandleIngrain
+	; fallthrough
+
+BattleCore_HandleYawn:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	bit SUBSTATUS_DROWSY_READY, [hl]
+	jr nz, .resolve
+	bit SUBSTATUS_DROWSY, [hl]
+	ret z
+	res SUBSTATUS_DROWSY, [hl]
+	set SUBSTATUS_DROWSY_READY, [hl]
+	ret
+
+.resolve
+	res SUBSTATUS_DROWSY_READY, [hl]
+	ld a, BATTLE_VARS_STATUS
+	call GetBattleVarAddr
+	ld a, [hl]
+	and a
+	ret nz
+.roll_sleep
+	push hl
+	call BattleRandom
+	pop hl
+	and %11
+	cp %11
+	jr z, .roll_sleep
+	add 3
+	ld [hl], a
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	call BattleCore_YawnSleepAnim
+	ld hl, UserFellAsleepText
+	call StdBattleTextbox
+	call BattleCore_SwitchTurn
+	farcall UseHeldStatusHealingItem
+	jp BattleCore_SwitchTurn
+
+BattleCore_HandleIngrain:
+	ld a, BATTLE_VARS_SUBSTATUS5
+	call GetBattleVar
+	bit SUBSTATUS_INGRAIN, a
+	ret z
+	call BattleCore_UserHPIsFull
+	ret z
+	farcall GetSixteenthMaxHP
+	push bc
+	call BattleCore_IngrainRecoveryAnim
+	pop bc
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	ld hl, AbsorbedNutrientsText
+	jp StdBattleTextbox
+
+BattleCore_HandleWish:
+	call BattleCore_GetActorWishCount
+	ld a, [hl]
+	and a
+	ret z
+	dec [hl]
+	ret nz
+
+	call BattleCore_CopyActorWishNameToBuffer
+	ld hl, WishCameTrueText
+	call StdBattleTextbox
+
+	call BattleCore_UserHPIsFull
+	ret z
+
+	call BattleCore_GetActorWishHP
+	ld a, [hli]
+	ld b, a
+	ld a, [hl]
+	ld c, a
+	call BattleCore_WishRecoveryAnim
+	call BattleCore_SwitchTurn
+	farcall RestoreHP
+	call BattleCore_SwitchTurn
+	call UpdateUserInParty
+	call RefreshBattleHuds
+	ld hl, RegainedHealthText
+	jp StdBattleTextbox
+
+BattleCore_WishRecoveryAnim:
+	push bc
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(ANIM_WISH_HEAL)
+		ld a, HIGH(ANIM_WISH_HEAL)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(ANIM_WISH_HEAL)
+	ld [wFXAnimID], a
+	predef PlayBattleAnim
+	pop bc
+	ret
+
+BattleCore_IngrainRecoveryAnim:
+	farcall EmptyBattleTextbox
+	xor a
+	ld [wBattleAfterAnim], a
+	if HIGH(INGRAIN)
+		ld a, HIGH(INGRAIN)
+	endc
+	ld [wFXAnimID + 1], a
+	ld a, LOW(INGRAIN)
+	ld [wFXAnimID], a
+	predef_jump PlayBattleAnim
+
+BattleCore_YawnSleepAnim:
+	xor a
+	ld [wBattleAfterAnim], a
+	ld de, ANIM_SLP
+	farcall FarPlayBattleAnimation
+	ret
+
+BattleCore_UserHPIsFull:
+	ld hl, wBattleMonHP
+	ld de, wBattleMonMaxHP
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .got_hp
+	ld hl, wEnemyMonHP
+	ld de, wEnemyMonMaxHP
+
+.got_hp
+	ld a, [hli]
+	ld b, a
+	ld a, [de]
+	cp b
+	ret nz
+	inc de
+	ld a, [hl]
+	ld b, a
+	ld a, [de]
+	cp b
+	ret
+
+BattleCore_SwitchTurn:
+	ldh a, [hBattleTurn]
+	xor 1
+	ldh [hBattleTurn], a
+	ret
+
+BattleCore_CheckTauntBlock:
+	call BattleCore_GetActorTauntCount
+	ld a, [hl]
+	and a
+	jr z, .not_blocked
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	jr nz, .not_blocked
+	ld a, [wPlayerMoveStruct + MOVE_POWER]
+	jr .got_power
+
+.enemy
+	ld a, [wEnemyMoveStruct + MOVE_POWER]
+
+.got_power
+	and a
+	jr nz, .not_blocked
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	ld [wNamedObjectIndex], a
+	call GetMoveName
+	ld hl, TauntPreventedMoveText
+	call StdBattleTextbox
+	scf
+	ret
+
+.not_blocked
+	and a
+	ret
+
+BattleCore_CheckIceBallBoost:
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	res SUBSTATUS_ICE_BALL_BOOST, [hl]
+	bit SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	jr z, .done
+	res SUBSTATUS_DEFENSE_CURL_PENDING, [hl]
+	call .ActorIsUsingMove
+	jr nz, .done
+	ld a, BATTLE_VARS_MOVE
+	call GetBattleVar
+	call GetMoveIndexFromID
+	ld a, h
+	cp HIGH(ICE_BALL)
+	jr nz, .done
+	ld a, l
+	cp LOW(ICE_BALL)
+	jr nz, .done
+	ld a, BATTLE_VARS_SUBSTATUS2
+	call GetBattleVarAddr
+	set SUBSTATUS_ICE_BALL_BOOST, [hl]
+
+.done
+	and a
+	ret
+
+.ActorIsUsingMove
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	ld a, [wBattlePlayerAction]
+	and a ; BATTLEPLAYERACTION_USEMOVE?
+	ret
+
+.enemy
+	ld a, [wBattleAction]
+	cp BATTLEACTION_SWITCH1
+	jr nc, .not_move
+	xor a
+	ret
+
+.not_move
+	or 1
+	ret
+
+BattleCore_GetActorTauntCount:
+	ld hl, wPlayerTauntCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyTauntCount
+	ret
+
+BattleCore_GetOpponentTauntCount:
+	ld hl, wEnemyTauntCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wPlayerTauntCount
+	ret
+
+BattleCore_GetActorWishCount:
+	ld hl, wPlayerWishCount
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishCount
+	ret
+
+BattleCore_GetActorWishHP:
+	ld hl, wPlayerWishHP
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishHP
+	ret
+
+BattleCore_GetActorWishName:
+	ld hl, wPlayerWishUserName
+	ldh a, [hBattleTurn]
+	and a
+	ret z
+	ld hl, wEnemyWishUserName
+	ret
+
+BattleCore_StoreActorWishName:
+	call BattleCore_GetActorWishName
+	ld d, h
+	ld e, l
+	ld hl, wBattleMonNickname
+	ldh a, [hBattleTurn]
+	and a
+	jr z, .copy
+	ld hl, wEnemyMonNickname
+
+.copy
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes
+
+BattleCore_CopyActorWishNameToBuffer:
+	ldh a, [hBattleTurn]
+	and a
+	jr nz, .enemy
+	call BattleCore_GetActorWishName
+	ld de, wStringBuffer1
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes
+
+.enemy
+	ld hl, EnemyText
+	ld de, wStringBuffer1
+
+.copy_prefix
+	ld a, [hli]
+	cp '@'
+	jr z, .copy_name
+	ld [de], a
+	inc de
+	jr .copy_prefix
+
+.copy_name
+	call BattleCore_GetActorWishName
+	ld bc, MON_NAME_LENGTH
+	jp CopyBytes

@@ -144,18 +144,18 @@ ROMX $2e
 	"bank2E"
 ROMX $2f
 	"Phone Scripts 2"
+	"Battle Animation GFX 2"
 ROMX $30
 	"Sprites 1"
 ROMX $31
 	"Sprites 2"
 ROMX $32
 	"bank32"
-	"The End"
 ROMX $33
 	"Move Animations"
-	"Extra Songs 2"
 ROMX $34
 	"Pic Animations 1"
+	"The End"
 ROMX $35
 	"Pic Animations 2"
 ROMX $36
@@ -179,11 +179,13 @@ ROMX $3c
 	"Cries"
 ROMX $3d
 	"Songs 4"
+	"Extra Songs 2"
 ROMX $3e
 	"bank3E"
 ROMX $3f
 	"bank3F"
 	"Apricorn Box"
+	"Battle Animation Extensions"
 ROMX $40
 	"mobile40"
 ROMX $41
@@ -195,6 +197,8 @@ ROMX $42
 	"Credits"
 ROMX $43
 	"Title"
+	"Debug Room"
+	"Tileset Data 8"
 ROMX $44
 	"Mobile Adapter SDK"
 ROMX $45
@@ -316,8 +320,9 @@ ROMX $77
 	"Status Condition Icons"
 	"European Mail"
 ROMX $78
-	"Debug Room"
-	"Tileset Data 8"
+	"Battle Animation Function Bank"
+ROMX $79
+	"Mon Icons 2"
 ROMX $7a
 	"Night Songs 1"
 	"Night Songs 2"
@@ -325,15 +330,17 @@ ROMX $7a
 	"Night Songs 4"
 	"Night Songs 5"
 ROMX $7b
-	"Battle Tower Text"
+	"Battle Engine Overhaul Future Use"
 ROMX $7c
 	"Battle Tower Trainer Data"
 	"Pack General Item Icons"
 ROMX $7d
 	"Mobile News Data"
+	"Battle Command Pointers"
 ROMX $7e
 	"Crystal Events"
 ROMX $7f
+	"Battle Animation Scripts"
 	org $7de0
 	"Stadium 2 Checksums"
 WRAM0

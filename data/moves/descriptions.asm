@@ -256,6 +256,89 @@ MoveDescriptions1:
 	dw RockSmashDescription
 	dw WhirlpoolDescription
 	dw BeatUpDescription
+	dw FakeOutDescription
+	dw HeatWaveDescription
+	dw HailDescription
+	dw WillOWispDescription
+	dw FocusPunchDescription
+	dw TauntDescription
+	dw WishDescription
+	dw IngrainDescription
+	dw SuperpowerDescription
+	dw BrickBreakDescription
+	dw YawnDescription
+	dw ArmThrustDescription
+	dw BlazeKickDescription
+	dw IceBallDescription
+	dw PoisonFangDescription
+	dw CrushClawDescription
+	dw MeteorMashDescription
+	dw AromatherapyDescription
+	dw AirCutterDescription
+	dw OverheatDescription
+	dw RockTombDescription
+	dw SilverWindDescription
+	dw SignalBeamDescription
+	dw ShadowPunchDescription
+	dw ExtrasensoryDescription
+	dw SkyUppercutDescription
+	dw SandTombDescription
+	dw BulletSeedDescription
+	dw AerialAceDescription
+	dw IronDefenseDescription
+	dw BlockDescription
+	dw HowlDescription
+	dw DragonClawDescription
+	dw BulkUpDescription
+	dw MudShotDescription
+	dw PoisonTailDescription
+	dw VoltTackleDescription
+	dw MagicalLeafDescription
+	dw CalmMindDescription
+	dw LeafBladeDescription
+	dw DragonDanceDescription
+	dw RockBlastDescription
+	dw ShockWaveDescription
+	dw WaterPulseDescription
+	dw PluckDescription
+	dw AssuranceDescription
+	dw SuckerPunchDescription
+	dw ForcePalmDescription
+	dw PoisonJabDescription
+	dw NightSlashDescription
+	dw XScissorDescription
+	dw DrainPunchDescription
+	dw EnergyBallDescription
+	dw BulletPunchDescription
+	dw ShadowClawDescription
+	dw ThunderFangDescription
+	dw IceFangDescription
+	dw FireFangDescription
+	dw MudBombDescription
+	dw LavaPlumeDescription
+	dw StoneEdgeDescription
+	dw BugBiteDescription
+	dw SludgeWaveDescription
+	dw HeavySlamDescription
+	dw HexDescription
+	dw WildChargeDescription
+	dw DrillRunDescription
+	dw IcicleCrashDescription
+	dw DisarmingVoiceDescription
+	dw FairyWindDescription
+	dw MoonblastDescription
+	dw DazzlingGleamDescription
+; Custom moves. Must always be last in the list.
+	dw GlacialSlamDescription
+	dw DrainLifeDescription
+	dw VampirismDescription
+	dw DiveBombDescription
+	dw AerialCrashDescription
+	dw MeteorDiveDescription
+	dw CausticDescription
+	dw CorrosionDescription
+	dw PiledriverDescription
+	dw LeekSlapDescription
 .IndirectEnd::
 
 InvalidMoveDescription:
@@ -1262,5 +1345,251 @@ WhirlpoolDescription:
 	line "2-5 turns.@"
 
 BeatUpDescription:
-	db   "Party #mon join"
-	line "in the attack.@"
+	db   "Placeholder@"
+
+FakeOutDescription:
+	db   "Placeholder@"
+
+HeatWaveDescription:
+	db   "Placeholder@"
+
+HailDescription:
+	db   "Summons a hail-"
+	line "storm for 5 turns.@"
+
+WillOWispDescription:
+	db   "Placeholder@"
+
+FocusPunchDescription:
+	db   "Placeholder@"
+
+TauntDescription:
+	db   "Placeholder@"
+
+WishDescription:
+	db   "Placeholder@"
+
+IngrainDescription:
+	db   "Placeholder@"
+
+SuperpowerDescription:
+	db   "Placeholder@"
+
+BrickBreakDescription:
+	db   "Placeholder@"
+
+YawnDescription:
+	db   "Placeholder@"
+
+ArmThrustDescription:
+	db   "Placeholder@"
+
+BlazeKickDescription:
+	db   "Placeholder@"
+
+IceBallDescription:
+	db   "Placeholder@"
+
+PoisonFangDescription:
+	db   "Placeholder@"
+
+CrushClawDescription:
+	db   "Placeholder@"
+
+MeteorMashDescription:
+	db   "Placeholder@"
+
+AromatherapyDescription:
+	db   "Placeholder@"
+
+AirCutterDescription:
+	db   "Placeholder@"
+
+OverheatDescription:
+	db   "Placeholder@"
+
+RockTombDescription:
+	db   "Placeholder@"
+
+SilverWindDescription:
+	db   "Placeholder@"
+
+SignalBeamDescription:
+	db   "Placeholder@"
+
+ShadowPunchDescription:
+	db   "Placeholder@"
+
+ExtrasensoryDescription:
+	db   "Placeholder@"
+
+SkyUppercutDescription:
+	db   "Placeholder@"
+
+SandTombDescription:
+	db   "Placeholder@"
+
+BulletSeedDescription:
+	db   "Placeholder@"
+
+AerialAceDescription:
+	db   "Placeholder@"
+
+IronDefenseDescription:
+	db   "Placeholder@"
+
+BlockDescription:
+	db   "Placeholder@"
+
+HowlDescription:
+	db   "Placeholder@"
+
+DragonClawDescription:
+	db   "Placeholder@"
+
+BulkUpDescription:
+	db   "Placeholder@"
+
+MudShotDescription:
+	db   "Placeholder@"
+
+PoisonTailDescription:
+	db   "Placeholder@"
+
+VoltTackleDescription:
+	db   "Placeholder@"
+
+MagicalLeafDescription:
+	db   "Placeholder@"
+
+CalmMindDescription:
+	db   "Placeholder@"
+
+LeafBladeDescription:
+	db   "Placeholder@"
+
+DragonDanceDescription:
+	db   "Placeholder@"
+
+RockBlastDescription:
+	db   "Placeholder@"
+
+ShockWaveDescription:
+	db   "Placeholder@"
+
+WaterPulseDescription:
+	db   "Placeholder@"
+
+PluckDescription:
+	db   "Placeholder@"
+
+AssuranceDescription:
+	db   "Placeholder@"
+
+SuckerPunchDescription:
+	db   "Placeholder@"
+
+ForcePalmDescription:
+	db   "Placeholder@"
+
+PoisonJabDescription:
+	db   "Placeholder@"
+
+NightSlashDescription:
+	db   "Placeholder@"
+
+XScissorDescription:
+	db   "Placeholder@"
+
+DrainPunchDescription:
+	db   "Placeholder@"
+
+EnergyBallDescription:
+	db   "Placeholder@"
+
+BulletPunchDescription:
+	db   "Placeholder@"
+
+ShadowClawDescription:
+	db   "Placeholder@"
+
+ThunderFangDescription:
+	db   "Placeholder@"
+
+IceFangDescription:
+	db   "Placeholder@"
+
+FireFangDescription:
+	db   "Placeholder@"
+
+MudBombDescription:
+	db   "Placeholder@"
+
+LavaPlumeDescription:
+	db   "Placeholder@"
+
+StoneEdgeDescription:
+	db   "Placeholder@"
+
+BugBiteDescription:
+	db   "Placeholder@"
+
+SludgeWaveDescription:
+	db   "Placeholder@"
+
+HeavySlamDescription:
+	db   "Placeholder@"
+
+HexDescription:
+	db   "Placeholder@"
+
+WildChargeDescription:
+	db   "Placeholder@"
+
+DrillRunDescription:
+	db   "Placeholder@"
+
+IcicleCrashDescription:
+	db   "Placeholder@"
+
+DisarmingVoiceDescription:
+	db   "Placeholder@"
+
+FairyWindDescription:
+	db   "Placeholder@"
+
+MoonblastDescription:
+	db   "Placeholder@"
+
+DazzlingGleamDescription:
+	db   "Placeholder@"
+
+GlacialSlamDescription:
+	db   "Placeholder@"
+
+DrainLifeDescription:
+	db   "Placeholder@"
+
+VampirismDescription:
+	db   "Placeholder@"
+
+DiveBombDescription:
+	db   "Placeholder@"
+
+AerialCrashDescription:
+	db   "Placeholder@"
+
+MeteorDiveDescription:
+	db   "Placeholder@"
+
+CausticDescription:
+	db   "Placeholder@"
+
+CorrosionDescription:
+	db   "Placeholder@"
+
+PiledriverDescription:
+	db   "Placeholder@"
+
+LeekSlapDescription:
+	db   "Placeholder@"

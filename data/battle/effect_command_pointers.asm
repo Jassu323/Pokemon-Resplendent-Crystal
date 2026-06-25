@@ -32,8 +32,8 @@ BattleCommandPointers:
 	dw BattleCommand_ParalyzeTarget
 	dw BattleCommand_Selfdestruct
 	dw BattleCommand_MirrorMove
-	dw BattleCommand_StatUp
-	dw BattleCommand_StatDown
+	dw BattleCommand_StatUpParam
+	dw BattleCommand_StatDownParam
 	dw BattleCommand_PayDay
 	dw BattleCommand_Conversion
 	dw BattleCommand_ResetStats
@@ -51,8 +51,8 @@ BattleCommandPointers:
 	dw BattleCommand_Heal
 	dw BattleCommand_Transform
 	dw BattleCommand_Screen
-	dw BattleCommand_Poison
-	dw BattleCommand_Paralyze
+	dw BattleCommand_StatusPrecheck
+	dw BattleCommand_StatusTarget
 	dw BattleCommand_Substitute
 	dw BattleCommand_RechargeNextTurn
 	dw BattleCommand_Mimic
@@ -64,7 +64,7 @@ BattleCommandPointers:
 	dw BattleCommand_Charge
 	dw BattleCommand_CheckCharge
 	dw BattleCommand_TrapTarget
-	dw BattleCommand_Unused3C
+	dw BattleCommand_MoveBegin
 	dw BattleCommand_Rampage
 	dw BattleCommand_CheckRampage
 	dw BattleCommand_ConstantDamage
@@ -97,7 +97,7 @@ BattleCommandPointers:
 	dw BattleCommand_Endure
 	dw BattleCommand_CheckRollout
 	dw BattleCommand_RolloutPower
-	dw BattleCommand_Unused5D
+	dw BattleCommand_SecondaryEffect
 	dw BattleCommand_FuryCutter
 	dw BattleCommand_Attract
 	dw BattleCommand_HappinessPower
@@ -161,18 +161,18 @@ BattleCommandPointers:
 	dw BattleCommand_MirrorCoat
 	dw BattleCommand_CheckFutureSight
 	dw BattleCommand_FutureSight
-	dw BattleCommand_DoubleMinimizeDamage
+	dw BattleCommand_CheckMinimize
 	dw BattleCommand_SkipSunCharge
-	dw BattleCommand_ThunderAccuracy
+	dw BattleCommand_StatFromEffect
 	dw BattleCommand_Teleport
-	dw BattleCommand_BeatUp
+	dw BattleCommand_StartHail
 	dw BattleCommand_RageDamage
 	dw BattleCommand_ResetTypeMatchup
 	dw BattleCommand_AllStatsUp
 	dw BattleCommand_BideFailText
 	dw BattleCommand_RaiseSubNoAnim
 	dw BattleCommand_LowerSubNoAnim
-	dw BattleCommand_BeatUpFailText
+	dw BattleCommand_FocusPunch
 	dw BattleCommand_ClearMissDamage
 	dw BattleCommand_MoveDelay
 	dw BattleCommand_MoveAnim
@@ -180,4 +180,5 @@ BattleCommandPointers:
 	dw BattleCommand_SuperEffectiveLoopText
 	dw BattleCommand_StartLoop
 	dw BattleCommand_Curl
+	dw BattleCommand_BattleExt
 	assert_table_length NUM_EFFECT_COMMANDS

@@ -12,6 +12,10 @@ AI_SwitchOrTryItem:
 	farcall CheckEnemyLockedIn
 	ret nz
 
+	ld a, [wEnemySubStatus5]
+	bit SUBSTATUS_INGRAIN, a
+	jr nz, DontSwitch
+
 	ld a, [wPlayerSubStatus5]
 	bit SUBSTATUS_CANT_RUN, a
 	jr nz, DontSwitch
@@ -33,11 +37,11 @@ AI_SwitchOrTryItem:
 
 .ok
 	bit SWITCH_OFTEN_F, [hl]
-	jp nz, SwitchOften
+	jr nz, SwitchOften
 	bit SWITCH_RARELY_F, [hl]
-	jp nz, SwitchRarely
+	jr nz, SwitchRarely
 	bit SWITCH_SOMETIMES_F, [hl]
-	jp nz, SwitchSometimes
+	jr nz, SwitchSometimes
 	; fallthrough
 
 DontSwitch:
@@ -55,7 +59,7 @@ SwitchOften:
 	call Random
 	cp 50 percent + 1
 	jr c, .switch
-	jp DontSwitch
+	jr DontSwitch
 .not_10
 
 	cp $20
@@ -63,13 +67,13 @@ SwitchOften:
 	call Random
 	cp 79 percent - 1
 	jr c, .switch
-	jp DontSwitch
+	jr DontSwitch
 .not_20
 
 	; $30
 	call Random
 	cp 4 percent
-	jp c, DontSwitch
+	jr c, DontSwitch
 
 .switch
 	ld a, [wEnemySwitchMonParam]
@@ -83,14 +87,14 @@ SwitchRarely:
 	callfar CheckAbleToSwitch
 	ld a, [wEnemySwitchMonParam]
 	and $f0
-	jp z, DontSwitch
+	jr z, DontSwitch
 
 	cp $10
 	jr nz, .not_10
 	call Random
 	cp 8 percent
 	jr c, .switch
-	jp DontSwitch
+	jr DontSwitch
 .not_10
 
 	cp $20
@@ -98,13 +102,13 @@ SwitchRarely:
 	call Random
 	cp 12 percent
 	jr c, .switch
-	jp DontSwitch
+	jr DontSwitch
 .not_20
 
 	; $30
 	call Random
 	cp 79 percent - 1
-	jp c, DontSwitch
+	jr c, DontSwitch
 
 .switch
 	ld a, [wEnemySwitchMonParam]

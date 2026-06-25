@@ -37,6 +37,7 @@ INCLUDE "engine/pokemon/move_mon.asm"
 INCLUDE "engine/pokemon/bills_pc_top.asm"
 INCLUDE "engine/pokemon/breedmon_level_growth.asm"
 INCLUDE "engine/events/bug_contest/caught_mon.asm"
+INCLUDE "engine/events/bug_contest/display_stats.asm"
 INCLUDE "engine/items/item_effects.asm"
 INCLUDE "engine/battle_anims/pokeball_wobble.asm"
 INCLUDE "engine/pokemon/knows_move.asm"
@@ -158,7 +159,6 @@ INCLUDE "engine/battle/read_trainer_party.asm"
 SECTION "Battle Core", ROMX
 
 INCLUDE "engine/battle/core.asm"
-INCLUDE "data/battle/effect_command_pointers.asm"
 
 
 SECTION "bank10", ROMX
@@ -291,7 +291,6 @@ SECTION "bank21", ROMX
 
 INCLUDE "engine/printer/printer_serial.asm"
 INCLUDE "engine/printer/printer.asm"
-INCLUDE "gfx/battle_anims.asm"
 INCLUDE "engine/events/halloffame.asm"
 
 
@@ -413,20 +412,28 @@ INCLUDE "engine/phone/scripts/generic_callee.asm"
 INCLUDE "engine/events/trainer_scripts.asm"
 
 
+SECTION "Battle Animation GFX 2", ROMX
+
+INCLUDE "gfx/battle_anims_bank2f.asm"
+
+
 SECTION "bank32", ROMX
 
 INCLUDE "engine/battle_anims/bg_effects.asm"
+INCLUDE "gfx/battle_anims.asm"
+
+
+SECTION "Battle Animation Scripts", ROMX
+
 INCLUDE "data/moves/animations.asm"
-INCLUDE "engine/events/poisonstep_pals.asm"
 
 
 SECTION "Move Animations", ROMX
 
-INCLUDE "engine/events/bug_contest/display_stats.asm"
 INCLUDE "engine/battle_anims/anim_commands.asm"
 INCLUDE "engine/battle_anims/core.asm"
-INCLUDE "engine/battle_anims/functions.asm"
 INCLUDE "engine/battle_anims/helpers.asm"
+INCLUDE "engine/battle_anims/extension_frame_oam.asm"
 
 
 SECTION "Pic Animations 1", ROMX
@@ -499,6 +506,16 @@ INCLUDE "engine/events/mom_phone.asm"
 SECTION "Apricorn Box", ROMX
 
 INCLUDE "engine/items/apricorn_box.asm"
+
+
+SECTION "Battle Animation Extensions", ROMX
+
+INCLUDE "engine/battle_anims/extensions.asm"
+
+
+SECTION "Battle Animation Pointers", ROMX, BANK[$3f]
+
+INCLUDE "data/moves/animation_pointers.asm"
 
 
 SECTION "TMHM Case", ROMX
@@ -676,32 +693,52 @@ SECTION "European Mail", ROMX
 INCLUDE "engine/pokemon/european_mail.asm"
 
 
-SECTION "Debug Room", ROMX
+SECTION "Debug Room", ROMX, BANK[$43]
 
 if DEF(_DEBUG)
 INCLUDE "engine/debug/debug_room.asm"
 endc
 
 
-SECTION "Battle Tower Text", ROMX
+; Reserved for battle animation function migration.
+SECTION "Battle Animation Function Bank", ROMX, BANK[$78]
 
-INCLUDE "data/battle_tower/trainer_text.asm"
+INCLUDE "engine/battle_anims/functions.asm"
+INCLUDE "engine/battle_anims/extension_functions.asm"
+
+
+; Cleared out for future development use as part of the Battle Engine Overhaul branch following commit a07eb1954.
+SECTION "Battle Engine Overhaul Future Use", ROMX, BANK[$7B]
+
+INCLUDE "data/moves/attributes.asm"
+INCLUDE "data/pokemon/abilities.asm"
+INCLUDE "data/abilities/names.asm"
+INCLUDE "data/abilities/descriptions.asm"
+INCLUDE "engine/battle/effect_command_extensions.asm"
 
 
 SECTION "Battle Tower Trainer Data", ROMX
 
+INCLUDE "data/battle_tower/trainer_text.asm"
 INCLUDE "data/battle_tower/unknown.asm"
 
 
+; Clear this whole bank out in a future branch for future development needs.
 SECTION "Mobile News Data", ROMX
 
 INCLUDE "mobile/news/news.asm"
+
+
+SECTION "Battle Command Pointers", ROMX
+
+INCLUDE "data/battle/effect_command_pointers.asm"
 
 
 SECTION "Crystal Events", ROMX
 
 INCLUDE "engine/events/battle_tower/load_trainer.asm"
 INCLUDE "engine/events/odd_egg.asm"
+INCLUDE "engine/events/poisonstep_pals.asm"
 
 
 SECTION "Stadium 2 Checksums", ROMX[$7DE0], BANK[$7F]

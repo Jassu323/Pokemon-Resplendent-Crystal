@@ -238,23 +238,125 @@ gfx/slots/slots_3.2bpp: tools/gfx += --interleave --png=$< --remove-duplicates -
 gfx/card_flip/card_flip_1.2bpp: tools/gfx += --trim-whitespace
 gfx/card_flip/card_flip_2.2bpp: tools/gfx += --remove-whitespace
 
-gfx/battle_anims/angels.2bpp: tools/gfx += --trim-whitespace
+battle_anim_dir := gfx/battle_anims
+battle_anim_2bpp = $(addprefix $(battle_anim_dir)/,$(addsuffix .2bpp,$(1)))
+battle_anim_png = $(addprefix $(battle_anim_dir)/,$(addsuffix .png,$(1)))
+battle_anim_chunk_pngs = $(foreach chunk,$(2),$(battle_anim_dir)/$(1)_$(chunk).png)
+battle_anim_chunk_tmps = $(foreach chunk,$(1),$@.$(chunk))
+
+$(call battle_anim_2bpp,angels bubble charge): tools/gfx += --trim-whitespace
+$(call battle_anim_2bpp,egg explosion hit horn lightning noise reflect rocks skyattack status vine_whip): tools/gfx += --remove-whitespace
+
 gfx/battle_anims/beam.2bpp: tools/gfx += --remove-xflip --remove-yflip --remove-whitespace
-gfx/battle_anims/bubble.2bpp: tools/gfx += --trim-whitespace
-gfx/battle_anims/charge.2bpp: tools/gfx += --trim-whitespace
-gfx/battle_anims/egg.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/explosion.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/hit.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/horn.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/lightning.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/misc.2bpp: tools/gfx += --remove-duplicates --remove-xflip
-gfx/battle_anims/noise.2bpp: tools/gfx += --remove-whitespace
 gfx/battle_anims/objects.2bpp: tools/gfx += --remove-whitespace --remove-xflip
 gfx/battle_anims/pokeball.2bpp: tools/gfx += --remove-xflip --keep-whitespace
-gfx/battle_anims/reflect.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/rocks.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/skyattack.2bpp: tools/gfx += --remove-whitespace
-gfx/battle_anims/status.2bpp: tools/gfx += --remove-whitespace
+
+transparent_gray_battle_anim_colors := '\#none,\#606060,\#909090,\#c8c8c8'
+mud_ball_battle_anim_colors := '\#ffffff,\#f0f0f0,\#884828,\#683018'
+thunder_battle_anim_colors := '\#none,\#c8c8c8,\#686868,\#ffffff'
+ember_transparent_battle_anim_colors := '\#none,\#a0a0a0,\#606060,\#282828'
+ember_opaque_battle_anim_colors := '\#ffffff,\#a0a0a0,\#606060,\#282828'
+water_column_battle_anim_colors := '\#none,\#0838f8,\#08a0f8,\#60e8f8'
+claw_battle_anim_colors := '\#ffffff,\#606060,\#a0a0a0,\#282828'
+poison_bubble_battle_anim_colors := '\#ffffff,\#f0f0f0,\#e050e0,\#c800c8'
+poison_powder_battle_anim_colors := '\#ffffff,\#8860c0,\#e050e0,\#c800c8'
+shadow_ball_battle_anim_colors := '\#ffffff,\#a0a0a0,\#606060,\#000000'
+sludge_bomb_battle_anim_colors := '\#ffffff,\#f0f0f0,\#e050e0,\#c800c8'
+sharp_teeth_battle_anim_colors := '\#ffffff,\#f0f0f0,\#606060,\#000000'
+hyper_fang_battle_anim_colors := '\#ffffff,\#f8f828,\#f87010,\#c81800'
+bullet_seed_battle_anim_colors := '\#ffffff,\#c8b870,\#807038,\#483800'
+silver_wind_battle_anim_colors := '\#ffffff,\#d0d8c8,\#b8c0a0,\#a0a878'
+ice_chunk_battle_anim_colors := '\#ffffff,\#08f8f8,\#08a0f8,\#0820f8'
+block_battle_anim_colors := '\#ffffff,\#000000,\#f81800,\#c00800'
+force_palm_battle_anim_colors := '\#ffffff,\#c8c8c8,\#606060,\#000000'
+ingrain_battle_anim_colors := '\#ffffff,\#909090,\#404040,\#000000'
+taunt_bubble_battle_anim_colors := '\#ffffff,\#e8e8e8,\#a090b8,\#9078a8'
+taunt_finger_battle_anim_colors := '\#ffffff,\#f8e0e0,\#f8a898,\#000000'
+taunt_anger_battle_anim_colors := '\#ffffff,\#f86010,\#f83008,\#000000'
+ghost_flame_battle_anim_colors := '\#ffffff,\#e030f8,\#b030f8,\#6830f8'
+pink_petal_battle_anim_colors := '\#ffffff,\#f888a0,\#f87090,\#d06078'
+aurora_beam_battle_anim_colors := '\#ffffff,\#20e820,\#20e8e8,\#e820e8'
+signal_beam_battle_anim_colors := '\#ffffff,\#2020e8,\#e82020,\#e820e8'
+
+define battle_anim_rgbgfx_rule
+$(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
+	$$(RGBGFX) $$(RGBGFXFLAGS) --colors $$($(2)) -o $$@ $$<
+endef
+
+# like battle_anim_rgbgfx_rule, but strips blank tiles afterward; the consuming
+# OAM data must be authored against the whitespace-removed tile layout
+define battle_anim_rgbgfx_rw_rule
+$(call battle_anim_2bpp,$(1)): $(call battle_anim_png,$(1))
+	$$(RGBGFX) $$(RGBGFXFLAGS) --colors $$($(2)) -o $$@ $$<
+	tools/gfx --remove-whitespace -o $$@ $$@
+endef
+
+$(call battle_anim_2bpp,electricity_effect thundershock thundershock_horizontal thunderbolt thunderbolt_aftereffect): %.2bpp: %.png
+	$(RGBGFX) $(RGBGFXFLAGS) --colors $(transparent_gray_battle_anim_colors) -o $@ $<
+
+$(eval $(call battle_anim_rgbgfx_rule,mud_ball_medium,mud_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rw_rule,thunder,thunder_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,poison_bubble,poison_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,toxic_bubble,poison_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,shadow_ball,shadow_ball_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sludge_bomb,sludge_bomb_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,sharp_teeth,sharp_teeth_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rw_rule,hyper_fang,hyper_fang_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,bullet_seed,bullet_seed_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,silver_wind,silver_wind_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ice_chunk,ice_chunk_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,block,block_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,force_palm,force_palm_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ingrain,ingrain_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_1,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_2,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_3,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,thought_bubble_4,taunt_bubble_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,taunt_finger,taunt_finger_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,anger,taunt_anger_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,ghost_flame,ghost_flame_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,pink_petal,pink_petal_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,aurora_beam,aurora_beam_battle_anim_colors))
+$(eval $(call battle_anim_rgbgfx_rule,signal_beam,signal_beam_battle_anim_colors))
+
+$(call battle_anim_2bpp,fangs): $(call battle_anim_2bpp,fangs_upper) $(call battle_anim_2bpp,fangs_lower)
+	cat $^ > $@
+
+$(call battle_anim_2bpp,leek_slap): $(call battle_anim_2bpp,leek_slap_1 leek_slap_2 leek_slap_3 leek_slap_4)
+	cat $^ > $@
+
+$(call battle_anim_2bpp,ember): $(call battle_anim_chunk_pngs,ember,1 2 3 4 5)
+	for chunk in 1 2; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(ember_transparent_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/ember_$$chunk.png; \
+	done
+	for chunk in 3 4 5; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(ember_opaque_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/ember_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5)
+
+$(call battle_anim_2bpp,water_column): $(call battle_anim_chunk_pngs,water_column,1 2 3 4)
+	for chunk in 1 2 3 4; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(water_column_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/water_column_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4)
+
+$(call battle_anim_2bpp,poison_powder): $(call battle_anim_chunk_pngs,poison_powder,1 2 3 4 5 6 7 8)
+	for chunk in 1 2 3 4 5 6 7 8; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(poison_powder_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/poison_powder_$$chunk.png; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5 6 7 8) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5 6 7 8)
+
+$(call battle_anim_2bpp,claw): $(call battle_anim_chunk_pngs,claw,1 2 3 4 5)
+	for chunk in 1 2 3 4 5; do \
+		$(RGBGFX) $(RGBGFXFLAGS) --colors $(claw_battle_anim_colors) -o $@.$$chunk $(battle_anim_dir)/claw_$$chunk.png; \
+		tools/gfx --remove-whitespace -o $@.$$chunk $@.$$chunk; \
+	done
+	cat $(call battle_anim_chunk_tmps,1 2 3 4 5) > $@
+	$(RM) $(call battle_anim_chunk_tmps,1 2 3 4 5)
 
 gfx/player/chris.2bpp: RGBGFXFLAGS += --columns
 gfx/player/chris_back.2bpp: RGBGFXFLAGS += --columns

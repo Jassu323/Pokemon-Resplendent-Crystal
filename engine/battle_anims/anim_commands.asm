@@ -145,13 +145,48 @@ RunBattleAnimScript:
 BattleAnimClearHud:
 	call BattleAnimDelayFrame
 	call WaitTop
+	call BattleAnim_ClearsBothHuds
+	jr nz, .clear_actor_hud
+	call BattleAnimCmd_ClearHuds
+	jr .cleared_hud
+
+.clear_actor_hud
 	call ClearActorHud
+
+.cleared_hud
 	ld a, $1
 	ldh [hBGMapMode], a
 	call BattleAnimDelayFrame
 	call BattleAnimDelayFrame
 	call BattleAnimDelayFrame
 	call WaitTop
+	ret
+
+BattleAnim_ClearsBothHuds:
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(WISH)
+	jr nz, .check_vine_whip
+	ld a, [hl]
+	cp HIGH(WISH)
+	ret z
+
+.check_vine_whip
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(VINE_WHIP)
+	jr nz, .check_tackle
+	ld a, [hl]
+	cp HIGH(VINE_WHIP)
+	ret
+
+.check_tackle
+	ld hl, wFXAnimID
+	ld a, [hli]
+	cp LOW(TACKLE)
+	ret nz
+	ld a, [hl]
+	cp HIGH(TACKLE)
 	ret
 
 BattleAnimRestoreHuds:
@@ -222,6 +257,17 @@ ClearActorHud:
 	hlcoord 9, 7
 	lb bc, 5, 11
 	call ClearBox
+	ret
+
+BattleAnimCmd_ClearHuds:
+	hlcoord 1, 0
+	lb bc, 4, 11
+	call ClearBox
+	hlcoord 9, 7
+	lb bc, 5, 11
+	call ClearBox
+	ld a, $1
+	ldh [hBGMapMode], a
 	ret
 
 PlaceWindowOverBattleTextbox: ; unreferenced
@@ -360,8 +406,8 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OAMOn
 	dw BattleAnimCmd_OAMOff
 	dw BattleAnimCmd_ClearObjs
-	dw BattleAnimCmd_BeatUp
-	dw BattleAnimCmd_E7
+	dw BattleAnimCmd_E7 ; dummy
+	dw BattleAnimCmd_ClearHuds
 	dw BattleAnimCmd_UpdateActorPic
 	dw BattleAnimCmd_Minimize
 	dw BattleAnimCmd_EA ; dummy
@@ -375,9 +421,9 @@ BattleAnimCommands::
 	dw BattleAnimCmd_OBP0
 	dw BattleAnimCmd_OBP1
 	dw BattleAnimCmd_KeepSprites
-	dw BattleAnimCmd_F5
-	dw BattleAnimCmd_F6
-	dw BattleAnimCmd_F7
+	dw BattleAnimCmd_Batch
+	dw BattleAnimCmd_ThunderPal
+	dw BattleAnimCmd_ThunderboltPal
 	dw BattleAnimCmd_IfParamEqual
 	dw BattleAnimCmd_SetVar
 	dw BattleAnimCmd_IncVar
@@ -608,8 +654,7 @@ BattleAnimCmd_IfParamAnd:
 
 BattleAnimCmd_Obj:
 ; index, x, y, param
-	call GetBattleAnimByte
-	ld [wBattleObjectTempID], a
+	call BattleAnimCmd_ReadObjectID
 	call GetBattleAnimByte
 	ld [wBattleObjectTempXCoord], a
 	call GetBattleAnimByte
@@ -617,6 +662,22 @@ BattleAnimCmd_Obj:
 	call GetBattleAnimByte
 	ld [wBattleObjectTempParam], a
 	call QueueBattleAnimation
+	ret
+
+BattleAnimCmd_ReadObjectID:
+	call GetBattleAnimByte
+	cp BATTLE_ANIM_OBJ_EXT1_PREFIX
+	jr z, .extended
+	ld [wBattleObjectTempID], a
+	xor a ; BATTLE_ANIM_OBJ_NAMESPACE_REGULAR
+	ld [wBattleObjectTempNamespace], a
+	ret
+
+.extended
+	call GetBattleAnimByte
+	ld [wBattleObjectTempID], a
+	ld a, BATTLE_ANIM_OBJ_NAMESPACE_EXT1
+	ld [wBattleObjectTempNamespace], a
 	ret
 
 BattleAnimCmd_BGEffect:
@@ -658,11 +719,13 @@ BattleAnimCmd_ResetObp0:
 
 BattleAnimCmd_ClearObjs:
 	ld hl, wActiveAnimObjects
-	ld a, NUM_BATTLE_ANIM_STRUCTS * BATTLEANIMSTRUCT_LENGTH
+	ld bc, NUM_BATTLE_ANIM_STRUCTS * BATTLEANIMSTRUCT_LENGTH
 .loop
 	ld [hl], 0
 	inc hl
-	dec a
+	dec bc
+	ld a, c
+	or b
 	jr nz, .loop
 	ret
 
@@ -708,6 +771,10 @@ endr
 
 BattleAnimCmd_IncObj:
 	call GetBattleAnimByte
+	jr IncBattleAnimObject
+
+IncBattleAnimObject:
+	ld [wBattleAnimByte], a
 	ld e, NUM_BATTLE_ANIM_STRUCTS
 	ld bc, wActiveAnimObjects
 .loop
@@ -1129,44 +1196,6 @@ BattleAnimCmd_DropSub:
 	ldh [rWBK], a
 	ret
 
-BattleAnimCmd_BeatUp:
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wCurPartySpecies)
-	ldh [rWBK], a
-
-	ld a, [wCurPartySpecies]
-	push af
-
-	ld a, [wBattleAnimParam]
-	ld [wCurPartySpecies], a
-
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .player
-
-	ld hl, wBattleMonDVs
-	predef GetUnownLetter
-	ld de, vTiles2 tile $00
-	predef GetMonFrontpic
-	jr .done
-
-.player
-	ld hl, wEnemyMonDVs
-	predef GetUnownLetter
-	ld de, vTiles2 tile $31
-	predef GetMonBackpic
-
-.done
-	pop af
-	ld [wCurPartySpecies], a
-	ld b, SCGB_BATTLE_COLORS
-	call GetSGBLayout
-
-	pop af
-	ldh [rWBK], a
-	ret
-
 BattleAnimCmd_OAMOn:
 	xor a
 	ldh [hOAMUpdate], a
@@ -1182,13 +1211,77 @@ BattleAnimCmd_KeepSprites:
 	set BATTLEANIM_KEEPSPRITES_F, [hl]
 	ret
 
-BattleAnimCmd_F5:
+BattleAnimCmd_Batch:
+	call GetBattleAnimByte
+	and a
+	jr z, .objparams
+	dec a
+	jr z, .objlist
+	dec a
+	jr z, .incobjrange
 	ret
 
-BattleAnimCmd_F6:
+.objparams
+	call BattleAnimCmd_ReadObjectID
+	call GetBattleAnimByte
+	ld [wBattleObjectTempXCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempYCoord], a
+	call GetBattleAnimByte
+	ld e, a
+.objparams_loop
+	push de
+	call GetBattleAnimByte
+	ld [wBattleObjectTempParam], a
+	call QueueBattleAnimation
+	pop de
+	dec e
+	jr nz, .objparams_loop
 	ret
 
-BattleAnimCmd_F7:
+.objlist
+	call BattleAnimCmd_ReadObjectID
+	call GetBattleAnimByte
+	ld e, a
+.objlist_loop
+	push de
+	call GetBattleAnimByte
+	ld [wBattleObjectTempXCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempYCoord], a
+	call GetBattleAnimByte
+	ld [wBattleObjectTempParam], a
+	call QueueBattleAnimation
+	pop de
+	dec e
+	jr nz, .objlist_loop
+	ret
+
+.incobjrange
+	call GetBattleAnimByte
+	ld d, a
+	call GetBattleAnimByte
+	ld e, a
+.incobjrange_loop
+	ld a, d
+	push de
+	call IncBattleAnimObject
+	pop de
+	inc d
+	dec e
+	jr nz, .incobjrange_loop
+	ret
+
+BattleAnimCmd_ThunderPal:
+	call GetBattleAnimByte
+	ld e, a
+	callfar BattleAnimExt_LoadThunderPal
+	ret
+
+BattleAnimCmd_ThunderboltPal:
+	call GetBattleAnimByte
+	ld e, a
+	callfar BattleAnimExt_LoadCustomPal
 	ret
 
 BattleAnimCmd_Sound:
@@ -1310,7 +1403,7 @@ endr
 ; +pitch, +length
 	dw $0000, $00c0
 	dw $0000, $0040
-	dw $0000, $0000
+	dw $0003, $0000
 	dw $0000, $0000
 
 PlayHitSound:
@@ -1376,6 +1469,11 @@ ClearBattleAnims::
 	ld a, c
 	or b
 	jr nz, .loop
+
+	ld a, $ff
+	ld [wBattleAnimObjCache1ID], a
+	ld [wBattleAnimObjCache2ID], a
+	ld [wBattleAnimObjCache3ID], a
 
 	ld hl, wFXAnimID
 	ld e, [hl]
@@ -1455,29 +1553,29 @@ BattleAnim_SetOBPals:
 	ret
 
 BattleAnim_UpdateOAM_All:
+	farcall BattleAnim_UpdateFunctions_All
 	ld a, 0
 	ld [wBattleAnimOAMPointerLo], a
-	ld hl, wActiveAnimObjects
-	ld e, NUM_BATTLE_ANIM_STRUCTS
-.loop
-	ld a, [hl]
+	ld a, [wBattleAnimUpdatedCount]
 	and a
-	jr z, .next
-	ld c, l
-	ld b, h
+	jr z, .clear_oam
+	ld e, a
+	ld hl, wBattleAnimUpdatedObjects
+.loop
+	ld c, [hl]
+	inc hl
+	ld b, [hl]
+	inc hl
 	push hl
 	push de
-	call DoBattleAnimFrame
 	call BattleAnimOAMUpdate
 	pop de
 	pop hl
 	jr c, .done
-
-.next
-	ld bc, BATTLEANIMSTRUCT_LENGTH
-	add hl, bc
 	dec e
 	jr nz, .loop
+
+.clear_oam
 	ld a, [wBattleAnimOAMPointerLo]
 	ld l, a
 	ld h, HIGH(wShadowOAM)

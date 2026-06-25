@@ -38,3 +38,58 @@ AnimObjShineGFX:     INCBIN "gfx/battle_anims/shine.2bpp.lz"
 AnimObjAngelsGFX:    INCBIN "gfx/battle_anims/angels.2bpp.lz"
 AnimObjWaveGFX:      INCBIN "gfx/battle_anims/wave.2bpp.lz"
 AnimObjAeroblastGFX: INCBIN "gfx/battle_anims/aeroblast.2bpp.lz"
+AnimObjMudBallMediumGFX:
+	INCBIN "gfx/battle_anims/mud_ball_medium.2bpp.lz"
+AnimObjThundershockGFX:
+	INCBIN "gfx/battle_anims/thundershock.2bpp.lz"
+AnimObjElectricityEffectGFX:
+	INCBIN "gfx/battle_anims/electricity_effect.2bpp.lz"
+AnimObjThunderGFX:
+	INCBIN "gfx/battle_anims/thunder.2bpp.lz"
+AnimObjThunderboltGFX:
+	INCBIN "gfx/battle_anims/thunderbolt.2bpp.lz"
+AnimObjThunderboltAftereffectGFX:
+	INCBIN "gfx/battle_anims/thunderbolt_aftereffect.2bpp.lz"
+AnimObjWaterColumnGFX:
+	INCBIN "gfx/battle_anims/water_column.2bpp.lz"
+AnimObjVineWhipGFX:
+	INCBIN "gfx/battle_anims/vine_whip.2bpp.lz"
+AnimObjEmberGFX:
+	INCBIN "gfx/battle_anims/ember.2bpp.lz"
+AnimObjDragonClawGFX:
+	INCBIN "gfx/battle_anims/claw.2bpp.lz"
+AnimObjPoisonBubbleGFX:
+	INCBIN "gfx/battle_anims/poison_bubble.2bpp.lz"
+AnimObjSludgeBombGFX:
+	INCBIN "gfx/battle_anims/sludge_bomb.2bpp.lz"
+AnimObjSharpTeethGFX:
+	INCBIN "gfx/battle_anims/sharp_teeth.2bpp.lz"
+AnimObjHyperFangGFX:
+	INCBIN "gfx/battle_anims/hyper_fang.2bpp.lz"
+AnimObjToxicBubbleGFX:
+	INCBIN "gfx/battle_anims/toxic_bubble.2bpp.lz"
+AnimObjPoisonPowderGFX:
+	INCBIN "gfx/battle_anims/poison_powder.2bpp.lz"
+AnimObjSmallBubbleGFX:
+	INCBIN "gfx/battle_anims/small_bubble.2bpp.lz"
+AnimObjTinyBubbleGFX:
+	INCBIN "gfx/battle_anims/tiny_bubble.2bpp.lz"
+AnimObjBulletSeedGFX:
+	INCBIN "gfx/battle_anims/bullet_seed.2bpp.lz"
+AnimObjSilverWindGFX:
+	INCBIN "gfx/battle_anims/silver_wind.2bpp.lz"
+AnimObjIceChunkGFX:
+	INCBIN "gfx/battle_anims/ice_chunk.2bpp.lz"
+AnimObjBlockGFX:
+	INCBIN "gfx/battle_anims/block.2bpp.lz"
+AnimObjForcePalmGFX:
+	INCBIN "gfx/battle_anims/force_palm.2bpp.lz"
+AnimObjFocusPunchGFX:
+	INCBIN "gfx/battle_anims/punch.2bpp.lz"
+AnimObjIngrainGFX:
+	INCBIN "gfx/battle_anims/ingrain.2bpp.lz"
+AnimObjMediumBubbleGFX:
+	INCBIN "gfx/battle_anims/medium_bubble.2bpp.lz"
+
+; Additional custom animation graphics are in bank 47 / $2f.
+; Add them there and not in this bank 50 / $32 graphics section.

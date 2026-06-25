@@ -36,7 +36,6 @@ BattleAnimOAMData:
 	battleanimoam $05, 16, .OAMData_00 ; BATTLE_ANIM_OAMSET_1A
 	battleanimoam $00,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_1B
 	battleanimoam $05, 12, .OAMData_1c ; BATTLE_ANIM_OAMSET_1C
-	battleanimoam $02,  4, .OAMData_02 ; BATTLE_ANIM_OAMSET_1D
 	battleanimoam $06,  1, .OAMData_0f ; BATTLE_ANIM_OAMSET_1E
 	battleanimoam $07,  1, .OAMData_0f ; BATTLE_ANIM_OAMSET_1F
 	battleanimoam $08,  1, .OAMData_0f ; BATTLE_ANIM_OAMSET_20
@@ -61,14 +60,6 @@ BattleAnimOAMData:
 	battleanimoam $00,  7, .OAMData_33 ; BATTLE_ANIM_OAMSET_33
 	battleanimoam $00, 14, .OAMData_32 ; BATTLE_ANIM_OAMSET_34
 	battleanimoam $00, 21, .OAMData_33 ; BATTLE_ANIM_OAMSET_35
-	battleanimoam $00,  2, .OAMData_36 ; BATTLE_ANIM_OAMSET_36
-	battleanimoam $00,  6, .OAMData_36 ; BATTLE_ANIM_OAMSET_37
-	battleanimoam $00, 10, .OAMData_36 ; BATTLE_ANIM_OAMSET_38
-	battleanimoam $00, 14, .OAMData_36 ; BATTLE_ANIM_OAMSET_39
-	battleanimoam $00,  2, .OAMData_3a ; BATTLE_ANIM_OAMSET_3A
-	battleanimoam $00,  6, .OAMData_3a ; BATTLE_ANIM_OAMSET_3B
-	battleanimoam $00, 10, .OAMData_3a ; BATTLE_ANIM_OAMSET_3C
-	battleanimoam $00, 14, .OAMData_3a ; BATTLE_ANIM_OAMSET_3D
 	battleanimoam $00,  4, .OAMData_3e ; BATTLE_ANIM_OAMSET_3E
 	battleanimoam $00, 16, .OAMData_3e ; BATTLE_ANIM_OAMSET_3F
 	battleanimoam $00, 26, .OAMData_3e ; BATTLE_ANIM_OAMSET_40
@@ -223,7 +214,204 @@ BattleAnimOAMData:
 	battleanimoam $00,  6, .OAMData_d5 ; BATTLE_ANIM_OAMSET_D5
 	battleanimoam $00, 14, .OAMData_d6 ; BATTLE_ANIM_OAMSET_D6
 	battleanimoam $00, 12, .OAMData_d7 ; BATTLE_ANIM_OAMSET_D7
+	battleanimoam $00,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_1
+	battleanimoam $04,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_2
+	battleanimoam $08,  4, .OAMData_ElectricityEffect ; BATTLE_ANIM_OAMSET_ELECTRICITY_EFFECT_3
+	battleanimoam $00,  1, .OAMData_0f ; BATTLE_ANIM_OAMSET_EMBER_1
+	battleanimoam $01,  2, .OAMData_11 ; BATTLE_ANIM_OAMSET_EMBER_2
+	battleanimoam $03,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_3
+	battleanimoam $07,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_4
+	battleanimoam $0b,  4, .OAMData_03 ; BATTLE_ANIM_OAMSET_EMBER_5
+	battleanimoam $00, 12, .OAMData_SharpTeeth ; BATTLE_ANIM_OAMSET_SHARP_TEETH
+	battleanimoam $00, 12, .OAMData_SharpTeethFlipped ; BATTLE_ANIM_OAMSET_SHARP_TEETH_FLIPPED
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_1
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_3
+	battleanimoam $30, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_ICE_CHUNK_4
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_BLOCK_X
+	battleanimoam $00, 12, .OAMData_FocusPunchFist ; BATTLE_ANIM_OAMSET_FOCUS_PUNCH_FIST
+	battleanimoam $00,  3, .OAMData_IngrainRoot0 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_0
+	battleanimoam $00,  8, .OAMData_IngrainRoot1 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_1
+	battleanimoam $00,  8, .OAMData_IngrainRoot2 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_2
+	battleanimoam $00,  8, .OAMData_IngrainRoot3 ; BATTLE_ANIM_OAMSET_INGRAIN_ROOT_3
+	battleanimoam $00, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_1
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_TAUNT_FINGER_3
+	battleanimoam $00,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_1
+	battleanimoam $08,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_2
+	battleanimoam $10,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_3
+	battleanimoam $18,  8, .OAMData_GhostFlame ; BATTLE_ANIM_OAMSET_GHOST_FLAME_4
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltLeftOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT_OFF
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltLeft ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_LEFT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltMidLeft ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_MID_LEFT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltMidRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_MID_RIGHT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltRight ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT
+	battleanimoam $00,  8, .OAMData_VoltTackleBoltRightOff ; BATTLE_ANIM_OAMSET_VOLT_TACKLE_BOLT_RIGHT_OFF
+	battleanimoam $10, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_2
+	battleanimoam $20, 16, .OAMData_IceChunk ; BATTLE_ANIM_OAMSET_SHADOW_BALL_3
+	battleanimoam $00, 17, .OAMData_LeafBlade ; BATTLE_ANIM_OAMSET_LEAF_BLADE
+	battleanimoam $00,  9, .OAMData_SolarBeamVerticalHead ; BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_HEAD
+	battleanimoam $00,  2, .OAMData_SolarBeamVerticalBody ; BATTLE_ANIM_OAMSET_SOLAR_BEAM_VERTICAL_BODY
+	battleanimoam $03,  9, .OAMData_2e ; BATTLE_ANIM_OAMSET_CORROSION_COLUMN_ALT
+	battleanimoam $00,  8, .OAMData_AeroblastWave ; BATTLE_ANIM_OAMSET_AEROBLAST_WAVE
+	battleanimoam $00,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_1
+	battleanimoam $01,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_2
+	battleanimoam $02,  5, .OAMData_DiveBombWind ; BATTLE_ANIM_OAMSET_DIVE_BOMB_WIND_3
 	assert_table_length NUM_BATTLE_ANIM_OAMSETS
+
+.OAMData_DiveBombWind:
+	dbsprite  -1,  -3, 4, 4, $00, $0
+	dbsprite  -1,  -2, 2, 4, $00, $0
+	dbsprite  -1,  -1, 4, 4, $00, $0
+	dbsprite  -1,   0, 6, 4, $00, $0
+	dbsprite  -1,   1, 4, 4, $00, $0
+
+.OAMData_AeroblastWave:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite   0,  -1, 0, 0, $02, $0
+	dbsprite   1,  -1, 0, 0, $03, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+	dbsprite  -1,   0, 0, 0, $05, $0
+	dbsprite   0,   0, 0, 0, $06, $0
+	dbsprite   1,   0, 0, 0, $07, $0
+
+.OAMData_IceChunk:
+	dbsprite  -2,  -2, 0, 0, $00, $0
+	dbsprite  -1,  -2, 0, 0, $01, $0
+	dbsprite   0,  -2, 0, 0, $02, $0
+	dbsprite   1,  -2, 0, 0, $03, $0
+	dbsprite  -2,  -1, 0, 0, $04, $0
+	dbsprite  -1,  -1, 0, 0, $05, $0
+	dbsprite   0,  -1, 0, 0, $06, $0
+	dbsprite   1,  -1, 0, 0, $07, $0
+	dbsprite  -2,   0, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+	dbsprite  -2,   1, 0, 0, $0c, $0
+	dbsprite  -1,   1, 0, 0, $0d, $0
+	dbsprite   0,   1, 0, 0, $0e, $0
+	dbsprite   1,   1, 0, 0, $0f, $0
+
+.OAMData_FocusPunchFist:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite   0,  -1, 0, 0, $02, $0
+	dbsprite   1,  -1, 0, 0, $03, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+	dbsprite  -1,   0, 0, 0, $05, $0
+	dbsprite   0,   0, 0, 0, $06, $0
+	dbsprite   1,   0, 0, 0, $07, $0
+	dbsprite  -2,   1, 0, 0, $08, $0
+	dbsprite  -1,   1, 0, 0, $09, $0
+	dbsprite   0,   1, 0, 0, $0a, $0
+	dbsprite   1,   1, 0, 0, $0b, $0
+
+.OAMData_GhostFlame:
+	dbsprite  -1,  -2, 0, 0, $00, $0
+	dbsprite   0,  -2, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $02, $0
+	dbsprite   0,  -1, 0, 0, $03, $0
+	dbsprite  -1,   0, 0, 0, $04, $0
+	dbsprite   0,   0, 0, 0, $05, $0
+	dbsprite  -1,   1, 0, 0, $06, $0
+	dbsprite   0,   1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltLeftOff:
+	dbsprite -12,  -1, 0, 0, $00, $0
+	dbsprite -11,  -1, 0, 0, $01, $0
+	dbsprite -10,  -1, 0, 0, $02, $0
+	dbsprite  -9,  -1, 0, 0, $03, $0
+	dbsprite  -8,  -1, 0, 0, $04, $0
+	dbsprite  -7,  -1, 0, 0, $05, $0
+	dbsprite  -6,  -1, 0, 0, $06, $0
+	dbsprite  -5,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltLeft:
+	dbsprite  -8,  -1, 0, 0, $00, $0
+	dbsprite  -7,  -1, 0, 0, $01, $0
+	dbsprite  -6,  -1, 0, 0, $02, $0
+	dbsprite  -5,  -1, 0, 0, $03, $0
+	dbsprite  -4,  -1, 0, 0, $04, $0
+	dbsprite  -3,  -1, 0, 0, $05, $0
+	dbsprite  -2,  -1, 0, 0, $06, $0
+	dbsprite  -1,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltMidLeft:
+	dbsprite  -4,  -1, 0, 0, $00, $0
+	dbsprite  -3,  -1, 0, 0, $01, $0
+	dbsprite  -2,  -1, 0, 0, $02, $0
+	dbsprite  -1,  -1, 0, 0, $03, $0
+	dbsprite   0,  -1, 0, 0, $04, $0
+	dbsprite   1,  -1, 0, 0, $05, $0
+	dbsprite   2,  -1, 0, 0, $06, $0
+	dbsprite   3,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltMidRight:
+	dbsprite   0,  -1, 0, 0, $00, $0
+	dbsprite   1,  -1, 0, 0, $01, $0
+	dbsprite   2,  -1, 0, 0, $02, $0
+	dbsprite   3,  -1, 0, 0, $03, $0
+	dbsprite   4,  -1, 0, 0, $04, $0
+	dbsprite   5,  -1, 0, 0, $05, $0
+	dbsprite   6,  -1, 0, 0, $06, $0
+	dbsprite   7,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltRight:
+	dbsprite   4,  -1, 0, 0, $00, $0
+	dbsprite   5,  -1, 0, 0, $01, $0
+	dbsprite   6,  -1, 0, 0, $02, $0
+	dbsprite   7,  -1, 0, 0, $03, $0
+	dbsprite   8,  -1, 0, 0, $04, $0
+	dbsprite   9,  -1, 0, 0, $05, $0
+	dbsprite  10,  -1, 0, 0, $06, $0
+	dbsprite  11,  -1, 0, 0, $07, $0
+
+.OAMData_VoltTackleBoltRightOff:
+	dbsprite   8,  -1, 0, 0, $00, $0
+	dbsprite   9,  -1, 0, 0, $01, $0
+	dbsprite  10,  -1, 0, 0, $02, $0
+	dbsprite  11,  -1, 0, 0, $03, $0
+	dbsprite  12,  -1, 0, 0, $04, $0
+	dbsprite  13,  -1, 0, 0, $05, $0
+	dbsprite  14,  -1, 0, 0, $06, $0
+	dbsprite  15,  -1, 0, 0, $07, $0
+
+.OAMData_IngrainRoot0:
+	dbsprite  -2,  -1, 0, 0, $00, $0
+	dbsprite  -1,  -1, 0, 0, $01, $0
+	dbsprite  -2,   0, 0, 0, $04, $0
+
+.OAMData_IngrainRoot1:
+	dbsprite  -2,  -1, 0, 0, $08, $0
+	dbsprite  -1,  -1, 0, 0, $09, $0
+	dbsprite   0,  -1, 0, 0, $0a, $0
+	dbsprite  -2,   0, 0, 0, $0c, $0
+	dbsprite  -1,   0, 0, 0, $0d, $0
+	dbsprite   0,   0, 0, 0, $0e, $0
+	dbsprite   1,   0, 0, 0, $0f, $0
+	dbsprite  -2,   1, 0, 0, $10, $0
+
+.OAMData_IngrainRoot2:
+	dbsprite  -2,  -1, 0, 0, $14, $0
+	dbsprite  -1,  -1, 0, 0, $15, $0
+	dbsprite   0,  -1, 0, 0, $16, $0
+	dbsprite   1,  -1, 0, 0, $17, $0
+	dbsprite  -2,   0, 0, 0, $18, $0
+	dbsprite  -1,   0, 0, 0, $19, $0
+	dbsprite   0,   0, 0, 0, $1a, $0
+	dbsprite   1,   0, 0, 0, $1b, $0
+
+.OAMData_IngrainRoot3:
+	dbsprite  -2,   0, 0, 0, $1c, $0
+	dbsprite  -1,   0, 0, 0, $1d, $0
+	dbsprite   0,   0, 0, 0, $1e, $0
+	dbsprite   1,   0, 0, 0, $1f, $0
+	dbsprite  -2,   1, 0, 0, $20, $0
+	dbsprite  -1,   1, 0, 0, $21, $0
+	dbsprite   0,   1, 0, 0, $22, $0
+	dbsprite   1,   1, 0, 0, $23, $0
 
 .OAMData_11:
 	dbsprite  -1,  -1, 4, 0, $00, $0
@@ -492,38 +680,6 @@ BattleAnimOAMData:
 	dbsprite   2,  -2, 4, 0, $00, $0
 	dbsprite  -4,  -1, 4, 0, $01, $0
 	dbsprite   2,  -1, 4, 0, $01, $0
-
-.OAMData_36:
-	dbsprite  -1,  -7, 0, 4, $00, $0
-	dbsprite   0,  -7, 0, 4, $01, $0
-	dbsprite  -1,  -6, 0, 4, $02, $0
-	dbsprite   0,  -6, 0, 4, $03, $0
-	dbsprite  -1,  -5, 0, 4, $04, $0
-	dbsprite   0,  -5, 0, 4, $05, $0
-	dbsprite  -1,  -4, 0, 4, $06, $0
-	dbsprite   0,  -4, 0, 4, $07, $0
-	dbsprite  -1,  -3, 0, 4, $08, $0
-	dbsprite   0,  -3, 0, 4, $09, $0
-	dbsprite  -1,  -2, 0, 4, $0a, $0
-	dbsprite   0,  -2, 0, 4, $0b, $0
-	dbsprite  -1,  -1, 0, 4, $0c, $0
-	dbsprite   0,  -1, 0, 4, $0d, $0
-
-.OAMData_3a:
-	dbsprite  -1,  -7, 0, 4, $0c, $0
-	dbsprite   0,  -7, 0, 4, $0d, $0
-	dbsprite  -1,  -6, 0, 4, $08, $0
-	dbsprite   0,  -6, 0, 4, $09, $0
-	dbsprite  -1,  -5, 0, 4, $04, $0
-	dbsprite   0,  -5, 0, 4, $05, $0
-	dbsprite  -1,  -4, 0, 4, $00, $0
-	dbsprite   0,  -4, 0, 4, $01, $0
-	dbsprite  -1,  -3, 0, 4, $02, $0
-	dbsprite   0,  -3, 0, 4, $03, $0
-	dbsprite   0,  -2, 0, 4, $02, $0
-	dbsprite   1,  -2, 0, 4, $03, $0
-	dbsprite   0,  -1, 0, 4, $0a, $0
-	dbsprite   1,  -1, 0, 4, $0b, $0
 
 .OAMData_3e:
 	dbsprite  -2,   1, 0, 4, $00, OAM_YFLIP
@@ -1011,6 +1167,12 @@ BattleAnimOAMData:
 	dbsprite  -1,  -4, 4, 4, $00, $0
 	dbsprite  -1,   2, 4, 4, $00, $0
 
+.OAMData_ElectricityEffect:
+	dbsprite  -1,  -1, 0, 0, $00, $0
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite  -1,   0, 0, 0, $02, $0
+	dbsprite   0,   0, 0, 0, $03, $0
+
 .OAMData_a4:
 	dbsprite  -2,  -2, 4, 4, $00, $0
 	dbsprite  -1,  -2, 4, 4, $01, $0
@@ -1090,3 +1252,65 @@ BattleAnimOAMData:
 	dbsprite   6,  -2, 4, 0, $00, $0
 	dbsprite   8,  -4, 4, 0, $00, $0
 	dbsprite  10,  -2, 4, 0, $00, $0
+
+.OAMData_LeafBlade:
+	dbsprite  -2,  -4, 0, 0, $00, $0
+	dbsprite  -2,  -3, 0, 0, $04, $0
+	dbsprite  -1,  -3, 0, 0, $05, $0
+	dbsprite  -2,  -2, 0, 0, $08, $0
+	dbsprite  -1,  -2, 0, 0, $09, $0
+	dbsprite  -1,  -1, 0, 0, $0d, $0
+	dbsprite   0,  -1, 0, 0, $0e, $0
+	dbsprite   1,  -1, 0, 0, $0f, $0
+	dbsprite  -2,   0, 0, 0, $10, $0
+	dbsprite  -1,   0, 0, 0, $11, $0
+	dbsprite   0,   0, 0, 0, $12, $0
+	dbsprite   1,   0, 0, 0, $13, $0
+	dbsprite  -2,   1, 0, 0, $14, $0
+	dbsprite  -1,   1, 0, 0, $15, $0
+	dbsprite   0,   1, 0, 0, $16, $0
+	dbsprite   0,   2, 0, 0, $1a, $0
+	dbsprite   1,   2, 0, 0, $1b, $0
+
+.OAMData_SolarBeamVerticalBody:
+	dbsprite   0,  -1, 0, 0, $01, $0
+	dbsprite   0,   0, 0, 0, $01, $0
+
+.OAMData_SolarBeamVerticalHead:
+	dbsprite  -1,  -2, 0, 0, $03, $0
+	dbsprite   0,  -2, 0, 0, $04, $0
+	dbsprite   1,  -2, 0, 0, $05, $0
+	dbsprite  -1,  -1, 0, 0, $06, $0
+	dbsprite   0,  -1, 0, 0, $07, $0
+	dbsprite   1,  -1, 0, 0, $08, $0
+	dbsprite  -1,   0, 0, 0, $09, $0
+	dbsprite   0,   0, 0, 0, $0a, $0
+	dbsprite   1,   0, 0, 0, $0b, $0
+
+.OAMData_SharpTeeth:
+	dbsprite  -3,  -1, 0, 0, $00, $0
+	dbsprite  -2,  -1, 0, 0, $01, $0
+	dbsprite  -1,  -1, 0, 0, $02, $0
+	dbsprite   0,  -1, 0, 0, $03, $0
+	dbsprite   1,  -1, 0, 0, $04, $0
+	dbsprite   2,  -1, 0, 0, $05, $0
+	dbsprite  -3,   0, 0, 0, $06, $0
+	dbsprite  -2,   0, 0, 0, $07, $0
+	dbsprite  -1,   0, 0, 0, $08, $0
+	dbsprite   0,   0, 0, 0, $09, $0
+	dbsprite   1,   0, 0, 0, $0a, $0
+	dbsprite   2,   0, 0, 0, $0b, $0
+
+.OAMData_SharpTeethFlipped:
+	dbsprite  -3,  -1, 0, 0, $06, OAM_YFLIP
+	dbsprite  -2,  -1, 0, 0, $07, OAM_YFLIP
+	dbsprite  -1,  -1, 0, 0, $08, OAM_YFLIP
+	dbsprite   0,  -1, 0, 0, $09, OAM_YFLIP
+	dbsprite   1,  -1, 0, 0, $0a, OAM_YFLIP
+	dbsprite   2,  -1, 0, 0, $0b, OAM_YFLIP
+	dbsprite  -3,   0, 0, 0, $00, OAM_YFLIP
+	dbsprite  -2,   0, 0, 0, $01, OAM_YFLIP
+	dbsprite  -1,   0, 0, 0, $02, OAM_YFLIP
+	dbsprite   0,   0, 0, 0, $03, OAM_YFLIP
+	dbsprite   1,   0, 0, 0, $04, OAM_YFLIP
+	dbsprite   2,   0, 0, 0, $05, OAM_YFLIP

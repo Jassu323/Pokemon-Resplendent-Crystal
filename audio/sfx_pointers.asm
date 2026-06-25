@@ -209,4 +209,6 @@ SFX:
 	dba Sfx_TwoPcBeeps
 	dba Sfx_4NoteDitty
 	dba Sfx_Twinkle
+	dba Sfx_ThundershockShort
+	dba Sfx_ThundershockLong
 	assert_table_length NUM_SFX

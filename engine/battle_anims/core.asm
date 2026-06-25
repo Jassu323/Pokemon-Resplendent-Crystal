@@ -27,15 +27,9 @@ DeinitBattleAnimation:
 	ret
 
 InitBattleAnimation:
-	ld a, [wBattleObjectTempID]
-	ld e, a
-	ld d, 0
-	ld hl, BattleAnimObjects
-rept BATTLEANIMOBJ_LENGTH
-	add hl, de
-endr
-	ld e, l
-	ld d, h
+	push bc
+	call GetBattleAnimObjectCached
+	pop bc
 	ld hl, BATTLEANIMSTRUCT_INDEX
 	add hl, bc
 	ld a, [wLastAnimObjectIndex]
@@ -48,7 +42,10 @@ endr
 	ld [hli], a ; BATTLEANIMSTRUCT_FIX_Y
 	ld a, [de]
 	inc de
-	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID
+	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID (lo = index)
+	ld a, [de]
+	inc de
+	ld [hli], a ; BATTLEANIMSTRUCT_FRAMESET_ID (hi = bank selector)
 	ld a, [de]
 	inc de
 	ld [hli], a ; BATTLEANIMSTRUCT_FUNCTION
@@ -74,7 +71,94 @@ endr
 	xor a
 	ld [hli], a ; BATTLEANIMSTRUCT_JUMPTABLE_INDEX
 	ld [hli], a ; BATTLEANIMSTRUCT_VAR1
-	ld [hl], a  ; BATTLEANIMSTRUCT_VAR2
+	ld [hli], a ; BATTLEANIMSTRUCT_VAR2
+	ld [hli], a ; BATTLEANIMSTRUCT_EXT_OAMSET
+	ld [hl], a  ; BATTLEANIMSTRUCT_EXT_OAMFLAGS
+	ret
+
+GetBattleAnimObjectCached:
+	ld hl, wBattleAnimObjCache1Namespace
+	call BattleAnimObjectCacheMatches
+	jr z, .hit_slot1
+	ld hl, wBattleAnimObjCache2Namespace
+	call BattleAnimObjectCacheMatches
+	jr z, .hit_slot2
+	ld hl, wBattleAnimObjCache3Namespace
+	call BattleAnimObjectCacheMatches
+	jr z, .hit_slot3
+
+	ld hl, wBattleAnimObjCache2Namespace
+	ld de, wBattleAnimObjCache3Namespace
+	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+	call CopyBytes
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
+	ld bc, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+	call CopyBytes
+	ld a, [wBattleObjectTempNamespace]
+	ld [wBattleAnimObjCache1Namespace], a
+	ld a, [wBattleObjectTempID]
+	ld [wBattleAnimObjCache1ID], a
+	ld e, a
+	ld d, 0
+	ld a, [wBattleObjectTempNamespace]
+	and a
+	jr z, .regular_object
+	ld hl, BattleAnimExtObjects
+	ld a, BANK(BattleAnimExtObjects)
+	jr .got_object_table
+
+.regular_object
+	ld hl, BattleAnimObjects
+	ld a, BANK(BattleAnimObjects)
+
+.got_object_table
+rept BATTLEANIMOBJ_LENGTH
+	add hl, de
+endr
+	ld de, wBattleAnimObjCache1Data
+	ld bc, BATTLEANIMOBJ_LENGTH
+	call FarCopyBytes
+.hit_slot1
+	ld de, wBattleAnimObjCache1Data
+	ret
+
+.hit_slot2
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
+	call SwapBattleAnimObjectCacheEntries
+	jr .hit_slot1
+
+.hit_slot3
+	ld hl, wBattleAnimObjCache2Namespace
+	ld de, wBattleAnimObjCache3Namespace
+	call SwapBattleAnimObjectCacheEntries
+	ld hl, wBattleAnimObjCache1Namespace
+	ld de, wBattleAnimObjCache2Namespace
+	call SwapBattleAnimObjectCacheEntries
+	jr .hit_slot1
+
+BattleAnimObjectCacheMatches:
+	ld a, [wBattleObjectTempNamespace]
+	cp [hl]
+	ret nz
+	inc hl
+	ld a, [wBattleObjectTempID]
+	cp [hl]
+	ret
+
+SwapBattleAnimObjectCacheEntries:
+	ld b, BATTLEANIMOBJ_CACHE_ENTRY_LENGTH
+.loop
+	ld a, [de]
+	ld c, a
+	ld a, [hl]
+	ld [de], a
+	ld a, c
+	ld [hli], a
+	inc de
+	dec b
+	jr nz, .loop
 	ret
 
 BattleAnimOAMUpdate:
@@ -94,6 +178,11 @@ BattleAnimOAMUpdate:
 	pop af
 
 	push bc
+	ld e, a
+	ld a, [wBattleAnimTempFrameOAMFlags]
+	bit BATTLEANIMSTRUCT_EXT_OAMFLAGS_EXT_F, a
+	jr nz, .extended_oam
+	ld a, e
 	call GetBattleAnimOAMPointer
 	ld a, [wBattleAnimTempTileID]
 	add [hl] ; tile offset
@@ -107,6 +196,13 @@ BattleAnimOAMUpdate:
 	ld a, [wBattleAnimOAMPointerLo]
 	ld e, a
 	ld d, HIGH(wShadowOAM)
+	jr .loop
+
+	.extended_oam
+	call BattleAnimExtOAMUpdate
+	pop bc
+	ret c
+	jr .done
 
 .loop
 	; Y Coord
@@ -316,5 +412,3 @@ _ExecuteBGEffects:
 _QueueBGEffect:
 	callfar QueueBGEffect
 	ret
-
-INCLUDE "data/battle_anims/objects.asm"

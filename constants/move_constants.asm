@@ -257,6 +257,89 @@
 	const ROCK_SMASH   ; f9
 	const WHIRLPOOL    ; fa
 	const BEAT_UP      ; fb
+	const FAKE_OUT     ; fc
+	const HEAT_WAVE    ; fd
+	const HAIL         ; fe
+	const WILL_O_WISP  ; ff
+	const FOCUS_PUNCH  ; 100
+	const TAUNT        ; 101
+	const WISH         ; 102
+	const INGRAIN      ; 103
+	const SUPERPOWER   ; 104
+	const BRICK_BREAK  ; 105
+	const YAWN         ; 106
+	const ARM_THRUST   ; 107
+	const BLAZE_KICK   ; 108
+	const ICE_BALL     ; 109
+	const POISON_FANG  ; 10a
+	const CRUSH_CLAW   ; 10b
+	const METEOR_MASH  ; 10c
+	const AROMATHERAPY ; 10d
+	const AIR_CUTTER   ; 10e
+	const OVERHEAT     ; 10f
+	const ROCK_TOMB    ; 110
+	const SILVER_WIND  ; 111
+	const SIGNAL_BEAM  ; 112
+	const SHADOW_PUNCH ; 113
+	const EXTRASENSORY ; 114
+	const SKY_UPPERCUT ; 115
+	const SAND_TOMB    ; 116
+	const BULLET_SEED  ; 117
+	const AERIAL_ACE   ; 118
+	const IRON_DEFENSE ; 119
+	const BLOCK        ; 11a
+	const HOWL         ; 11b
+	const DRAGON_CLAW  ; 11c
+	const BULK_UP      ; 11d
+	const MUD_SHOT     ; 11e
+	const POISON_TAIL  ; 11f
+	const VOLT_TACKLE  ; 120
+	const MAGICAL_LEAF ; 121
+	const CALM_MIND    ; 122
+	const LEAF_BLADE   ; 123
+	const DRAGON_DANCE ; 124
+	const ROCK_BLAST   ; 125
+	const SHOCK_WAVE   ; 126
+	const WATER_PULSE  ; 127
+	const PLUCK        ; 128
+	const ASSURANCE    ; 129
+	const SUCKER_PUNCH ; 12a
+	const FORCE_PALM   ; 12b
+	const POISON_JAB   ; 12c
+	const NIGHT_SLASH  ; 12d
+	const X_SCISSOR    ; 12e
+	const DRAIN_PUNCH  ; 12f
+	const ENERGY_BALL  ; 130
+	const BULLET_PUNCH ; 131
+	const SHADOW_CLAW  ; 132
+	const THUNDER_FANG ; 133
+	const ICE_FANG     ; 134
+	const FIRE_FANG    ; 135
+	const MUD_BOMB     ; 136
+	const LAVA_PLUME   ; 137
+	const STONE_EDGE   ; 138
+	const BUG_BITE     ; 139
+	const SLUDGE_WAVE  ; 13a
+	const HEAVY_SLAM   ; 13b
+	const HEX          ; 13c
+	const WILD_CHARGE  ; 13d
+	const DRILL_RUN    ; 13e
+	const ICICLE_CRASH ; 13f
+	const DISARMING_VOICE ; 140
+	const FAIRY_WIND   ; 141
+	const MOONBLAST    ; 142
+	const DAZZLING_GLEAM ; 143
+; Custom moves. Must always be last in the list.
+	const GLACIAL_SLAM ; 144
+	const DRAIN_LIFE   ; 145
+	const VAMPIRISM    ; 146
+	const DIVE_BOMB    ; 147
+	const AERIAL_CRASH ; 148
+	const METEOR_DIVE  ; 149
+	const CAUSTIC      ; 14a
+	const CORROSION    ; 14b
+	const PILEDRIVER   ; 14c
+	const LEEK_SLAP    ; 14d
 DEF NUM_ATTACKS EQU const_value - 1
 
 DEF CANNOT_MOVE EQU $ff
@@ -266,15 +349,16 @@ DEF CANNOT_MOVE EQU $ff
 	endc
 
 ; Battle animations use the same constants as the moves
-	const ANIM_SWEET_SCENT_2     ; fc
+	const ANIM_SWEET_SCENT_2     ; fd
+	const ANIM_WISH_HEAL
 ; Animations with negative IDs will play even when animations are disabled
 	const_def -1, -1
 	const ANIM_HIT_CONFUSION     ;  -1 (ffff)
 	const ANIM_SHAKE             ;  -2 (fffe)
 	const ANIM_WOBBLE            ;  -3 (fffd)
 	const ANIM_PLAYER_DAMAGE     ;  -4 (fffc)
-	const ANIM_PLAYER_STAT_DOWN  ;  -5 (fffb)
-	const ANIM_ENEMY_STAT_DOWN   ;  -6 (fffa)
+	const ANIM_STAT_UP           ;  -5 (fffb)
+	const ANIM_STAT_DOWN         ;  -6 (fffa)
 	const ANIM_ENEMY_DAMAGE      ;  -7 (fff9)
 	const ANIM_MISS              ;  -8 (fff8)
 	DEF BATTLE_AFTERANIMS EQU ANIM_MISS
@@ -293,4 +377,7 @@ DEF CANNOT_MOVE EQU $ff
 	const ANIM_RETURN_MON        ; -14 (ffec)
 	const ANIM_SEND_OUT_MON      ; -15 (ffeb)
 	const ANIM_THROW_POKE_BALL   ; -16 (ffea)
+	const ANIM_IN_RAIN           ; -17 (ffe9)
+	const ANIM_IN_SUN            ; -18 (ffe8)
+	const ANIM_IN_HAIL           ; -19 (ffe7)
 DEF NUM_BATTLE_ANIMS EQU -const_value - 1
