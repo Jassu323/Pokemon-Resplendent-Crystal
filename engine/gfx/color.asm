@@ -1215,6 +1215,13 @@ GetMonPalettePointer:
 	call _GetMonPalettePointer
 	ret
 
+LoadPokemonPalette:
+	ld a, [wCurPartySpecies]
+	call GetMonPalettePointer
+	ld bc, PAL_COLOR_SIZE * 2
+	ld a, BANK(wBGPals1)
+	jp FarCopyWRAM
+
 CGBCopyBattleObjectPals: ; unreferenced
 ; dummied out
 	ret
