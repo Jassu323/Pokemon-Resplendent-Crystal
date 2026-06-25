@@ -53,7 +53,7 @@ SGBLayoutJumptable:
 	dw .SGB_PlayerOrMonFrontpicPals
 	dw .SGB_TradeTube
 	dw .SGB_TrainerOrMonFrontpicPals
-	dw .SGB_MysteryGift
+	dw .SGB_Diploma
 	dw .SGB_Unused1E
 	assert_table_length NUM_SCGB_LAYOUTS
 
@@ -292,7 +292,6 @@ SGBLayoutJumptable:
 	ret
 
 .SGB_Diploma:
-.SGB_MysteryGift:
 	ld hl, PalPacket_Diploma
 	ld de, BlkPacket_AllPal0
 	ret

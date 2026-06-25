@@ -66,7 +66,7 @@ DEF NUM_FRAMES EQU const_value
 	const FAST_TEXT_DELAY_F ; 0
 	const TEXT_DELAY_F      ; 1
 
-; wGBPrinterBrightness::
+; reclaimed GB Printer brightness byte
 DEF GBPRINTER_LIGHTEST EQU $00
 DEF GBPRINTER_LIGHTER  EQU $20
 DEF GBPRINTER_NORMAL   EQU $40

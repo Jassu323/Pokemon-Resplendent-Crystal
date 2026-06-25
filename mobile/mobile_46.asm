@@ -3200,7 +3200,6 @@ Function11984e:
 	ld a, $1
 	ldh [rWBK], a
 	call FadeToMenu
-	farcall MobileTradeAnimation_SendGivemonToGTS
 	call Function11a9ce
 	call RestartMapMusic
 	ld a, BANK("Battle Tower RAM")
@@ -3234,7 +3233,6 @@ Function11984e:
 	ld a, $1
 	ldh [rWBK], a
 	call FadeToMenu
-	farcall MobileTradeAnimation_RetrieveGivemonFromGTS
 	call Function11a9ce
 	call RestartMapMusic
 	ld a, BANK("Battle Tower RAM")
@@ -7341,7 +7339,6 @@ Function11b7e5:
 	ld [wOTTrademonCaughtData], a
 	call SpeechTextbox
 	call FadeToMenu
-	farcall MobileTradeAnimation_ReceiveGetmonFromGTS
 	farcall Function17d1f1
 	ld a, $1
 	ld [wForceEvolution], a

@@ -133,8 +133,7 @@ wMapTimeOfDay:: db
 
 	ds 3
 
-wPrinterConnectionOpen:: db
-wPrinterOpcode:: db
+wReclaimedPrinterSerialWRAM0:: ds 2
 
 	ds 1
 
@@ -903,38 +902,9 @@ wOverworldMapBlocksEnd::
 
 SECTION UNION "Overworld Map", WRAM0
 
-; GB Printer data
-wGameboyPrinterRAM::
-wGameboyPrinter2bppSource:: ds 40 tiles
-wGameboyPrinter2bppSourceEnd::
-wUnusedGameboyPrinterSafeCancelFlag:: db
-wPrinterRowIndex:: db
-
-; Printer data
-wPrinterData:: ds 4
-wPrinterChecksum:: dw
-wPrinterHandshake:: db
-wPrinterStatusFlags::
-; bit 7: set if error 1 (battery low)
-; bit 6: set if error 4 (too hot or cold)
-; bit 5: set if error 3 (paper jammed or empty)
-; if this and the previous byte are both $ff: error 2 (connection error)
-	db
-
-wHandshakeFrameDelay:: db
-wPrinterSerialFrameDelay:: db
-wPrinterSendByteOffset:: dw
-wPrinterSendByteCounter:: dw
-
-; tilemap backup?
-wPrinterTilemapBuffer:: ds SCREEN_AREA
-wPrinterStatus:: db
-	ds 1
-; High nibble is for margin before the image, low nibble is for after.
-wPrinterMargins:: db
-wPrinterExposureTime:: db
-	ds 16
-wGameboyPrinterRAMEnd::
+; reclaimed GB Printer data
+wReclaimedPrinterWRAM0:: ds $40c
+wReclaimedPrinterWRAM0End::
 
 
 SECTION UNION "Overworld Map", WRAM0
@@ -1069,58 +1039,17 @@ wLinkReceivedMailEnd:: db
 
 SECTION UNION "Overworld Map", WRAM0
 
-; mystery gift data
-wMysteryGiftStaging:: ds 80
-
-UNION
-wMysteryGiftTrainer:: ds 1 + (1 + 1 + NUM_MOVES) * PARTY_LENGTH + 1
-wMysteryGiftTrainerEnd::
-
-NEXTU
-wNameCardData:: ds NAME_LENGTH + 2 + 2 + 1 + 8 + 12
-wNameCardDataEnd::
-
-NEXTU
-wMysteryGiftCardHolderName:: ds PLAYER_NAME_LENGTH
-ENDU
-
-	ds 138
-
-wMysteryGiftPartnerData::
-wMysteryGiftPartnerGameVersion:: db
-wMysteryGiftPartnerID:: dw
-wMysteryGiftPartnerName:: ds NAME_LENGTH
-wMysteryGiftPartnerDexCaught:: db
-wMysteryGiftPartnerSentDeco:: db
-wMysteryGiftPartnerWhichItem:: db
-wMysteryGiftPartnerWhichDeco:: db
-wMysteryGiftPartnerBackupItem:: db
-	ds 1
-wMysteryGiftPartnerDataEnd::
-
-	ds 60
-
-wMysteryGiftPlayerData::
-wMysteryGiftPlayerGameVersion:: db
-wMysteryGiftPlayerID:: dw
-wMysteryGiftPlayerName:: ds NAME_LENGTH
-wMysteryGiftPlayerDexCaught:: db
-wMysteryGiftPlayerSentDeco:: db
-wMysteryGiftPlayerWhichItem:: db
-wMysteryGiftPlayerWhichDeco:: db
-wMysteryGiftPlayerBackupItem:: db
-	ds 1
-wMysteryGiftPlayerDataEnd::
+; reclaimed Mystery Gift/name-card data
+wReclaimedMysteryGiftWRAM0:: ds $164
+wReclaimedMysteryGiftWRAM0End::
 
 
 SECTION UNION "Overworld Map", WRAM0
 
 	ds $200
 
-; mystery gift data
-wUnusedMysteryGiftStagedDataLength:: db
-wMysteryGiftMessageCount:: db
-wMysteryGiftStagedDataLength:: db
+; reclaimed Mystery Gift message counters
+wReclaimedMysteryGiftMessageWRAM0:: ds 3
 
 
 SECTION UNION "Overworld Map", WRAM0
@@ -1637,7 +1566,6 @@ wHallOfFameMonCounter::
 wTradeDialog::
 	db
 wFrameCounter2::
-wPrinterQueueLength::
 wUnusedSGB1eColorOffset::
 	db
 wUnusedTradeAnimPlayEvolutionMusic:: db
@@ -1806,13 +1734,8 @@ wTextboxFlags::
 ; bit 0: 1-frame text delay
 ; bit 4: no text delay
 	db
-wGBPrinterBrightness::
-; bit 0-6: brightness
-;   lightest: $00
-;   lighter:  $20
-;   normal:   $40 (default)
-;   darker:   $60
-;   darkest:  $7F
+wReclaimedPrinterBrightnessWRAM0::
+; reclaimed GB Printer brightness byte
 	db
 wOptions2::
 ; bit 1: menu account off/on
@@ -2644,7 +2567,6 @@ wCurEnemyItem:: db
 NEXTU
 ; miscellaneous words
 wBuySellItemPrice::
-wTempMysteryGiftTimer::
 wMagikarpLength:: dw
 
 NEXTU

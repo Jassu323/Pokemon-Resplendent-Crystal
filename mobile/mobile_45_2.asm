@@ -1,3 +1,44 @@
+Function115d99::
+Function115dc3::
+Function115dd3::
+Function11615a::
+Function115e18::
+Function11619d::
+Function4a94e::
+Function108026::
+Function10802a::
+Function10803d::
+Function10804d::
+	ret
+
+Function17a68f::
+	scf
+	ret
+
+Function8aba9::
+	xor a
+	ld c, a
+	ret
+
+Function8ac4e::
+	ret
+
+Function8ac70::
+	xor a
+	ld c, a
+	ret
+
+Function8adb3::
+Function8adcc::
+MobileCheckOwnMonAnywhere::
+	scf
+	ret
+
+Function48c63::
+	ld a, '@'
+	ld [de], a
+	ret
+
 Function116567:
 	ld hl, wc3f7
 	dec [hl]

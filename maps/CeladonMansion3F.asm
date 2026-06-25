@@ -36,29 +36,7 @@ GameFreakGameDesignerScript:
 GameFreakGraphicArtistScript:
 	faceplayer
 	opentext
-	checkevent EVENT_ENABLE_DIPLOMA_PRINTING
-	iftrue .CanPrintDiploma
 	writetext GameFreakGraphicArtistText
-	waitbutton
-	closetext
-	end
-
-.CanPrintDiploma:
-	writetext GameFreakGraphicArtistPrintDiplomaText
-	yesorno
-	iffalse .Refused
-	special PrintDiploma
-	closetext
-	end
-
-.Refused:
-	writetext GameFreakGraphicArtistRefusedText
-	waitbutton
-	closetext
-	end
-
-.CancelPrinting: ; unreferenced
-	writetext GameFreakGraphicArtistErrorText
 	waitbutton
 	closetext
 	end
@@ -118,29 +96,6 @@ GameFreakGraphicArtistText:
 	line "Artist."
 
 	para "I drew you!"
-	done
-
-GameFreakGraphicArtistPrintDiplomaText:
-	text "I'm the Graphic"
-	line "Artist."
-
-	para "Oh, you completed"
-	line "your #dex?"
-
-	para "Want me to print"
-	line "out your Diploma?"
-	done
-
-GameFreakGraphicArtistRefusedText:
-	text "Give me a shout if"
-	line "you want your"
-	cont "Diploma printed."
-	done
-
-GameFreakGraphicArtistErrorText:
-	text "Something's wrong."
-	line "I'll have to can-"
-	cont "cel printing."
 	done
 
 GameFreakProgrammerText:

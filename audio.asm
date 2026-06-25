@@ -66,7 +66,7 @@ INCLUDE "audio/music/route29.asm"
 INCLUDE "audio/music/halloffame.asm"
 INCLUDE "audio/music/healpokemon.asm"
 INCLUDE "audio/music/evolution.asm"
-INCLUDE "audio/music/printer.asm"
+INCLUDE "audio/music/printer_stub.asm"
 
 
 SECTION "Songs 4", ROMX

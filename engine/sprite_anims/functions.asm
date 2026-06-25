@@ -740,11 +740,9 @@ SpriteAnimFunc_FlyTo:
 	ret
 
 SpriteAnimFunc_MobileTradeSentPulse:
-	farcall MobileTradeAnim_AnimateSentPulse
 	ret
 
 SpriteAnimFunc_MobileTradeOTPulse:
-	farcall MobileTradeAnim_AnimateOTPulse
 	ret
 
 SpriteAnimFunc_IntroSuicune:
