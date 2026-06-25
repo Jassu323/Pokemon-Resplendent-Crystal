@@ -15,6 +15,8 @@ DoBattle:
 	ld [wBattleEnded], a
 	ld [wPlayerWishCount], a
 	ld [wEnemyWishCount], a
+	ld [wPlayerAbility], a
+	ld [wEnemyAbility], a
 	inc a
 	ld [wBattleHasJustStarted], a
 	ld hl, wOTPartyMon1HP
@@ -1086,6 +1088,41 @@ BattleCoreExt:
 	ld [wBattleCommandParam], a
 	callfar BattleCoreHookExt
 	ret
+
+BattleCore_PlayerSwitchOutHook:
+	ldh a, [hBattleTurn]
+	push af
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_OUT
+	call BattleCoreExt
+	pop af
+	ldh [hBattleTurn], a
+	ret
+
+BattleCore_EnemySwitchOutHook:
+	ldh a, [hBattleTurn]
+	push af
+	call SetEnemyTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_OUT
+	call BattleCoreExt
+	pop af
+	ldh [hBattleTurn], a
+	ret
+
+BattleCore_PlayerSwitchInHook:
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_IN
+	jp BattleCoreExt
+
+BattleCore_EnemySwitchInHook:
+	call SetEnemyTurn
+	ld a, BATTLE_CORE_HOOK_SWITCH_IN
+	jp BattleCoreExt
+
+BattleCore_PlayerCanSwitchHook:
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_CAN_SWITCH
+	jp BattleCoreExt
 
 EndOpponentProtectEndureDestinyBond:
 	ld a, BATTLE_VARS_SUBSTATUS1_OPP
@@ -3366,6 +3403,7 @@ CheckWhetherSwitchmonIsPredetermined:
 
 ResetEnemyBattleVars:
 ; and draw empty Textbox
+	call BattleCore_EnemySwitchOutHook
 	xor a
 	ld [wLastPlayerCounterMove], a
 	ld [wLastEnemyCounterMove], a
@@ -3675,6 +3713,7 @@ OfferSwitch:
 	call SetUpBattlePartyMenu
 	call PickSwitchMonInBattle
 	jr c, .canceled_switch
+	call BattleCore_PlayerSwitchOutHook
 	ld a, [wCurBattleMon]
 	ld [wLastPlayerMon], a
 	ld a, [wCurPartyMon]
@@ -3766,6 +3805,7 @@ ShowSetEnemyMonAndSendOutAnimation:
 
 .skip_cry
 	call UpdateEnemyHUD
+	call BattleCore_EnemySwitchInHook
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
@@ -3882,6 +3922,11 @@ TryToRunAwayFromBattle:
 	ld a, [wPlayerWrapCount]
 	and a
 	jp nz, .cant_escape
+
+	call SetPlayerTurn
+	ld a, BATTLE_CORE_HOOK_RUN_CHECK
+	call BattleCoreExt
+	jp c, .can_escape
 
 	push hl
 	push de
@@ -4249,6 +4294,7 @@ SendOutPlayerMon:
 
 .statused
 	call UpdatePlayerHUD
+	call BattleCore_PlayerSwitchInHook
 	ld a, $1
 	ldh [hBGMapMode], a
 	ret
@@ -5382,8 +5428,11 @@ TryPlayerSwitch:
 	jp BattleMenuPKMN_Loop
 
 .try_switch
+	call BattleCore_PlayerCanSwitchHook
+	jr c, .trapped
 	call CheckIfCurPartyMonIsFitToFight
 	jp z, BattleMenuPKMN_Loop
+	call BattleCore_PlayerSwitchOutHook
 	ld a, [wCurBattleMon]
 	ld [wLastPlayerMon], a
 	ld a, BATTLEPLAYERACTION_SWITCH

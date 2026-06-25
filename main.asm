@@ -710,6 +710,8 @@ INCLUDE "engine/battle_anims/extension_functions.asm"
 ; Cleared out for future development use as part of the Battle Engine Overhaul branch following commit a07eb1954.
 SECTION "Battle Engine Overhaul Future Use", ROMX, BANK[$7B]
 
+INCLUDE "data/moves/attributes.asm"
+INCLUDE "data/pokemon/abilities.asm"
 INCLUDE "engine/battle/effect_command_extensions.asm"
 
 

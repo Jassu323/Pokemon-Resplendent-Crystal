@@ -605,6 +605,8 @@ wPlayerWishCount:: db
 wEnemyWishCount:: db
 wPlayerWishHP:: dw
 wEnemyWishHP:: dw
+wPlayerAbility:: db
+wEnemyAbility:: db
 
 wPlayerTrappingMove:: db
 wEnemyTrappingMove:: db

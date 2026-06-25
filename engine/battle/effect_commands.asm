@@ -1458,7 +1458,8 @@ BattleCommand_Stab:
 	and STAB_DAMAGE
 	or b
 	ld [wTypeModifier], a
-	ret
+	ld a, BATTLE_ABILITY_HOOK_DAMAGE_MODIFIER
+	jp BattleCommand_AbilityHook
 
 BattleCommand_GetPoisonSteelMatchup:
 ; Input: a = current move type, hl = type-chart multiplier byte.
@@ -1714,6 +1715,10 @@ BattleCommand_CheckHit:
 
 	call .FlyDigMoves
 	jp nz, .Miss
+
+	ld a, BATTLE_ABILITY_HOOK_CHECK_HIT
+	call BattleCommand_AbilityHook
+	ret c
 
 	ld a, [wMinimizeAccuracyBypass]
 	and a
@@ -2386,6 +2391,9 @@ BattleCommand_ApplyDamage:
 	farcall BattleCommand_BreakFocusPunchExt
 
 .skip_focus_break
+	ld a, BATTLE_ABILITY_HOOK_AFTER_DAMAGE
+	call BattleCommand_AbilityHook
+
 	ld de, wPlayerDamageTaken + 1
 	ldh a, [hBattleTurn]
 	and a
@@ -4392,6 +4400,11 @@ BattleCommand_BattleExt:
 	farcall BattleCommand_BattleExtDispatcher
 	ret
 
+BattleCommand_AbilityHook:
+	ld [wBattleCommandParam], a
+	farcall BattleCommand_AbilityHookExt
+	ret
+
 BattleCommand_AttackUp:
 	ld b, ATTACK
 	jr BattleCommand_StatUp
@@ -4449,135 +4462,8 @@ BattleCommand_EvasionUp2:
 	jr BattleCommand_StatUp
 
 BattleCommand_StatUp:
-	call RaiseStat
-	ld a, [wFailedMessage]
-	and a
-	ret nz
-	jp MinimizeDropSub
-
-RaiseStat:
-	ld a, b
-	ld [wLoweredStat], a
-	ld hl, wPlayerStatLevels
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .got_stat_levels
-	ld hl, wEnemyStatLevels
-.got_stat_levels
-	ld a, [wAttackMissed]
-	and a
-	jp nz, .stat_raise_failed
-	ld a, [wEffectFailed]
-	and a
-	jp nz, .stat_raise_failed
-	ld a, [wLoweredStat]
-	and $f
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld b, [hl]
-	inc b
-	ld a, MAX_STAT_LEVEL
-	cp b
-	jp c, .cant_raise_stat
-	ld a, [wLoweredStat]
-	and $f0
-	jr z, .got_num_stages
-	inc b
-	ld a, MAX_STAT_LEVEL
-	cp b
-	jr nc, .got_num_stages
-	ld b, a
-.got_num_stages
-	ld [hl], b
-	push hl
-	ld a, c
-	cp ACCURACY
-	jr nc, .done_calcing_stats
-	ld hl, wBattleMonStats + 1
-	ld de, wPlayerStats
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .got_stats_pointer
-	ld hl, wEnemyMonStats + 1
-	ld de, wEnemyStats
-.got_stats_pointer
-	push bc
-	sla c
-	ld b, 0
-	add hl, bc
-	ld a, c
-	add e
-	ld e, a
-	jr nc, .no_carry
-	inc d
-.no_carry
-	pop bc
-	ld a, [hld]
-	sub LOW(MAX_STAT_VALUE)
-	jr nz, .not_already_max
-	ld a, [hl]
-	sbc HIGH(MAX_STAT_VALUE)
-	jp z, .stats_already_max
-.not_already_max
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .calc_player_stats
-	call CalcEnemyStats
-	jr .done_calcing_stats
-
-.calc_player_stats
-	call CalcPlayerStats
-.done_calcing_stats
-	pop hl
-	xor a
-	ld [wFailedMessage], a
+	farcall BattleCommand_StatUpExt
 	ret
-
-.stats_already_max
-	pop hl
-	dec [hl]
-	; fallthrough
-
-.cant_raise_stat
-	ld a, $2
-	ld [wFailedMessage], a
-	ld a, $1
-	ld [wAttackMissed], a
-	ret
-
-.stat_raise_failed
-	ld a, $1
-	ld [wFailedMessage], a
-	ret
-
-MinimizeDropSub:
-; Lower the substitute if we're minimizing
-
-	ld de, wPlayerMinimized
-	ld hl, DropPlayerSub
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .do_player
-	ld de, wEnemyMinimized
-	ld hl, DropEnemySub
-.do_player
-	ld a, BATTLE_VARS_MOVE_ANIM
-	call GetBattleVar
-	ld bc, MINIMIZE
-	call CompareMove
-	ret nz
-
-	ld a, $1
-	ld [de], a
-	call _CheckBattleScene
-	ret nc
-
-	xor a
-	ldh [hBGMapMode], a
-	call CallBattleCore
-	call WaitBGMap
-	jp BattleCommand_MoveDelay
 
 BattleCommand_AttackDown:
 	ld a, ATTACK
@@ -4633,316 +4519,32 @@ BattleCommand_AccuracyDown2:
 
 BattleCommand_EvasionDown2:
 	ld a, $10 | EVASION
+	jr BattleCommand_StatDown
 
 BattleCommand_StatDownFromParam:
-	ld a, [wBattleCommandParam]
-	and STAT_PARAM_MASK
-	; fallthrough
+	farcall BattleCommand_StatDownFromParamExt
+	ret
 
 BattleCommand_StatDown:
-	ld [wLoweredStat], a
-
-	call CheckMist
-	jp nz, .Mist
-
-	ld hl, wEnemyStatLevels
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .GetStatLevel
-	ld hl, wPlayerStatLevels
-
-.GetStatLevel:
-; Attempt to lower the stat.
-	ld a, [wLoweredStat]
-	and $f
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld b, [hl]
-	dec b
-	jp z, .CantLower
-
-; Sharply lower the stat if applicable.
-	ld a, [wLoweredStat]
-	and $f0
-	jr z, .ComputerMiss
-	dec b
-	jr nz, .ComputerMiss
-	inc b
-
-.ComputerMiss:
-; Computer opponents have a 25% chance of failing.
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .DidntMiss
-
-	ld a, [wLinkMode]
-	and a
-	jr nz, .DidntMiss
-
-	ld a, [wInBattleTowerBattle]
-	and a
-	jr nz, .DidntMiss
-
-; Lock-On still always works.
-	ld a, [wPlayerSubStatus5]
-	bit SUBSTATUS_LOCK_ON, a
-	jr nz, .DidntMiss
-
-; Attacking moves that also lower accuracy are unaffected.
-	ld a, BATTLE_VARS_MOVE_EFFECT
-	call GetBattleVar
-	cp EFFECT_ACCURACY_DOWN_HIT
-	jr z, .DidntMiss
-
-	call BattleRandom
-	cp 25 percent + 1 ; 25% chance AI fails
-	jr c, .Failed
-
-.DidntMiss:
-	call CheckSubstituteOpp
-	jr nz, .Failed
-
-	ld a, [wAttackMissed]
-	and a
-	jr nz, .Failed
-
-	ld a, [wEffectFailed]
-	and a
-	jr nz, .Failed
-
-	call CheckHiddenOpponent
-	jr nz, .Failed
-
-; Accuracy/Evasion reduction don't involve stats.
-	ld [hl], b
-	ld a, c
-	cp ACCURACY
-	jr nc, .Hit
-
-	push hl
-	ld hl, wEnemyMonAttack + 1
-	ld de, wEnemyStats
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .do_enemy
-	ld hl, wBattleMonAttack + 1
-	ld de, wPlayerStats
-.do_enemy
-	call TryLowerStat
-	pop hl
-	jr z, .CouldntLower
-
-.Hit:
-	xor a
-	ld [wFailedMessage], a
-	ret
-
-.CouldntLower:
-	inc [hl]
-.CantLower:
-	ld a, 3
-	ld [wFailedMessage], a
-	ld a, 1
-	ld [wAttackMissed], a
-	ret
-
-.Failed:
-	ld a, 1
-	ld [wFailedMessage], a
-	ld [wAttackMissed], a
-	ret
-
-.Mist:
-	ld a, 2
-	ld [wFailedMessage], a
-	ld a, 1
-	ld [wAttackMissed], a
-	ret
-
-CheckMist:
-	ld a, BATTLE_VARS_MOVE_EFFECT
-	call GetBattleVar
-	cp EFFECT_ATTACK_DOWN
-	jr c, .dont_check_mist
-	cp EFFECT_EVASION_DOWN + 1
-	jr c, .check_mist
-	cp EFFECT_ATTACK_DOWN_2
-	jr c, .dont_check_mist
-	cp EFFECT_EVASION_DOWN_2 + 1
-	jr c, .check_mist
-	cp EFFECT_ATTACK_DOWN_HIT
-	jr c, .dont_check_mist
-	cp EFFECT_EVASION_DOWN_HIT + 1
-	jr c, .check_mist
-.dont_check_mist
-	xor a
-	ret
-
-.check_mist
-	ld a, BATTLE_VARS_SUBSTATUS4_OPP
-	call GetBattleVar
-	bit SUBSTATUS_MIST, a
+	ld [wBattleCommandParam], a
+	farcall BattleCommand_StatDownExt
 	ret
 
 BattleCommand_StatUpMessage:
-	ld a, [wFailedMessage]
-	and a
-	ret nz
-	ld a, [wLoweredStat]
-	and $f
-	ld b, a
-	inc b
-	call GetStatName
-	ld hl, .stat
-	jp BattleTextbox
-
-.stat
-	text_far Text_BattleEffectActivate
-	text_asm
-	ld hl, .BattleStatWentUpText
-	ld a, [wLoweredStat]
-	and $f0
-	ret z
-	ld hl, .BattleStatWentWayUpText
+	farcall BattleCommand_StatUpMessageExt
 	ret
-
-.BattleStatWentWayUpText:
-	text_far _BattleStatWentWayUpText
-	text_end
-
-.BattleStatWentUpText:
-	text_far _BattleStatWentUpText
-	text_end
 
 BattleCommand_StatDownMessage:
-	ld a, [wFailedMessage]
-	and a
-	ret nz
-	ld a, [wLoweredStat]
-	and $f
-	ld b, a
-	inc b
-	call GetStatName
-	ld hl, .stat
-	jp BattleTextbox
-
-.stat
-	text_far Text_BattleFoeEffectActivate
-	text_asm
-	ld hl, .BattleStatFellText
-	ld a, [wLoweredStat]
-	and $f0
-	ret z
-	ld hl, .BattleStatSharplyFellText
-	ret
-
-.BattleStatSharplyFellText:
-	text_far _BattleStatSharplyFellText
-	text_end
-
-.BattleStatFellText:
-	text_far _BattleStatFellText
-	text_end
-
-TryLowerStat:
-; Lower stat c from stat struct hl (buffer de).
-
-	push bc
-	sla c
-	ld b, 0
-	add hl, bc
-	; add de, c
-	ld a, c
-	add e
-	ld e, a
-	jr nc, .no_carry
-	inc d
-.no_carry
-	pop bc
-
-; The lowest possible stat is 1.
-	ld a, [hld]
-	sub 1
-	jr nz, .not_min
-	ld a, [hl]
-	and a
-	ret z
-
-.not_min
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .Player
-
-	call BattleCommand_SwitchTurn
-	call CalcPlayerStats
-	call BattleCommand_SwitchTurn
-	jr .end
-
-.Player:
-	call BattleCommand_SwitchTurn
-	call CalcEnemyStats
-	call BattleCommand_SwitchTurn
-.end
-	ld a, 1
-	and a
+	farcall BattleCommand_StatDownMessageExt
 	ret
 
 BattleCommand_StatUpFailText:
-	ld a, [wFailedMessage]
-	and a
-	ret z
-	push af
-	call BattleCommand_MoveDelay
-	pop af
-	dec a
-	jp z, TryPrintButItFailed
-	ld a, [wLoweredStat]
-	and $f
-	ld b, a
-	inc b
-	call GetStatName
-	ld hl, WontRiseAnymoreText
-	jp StdBattleTextbox
+	farcall BattleCommand_StatUpFailTextExt
+	ret
 
 BattleCommand_StatDownFailText:
-	ld a, [wFailedMessage]
-	and a
-	ret z
-	push af
-	call BattleCommand_MoveDelay
-	pop af
-	dec a
-	jp z, TryPrintButItFailed
-	dec a
-	ld hl, ProtectedByMistText
-	jp z, StdBattleTextbox
-	ld a, [wLoweredStat]
-	and $f
-	ld b, a
-	inc b
-	call GetStatName
-	ld hl, WontDropAnymoreText
-	jp StdBattleTextbox
-
-GetStatName:
-	ld hl, StatNames
-	ld c, '@'
-.CheckName:
-	dec b
-	jr z, .Copy
-.GetName:
-	ld a, [hli]
-	cp c
-	jr z, .CheckName
-	jr .GetName
-
-.Copy:
-	ld de, wStringBuffer2
-	ld bc, STRING_BUFFER_LENGTH
-	jp CopyBytes
-
-INCLUDE "data/battle/stat_names.asm"
+	farcall BattleCommand_StatDownFailTextExt
+	ret
 
 StatLevelMultipliers:
 INCLUDE "data/battle/stat_multipliers.asm"
@@ -4954,82 +4556,6 @@ BattleCommand_AllStatsUp:
 ResetMiss:
 	xor a
 	ld [wAttackMissed], a
-	ret
-
-LowerStatFromParam:
-	ld a, [wBattleCommandParam]
-	and STAT_PARAM_MASK
-	; fallthrough
-
-LowerStat:
-	ld [wLoweredStat], a
-
-	ld hl, wPlayerStatLevels
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .got_target
-	ld hl, wEnemyStatLevels
-
-.got_target
-	ld a, [wLoweredStat]
-	and $f
-	ld c, a
-	ld b, 0
-	add hl, bc
-	ld b, [hl]
-	dec b
-	jr z, .cant_lower_anymore
-
-	ld a, [wLoweredStat]
-	and $f0
-	jr z, .got_num_stages
-	dec b
-	jr nz, .got_num_stages
-	inc b
-
-.got_num_stages
-	ld [hl], b
-	ld a, c
-	cp ACCURACY
-	jr nc, .accuracy_evasion
-
-	push hl
-	ld hl, wBattleMonStats + 1
-	ld de, wPlayerStats
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .got_target_2
-	ld hl, wEnemyMonStats + 1
-	ld de, wEnemyStats
-
-.got_target_2
-	call TryLowerStat
-	pop hl
-	jr z, .failed
-
-.accuracy_evasion
-	ldh a, [hBattleTurn]
-	and a
-	jr z, .player
-
-	call CalcEnemyStats
-
-	jr .finish
-
-.player
-	call CalcPlayerStats
-
-.finish
-	xor a
-	ld [wFailedMessage], a
-	ret
-
-.failed
-	inc [hl]
-
-.cant_lower_anymore
-	ld a, 2
-	ld [wFailedMessage], a
 	ret
 
 BattleCommand_TriStatusChance:
@@ -5389,7 +4915,7 @@ BattleCommand_ForceSwitch:
 	ld [wForcedSwitch], a
 	call SetBattleDraw
 	ld a, [wEnemyMoveStructAnimation]
-	jr .succeed
+	jp .succeed
 
 .vs_trainer
 	call CheckPlayerHasMonToSwitchTo
@@ -5432,6 +4958,9 @@ BattleCommand_ForceSwitch:
 	pop bc
 	pop de
 	jr z, .random_loop_trainer_playeristarget
+
+	ld hl, BattleCore_PlayerSwitchOutHook
+	call CallBattleCore
 
 	ld a, d
 	ld [wCurPartyMon], a

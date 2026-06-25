@@ -36,6 +36,9 @@ BattleCommand_BatonPass:
 	farcall CheckMobileBattleError
 	jp c, EndMoveEffect
 
+	ld hl, BattleCore_PlayerSwitchOutHook
+	call CallBattleCore
+
 	ld hl, PassedBattleMonEntrance
 	call CallBattleCore
 

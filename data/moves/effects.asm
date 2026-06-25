@@ -1010,7 +1010,7 @@ Swagger:
 	movebegin
 	checkhit
 	switchturn
-	attackup2
+	statup STAT_PARAM_STAGE_2 | ATTACK
 	switchturn
 	lowersub
 	statupanim
@@ -1296,7 +1296,7 @@ SkullBash:
 	buildopponentrage
 	kingsrock
 	endturn
-	defenseup
+	statup DEFENSE
 	statupmessage
 	endmove
 
@@ -1427,7 +1427,7 @@ Hail:
 
 DefenseCurl:
 	movebegin
-	defenseup
+	statup DEFENSE
 	curl
 	lowersub
 	statupanim
