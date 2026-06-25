@@ -7332,28 +7332,7 @@ Unknown_103608:
 	db 2, 2, 3
 
 AskMobileOrCable:
-	ld hl, MenuHeader_103640
-	call LoadMenuHeader
-	ld a, [wMobileOrCable_LastSelection]
-	and $0f
-	jr z, .skip_load
-	ld [wMenuCursorPosition], a
-
-.skip_load
-	call VerticalMenu
-	call CloseWindow
-	jr c, .pressed_b
-	ld a, [wMenuCursorY]
-	ld [wScriptVar], a
-	ld c, a
-	ld a, [wMobileOrCable_LastSelection]
-	and $f0
-	or c
-	ld [wMobileOrCable_LastSelection], a
-	ret
-
-.pressed_b
-	xor a
+	ld a, $2 ; cable
 	ld [wScriptVar], a
 	ret
 

@@ -504,8 +504,8 @@ MenuData_ChallengeExplanationCancel:
 	db "Cancel@"
 
 Function17d2b6:
-	call Function17d2c0
-	farcall Function1181da
+	ld a, $1
+	ld [wScriptVar], a
 	ret
 
 Function17d2c0:
@@ -517,38 +517,8 @@ Function17d2c0:
 	ret
 
 Function17d2ce:
-	ld a, BANK(s5_aa72)
-	call OpenSRAM
-	ld a, [s5_aa72]
-	call CloseSRAM
-	and a
-	jr nz, .asm_17d2e2
 	ld a, $1
 	ld [wScriptVar], a
-	ret
-
-.asm_17d2e2
-	call Function17d314
-	ret c
-	call SpeechTextbox
-	call FadeToMenu
-	ldh a, [rWBK]
-	push af
-	ld a, $4
-	ldh [rWBK], a
-	call Function17d370
-	call Function17d45a
-	pop af
-	ldh [rWBK], a
-	ld de, MUSIC_MOBILE_CENTER
-	ld a, e
-	ld [wMapMusic], a
-	ld [wMusicFadeID], a
-	ld a, d
-	ld [wMusicFadeID + 1], a
-	call PlayMusic
-	call ReturnToMapFromSubmenu
-	call CloseSubmenu
 	ret
 
 Function17d314:
@@ -645,13 +615,6 @@ Function17d370:
 	ld [wBGMapBuffer], a
 	ld a, $d0
 	ld [wcd21], a
-	ld a, BANK(s6_a006)
-	call OpenSRAM
-	ld hl, s6_a006
-	ld de, w4_d000
-	ld bc, $1000
-	call CopyBytes
-	call CloseSRAM
 	ret
 
 Function17d3f6:
@@ -1181,19 +1144,9 @@ Function17d78c:
 
 Function17d78d:
 	call IncCrashCheckPointer
-	ld a, [hli]
-	ld c, a
-	ld a, [hli]
-	ld b, a
+	inc hl
+	inc hl
 	call HlToCrashCheckPointer
-	ld a, BANK(s6_a006)
-	call OpenSRAM
-	ld hl, s6_a006
-	add hl, bc
-	ld de, w4_d000
-	ld bc, $1000
-	call CopyBytes
-	call CloseSRAM
 	xor a
 	ld [wcd77], a
 	call ClearBGPalettes

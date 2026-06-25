@@ -1,125 +1,16 @@
 MobileAPI::
-; Mobile
-	cp $2
-	ld [wMobileAPIIndex], a
-	ld a, l
-	ld [wc986], a
-	ld a, h
-	ld [wc987], a
-	jr nz, .okay
-
-	ld [wc982], a
-	ld a, l
-	ld [wc981], a
-	ld hl, wc983
-	ld a, c
-	ld [hli], a
-	ld a, b
-	ld [hl], a
-
-.okay
-	ld hl, wc822
-	set 6, [hl]
-	ldh a, [hROMBank]
-	push af
-	ld a, BANK(_MobileAPI)
-	ld [wc981], a
-	rst Bankswitch
-
-	jp _MobileAPI
+	ld a, $ff
+	ld hl, 0
+	scf
+	ret
 
 ReturnMobileAPI::
-; Return from _MobileAPI
-	ld [wc986], a
-	ld a, l
-	ld [wc987], a
-	ld a, h
-	ld [wMobileAPIIndex], a
-
-	pop bc
-	ld a, b
-	ld [wc981], a
-	rst Bankswitch
-
-	ld hl, wc822
-	res 6, [hl]
-	ld hl, wc987
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	ld a, [wc986]
 	ret
 
 MobileReceive::
-	ldh a, [hROMBank]
-	push af
-	ld a, BANK(_MobileReceive)
-	ld [wc981], a
-	rst Bankswitch
-
-	call _MobileReceive
-	pop bc
-	ld a, b
-	ld [wc981], a
-	rst Bankswitch
-
 	ret
 
 MobileTimer::
-	push af
-	push bc
-	push de
-	push hl
-
-	ldh a, [hMobile]
-	and a
-	jr z, .pop_ret
-
-	xor a
-	ldh [rTAC], a
-
-; Turn off timer interrupt
-	ldh a, [rIF]
-	and IF_VBLANK | IF_STAT | IF_SERIAL | IF_JOYPAD
-	ldh [rIF], a
-
-	ld a, [wc86a]
-	or a
-	jr z, .pop_ret
-
-	ld a, [wc822]
-	bit 1, a
-	jr nz, .skip_timer
-
-	ldh a, [rSC]
-	and SC_START
-	jr nz, .skip_timer
-
-	ldh a, [hROMBank]
-	push af
-	ld a, BANK(_Timer)
-	ld [wc981], a
-	rst Bankswitch
-
-	call _Timer
-
-	pop bc
-	ld a, b
-	ld [wc981], a
-	rst Bankswitch
-
-.skip_timer
-	ldh a, [rTMA]
-	ldh [rTIMA], a
-
-	ld a, TAC_START | TAC_65KHZ
-	ldh [rTAC], a
-
-.pop_ret
-	pop hl
-	pop de
-	pop bc
-	pop af
 	reti
 
 Function3eea::

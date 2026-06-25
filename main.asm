@@ -707,8 +707,7 @@ INCLUDE "engine/battle_anims/functions.asm"
 INCLUDE "engine/battle_anims/extension_functions.asm"
 
 
-; Cleared out for future development use as part of the Battle Engine Overhaul branch following commit a07eb1954.
-SECTION "Battle Engine Overhaul Future Use", ROMX, BANK[$7B]
+SECTION "Battle Core Extensions", ROMX, BANK[$7B]
 
 INCLUDE "data/moves/attributes.asm"
 INCLUDE "data/pokemon/abilities.asm"
@@ -721,12 +720,6 @@ SECTION "Battle Tower Trainer Data", ROMX
 
 INCLUDE "data/battle_tower/trainer_text.asm"
 INCLUDE "data/battle_tower/unknown.asm"
-
-
-; Clear this whole bank out in a future branch for future development needs.
-SECTION "Mobile News Data", ROMX
-
-INCLUDE "mobile/news/news.asm"
 
 
 SECTION "Battle Command Pointers", ROMX

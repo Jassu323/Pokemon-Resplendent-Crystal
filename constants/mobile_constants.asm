@@ -1,4 +1,4 @@
-; MobileAPI calls (see lib/mobile/main.asm:_MobileAPI)
+; MobileAPI calls
 	const_def 0, 2
 	const MOBILEAPI_00
 	const MOBILEAPI_01
