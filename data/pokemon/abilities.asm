@@ -162,9 +162,9 @@ SpeciesAbilities::
 	mon_ability NATURAL_CURE ; 098 CHIKORITA
 	mon_ability NATURAL_CURE ; 099 BAYLEEF
 	mon_ability NATURAL_CURE ; 09a MEGANIUM
-	mon_ability THERMAL_DRAFT ; 09b CYNDAQUIL
-	mon_ability THERMAL_DRAFT ; 09c QUILAVA
-	mon_ability THERMAL_DRAFT ; 09d TYPHLOSION
+	mon_ability THERMAL_WAKE ; 09b CYNDAQUIL
+	mon_ability THERMAL_WAKE ; 09c QUILAVA
+	mon_ability THERMAL_WAKE ; 09d TYPHLOSION
 	mon_ability NO_ABILITY ; 09e TOTODILE
 	mon_ability NO_ABILITY ; 09f CROCONAW
 	mon_ability NO_ABILITY ; 0a0 FERALIGATR

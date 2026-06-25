@@ -14,7 +14,7 @@
 	const BATTLE_ARMOR
 	const MULTISCALE
 	const NATURAL_CURE
-	const THERMAL_DRAFT
+	const THERMAL_WAKE
 	const INSOMNIA
 	const STATIC
 	const DRAGON_SKIN

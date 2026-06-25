@@ -712,6 +712,8 @@ SECTION "Battle Engine Overhaul Future Use", ROMX, BANK[$7B]
 
 INCLUDE "data/moves/attributes.asm"
 INCLUDE "data/pokemon/abilities.asm"
+INCLUDE "data/abilities/names.asm"
+INCLUDE "data/abilities/descriptions.asm"
 INCLUDE "engine/battle/effect_command_extensions.asm"
 
 
