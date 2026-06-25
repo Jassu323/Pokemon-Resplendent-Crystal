@@ -46,7 +46,7 @@ hInMenu:: db
 
 	ds 1
 
-hPrinter:: db
+hReclaimedPrinterHRAM:: db
 hGraphicStartTile:: db
 hMoveMon:: db
 
@@ -88,15 +88,8 @@ NEXTU
 hPrintNumBuffer:: ds 10
 
 NEXTU
-; Mystery Gift
-hMGExchangedByte:: db
-hMGExchangedWord:: dw
-hMGNumBits:: db
-hMGChecksum:: dw
-	ds 1
-hMGUnusedMsgLength:: db
-hMGRole:: db
-hMGStatusFlags:: db
+; reclaimed Mystery Gift HRAM
+hReclaimedMysteryGiftHRAM:: ds 10
 ENDU
 
 UNION
@@ -114,9 +107,7 @@ ENDU
 UNION
 hMoneyTemp:: ds 3
 NEXTU
-hMGJoypadPressed::  db
-hMGJoypadReleased:: db
-hMGPrevTIMA::       db
+hReclaimedMysteryGiftJoypadHRAM:: ds 3
 ENDU
 
 hLCDCPointer::     db

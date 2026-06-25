@@ -50,7 +50,7 @@ sMysteryGiftTimer:: dw
 sMysteryGiftTrainerHouseFlag:: db
 sMysteryGiftPartnerName:: ds NAME_LENGTH
 sMysteryGiftUnusedFlag:: db
-sMysteryGiftTrainer:: ds wMysteryGiftTrainerEnd - wMysteryGiftTrainer
+sMysteryGiftTrainer:: ds 1 + (1 + 1 + NUM_MOVES) * PARTY_LENGTH + 1
 sBackupMysteryGiftItemEnd::
 
 	ds $30

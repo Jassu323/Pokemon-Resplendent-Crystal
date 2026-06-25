@@ -3200,7 +3200,6 @@ Function11984e:
 	ld a, $1
 	ldh [rWBK], a
 	call FadeToMenu
-	farcall MobileTradeAnimation_SendGivemonToGTS
 	call Function11a9ce
 	call RestartMapMusic
 	ld a, BANK("Battle Tower RAM")
@@ -3234,7 +3233,6 @@ Function11984e:
 	ld a, $1
 	ldh [rWBK], a
 	call FadeToMenu
-	farcall MobileTradeAnimation_RetrieveGivemonFromGTS
 	call Function11a9ce
 	call RestartMapMusic
 	ld a, BANK("Battle Tower RAM")
@@ -5525,6 +5523,20 @@ Text_ThisBattleRoomPleaseWait: ; unreferenced
 	cont "Please wait…"
 	done
 
+; Removed Mobile System GB Trade Corner / downloaded-mon entry points.
+Function11ac3e:
+TradeCornerHoldMon:
+Function11b5e8:
+Function11b7e5:
+Function11b879:
+Function11b920:
+Function11b93b:
+Function11ba38:
+	xor a
+	ld [wScriptVar], a
+	ret
+
+if 0
 Function11ac3e:
 	call SpeechTextbox
 	call FadeToMenu
@@ -7341,7 +7353,6 @@ Function11b7e5:
 	ld [wOTTrademonCaughtData], a
 	call SpeechTextbox
 	call FadeToMenu
-	farcall MobileTradeAnimation_ReceiveGetmonFromGTS
 	farcall Function17d1f1
 	ld a, $1
 	ld [wForceEvolution], a
@@ -7705,3 +7716,5 @@ TilemapPack_11bb7d:
 	db $2e, $0a, $85, $0a, $0a, $0a, $8d, $00 ; 22
 	db $2e, $0a, $0a, $84, $0a, $0a, $8e, $00 ; 23
 	db -1
+
+endc

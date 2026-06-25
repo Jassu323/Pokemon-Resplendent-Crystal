@@ -18,6 +18,11 @@ INCLUDE "data/events/special_pointers.asm"
 UnusedDummySpecial:
 	ret
 
+UnusedFindItemInPCOrBag:
+	xor a
+	ld [wScriptVar], a
+	ret
+
 SetPlayerPalette:
 	ld a, [wScriptVar]
 	ld d, a
@@ -103,9 +108,11 @@ OverworldTownMap:
 	ret
 
 UnownPrinter:
-	call FadeToMenu
-	farcall _UnownPrinter
-	call ExitAllMenus
+	xor a
+	ld [wScriptVar], a
+	ret
+
+PhotoStudio:
 	ret
 
 DisplayLinkRecord:
@@ -123,49 +130,19 @@ PlayersHousePC:
 	ret
 
 CheckMysteryGift:
-	ld a, BANK(sMysteryGiftItem)
-	call OpenSRAM
-	ld a, [sMysteryGiftItem]
-	and a
-	jr z, .no
-	inc a
-
-.no
+	xor a
 	ld [wScriptVar], a
-	call CloseSRAM
 	ret
 
 GetMysteryGiftItem:
-	ld a, BANK(sMysteryGiftItem)
-	call OpenSRAM
-	ld a, [sMysteryGiftItem]
-	ld [wCurItem], a
-	ld a, 1
-	ld [wItemQuantityChange], a
-	ld hl, wNumItems
-	call ReceiveItem
-	jr nc, .no_room
-	xor a
-	ld [sMysteryGiftItem], a
-	call CloseSRAM
-	ld a, [wCurItem]
-	ld [wNamedObjectIndex], a
-	call GetItemName
-	ld hl, .ReceiveItemText
-	call PrintText
-	ld a, TRUE
-	ld [wScriptVar], a
-	ret
-
-.no_room
-	call CloseSRAM
 	xor a
 	ld [wScriptVar], a
 	ret
 
-.ReceiveItemText:
-	text_far _ReceiveItemText
-	text_end
+UnlockMysteryGift:
+	xor a
+	ld [wScriptVar], a
+	ret
 
 BugContestJudging:
 	farcall _BugContestJudging
@@ -409,9 +386,8 @@ Diploma:
 	ret
 
 PrintDiploma:
-	call FadeToMenu
-	farcall _PrintDiploma
-	call ExitAllMenus
+	xor a
+	ld [wScriptVar], a
 	ret
 
 TrainerHouse:

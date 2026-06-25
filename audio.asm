@@ -66,7 +66,7 @@ INCLUDE "audio/music/route29.asm"
 INCLUDE "audio/music/halloffame.asm"
 INCLUDE "audio/music/healpokemon.asm"
 INCLUDE "audio/music/evolution.asm"
-INCLUDE "audio/music/printer.asm"
+INCLUDE "audio/music/printer_stub.asm"
 
 
 SECTION "Songs 4", ROMX
@@ -148,21 +148,19 @@ INCLUDE "audio/music/newbarktown.asm"
 
 SECTION "Songs 5", ROMX
 
-INCLUDE "audio/music/mobileadaptermenu.asm"
+INCLUDE "audio/music/mobile_stubs.asm"
 INCLUDE "audio/music/buenaspassword.asm"
 INCLUDE "audio/music/lookmysticalman.asm"
 INCLUDE "audio/music/crystalopening.asm"
 INCLUDE "audio/music/battletowertheme.asm"
 INCLUDE "audio/music/suicunebattle.asm"
 INCLUDE "audio/music/battletowerlobby.asm"
-INCLUDE "audio/music/mobilecenter.asm"
 
 
 SECTION "Extra Songs 1", ROMX
 
 INCLUDE "audio/music/credits.asm"
 INCLUDE "audio/music/clair.asm"
-INCLUDE "audio/music/mobileadapter.asm"
 
 
 SECTION "Extra Songs 2", ROMX

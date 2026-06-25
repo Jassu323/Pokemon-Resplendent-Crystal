@@ -290,9 +290,6 @@ ENDM
 	jp NextChar
 
 MobileScriptChar::
-	ld c, l
-	ld b, h
-	farcall RunMobileScript
 	jp PlaceNextChar
 
 MACRO print_name

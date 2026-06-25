@@ -1383,20 +1383,11 @@ BattleTowerAction_10:
 	ret
 
 .Action4:
-	ld a, BANK(s5_b023) ; aka BANK(sOfferReqGender) and BANK(sOfferReqSpecies)
+	ld a, BANK(s5_a800)
 	call OpenSRAM
-	ld hl, s5_b023
-	ld de, wc608
-	ld bc, 105
-	call CopyBytes
-	ld a, [sOfferReqGender]
-	ld [wcd30], a
-	ld a, [sOfferReqSpecies]
-	ld [wcd31], a
+	xor a
+	ld [s5_a800], a
 	call CloseSRAM
-	farcall Function11b6b4
-	farcall Function17d0f3
-	ld a, TRUE
 	ld [wScriptVar], a
 	ret
 

@@ -60,15 +60,7 @@ RuinsOfAlphResearchCenterGetUnownDexScript:
 RuinsOfAlphResearchCenterScientist3Script:
 	faceplayer
 	opentext
-	readvar VAR_UNOWNCOUNT
-	ifequal NUM_UNOWN, .PrinterAvailable
 	writetext RuinsOfAlphResearchCenterScientist3Text
-	waitbutton
-	closetext
-	end
-
-.PrinterAvailable:
-	writetext RuinsOfAlphResearchCenterScientist3_PrinterAvailable
 	waitbutton
 	closetext
 	end
@@ -150,20 +142,8 @@ RuinsOfAlphResearchCenterComputer:
 
 RuinsOfAlphResearchCenterPrinter:
 	opentext
-	checkevent EVENT_RUINS_OF_ALPH_RESEARCH_CENTER_SCIENTIST
-	iftrue .SkipChecking
-	readvar VAR_UNOWNCOUNT
-	ifequal NUM_UNOWN, .PrinterAvailable
-.SkipChecking:
 	writetext RuinsOfAlphResearchCenterPrinterText_DoesntWork
 	waitbutton
-	closetext
-	end
-
-.PrinterAvailable:
-	writetext RuinsOfAlphResearchCenterUnownPrinterText
-	waitbutton
-	special UnownPrinter
 	closetext
 	end
 
@@ -217,21 +197,6 @@ RuinsOfAlphResearchCenterScientist3Text:
 
 	para "Check to see how"
 	line "many kinds exist."
-	done
-
-RuinsOfAlphResearchCenterScientist3_PrinterAvailable:
-	text "You caught all the"
-	line "Unown variations?"
-
-	para "That's a great"
-	line "achievement!"
-
-	para "I've set up the"
-	line "printer here for"
-	cont "handling Unown."
-
-	para "Feel free to use"
-	line "it anytime."
 	done
 
 RuinsOfAlphResearchCenterScientist1Text:
@@ -363,11 +328,6 @@ RuinsOfAlphResearchCenterComputerText_GotAllUnown:
 RuinsOfAlphResearchCenterPrinterText_DoesntWork:
 	text "This doesn't seem"
 	line "to work yet."
-	done
-
-RuinsOfAlphResearchCenterUnownPrinterText:
-	text "Unown may be"
-	line "printed out."
 	done
 
 RuinsOfAlphResearchCenterProfSilktreePhotoText:

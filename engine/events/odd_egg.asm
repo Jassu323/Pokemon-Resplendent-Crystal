@@ -90,41 +90,77 @@ _GiveOddEgg:
 	ld hl, wNumItems
 	call TossItem
 
-	; load species in wMobileMonSpecies
-	ld a, EGG
-	ld [wMobileMonMiscSpecies], a
-
-	; load pointer to (wMobileMonSpecies - 1) in wMobileMonSpeciesPointer
-	ld a, LOW(wMobileMonMiscSpecies - 1)
-	ld [wMobileMonSpeciesPointer], a
-	ld a, HIGH(wMobileMonMiscSpecies - 1)
-	ld [wMobileMonSpeciesPointer + 1], a
-	; load pointer to wOddEgg in wMobileMonStructPointer
-	ld a, LOW(wOddEgg)
-	ld [wMobileMonStructPointer], a
-	ld a, HIGH(wOddEgg)
-	ld [wMobileMonStructPointer + 1], a
-
-	; load Odd Egg Name in wTempOddEggNickname
-	ld hl, .Odd
-	ld de, wTempOddEggNickname
-	ld bc, MON_NAME_LENGTH
-	call CopyBytes
-
-	; load pointer to wTempOddEggNickname in wMobileMonOTPointer
-	ld a, LOW(wTempOddEggNickname)
-	ld [wMobileMonOTPointer], a
-	ld a, HIGH(wTempOddEggNickname)
-	ld [wMobileMonOTPointer + 1], a
-	; load pointer to wOddEggName in wMobileMonNicknamePointer
-	ld a, LOW(wOddEggName)
-	ld [wMobileMonNicknamePointer], a
-	ld a, HIGH(wOddEggName)
-	ld [wMobileMonNicknamePointer + 1], a
-	farcall AddMobileMonToParty
+	call .AddOddEggToParty
 	ret
 
 .Odd:
 	dname "Odd", MON_NAME_LENGTH + 1
+
+.AddOddEggToParty:
+	ld hl, wPartyCount
+	ld a, [hl]
+	ld e, a
+	inc [hl]
+
+	ld bc, wPartySpecies
+	ld d, e
+.party_species_loop
+	inc bc
+	dec d
+	jr nz, .party_species_loop
+	ld a, e
+	ld [wCurPartyMon], a
+	ld a, EGG
+	ld [bc], a
+	inc bc
+	ld a, -1
+	ld [bc], a
+
+	ld hl, wPartyMon1Species
+	ld bc, PARTYMON_STRUCT_LENGTH
+	ld a, [wCurPartyMon]
+.party_struct_loop
+	add hl, bc
+	dec a
+	and a
+	jr nz, .party_struct_loop
+	ld e, l
+	ld d, h
+	ld hl, wOddEgg
+	ld bc, PARTYMON_STRUCT_LENGTH
+	call CopyBytes
+
+	ld hl, wPartyMonOTs
+	ld bc, NAME_LENGTH
+	ld a, [wCurPartyMon]
+.ot_loop
+	add hl, bc
+	dec a
+	and a
+	jr nz, .ot_loop
+	ld e, l
+	ld d, h
+	ld hl, .Odd
+	ld bc, MON_NAME_LENGTH - 1
+	call CopyBytes
+	ld a, '@'
+	ld [de], a
+
+	ld hl, wPartyMonNicknames
+	ld bc, MON_NAME_LENGTH
+	ld a, [wCurPartyMon]
+.nickname_loop
+	add hl, bc
+	dec a
+	and a
+	jr nz, .nickname_loop
+	ld e, l
+	ld d, h
+	ld hl, wOddEggName
+	ld bc, MON_NAME_LENGTH - 1
+	call CopyBytes
+	ld a, '@'
+	ld [de], a
+	ret
 
 INCLUDE "data/events/odd_eggs.asm"
