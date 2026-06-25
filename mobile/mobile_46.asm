@@ -5523,6 +5523,20 @@ Text_ThisBattleRoomPleaseWait: ; unreferenced
 	cont "Please wait…"
 	done
 
+; Removed Mobile System GB Trade Corner / downloaded-mon entry points.
+Function11ac3e:
+TradeCornerHoldMon:
+Function11b5e8:
+Function11b7e5:
+Function11b879:
+Function11b920:
+Function11b93b:
+Function11ba38:
+	xor a
+	ld [wScriptVar], a
+	ret
+
+if 0
 Function11ac3e:
 	call SpeechTextbox
 	call FadeToMenu
@@ -7702,3 +7716,5 @@ TilemapPack_11bb7d:
 	db $2e, $0a, $85, $0a, $0a, $0a, $8d, $00 ; 22
 	db $2e, $0a, $0a, $84, $0a, $0a, $8e, $00 ; 23
 	db -1
+
+endc

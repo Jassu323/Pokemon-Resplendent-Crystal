@@ -103,7 +103,7 @@ $(pokecrystal_obj):         RGBASMFLAGS +=
 $(pokecrystal_vc_obj):      RGBASMFLAGS += -D _CRYSTAL_VC
 
 %.patch: %_vc.gbc %.gbc vc/%.patch.template
-# Ignore the checksums added by tools/stadium at the end of the ROM
+# Keep ignoring the former Stadium checksum range in legacy VC patches.
 	tools/make_patch --ignore 0x1ffde0:0x220 $*_vc.sym $^ $@
 
 rgbdscheck.o: rgbdscheck.asm
@@ -138,7 +138,6 @@ pokecrystal11_vc.gbc: RGBFIXFLAGS += -i BYTE -n 1
 %.gbc: $$(%_obj) layout.link
 	$(RGBLINK) $(RGBLINKFLAGS) -l layout.link -n $*.sym -m $*.map -o $@ $(filter %.o,$^)
 	$(RGBFIX) $(RGBFIXFLAGS) $@
-	tools/stadium $@
 
 
 ### LZ compression rules

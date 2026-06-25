@@ -2997,25 +2997,12 @@ PlayerPartyMonEntrance:
 	jp SpikesDamage
 
 CheckMobileBattleError:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	jr nz, .not_mobile ; It's not a mobile battle
-
-	ld a, [wcd2b]
-	and a
-	jr z, .not_mobile
-
-; We have a mobile battle and something else happened
-	scf
-	ret
-
-.not_mobile
 	xor a
 	ret
 
 IsMobileBattle:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
+	ld a, 1
+	and a
 	ret
 
 SetUpBattlePartyMenu:
@@ -8777,8 +8764,8 @@ DisplayLinkBattleResult:
 	db "Invalid Battle@"
 
 IsMobileBattle2:
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
+	ld a, 1
+	and a
 	ret
 
 _DisplayLinkRecord:
