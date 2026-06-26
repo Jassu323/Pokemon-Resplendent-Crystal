@@ -606,6 +606,33 @@ GetTMHMNumber::
 	ld c, a
 	ret
 
+AppendTMHMMoveNameToStringBuffer4::
+	ld de, wStringBuffer4 + STRLEN("TM##")
+	jr AppendTMHMMoveName
+
+AppendTMHMMoveNameToStringBuffer3::
+	ld de, wStringBuffer3 + STRLEN("TM##")
+	; fallthrough
+
+AppendTMHMMoveName::
+	ld a, [wNamedObjectIndex]
+	cp TM01
+	ret c
+	push de
+	ld c, a
+	call GetTMHMNumber
+	ld a, c
+	ld [wTempTMHM], a
+	predef GetTMHMMove
+	ld a, [wTempTMHM]
+	ld [wNamedObjectIndex], a
+	call GetMoveName
+	pop hl
+	ld [hl], ' '
+	inc hl
+	ld de, wStringBuffer1
+	jp CopyName2
+
 GetNumberedTMHM:
 ; Return the item id of a TM/HM by number c.
 	ld a, c
