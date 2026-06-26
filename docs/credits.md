@@ -1,0 +1,72 @@
+OmegaHadangeki
+- Evolution moves:  https://github.com/pret/pokecrystal/wiki/Evolution-moves
+
+Rangi42
+- Night music lgic:  https://github.com/pret/pokecrystal/wiki/Add-more-music-that-changes-at-night
+- Finite low health beeping:  https://github.com/pret/pokecrystal/wiki/Short-beeping-noise-for-low-HP
+- Remove 25% failure chance for AI status moves:  https://github.com/pret/pokecrystal/wiki/Remove-the-25%25-failure-chance-for-AI-status-moves
+
+TriteHexagon - Music Resources
+- Night themes:  https://github.com/TriteHexagon/Trite_ASM_Repository
+
+SultanPepper
+- Evening fourth time of day:  https://github.com/pret/pokecrystal/wiki/Make-evening-the-fourth-time-of-day
+
+Idain
+- Encounter Table Rework:  https://github.com/pret/pokecrystal/wiki/Make-wild-Pokémon-encounter-levels-vary
+- Exp for catching Pokémon:  https://github.com/pret/pokecrystal/wiki/Gain-experience-from-catching-Pokémon
+
+Brianum
+- New party menu icons:  https://github.com/pret/pokecrystal/wiki/Add-a-new-party-menu-icon
+
+Logan Hansen
+- Color party menu icons by species:  https://github.com/pret/pokecrystal/wiki/Color-party-menu-icons-by-species
+
+LugiTKO
+- Gens 1-2 minisprites:  https://user-images.githubusercontent.com/64930003/220241272-8dcc220a-6eca-44eb-88f4-0a748f06f72b.png
+
+Chamber, Soloo993, Blue Emerald, Lake, Neslug, Pikachu25, Ryta, Rangi42, and Idain
+- Gens 1-2 minisprites:  https://raw.githubusercontent.com/wiki/pret/pokecrystal/screenshots/minidex.png
+
+Kurausukun
+- Remove redundant move grammar table:  https://github.com/pret/pokecrystal/wiki/Remove-the-redundant-move-grammar-table
+
+FrenchOrange
+- Color Pokémon pictures in overworld:  https://github.com/pret/pokecrystal/wiki/Color-Pokémon-pictures-shown-in-overworld
+- Colored trainer card badges:  https://github.com/pret/pokecrystal/wiki/Colored-trainer-card-badges
+- Third trainer card page for Kanto badges:  https://github.com/pret/pokecrystal/wiki/Add-a-third-trainer-card-page-for-Kanto-badges
+
+i-am-the-pokeman
+- Tops of leaders heads on trainer cards:  https://github.com/pret/pokecrystal/wiki/Show-the-tops-of-leaders-heads-on-the-trainer-card
+
+Sam Ess
+- Kurt makes Poké Balls instantly:  https://github.com/pret/pokecrystal/wiki/Kurt-Makes-Pokeballs-Instantly
+
+RaJah239
+- Correct grammar for plural trainers:  https://github.com/pret/pokecrystal/wiki/Correct-grammar-for-plural-trainers-like-Twins
+
+Damien Doury
+- Remove gym badge boosts:  https://github.com/pret/pokecrystal/wiki/Remove-the-gym-badges-boosts
+- Unlimited TM usage:  https://github.com/pret/pokecrystal/wiki/Infinitely-reusable-TMs
+- Automatic Repel reuse:  https://github.com/pret/pokecrystal/wiki/Automatically-reuse-Repel
+
+NickJam
+- Move names for TMs/HMs in text box:  https://github.com/pret/pokecrystal/wiki/Show-move-names-for-TMs-and-HMs-when-receiving-or-buying
+
+---
+
+MajorAgnostic - Pokémon Crystal Ultimate - https://github.com/MajorAgnostic/Pokemon-Crystal-Ultimate
+- In-battle Poké Ball animations and source graphics
+
+Rangi42 and the broader Polished Crystal team - https://github.com/Rangi42/polishedcrystal
+- Used as a reference point for some feature development (such as the Ability system)
+- Used as a reference point for graphical assets (item icons for the Pack UI)
+
+Pret Team - https://github.com/pret/pokecrystal
+- pokecrystal disassembly project
+
+aaaaaa1234567890 - https://github.com/aaaaaa123456789/pokecrystal16
+- Original pokecrystal16 project
+
+fellowship-of-the-roms
+- Updated and modernized pokecrystal16 project:  https://github.com/fellowship-of-the-roms/pokecrystal16
