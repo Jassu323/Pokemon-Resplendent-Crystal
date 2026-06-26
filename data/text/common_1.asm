@@ -4,9 +4,9 @@ _FruitBearingTreeText::
 	done
 
 _HeyItsFruitText::
-	text "Hey! It's"
+	text "Found two"
 	line "@"
-	text_ram wStringBuffer3
+	text_ram wStringBuffer4
 	text "!"
 	done
 
@@ -16,6 +16,24 @@ _ObtainedFruitText::
 	text_ram wStringBuffer3
 	text "!"
 	done
+
+_ObtainedTwoFruitText::
+	text "Obtained two"
+	line "@"
+	text_ram wStringBuffer4
+	text "!"
+	done
+
+_PutTwoFruitInPocketText::
+	text_ram wPlayerName
+	text " put two"
+	line "@"
+	text_ram wStringBuffer4
+	text " in"
+	cont "the @"
+	text_ram wStringBuffer3
+	text "."
+	prompt
 
 _FruitPackIsFullText::
 	text "But the Pack is"
