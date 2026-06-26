@@ -1492,7 +1492,6 @@ NEXTU
 ; trainer card badges
 wTrainerCardBadgeFrameCounter:: db
 wTrainerCardBadgeTileID:: db
-wTrainerCardBadgeAttributes:: db
 
 NEXTU
 ; slot machine
@@ -1750,7 +1749,8 @@ wMinutesSince:: db
 wHoursSince:: db
 wDaysSince:: db
 
-	ds 7
+wTrainerCardBadgePaletteAddr:: dw
+	ds 5
 
 wTempLoopCounter:: db
 
