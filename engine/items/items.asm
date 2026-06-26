@@ -91,12 +91,8 @@ _TossItem::
 	jp TossApricorn
 
 .TMHM:
-	ld h, d
-	ld l, e
-	ld a, [wCurItem]
-	ld c, a
-	call GetTMHMNumber
-	jp TossTMHM
+	and a
+	ret
 
 .KeyItem:
 	ld h, d
@@ -558,33 +554,6 @@ ReceiveTMHM:
 	ret
 
 .toomany
-	and a
-	ret
-
-TossTMHM:
-	dec c
-	ld b, 0
-	ld hl, wTMsHMs
-	add hl, bc
-	ld a, [wItemQuantityChange]
-	ld b, a
-	ld a, [hl]
-	sub b
-	jr c, .nope
-	ld [hl], a
-	ld [wItemQuantity], a
-	jr nz, .yup
-	ld a, [wTMHMPocketScrollPosition]
-	and a
-	jr z, .yup
-	dec a
-	ld [wTMHMPocketScrollPosition], a
-
-.yup
-	scf
-	ret
-
-.nope
 	and a
 	ret
 

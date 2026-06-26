@@ -14,5 +14,8 @@ TimeCapsule_CatchRateItems:
 	db ITEM_C3, BERRY
 	db ITEM_DC, BERRY
 	db ITEM_FA, BERRY
+	db TM_ZAP_CANNON, BERRY
+	db TM_DOUBLE_TEAM, BERRY
+	db TM_DREAM_EATER, BERRY
 	db -1,      BERRY
 	db 0 ; end

@@ -2216,8 +2216,7 @@ wPartyMenuCursor::      db
 wItemsPocketCursor::    db
 wKeyItemsPocketCursor:: db
 wBallsPocketCursor::    db
-wBerriesPocketCursor::
-wTMHMPocketCursor::     db
+wBerriesPocketCursor::  db
 wMedicinePocketCursor:: db
 
 wPCItemsScrollPosition::        db
@@ -2225,8 +2224,7 @@ wPCItemsScrollPosition::        db
 wItemsPocketScrollPosition::    db
 wKeyItemsPocketScrollPosition:: db
 wBallsPocketScrollPosition::    db
-wBerriesPocketScrollPosition::
-wTMHMPocketScrollPosition::     db
+wBerriesPocketScrollPosition::  db
 wMedicinePocketScrollPosition:: db
 
 wSwitchMon::
