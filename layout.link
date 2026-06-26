@@ -33,6 +33,9 @@ ROMX $01
 	"bank1"
 ROMX $02
 	"bank2"
+	"Hall of Fame"
+	; Reserved for custom Pokemon party icon graphics.
+	"Mon Icons 3"
 ROMX $03
 	"bank3"
 ROMX $04
@@ -69,8 +72,7 @@ ROMX $0f
 	"Battle Core"
 ROMX $10
 	"bank10"
-	"Evolutions and Attacks Pointers"
-	"Evolutions and Attacks 1"
+	"mobile45"
 ROMX $11
 	"bank11"
 	"Pack"
@@ -81,7 +83,12 @@ ROMX $12
 	"Crystal Features 1"
 	"Crystal Features 1_2"
 	"Egg Moves 2"
-	"Evolutions and Attacks 2"
+	"Night Songs 1"
+	"Night Songs 2"
+	"Night Songs 3"
+	"Night Songs 4"
+	"Night Songs 5"
+	"TMHM Case"
 ROMX $13
 	"bank13"
 	"Shrink Pics"
@@ -112,10 +119,14 @@ ROMX $1e
 ROMX $1f
 	"Map Scripts 10"
 ROMX $20
+	; Reserved for species base data overflow and species metadata.
 	"bank20"
+	"Pokemon Names"
 ROMX $21
-	"bank21"
+	; Reserved for the full color/palette system, including Pokemon palettes.
+	"Color"
 ROMX $22
+	; Reserved for additional custom Pokemon front/back pics.
 	"Crystal Features 2"
 ROMX $23
 	"bank23"
@@ -187,6 +198,7 @@ ROMX $3f
 	"Apricorn Box"
 	"Battle Animation Extensions"
 ROMX $40
+	; Reserved for sampled cry payloads.
 	"mobile40"
 ROMX $41
 	"bank41"
@@ -200,7 +212,7 @@ ROMX $43
 	"Tileset Data 8"
 ROMX $44
 ROMX $45
-	"mobile45"
+	; Reserved for sampled cry payloads.
 ROMX $46
 	"mobile46"
 ROMX $47
@@ -243,8 +255,10 @@ ROMX $57
 ROMX $58
 	"Pics 17"
 ROMX $59
+	; Reserved for additional custom Pokemon front/back pics.
 	"Pics 18"
 ROMX $5a
+	; Reserved for additional custom Pokemon front/back pics.
 	"Pics 19"
 ROMX $5b
 	"bank5B"
@@ -256,6 +270,7 @@ ROMX $5e
 	"UpdateBattleHUDs"
 	"Songs 5"
 	"Crystal Sound Effects"
+	"Footprints"
 ROMX $5f
 	"mobile5F"
 ROMX $60
@@ -301,10 +316,14 @@ ROMX $72
 ROMX $73
 	"Pokedex Entries 129-192"
 ROMX $74
+	; Reserved for custom Pokedex entries and dex order data.
 	"Pokedex Entries 193-251"
+	"Pokedex Order"
 ROMX $75
 	"16-bit ID stuff"
 	"Pack Other Item Icons"
+ROMX $76
+	; Reserved for sampled cry payloads.
 ROMX $77
 	"Unown Font"
 	"Tileset Data 7"
@@ -319,18 +338,21 @@ ROMX $78
 ROMX $79
 	"Mon Icons 2"
 ROMX $7a
-	"Night Songs 1"
-	"Night Songs 2"
-	"Night Songs 3"
-	"Night Songs 4"
-	"Night Songs 5"
+	; Reserved for evolutions/attacks data and future balance-pass
+	; expansion across all species, including custom additions.
+	"Evolutions and Attacks Pointers"
+	"Evolutions and Attacks 1"
+	"Evolutions and Attacks 2"
 ROMX $7b
+	; Battle engine only. Do not place species assets, sampled cries, or
+	; other non-battle payloads here; ability logic is expected to grow.
 	"Battle Core Extensions"
 	"Battle Command Pointers"
 ROMX $7c
 	"Battle Tower Trainer Data"
 	"Pack General Item Icons"
 ROMX $7d
+	; Reserved for sampled cry payloads.
 ROMX $7e
 	"Crystal Events"
 ROMX $7f

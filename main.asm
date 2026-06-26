@@ -20,7 +20,16 @@ SECTION "bank2", ROMX
 INCLUDE "engine/overworld/player_object.asm"
 INCLUDE "engine/math/sine.asm"
 INCLUDE "engine/predef.asm"
-INCLUDE "engine/gfx/color.asm"
+
+
+SECTION "Hall of Fame", ROMX
+
+INCLUDE "engine/events/halloffame.asm"
+
+
+SECTION "Mon Icons 3", ROMX
+
+CustomMonIcons::
 
 
 SECTION "bank3", ROMX
@@ -281,9 +290,9 @@ INCLUDE "engine/overworld/variables.asm"
 INCLUDE "data/text/battle.asm"
 
 
-SECTION "bank21", ROMX
+SECTION "Color", ROMX
 
-INCLUDE "engine/events/halloffame.asm"
+INCLUDE "engine/gfx/color.asm"
 
 
 SECTION "Crystal Features 2", ROMX
@@ -437,10 +446,6 @@ INCLUDE "gfx/pokemon/unown_anim_pointers.asm"
 INCLUDE "gfx/pokemon/unown_anims.asm"
 INCLUDE "gfx/pokemon/unown_idle_pointers.asm"
 INCLUDE "gfx/pokemon/unown_idles.asm"
-INCLUDE "gfx/pokemon/bitmask_pointers.asm"
-INCLUDE "gfx/pokemon/bitmasks.asm"
-INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
-INCLUDE "gfx/pokemon/unown_bitmasks.asm"
 
 
 SECTION "Pic Animations 2", ROMX
@@ -454,6 +459,10 @@ SECTION "Pic Animations 3", ROMX
 INCLUDE "gfx/pokemon/johto_frames.asm"
 INCLUDE "gfx/pokemon/unown_frame_pointers.asm"
 INCLUDE "gfx/pokemon/unown_frames.asm"
+INCLUDE "gfx/pokemon/bitmask_pointers.asm"
+INCLUDE "gfx/pokemon/bitmasks.asm"
+INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
+INCLUDE "gfx/pokemon/unown_bitmasks.asm"
 
 
 SECTION "bank38", ROMX
@@ -483,6 +492,11 @@ INCLUDE "engine/pokedex/unown_dex.asm"
 INCLUDE "engine/events/magikarp.asm"
 INCLUDE "engine/battle/hidden_power.asm"
 INCLUDE "engine/battle/misc.asm"
+
+
+SECTION "Footprints", ROMX
+
+INCLUDE "gfx/footprints.asm"
 
 
 SECTION "bank3F", ROMX
@@ -657,6 +671,11 @@ INCLUDE "engine/events/diploma.asm"
 INCLUDE "engine/pokedex/pokedex_3.asm"
 INCLUDE "engine/events/catch_tutorial_input.asm"
 INCLUDE "engine/pokegear/townmap_convertlinebreakcharacters.asm"
+
+
+SECTION "Pokedex Order", ROMX
+
+INCLUDE "engine/pokedex/order.asm"
 
 
 SECTION "European Mail", ROMX

@@ -19,7 +19,6 @@ INCLUDE "data/trainers/pic_pointers.asm"
 
 SECTION "Pics 1", ROMX
 
-HoOhFrontpic:        INCBIN "gfx/pokemon/ho_oh/front.animated.2bpp.lz"
 MachampFrontpic:     INCBIN "gfx/pokemon/machamp/front.animated.2bpp.lz"
 NinetalesFrontpic:   INCBIN "gfx/pokemon/ninetales/front.animated.2bpp.lz"
 FeraligatrFrontpic:  INCBIN "gfx/pokemon/feraligatr/front.animated.2bpp.lz"
@@ -647,6 +646,7 @@ UnownDBackpic:       INCBIN "gfx/pokemon/unown_d/back.2bpp.lz"
 
 SECTION "Pics 18", ROMX
 
+HoOhFrontpic:        INCBIN "gfx/pokemon/ho_oh/front.animated.2bpp.lz"
 SpinarakBackpic:     INCBIN "gfx/pokemon/spinarak/back.2bpp.lz"
 RaikouBackpic:       INCBIN "gfx/pokemon/raikou/back.2bpp.lz"
 UnownKFrontpic:      INCBIN "gfx/pokemon/unown_k/front.animated.2bpp.lz"
