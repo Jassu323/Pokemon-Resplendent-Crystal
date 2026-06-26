@@ -12,9 +12,7 @@ FindItemInBallScript::
 	disappear LAST_TALKED
 	opentext
 	writetext .FoundItemText
-	playsound SFX_ITEM
-	pause 60
-	itemnotify
+	itempicnotify
 	closetext
 	end
 
@@ -43,6 +41,7 @@ FindItemInBallScript::
 	call GetItemName
 	ld hl, wStringBuffer3
 	call CopyName2
+	farcall AppendTMHMMoveNameToStringBuffer3
 	ld a, [wItemBallItemID]
 	ld [wCurItem], a
 	ld a, [wItemBallQuantity]

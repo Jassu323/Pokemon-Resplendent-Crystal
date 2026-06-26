@@ -198,14 +198,11 @@ Text_ReceivedGlacierBadge:
 	done
 
 PryceText_GlacierBadgeSpeech:
-	text "That Badge will"
-	line "raise the Special"
-	cont "stats of #mon."
-
-	para "It also lets your"
-	line "#mon use Whirl-"
-	cont "Pool to get across"
-	cont "real whirlpools."
+	text "That Badge lets"
+	line "your #mon use"
+	cont "Whirlpool to get"
+	cont "across real"
+	cont "whirlpools."
 
 	para "And this… This is"
 	line "a gift from me!"

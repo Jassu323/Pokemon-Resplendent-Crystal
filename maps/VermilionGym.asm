@@ -140,13 +140,11 @@ ReceivedThunderBadgeText:
 
 LtSurgeThunderBadgeText:
 	text "Surge: Thunder-"
-	line "Badge increases"
-	cont "#mon's speed. "
+	line "Badge is proof"
+	cont "that you defeated"
+	cont "me."
 
-	para "Consider it proof"
-	line "that you defeated"
-
-	para "me. You wear it"
+	para "You wear it"
 	line "proudly, hear?"
 	done
 

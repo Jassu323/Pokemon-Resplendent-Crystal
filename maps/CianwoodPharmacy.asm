@@ -21,9 +21,7 @@ CianwoodPharmacist:
 	promptbutton
 	giveitem SECRETPOTION
 	writetext ReceivedSecretpotionText
-	playsound SFX_KEY_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	setevent EVENT_GOT_SECRETPOTION_FROM_PHARMACY
 	writetext PharmacistDescribeSecretpotionText
 	waitbutton

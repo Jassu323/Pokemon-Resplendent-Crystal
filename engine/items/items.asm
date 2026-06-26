@@ -91,12 +91,8 @@ _TossItem::
 	jp TossApricorn
 
 .TMHM:
-	ld h, d
-	ld l, e
-	ld a, [wCurItem]
-	ld c, a
-	call GetTMHMNumber
-	jp TossTMHM
+	and a
+	ret
 
 .KeyItem:
 	ld h, d
@@ -561,33 +557,6 @@ ReceiveTMHM:
 	and a
 	ret
 
-TossTMHM:
-	dec c
-	ld b, 0
-	ld hl, wTMsHMs
-	add hl, bc
-	ld a, [wItemQuantityChange]
-	ld b, a
-	ld a, [hl]
-	sub b
-	jr c, .nope
-	ld [hl], a
-	ld [wItemQuantity], a
-	jr nz, .yup
-	ld a, [wTMHMPocketScrollPosition]
-	and a
-	jr z, .yup
-	dec a
-	ld [wTMHMPocketScrollPosition], a
-
-.yup
-	scf
-	ret
-
-.nope
-	and a
-	ret
-
 CheckTMHM:
 	dec c
 	ld b, $0
@@ -605,6 +574,33 @@ GetTMHMNumber::
 	sub TM01 - 1
 	ld c, a
 	ret
+
+AppendTMHMMoveNameToStringBuffer4::
+	ld de, wStringBuffer4 + STRLEN("TM##")
+	jr AppendTMHMMoveName
+
+AppendTMHMMoveNameToStringBuffer3::
+	ld de, wStringBuffer3 + STRLEN("TM##")
+	; fallthrough
+
+AppendTMHMMoveName::
+	ld a, [wNamedObjectIndex]
+	cp TM01
+	ret c
+	push de
+	ld c, a
+	call GetTMHMNumber
+	ld a, c
+	ld [wTempTMHM], a
+	predef GetTMHMMove
+	ld a, [wTempTMHM]
+	ld [wNamedObjectIndex], a
+	call GetMoveName
+	pop hl
+	ld [hl], ' '
+	inc hl
+	ld de, wStringBuffer1
+	jp CopyName2
 
 GetNumberedTMHM:
 ; Return the item id of a TM/HM by number c.

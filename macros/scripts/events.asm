@@ -1077,4 +1077,9 @@ MACRO checkmaplockedmons
 	db checkmaplockedmons_command
 ENDM
 
+	const itempicnotify_command ; $ac
+MACRO itempicnotify
+	db itempicnotify_command
+ENDM
+
 DEF NUM_EVENT_COMMANDS EQU const_value

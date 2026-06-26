@@ -3,6 +3,7 @@ FruitTreeScript::
 	opentext
 	readmem wCurFruit
 	getitemname STRING_BUFFER_3, USE_SCRIPT_VAR
+	callasm GetCurTreeFruitPluralName
 	writetext FruitBearingTreeText
 	promptbutton
 	callasm TryResetFruitTrees
@@ -15,13 +16,14 @@ FruitTreeScript::
 .fruit
 	writetext HeyItsFruitText
 	readmem wCurFruit
-	giveitem ITEM_FROM_MEM
+	giveitem ITEM_FROM_MEM, 2
 	iffalse .packisfull
 	promptbutton
-	writetext ObtainedFruitText
+	writetext ObtainedTwoFruitText
 	callasm PickedFruitTree
-	specialsound
-	itemnotify
+	callasm FruitTreeItemPicNotify
+	callasm GetCurTreeFruitPocketName
+	writetext PutTwoFruitInPocketText
 	sjump .end
 
 .packisfull
@@ -38,6 +40,34 @@ GetCurTreeFruit:
 	dec a
 	call GetFruitTreeItem
 	ld [wCurFruit], a
+	ret
+
+GetCurTreeFruitPluralName:
+	ld a, [wCurFruit]
+	ld c, a
+	ld hl, FruitTreePluralNames
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .use_item_name
+	cp c
+	jr z, .copy
+.skip_name
+	ld a, [hli]
+	cp '@'
+	jr nz, .skip_name
+	jr .loop
+
+.use_item_name
+	ld hl, wStringBuffer3
+.copy
+	ld de, wStringBuffer4
+.copy_loop
+	ld a, [hli]
+	ld [de], a
+	inc de
+	cp '@'
+	jr nz, .copy_loop
 	ret
 
 TryResetFruitTrees:
@@ -57,6 +87,21 @@ PickedFruitTree:
 	farcall StubbedTrainerRankings_FruitPicked
 	ld b, 1
 	jp GetFruitTreeFlag
+
+FruitTreeItemPicNotify:
+	farcall ItemPicNotify
+	ret
+
+GetCurTreeFruitPocketName:
+	farcall CheckItemPocket
+	ld de, FruitTreeBerryPocketName
+	ld a, [wItemAttributeValue]
+	cp APRICORN
+	jr nz, .copy
+	ld de, FruitTreeApricornPocketName
+.copy
+	ld hl, wStringBuffer3
+	jp CopyName2
 
 ResetFruitTrees:
 	xor a
@@ -96,6 +141,30 @@ GetFruitTreeItem:
 
 INCLUDE "data/items/fruit_trees.asm"
 
+FruitTreePluralNames:
+	db BERRY,        "Berries@"
+	db PSNCUREBERRY, "PsnCureBerries@"
+	db BITTER_BERRY, "Bitter Berries@"
+	db PRZCUREBERRY, "PrzCureBerries@"
+	db MYSTERYBERRY, "MysteryBerries@"
+	db ICE_BERRY,    "Ice Berries@"
+	db MINT_BERRY,   "Mint Berries@"
+	db BURNT_BERRY,  "Burnt Berries@"
+	db RED_APRICORN, "Red Apricorns@"
+	db BLU_APRICORN, "Blu Apricorns@"
+	db BLK_APRICORN, "Blk Apricorns@"
+	db WHT_APRICORN, "Wht Apricorns@"
+	db PNK_APRICORN, "Pnk Apricorns@"
+	db GRN_APRICORN, "Grn Apricorns@"
+	db YLW_APRICORN, "Ylw Apricorns@"
+	db -1
+
+FruitTreeBerryPocketName:
+	db "Berry Pocket@"
+
+FruitTreeApricornPocketName:
+	db "Apricorn Box@"
+
 FruitBearingTreeText:
 	text_far _FruitBearingTreeText
 	text_end
@@ -106,6 +175,14 @@ HeyItsFruitText:
 
 ObtainedFruitText:
 	text_far _ObtainedFruitText
+	text_end
+
+ObtainedTwoFruitText:
+	text_far _ObtainedTwoFruitText
+	text_end
+
+PutTwoFruitInPocketText:
+	text_far _PutTwoFruitInPocketText
 	text_end
 
 FruitPackIsFullText:

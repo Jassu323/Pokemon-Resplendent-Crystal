@@ -117,6 +117,7 @@ GetBattleAnimOAMPointer:
 
 LoadBattleAnimGFX:
 	push hl
+	push af
 	ld l, a
 	ld h, 0
 	add hl, hl
@@ -130,10 +131,67 @@ LoadBattleAnimGFX:
 	ld a, [hli]
 	ld h, [hl]
 	ld l, a
+	pop af
+	cp BATTLE_ANIM_GFX_POKE_BALL
+	call z, .GetBall
 	pop de
 	push bc
 	call DecompressRequest2bpp
 	pop bc
+	ret
+
+.GetBall:
+	push bc
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wCurItem)
+	ldh [rWBK], a
+	ld a, [wCurItem]
+	ld b, a
+	ld hl, BattleAnimBallData
+
+.loop
+	ld a, [hli]
+	cp -1
+	jr z, .got_ball
+	cp b
+	jr z, .got_ball
+	ld de, BATTLE_ANIM_BALL_DATA_LENGTH - 1
+	add hl, de
+	jr .loop
+
+.got_ball
+	ld a, [hli]
+	ldh [hTempBank], a
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	ld a, [hli]
+	ld c, a
+	ld b, [hl]
+	push bc
+	ld h, d
+	ld l, e
+	ld de, PAL_COLOR_SIZE
+	add hl, de
+	ld a, BANK(wOBPals2)
+	ldh [rWBK], a
+	ld de, wOBPals2 palette PAL_BATTLE_OB_RED color 1
+	ld bc, PAL_COLOR_SIZE * 2
+	ldh a, [hTempBank]
+	call FarCopyBytes
+	ld hl, WhitePalette
+	ld de, wOBPals2 palette PAL_BATTLE_OB_GREEN color 1
+	ld bc, PAL_COLOR_SIZE
+	call CopyBytes
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	pop hl
+	pop af
+	ldh [rWBK], a
+	pop bc
+	ld b, BANK(AnimObjBattlePokeBallGFX)
 	ret
 
 INCLUDE "data/battle_anims/framesets.asm"
@@ -141,3 +199,5 @@ INCLUDE "data/battle_anims/framesets.asm"
 INCLUDE "data/battle_anims/oam.asm"
 
 INCLUDE "data/battle_anims/object_gfx.asm"
+
+INCLUDE "data/battle_anims/ball_colors.asm"

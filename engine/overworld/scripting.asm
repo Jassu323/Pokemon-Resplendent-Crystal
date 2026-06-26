@@ -236,6 +236,7 @@ ScriptCommandTable:
 	dw Script_checksave                  ; a9
 	dw Script_loadmonindex               ; aa
 	dw Script_checkmaplockedmons         ; ab
+	dw Script_itempicnotify              ; ac
 	assert_table_length NUM_EVENT_COMMANDS
 
 StartScript:
@@ -459,17 +460,12 @@ Script_verbosegiveitem:
 	ld de, GiveItemScript
 	jp ScriptCall
 
-GiveItemScript_DummyFunction:
-	ret
-
 GiveItemScript:
-	callasm GiveItemScript_DummyFunction
+	callasm AppendTMHMMoveNameToStringBuffer4
 	writetext .ReceivedItemText
 	iffalse .Full
 	waitsfx
-	specialsound
-	waitbutton
-	itemnotify
+	itempicnotify
 	end
 
 .Full:
@@ -514,6 +510,10 @@ Script_itemnotify:
 	ld hl, PutItemInPocketText
 	call MapTextbox
 	ret
+
+Script_itempicnotify:
+	farcall ItemPicNotify
+	jr Script_itemnotify
 
 Script_pocketisfull:
 	call GetPocketName

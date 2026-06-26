@@ -18,7 +18,7 @@ AnimObjGFX:
 	anim_obj_gfx  9, AnimObjExplosionGFX
 	anim_obj_gfx 17, AnimObjRocksGFX
 	anim_obj_gfx  6, AnimObjIceGFX
-	anim_obj_gfx 10, AnimObjPokeBallGFX
+	anim_obj_gfx 10, NULL ; selected from wCurItem
 	anim_obj_gfx  9, AnimObjPoisonGFX
 	anim_obj_gfx 13, AnimObjBubbleGFX
 	anim_obj_gfx 16, AnimObjNoiseGFX
@@ -98,4 +98,5 @@ AnimObjGFX:
 	anim_obj_gfx  8, AnimObjAeroblastWaveGFX
 	anim_obj_gfx  2, AnimObjReflectVerticalGFX
 	anim_obj_gfx 28, AnimObjLeekSlapGFX
+	anim_obj_gfx 10, AnimObjBattlePokeBallBGGFX
 	assert_table_length NUM_BATTLE_ANIM_GFX + 1

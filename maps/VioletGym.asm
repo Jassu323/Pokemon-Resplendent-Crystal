@@ -153,14 +153,11 @@ ReceivedZephyrBadgeText:
 
 FalknerZephyrBadgeText:
 	text "Zephyrbadge"
-	line "raises the attack"
-	cont "power of #mon."
+	line "enables #mon"
+	cont "to use Flash,"
 
-	para "It also enables"
-	line "#mon to use"
-
-	para "Flash, if they"
-	line "have it, anytime."
+	para "if they have it,"
+	line "anytime."
 
 	para "Here--take this"
 	line "too."
@@ -173,9 +170,9 @@ FalknerTMMudSlapText:
 	para "instantly learn a"
 	line "new move."
 
-	para "Think before you"
-	line "act--a TM can be"
-	cont "used only once."
+	para "A TM can be used"
+	line "as many times as"
+	cont "you like."
 
 	para "TM31 contains"
 	line "Mud-Slap."

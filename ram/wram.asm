@@ -1492,7 +1492,6 @@ NEXTU
 ; trainer card badges
 wTrainerCardBadgeFrameCounter:: db
 wTrainerCardBadgeTileID:: db
-wTrainerCardBadgeAttributes:: db
 
 NEXTU
 ; slot machine
@@ -1750,7 +1749,8 @@ wMinutesSince:: db
 wHoursSince:: db
 wDaysSince:: db
 
-	ds 7
+wTrainerCardBadgePaletteAddr:: dw
+	ds 5
 
 wTempLoopCounter:: db
 
@@ -2216,8 +2216,7 @@ wPartyMenuCursor::      db
 wItemsPocketCursor::    db
 wKeyItemsPocketCursor:: db
 wBallsPocketCursor::    db
-wBerriesPocketCursor::
-wTMHMPocketCursor::     db
+wBerriesPocketCursor::  db
 wMedicinePocketCursor:: db
 
 wPCItemsScrollPosition::        db
@@ -2225,8 +2224,7 @@ wPCItemsScrollPosition::        db
 wItemsPocketScrollPosition::    db
 wKeyItemsPocketScrollPosition:: db
 wBallsPocketScrollPosition::    db
-wBerriesPocketScrollPosition::
-wTMHMPocketScrollPosition::     db
+wBerriesPocketScrollPosition::  db
 wMedicinePocketScrollPosition:: db
 
 wSwitchMon::
@@ -3229,7 +3227,7 @@ wPhoneList:: ds CONTACT_LIST_SIZE + 1
 	ds 22
 
 wLuckyNumberShowFlag:: db
-	ds 1
+wRepelType:: db
 wLuckyIDNumber:: dw
 
 wRepelEffect:: db ; If a Repel is in use, it contains the nr of steps it's still active

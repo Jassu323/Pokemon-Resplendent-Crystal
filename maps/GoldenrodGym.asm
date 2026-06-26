@@ -240,10 +240,6 @@ WhitneyPlainBadgeText:
 	para "Strength outside"
 	line "of battle."
 
-	para "It also boosts"
-	line "your #mon's"
-	cont "Speed."
-
 	para "Oh, you can have"
 	line "this too!"
 	done

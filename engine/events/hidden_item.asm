@@ -2,12 +2,12 @@ HiddenItemScript::
 	opentext
 	readmem wHiddenItemID
 	getitemname STRING_BUFFER_3, USE_SCRIPT_VAR
+	callasm AppendTMHMMoveNameToStringBuffer3
 	writetext .PlayerFoundItemText
 	giveitem ITEM_FROM_MEM
 	iffalse .bag_full
 	callasm SetMemEvent
-	specialsound
-	itemnotify
+	itempicnotify
 	sjump .finish
 
 .bag_full
