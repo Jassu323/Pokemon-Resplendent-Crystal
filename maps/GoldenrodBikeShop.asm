@@ -22,9 +22,7 @@ GoldenrodBikeShopClerkScript:
 	waitsfx
 	giveitem BICYCLE
 	writetext BorrowedABicycleText
-	playsound SFX_KEY_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	setflag ENGINE_BIKE_SHOP_CALL_ENABLED
 	setevent EVENT_GOT_BICYCLE
 .GotBicycle:

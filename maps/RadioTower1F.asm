@@ -73,7 +73,7 @@ RadioTower1FLuckyNumberManScript:
 	promptbutton
 	giveitem MASTER_BALL
 	iffalse .BagFull
-	itemnotify
+	itempicnotify
 	setflag ENGINE_LUCKY_NUMBER_SHOW
 	sjump .GameOver
 
@@ -84,7 +84,7 @@ RadioTower1FLuckyNumberManScript:
 	promptbutton
 	giveitem EXP_SHARE
 	iffalse .BagFull
-	itemnotify
+	itempicnotify
 	setflag ENGINE_LUCKY_NUMBER_SHOW
 	sjump .GameOver
 
@@ -95,7 +95,7 @@ RadioTower1FLuckyNumberManScript:
 	promptbutton
 	giveitem PP_UP
 	iffalse .BagFull
-	itemnotify
+	itempicnotify
 	setflag ENGINE_LUCKY_NUMBER_SHOW
 	sjump .GameOver
 

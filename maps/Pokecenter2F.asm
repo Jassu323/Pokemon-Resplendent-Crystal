@@ -599,7 +599,7 @@ Pokecenter2FOfficerScript:
 	waitsfx
 	special GetMysteryGiftItem
 	iffalse .BagIsFull
-	itemnotify
+	itempicnotify
 	setevent EVENT_MYSTERY_GIFT_DELIVERY_GUY
 .AlreadyGotGift:
 	writetext Text_MysteryGiftDeliveryGuy_Outro

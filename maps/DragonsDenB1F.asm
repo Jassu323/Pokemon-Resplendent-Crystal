@@ -58,9 +58,7 @@ DragonsDenB1F_ClairScene:
 	iffalse .BagFull
 	getitemname STRING_BUFFER_3, TM_DRAGONBREATH
 	writetext Text_ReceivedTM24
-	playsound SFX_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	setevent EVENT_GOT_TM24_DRAGONBREATH
 	writetext ClairText_DescribeDragonbreathDragonDen
 	promptbutton
@@ -135,9 +133,7 @@ DragonsDenB1FDragonFangScript:
 	opentext
 	getitemname STRING_BUFFER_3, DRAGON_FANG
 	writetext Text_FoundDragonFang
-	playsound SFX_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	closetext
 	end
 

@@ -95,9 +95,7 @@ RedGyarados:
 	giveitem RED_SCALE
 	waitsfx
 	writetext LakeOfRageGotRedScaleText
-	playsound SFX_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	closetext
 	setscene 0 ; Lake of Rage does not have a scene variable
 	appear LAKEOFRAGE_LANCE

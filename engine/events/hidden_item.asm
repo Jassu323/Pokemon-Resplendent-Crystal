@@ -6,8 +6,7 @@ HiddenItemScript::
 	giveitem ITEM_FROM_MEM
 	iffalse .bag_full
 	callasm SetMemEvent
-	specialsound
-	itemnotify
+	itempicnotify
 	sjump .finish
 
 .bag_full

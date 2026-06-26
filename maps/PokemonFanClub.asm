@@ -79,9 +79,7 @@ PokemonFanClubClefairyGuyScript:
 	iffalse .NoRoom
 	disappear POKEMONFANCLUB_FAIRY
 	writetext PokemonFanClubPlayerReceivedDollText
-	playsound SFX_KEY_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	setevent EVENT_GOT_LOST_ITEM_FROM_FAN_CLUB
 	closetext
 	end

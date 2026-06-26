@@ -3704,6 +3704,11 @@ ShowPackItemEmptyIcon:
 	jr LoadPackItemIcon
 
 LoadPackItemIcon:
+	call LoadPackItemIconGFX
+	call LoadPackItemIconPalette
+	ret
+
+LoadPackItemIconGFX:
 	push bc
 	push hl
 	ld hl, vTiles2 tile PACK_ITEM_ICON_FIRST_TILE
@@ -3720,7 +3725,6 @@ LoadPackItemIcon:
 .loaded
 	pop hl
 	pop bc
-	call LoadPackItemIconPalette
 	ret
 
 LoadPackItemIconPalette:
@@ -3742,6 +3746,27 @@ LoadPackItemIconPalette:
 	farcall ApplyPals
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
+	ret
+
+LoadItemNotifyIconPalette:
+	ldh a, [hCGB]
+	and a
+	ret z
+	inc hl
+	inc hl
+	ld a, b
+	ldh [hTempBank], a
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+	ld de, wBGPals1 palette PAL_BG_TEXT color 1
+	ld bc, PAL_COLOR_SIZE * 2
+	ldh a, [hTempBank]
+	call FarCopyBytes
+	pop af
+	ldh [rWBK], a
+	call UpdateTimePals
 	ret
 
 HidePackItemIcon:
@@ -3766,6 +3791,69 @@ PlacePackItemIconTiles:
 	dec b
 	jr nz, .row
 	ret
+
+ItemNotifyPic::
+	ld hl, ItemNotifyPicMenuHeader
+	call CopyMenuHeader
+	call MenuBox
+	ld a, [wCurItem]
+	call GetPackItemIcon
+	call LoadPackItemIconGFX
+	call LoadItemNotifyIconPalette
+	call ItemNotifyPicCoord2Tile
+	ld a, PACK_ITEM_ICON_FIRST_TILE
+	call PlacePackItemIconTiles
+	call UpdateSprites
+	call ApplyTilemap
+	ret
+
+ItemPicNotify::
+	call ItemNotifyPic
+	call PlayItemNotifySFX
+	call WaitSFX
+	jp CloseItemNotifyPic
+
+PlayItemNotifySFX:
+	farcall CheckItemPocket
+	ld a, [wItemAttributeValue]
+	cp TM_HM
+	ld de, SFX_GET_TM
+	jr z, .play
+	cp KEY_ITEM
+	ld de, SFX_KEY_ITEM
+	jr z, .play
+	ld de, SFX_ITEM
+.play
+	jp PlaySFX
+
+CloseItemNotifyPic::
+	ld hl, ItemNotifyPicMenuHeader
+	call CopyMenuHeader
+	call ClearMenuBoxInterior
+	call WaitBGMap
+	xor a
+	ldh [hBGMapMode], a
+	call LoadOverworldTilemapAndAttrmapPals
+	call CopyTilemapAtOnce
+	call UpdateSprites
+	call LoadStandardFont
+	call LoadFontsExtra
+	ret
+
+ItemNotifyPicCoord2Tile:
+	ld a, [wMenuBorderTopCoord]
+	inc a
+	ld b, a
+	ld a, [wMenuBorderLeftCoord]
+	inc a
+	ld c, a
+	jp Coord2Tile
+
+ItemNotifyPicMenuHeader:
+	db MENU_BACKUP_TILES ; flags
+	menu_coords 7, 5, 11, 9
+	dw NULL
+	db 1 ; default option
 
 INCLUDE "gfx/items/items.asm"
 

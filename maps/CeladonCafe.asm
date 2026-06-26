@@ -96,9 +96,7 @@ CeladonCafeTrashcan:
 	opentext
 	getitemname STRING_BUFFER_3, LEFTOVERS
 	writetext FoundLeftoversText
-	playsound SFX_ITEM
-	waitsfx
-	itemnotify
+	itempicnotify
 	closetext
 	setevent EVENT_FOUND_LEFTOVERS_IN_CELADON_CAFE
 	end

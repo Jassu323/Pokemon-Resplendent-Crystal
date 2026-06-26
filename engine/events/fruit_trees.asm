@@ -20,8 +20,7 @@ FruitTreeScript::
 	promptbutton
 	writetext ObtainedFruitText
 	callasm PickedFruitTree
-	specialsound
-	itemnotify
+	itempicnotify
 	sjump .end
 
 .packisfull
