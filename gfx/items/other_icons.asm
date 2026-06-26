@@ -97,6 +97,8 @@ PackItemMoonBallIconPalette:
 INCLUDE "gfx/items/poke_balls/moon_ball.pal"
 PackItemLoveBallIconPalette:
 INCLUDE "gfx/items/poke_balls/love_ball.pal"
+PackItemParkBallIconPalette:
+INCLUDE "gfx/items/poke_balls/park_ball.pal"
 PackItemOranBerryIconPalette:
 INCLUDE "gfx/items/berries/oran_berry.pal"
 PackItemPechaBerryIconPalette:

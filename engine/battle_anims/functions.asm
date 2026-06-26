@@ -224,6 +224,8 @@ DoBattleAnimFrame:
 	dw BattleAnimFunc_AeroblastWave
 	dw BattleAnimFunc_DiveBombWind
 	dw BattleAnimFunc_BrickBreakShard
+	dw BattleAnimFunc_PokeBallBG
+	dw BattleAnimFunc_CatchSparkle
 	assert_table_length NUM_BATTLE_ANIM_FUNCS
 
 BattleAnimFunc_Null:
@@ -534,6 +536,27 @@ BattleAnimFunc_MoveFromUserToTargetAndDisappear:
 	call BattleAnimExt_Deinit
 	ret
 
+BattleAnimFunc_PokeBallBG:
+	call BattleAnim_AnonJumptable
+.anon_dw
+	dw .zero
+	dw BattleAnimFunc_PokeBall.one
+	dw BattleAnimFunc_PokeBall.two
+	dw BattleAnimFunc_PokeBall.three
+	dw BattleAnimFunc_PokeBall.four
+	dw BattleAnimFunc_PokeBall.five
+	dw BattleAnimFunc_PokeBall.six
+	dw BattleAnimFunc_PokeBall.seven
+	dw BattleAnimFunc_PokeBall.eight
+	dw BattleAnimFunc_PokeBall.nine
+	dw BattleAnimFunc_PokeBall.ten
+	dw BattleAnimFunc_PokeBall.eleven
+
+.zero
+	call GetBallAnimBGPal
+	call BattleAnim_IncAnonJumptableIndex
+	ret
+
 BattleAnimFunc_PokeBall:
 	call BattleAnim_AnonJumptable
 .anon_dw
@@ -692,32 +715,46 @@ BattleAnimFunc_PokeBallBlocked:
 	ret
 
 GetBallAnimPal:
-	ld hl, BallColors
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wCurItem)
-	ldh [rWBK], a
-	ld a, [wCurItem]
-	ld e, a
-	pop af
-	ldh [rWBK], a
-.IsInArray:
-	ld a, [hli]
-	cp -1
-	jr z, .load
-	cp e
-	jr z, .load
-	inc hl
-	jr .IsInArray
-
-.load
-	ld a, [hl]
 	ld hl, BATTLEANIMSTRUCT_PALETTE
+	add hl, bc
+	ld [hl], PAL_BATTLE_OB_RED
+	ret
+
+GetBallAnimBGPal:
+	ld hl, BATTLEANIMSTRUCT_PALETTE
+	add hl, bc
+	ld [hl], PAL_BATTLE_OB_GREEN
+	ret
+
+BattleAnimFunc_CatchSparkle:
+	ld hl, BATTLEANIMSTRUCT_VAR1
+	add hl, bc
+	ld a, [hl]
+	cp $10
+	jr nc, .done
+	inc [hl]
+	inc [hl]
+	ld d, a
+	ld hl, BATTLEANIMSTRUCT_PARAM
+	add hl, bc
+	ld a, [hl]
+	push af
+	push de
+	call BattleAnim_Sine
+	ld hl, BATTLEANIMSTRUCT_YOFFSET
+	add hl, bc
+	ld [hl], a
+	pop de
+	pop af
+	call BattleAnim_Cosine
+	ld hl, BATTLEANIMSTRUCT_XOFFSET
 	add hl, bc
 	ld [hl], a
 	ret
 
-INCLUDE "data/battle_anims/ball_colors.asm"
+.done
+	call BattleAnimExt_Deinit
+	ret
 
 BattleAnimFunc_Ember:
 	call BattleAnim_AnonJumptable

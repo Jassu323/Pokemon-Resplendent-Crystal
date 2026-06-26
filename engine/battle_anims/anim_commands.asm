@@ -94,7 +94,101 @@ BattleAnimRunScript:
 	call RunBattleAnimScript
 
 .done
-	call BattleAnim_RevertPals
+	ld a, [wBattleAnimFlags]
+	bit BATTLEANIM_KEEPSPRITES_F, a
+	jp z, BattleAnim_RevertPals
+	; fallthrough
+
+BattleAnimDarkenObjPals:
+; Shade colors by 3/4 of their original value.
+	push hl
+	push de
+	push bc
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wOBPals2)
+	ldh [rWBK], a
+
+	ld hl, wOBPals2 palette PAL_BATTLE_OB_RED color 1
+	call DarkenColorByAQuarter
+	inc hl
+	inc hl
+	call DarkenColorByAQuarter
+
+	ld hl, wOBPals2 palette PAL_BATTLE_OB_GREEN color 1
+	call DarkenColorByAQuarter
+
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+
+	pop af
+	ldh [rWBK], a
+	pop bc
+	pop de
+	pop hl
+	ret
+
+DarkenColorByAQuarter:
+	ld a, [hl]
+	and %00011111
+	ld d, a
+	srl d
+	srl d
+	sub d
+	ld d, a
+	ld a, [hl]
+	and %11100000
+	or d
+	ld [hl], a
+
+	ld a, [hli]
+	and %11100000
+	rrca
+	swap a
+	ld d, a
+	ld a, [hld]
+	and %00000011
+	swap a
+	rrca
+	or d
+	ld d, a
+	srl d
+	srl d
+	sub d
+	ld d, a
+	rlca
+	swap a
+	ld d, a
+	and %11100000
+	ld e, a
+	ld a, d
+	and %00000011
+	ld d, a
+	ld a, [hl]
+	and %00011111
+	or e
+	ld [hli], a
+	ld a, [hl]
+	and %11111100
+	or d
+	ld [hl], a
+
+	ld a, [hl]
+	and %01111100
+	rrca
+	rrca
+	ld d, a
+	srl d
+	srl d
+	sub d
+	ld d, a
+	sla d
+	sla d
+	ld a, [hl]
+	and %10000011
+	or d
+	ld [hld], a
 	ret
 
 RunBattleAnimScript:
@@ -138,6 +232,8 @@ RunBattleAnimScript:
 	ld a, [wBattleAnimFlags]
 	bit BATTLEANIM_STOP_F, a
 	jr z, .playframe
+	bit BATTLEANIM_KEEPSPRITES_F, a
+	ret nz
 
 	call BattleAnim_ClearOAM
 	ret
@@ -295,26 +391,6 @@ PlaceWindowOverBattleTextbox: ; unreferenced
 	ret
 
 BattleAnim_ClearOAM:
-	ld a, [wBattleAnimFlags]
-	bit BATTLEANIM_KEEPSPRITES_F, a
-	jr z, .delete
-
-	; Instead of deleting the sprites, make them all use PAL_BATTLE_OB_ENEMY
-	ld hl, wShadowOAMSprite00Attributes
-	ld c, OAM_COUNT
-.loop
-	ld a, [hl]
-	and ~(OAM_PALETTE | OAM_BANK1) ; zeros out the palette bits
-	assert PAL_BATTLE_OB_ENEMY == 0
-	ld [hli], a
-rept OBJ_SIZE - 1
-	inc hl
-endr
-	dec c
-	jr nz, .loop
-	ret
-
-.delete
 	ld hl, wShadowOAM
 	ld c, wShadowOAMEnd - wShadowOAM
 	xor a

@@ -69,3 +69,42 @@ AnimObjReflectVerticalGFX:
 
 AnimObjLeekSlapGFX:
 	INCBIN "gfx/battle_anims/leek_slap.2bpp.lz"
+
+AnimObjBattlePokeBallBGGFX:
+	INCBIN "gfx/battle_balls/background.2bpp.lz"
+
+AnimObjBattlePokeBallGFX:
+	INCBIN "gfx/battle_balls/poke_ball.2bpp.lz"
+
+AnimObjBattleGreatBallGFX:
+	INCBIN "gfx/battle_balls/great_ball.2bpp.lz"
+
+AnimObjBattleUltraBallGFX:
+	INCBIN "gfx/battle_balls/ultra_ball.2bpp.lz"
+
+AnimObjBattleMasterBallGFX:
+	INCBIN "gfx/battle_balls/master_ball.2bpp.lz"
+
+AnimObjBattleHeavyBallGFX:
+	INCBIN "gfx/battle_balls/heavy_ball.2bpp.lz"
+
+AnimObjBattleLevelBallGFX:
+	INCBIN "gfx/battle_balls/level_ball.2bpp.lz"
+
+AnimObjBattleLureBallGFX:
+	INCBIN "gfx/battle_balls/lure_ball.2bpp.lz"
+
+AnimObjBattleFastBallGFX:
+	INCBIN "gfx/battle_balls/fast_ball.2bpp.lz"
+
+AnimObjBattleFriendBallGFX:
+	INCBIN "gfx/battle_balls/friend_ball.2bpp.lz"
+
+AnimObjBattleMoonBallGFX:
+	INCBIN "gfx/battle_balls/moon_ball.2bpp.lz"
+
+AnimObjBattleLoveBallGFX:
+	INCBIN "gfx/battle_balls/love_ball.2bpp.lz"
+
+AnimObjBattleParkBallGFX:
+	INCBIN "gfx/battle_balls/park_ball.2bpp.lz"

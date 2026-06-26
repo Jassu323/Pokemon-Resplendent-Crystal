@@ -248,6 +248,7 @@ gfx/battle_anims/beam.2bpp: tools/gfx += --remove-xflip --remove-yflip --remove-
 gfx/battle_anims/misc.2bpp: tools/gfx += --remove-duplicates --remove-xflip
 gfx/battle_anims/objects.2bpp: tools/gfx += --remove-whitespace --remove-xflip
 gfx/battle_anims/pokeball.2bpp: tools/gfx += --remove-xflip --keep-whitespace
+gfx/battle_balls/%.2bpp: tools/gfx += --remove-xflip --keep-whitespace
 
 transparent_gray_battle_anim_colors := '\#none,\#606060,\#909090,\#c8c8c8'
 mud_ball_battle_anim_colors := '\#ffffff,\#f0f0f0,\#884828,\#683018'
