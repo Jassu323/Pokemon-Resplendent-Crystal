@@ -258,4 +258,5 @@ PokedexDataPointerTable:
 	dba TorchicPokedexEntry
 	dba CombuskenPokedexEntry
 	dba BlazikenPokedexEntry
+	dba MudkipPokedexEntry
 	assert_table_length NUM_POKEMON

@@ -259,4 +259,5 @@ NewPokedexOrder:
 	dw TORCHIC
 	dw COMBUSKEN
 	dw BLAZIKEN
+	dw MUDKIP
 	assert_table_length NUM_POKEMON

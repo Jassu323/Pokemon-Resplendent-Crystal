@@ -257,4 +257,5 @@ BitmasksPointers:
 	dw TorchicBitmasks
 	dw CombuskenBitmasks
 	dw BlazikenBitmasks
+	dw MudkipBitmasks
 	assert_table_length NUM_POKEMON

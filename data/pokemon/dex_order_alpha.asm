@@ -141,6 +141,7 @@ AlphabeticalPokedexOrder:
 	dw MISDREAVUS
 	dw MOLTRES
 	dw MR__MIME
+	dw MUDKIP
 	dw MUK
 	dw MURKROW
 	dw NATU

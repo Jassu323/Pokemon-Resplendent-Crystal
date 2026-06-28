@@ -257,4 +257,5 @@ AnimationIdlePointers:
 	dw TorchicAnimationIdle
 	dw CombuskenAnimationIdle
 	dw BlazikenAnimationIdle
+	dw MudkipAnimationIdle
 	assert_table_length NUM_POKEMON

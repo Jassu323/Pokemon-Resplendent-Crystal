@@ -7,6 +7,7 @@ EvosAttacksPointers3::
 	dw TorchicEvosAttacks
 	dw CombuskenEvosAttacks
 	dw BlazikenEvosAttacks
+	dw MudkipEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -35,6 +36,11 @@ CombuskenEvosAttacks:
 	db 0 ; no more level-up moves
 
 BlazikenEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+MudkipEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

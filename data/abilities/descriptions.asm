@@ -21,6 +21,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; DRAGON_SKIN
 	dw AbilityPlaceholderDescription ; OVERGROW
 	dw AbilityPlaceholderDescription ; BLAZE
+	dw AbilityPlaceholderDescription ; TORRENT
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

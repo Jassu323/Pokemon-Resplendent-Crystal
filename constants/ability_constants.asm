@@ -20,4 +20,5 @@
 	const DRAGON_SKIN
 	const OVERGROW
 	const BLAZE
+	const TORRENT
 DEF NUM_ABILITIES EQU const_value - 1

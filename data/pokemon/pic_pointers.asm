@@ -530,4 +530,6 @@ PokemonPicPointers::
 	dba CombuskenBackpic
 	dba BlazikenFrontpic
 	dba BlazikenBackpic
+	dba MudkipFrontpic
+	dba MudkipBackpic
 	assert_table_length NUM_POKEMON + 1
