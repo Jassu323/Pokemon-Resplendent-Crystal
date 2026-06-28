@@ -262,4 +262,5 @@ PokemonNames::
 	dname "Sceptile"
 	dname "Torchic"
 	dname "Combusken"
+	dname "Blaziken"
 	assert_table_length NUM_POKEMON

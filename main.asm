@@ -35,6 +35,7 @@ GrovyleIcon::       INCBIN "gfx/icons/grovyle.2bpp"
 SceptileIcon::      INCBIN "gfx/icons/sceptile.2bpp"
 TorchicIcon::       INCBIN "gfx/icons/torchic.2bpp"
 CombuskenIcon::     INCBIN "gfx/icons/combusken.2bpp"
+BlazikenIcon::      INCBIN "gfx/icons/blaziken.2bpp"
 
 
 SECTION "bank3", ROMX

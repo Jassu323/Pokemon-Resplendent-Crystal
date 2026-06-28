@@ -262,4 +262,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SCEPTILE
 	mon_cry CRY_BULBASAUR,   128,  129 ; TORCHIC
 	mon_cry CRY_BULBASAUR,   128,  129 ; COMBUSKEN
+	mon_cry CRY_BULBASAUR,   128,  129 ; BLAZIKEN
 	assert_table_length NUM_POKEMON

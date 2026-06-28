@@ -257,4 +257,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SCEPTILE
 	dw NO_MOVE ; TORCHIC
 	dw NO_MOVE ; COMBUSKEN
+	dw NO_MOVE ; BLAZIKEN
 	assert_table_length NUM_POKEMON

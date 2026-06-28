@@ -257,4 +257,5 @@ FirstEvoStages::
 	dw TREECKO
 	dw TORCHIC
 	dw TORCHIC
+	dw TORCHIC
 	assert_table_length NUM_POKEMON

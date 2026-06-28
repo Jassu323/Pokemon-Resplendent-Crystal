@@ -6,6 +6,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SCEPTILE
 	dw NoEggMoves3 ; TORCHIC
 	dw NoEggMoves3 ; COMBUSKEN
+	dw NoEggMoves3 ; BLAZIKEN
 .IndirectEnd::
 
 NoEggMoves3:

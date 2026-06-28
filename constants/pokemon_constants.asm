@@ -276,6 +276,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SCEPTILE   ; fe, NatDex 254
 	const TORCHIC    ; ff, NatDex 255
 	const COMBUSKEN  ; 100, NatDex 256
+	const BLAZIKEN   ; 101, NatDex 257
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

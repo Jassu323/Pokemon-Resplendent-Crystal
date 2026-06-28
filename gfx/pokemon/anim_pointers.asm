@@ -256,4 +256,5 @@ AnimationPointers:
 	dw SceptileAnimation
 	dw TorchicAnimation
 	dw CombuskenAnimation
+	dw BlazikenAnimation
 	assert_table_length NUM_POKEMON

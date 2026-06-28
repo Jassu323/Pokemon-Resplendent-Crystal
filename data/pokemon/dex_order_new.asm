@@ -258,4 +258,5 @@ NewPokedexOrder:
 	dw SCEPTILE
 	dw TORCHIC
 	dw COMBUSKEN
+	dw BLAZIKEN
 	assert_table_length NUM_POKEMON

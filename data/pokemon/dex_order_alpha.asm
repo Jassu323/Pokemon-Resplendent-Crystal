@@ -17,6 +17,7 @@ AlphabeticalPokedexOrder:
 	dw BELLOSSOM
 	dw BELLSPROUT
 	dw BLASTOISE
+	dw BLAZIKEN
 	dw BLISSEY
 	dw BULBASAUR
 	dw BUTTERFREE

@@ -264,4 +264,5 @@ SpeciesAbilities::
 	mon_ability OVERGROW ; 0fe SCEPTILE
 	mon_ability BLAZE ; 0ff TORCHIC
 	mon_ability BLAZE ; 100 COMBUSKEN
+	mon_ability BLAZE ; 101 BLAZIKEN
 	assert_table_length NUM_POKEMON + 1

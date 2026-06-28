@@ -215,6 +215,7 @@ ROMX $43
 ROMX $44
 ROMX $45
 	; Reserved for sampled cry payloads.
+	"Sampled Cry Payloads 2"
 ROMX $46
 	"mobile46"
 ROMX $47
