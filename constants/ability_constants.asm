@@ -19,4 +19,5 @@
 	const STATIC
 	const DRAGON_SKIN
 	const OVERGROW
+	const BLAZE
 DEF NUM_ABILITIES EQU const_value - 1

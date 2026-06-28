@@ -260,4 +260,5 @@ PokemonNames::
 	dname "Treecko"
 	dname "Grovyle"
 	dname "Sceptile"
+	dname "Torchic"
 	assert_table_length NUM_POKEMON

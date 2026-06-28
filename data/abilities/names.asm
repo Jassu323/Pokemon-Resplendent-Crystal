@@ -19,4 +19,5 @@ AbilityNames::
 	li "Static"
 	li "Dragon Skin"
 	li "Overgrow"
+	li "Blaze"
 	assert_list_length NUM_ABILITIES + 1

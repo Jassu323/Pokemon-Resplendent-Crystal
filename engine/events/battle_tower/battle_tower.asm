@@ -536,9 +536,13 @@ Function17042c:
 .empty
 	; If a == 0 and b >= $fc, overwrite the current trainer's data with
 	; Unknown_17047e, and exit the inner loop.
+	; Once NUM_POKEMON reaches $ff, no 8-bit species byte can exceed the valid
+	; range, so avoid assembling cp 256 as cp 0.
+if NUM_POKEMON < $ff
 	ld a, b
 	cp NUM_POKEMON + 1
 	jr nc, .copy_data
+endc
 
 .next_iteration
 	dec c

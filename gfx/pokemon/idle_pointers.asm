@@ -254,4 +254,5 @@ AnimationIdlePointers:
 	dw TreeckoAnimationIdle
 	dw GrovyleAnimationIdle
 	dw SceptileAnimationIdle
+	dw TorchicAnimationIdle
 	assert_table_length NUM_POKEMON

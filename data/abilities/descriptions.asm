@@ -20,6 +20,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; STATIC
 	dw AbilityPlaceholderDescription ; DRAGON_SKIN
 	dw AbilityPlaceholderDescription ; OVERGROW
+	dw AbilityPlaceholderDescription ; BLAZE
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

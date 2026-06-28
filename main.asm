@@ -33,6 +33,7 @@ CustomMonIcons::
 TreeckoIcon::       INCBIN "gfx/icons/treecko.2bpp"
 GrovyleIcon::       INCBIN "gfx/icons/grovyle.2bpp"
 SceptileIcon::      INCBIN "gfx/icons/sceptile.2bpp"
+TorchicIcon::       INCBIN "gfx/icons/torchic.2bpp"
 
 
 SECTION "bank3", ROMX

@@ -229,6 +229,7 @@ AlphabeticalPokedexOrder:
 	dw TENTACRUEL
 	dw TOGEPI
 	dw TOGETIC
+	dw TORCHIC
 	dw TOTODILE
 	dw TREECKO
 	dw TYPHLOSION
