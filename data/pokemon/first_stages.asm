@@ -263,4 +263,5 @@ FirstEvoStages::
 	dw MUDKIP
 	dw POOCHYENA
 	dw POOCHYENA
+	dw WINGULL
 	assert_table_length NUM_POKEMON

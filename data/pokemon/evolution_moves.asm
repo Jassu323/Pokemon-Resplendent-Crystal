@@ -263,4 +263,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SWAMPERT
 	dw NO_MOVE ; POOCHYENA
 	dw NO_MOVE ; MIGHTYENA
+	dw NO_MOVE ; WINGULL
 	assert_table_length NUM_POKEMON

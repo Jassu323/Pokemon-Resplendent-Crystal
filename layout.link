@@ -329,6 +329,7 @@ ROMX $75
 	"Pack Other Item Icons"
 ROMX $76
 	; Reserved for sampled cry payloads.
+	"Sampled Cry Payloads 3"
 ROMX $77
 	"Unown Font"
 	"Tileset Data 7"

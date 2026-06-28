@@ -263,4 +263,5 @@ PokedexDataPointerTable:
 	dba SwampertPokedexEntry
 	dba PoochyenaPokedexEntry
 	dba MightyenaPokedexEntry
+	dba WingullPokedexEntry
 	assert_table_length NUM_POKEMON

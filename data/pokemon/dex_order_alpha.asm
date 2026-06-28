@@ -258,6 +258,7 @@ AlphabeticalPokedexOrder:
 	dw WEEPINBELL
 	dw WEEZING
 	dw WIGGLYTUFF
+	dw WINGULL
 	dw WOBBUFFET
 	dw WOOPER
 	dw XATU

@@ -268,4 +268,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SWAMPERT
 	mon_cry CRY_BULBASAUR,   128,  129 ; POOCHYENA
 	mon_cry CRY_BULBASAUR,   128,  129 ; MIGHTYENA
+	mon_cry CRY_BULBASAUR,   128,  129 ; WINGULL
 	assert_table_length NUM_POKEMON

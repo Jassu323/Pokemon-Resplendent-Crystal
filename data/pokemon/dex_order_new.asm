@@ -264,4 +264,5 @@ NewPokedexOrder:
 	dw SWAMPERT
 	dw POOCHYENA
 	dw MIGHTYENA
+	dw WINGULL
 	assert_table_length NUM_POKEMON

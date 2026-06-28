@@ -268,4 +268,5 @@ PokemonNames::
 	dname "Swampert"
 	dname "Poochyena"
 	dname "Mightyena"
+	dname "Wingull"
 	assert_table_length NUM_POKEMON

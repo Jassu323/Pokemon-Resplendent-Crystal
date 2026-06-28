@@ -800,3 +800,5 @@ SECTION "Pics 20", ROMX
 
 MightyenaFrontpic:  INCBIN "gfx/pokemon/mightyena/front.animated.2bpp.lz"
 MightyenaBackpic:   INCBIN "gfx/pokemon/mightyena/back.2bpp.lz"
+WingullFrontpic:    INCBIN "gfx/pokemon/wingull/front.animated.2bpp.lz"
+WingullBackpic:     INCBIN "gfx/pokemon/wingull/back.2bpp.lz"

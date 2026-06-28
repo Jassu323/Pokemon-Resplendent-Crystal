@@ -41,6 +41,7 @@ MarshtompIcon::     INCBIN "gfx/icons/marshtomp.2bpp"
 SwampertIcon::      INCBIN "gfx/icons/swampert.2bpp"
 PoochyenaIcon::     INCBIN "gfx/icons/poochyena.2bpp"
 MightyenaIcon::     INCBIN "gfx/icons/mightyena.2bpp"
+WingullIcon::       INCBIN "gfx/icons/wingull.2bpp"
 
 
 SECTION "bank3", ROMX
