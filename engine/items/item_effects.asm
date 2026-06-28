@@ -384,6 +384,15 @@ PokeBallEffect:
 
 .fail_to_catch
 	ld [wWildMon], a
+	and a
+	jr z, .clear_prepared_sampled_cry
+	call PrepareBattleSampledCry
+	jr .prepared_sampled_cry
+
+.clear_prepared_sampled_cry
+	call ClearBattlePreparedSampledCry
+
+.prepared_sampled_cry
 	ld c, 20
 	call DelayFrames
 

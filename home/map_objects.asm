@@ -520,16 +520,6 @@ _GetMovementIndex::
 	ld a, h
 	ret
 
-SetVramState_SpriteUpdatesDisabled:: ; unreferenced
-	ld hl, wStateFlags
-	set SPRITE_UPDATES_DISABLED_F, [hl]
-	ret
-
-ResetVramState_SpriteUpdatesDisabled:: ; unreferenced
-	ld hl, wStateFlags
-	res SPRITE_UPDATES_DISABLED_F, [hl]
-	ret
-
 UpdateSprites::
 	ld a, [wStateFlags]
 	bit SPRITE_UPDATES_DISABLED_F, a

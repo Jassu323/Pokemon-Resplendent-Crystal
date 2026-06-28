@@ -412,8 +412,9 @@ Pokedex_InitDexEntryScreen:
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call DelayFrame
 	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call PlayMonCry2
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -488,8 +489,9 @@ Pokedex_ReinitDexEntryScreen:
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call DelayFrame
 	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call PlayMonCry2
 	ld hl, wJumptableIndex
 	dec [hl]
 	ret
@@ -2645,11 +2647,16 @@ _NewPokedexEntry:
 	call WaitBGMap
 	call GetBaseData
 	ld de, vTiles2
-	predef GetMonFrontpic
+	predef GetAnimatedFrontpic
+	hlcoord 1, 1
+	ld d, $0
+	ld e, ANIM_MON_MENU
+	predef LoadMonAnimation
+	ld a, 1
+	ld [wFrameCounter], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
-	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call DelayFrame
 	ret
 
 Pokedex_SetBGMapMode3:

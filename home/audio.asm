@@ -59,21 +59,8 @@ ServiceSampledCryAsync::
 	push bc
 	push af
 
-	ldh a, [hSampledCryTimer]
-	and a
-	jr z, .done
-
-	ldh a, [hROMBank]
-	push af
-	ldh a, [hSampledCryBank]
-	rst Bankswitch
-
 	call SampledCry_ServiceAsync
 
-	pop af
-	rst Bankswitch
-
-.done
 	pop af
 	pop bc
 	pop de
@@ -233,23 +220,12 @@ PlayLoadedSampledCryWithPeriod::
 	push bc
 	push af
 
-	ldh a, [hROMBank]
-	push af
-
 	ldh a, [hSampledCryAddress]
 	ld e, a
 	ldh a, [hSampledCryAddress + 1]
 	ld d, a
 	ldh a, [hSampledCryBank]
-	ld b, a
-	ld a, BANK(StartSampledCryAsync)
-	rst Bankswitch
-	ld a, b
 	call StartSampledCryAsync
-
-	pop af
-	ldh [hROMBank], a
-	ld [rROMB], a
 
 	pop af
 	pop bc
@@ -326,6 +302,35 @@ WaitSFX::
 	pop hl
 	ret
 
+WaitCrySFX::
+; Wait for a Pokemon cry while keeping sampled cries fed.
+
+	push hl
+
+.wait
+	ldh a, [hSampledCryTimer]
+	and a
+	jr z, .check_normal_sfx
+	call ServiceSampledCryAsync
+	jr .wait
+
+.check_normal_sfx
+	ld hl, wChannel5Flags1
+	bit SOUND_CHANNEL_ON, [hl]
+	jr nz, .wait
+	ld hl, wChannel6Flags1
+	bit SOUND_CHANNEL_ON, [hl]
+	jr nz, .wait
+	ld hl, wChannel7Flags1
+	bit SOUND_CHANNEL_ON, [hl]
+	jr nz, .wait
+	ld hl, wChannel8Flags1
+	bit SOUND_CHANNEL_ON, [hl]
+	jr nz, .wait
+
+	pop hl
+	ret
+
 IsSFXPlaying::
 ; Return carry if no sound effect is playing.
 ; The inverse of CheckSFX.
@@ -366,11 +371,6 @@ LowVolume::
 MinVolume::
 	xor a
 	ld [wVolume], a
-	ret
-
-FadeOutToMusic:: ; unreferenced
-	ld a, 4
-	ld [wMusicFade], a
 	ret
 
 FadeInToMusic::

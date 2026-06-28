@@ -1779,6 +1779,19 @@ CopyRadioTextToRAM:
 	ld bc, 2 * SCREEN_WIDTH
 	jp CopyBytes
 
+FarCopyRadioText::
+	inc hl
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	ld a, [hli]
+	ld h, d
+	ld l, e
+	ld de, wRadioText
+	ld bc, 2 * SCREEN_WIDTH
+	jp FarCopyBytes
+
 StartRadioStation:
 	ld a, [wNumRadioLinesPrinted]
 	and a
@@ -1796,6 +1809,13 @@ StartRadioStation:
 	ld d, [hl]
 	callfar RadioMusicRestartDE
 	ret
+
+RadioTerminator::
+	ld hl, .stop
+	ret
+
+.stop:
+	text_end
 
 INCLUDE "data/radio/channel_music.asm"
 

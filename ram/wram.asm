@@ -909,6 +909,17 @@ wReclaimedPrinterWRAM0End::
 
 SECTION UNION "Overworld Map", WRAM0
 
+; Battle-only scratch for prepared sampled cries. This overlays the overworld
+; map buffer, so do not use it from menus/stats screens.
+wPreparedSampledCryState:: db
+wPreparedSampledCryBank:: db
+wPreparedSampledCryHeader:: dw
+wPreparedSampledCryPeriod:: db
+wPreparedSampledCryFrameCounter:: db
+
+
+SECTION UNION "Overworld Map", WRAM0
+
 ; bill's pc data
 wBillsPCData::
 wBillsPCPokemonList:: ds BOXLIST_SIZE * MONS_PER_BOX_JP
@@ -3482,6 +3493,8 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
 	ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
+wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
+wSampledCryMinMax2BitLevelsEnd::
 wSampledCryLevel0:: db
 wSampledCryLevel1:: db
 wSampledCryLevel2:: db

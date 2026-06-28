@@ -566,6 +566,7 @@ SECTION "bank5B", ROMX
 
 INCLUDE "engine/link/link_trade.asm"
 INCLUDE "engine/link/link.asm"
+INCLUDE "engine/link/serial_exchange.asm"
 INCLUDE "engine/battle/link_result.asm"
 
 

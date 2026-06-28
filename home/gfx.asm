@@ -1,5 +1,4 @@
 DEF TILES_PER_CYCLE EQU 8
-DEF MOBILE_TILES_PER_CYCLE EQU 6
 
 Get2bppViaHDMA::
 	ldh a, [rLCDC]
@@ -19,81 +18,6 @@ Get1bppViaHDMA::
 
 	ret
 
-FarCopyBytesDouble_DoubleBankSwitch::
-	ldh [hTempBank], a
-	ldh a, [hROMBank]
-	push af
-	ldh a, [hTempBank]
-	rst Bankswitch
-
-	call FarCopyBytesDouble
-
-	pop af
-	rst Bankswitch
-	ret
-
-SafeHDMATransfer: ; unreferenced
-	dec c
-	ldh a, [hBGMapMode]
-	push af
-	xor a
-	ldh [hBGMapMode], a
-	ldh a, [hROMBank]
-	push af
-	ld a, b
-	rst Bankswitch
-
-.loop
-; load the source and target MSB and LSB
-	ld a, d
-	ldh [rVDMA_SRC_HIGH], a ; source MSB
-	ld a, e
-	and $f0
-	ldh [rVDMA_SRC_LOW], a ; source LSB
-	ld a, h
-	and $1f
-	ldh [rVDMA_DEST_HIGH], a ; target MSB
-	ld a, l
-	and $f0
-	ldh [rVDMA_DEST_LOW], a ; target LSB
-; stop when c < TILES_PER_CYCLE
-	ld a, c
-	cp TILES_PER_CYCLE
-	jr c, .done
-; decrease c by TILES_PER_CYCLE
-	sub TILES_PER_CYCLE
-	ld c, a
-; DMA transfer state
-	ld a, $f
-	ldh [hDMATransfer], a
-	call DelayFrame
-; add $100 to hl and de
-	ld a, l
-	add LOW($100)
-	ld l, a
-	ld a, h
-	adc HIGH($100)
-	ld h, a
-	ld a, e
-	add LOW($100)
-	ld e, a
-	ld a, d
-	adc HIGH($100)
-	ld d, a
-	jr .loop
-
-.done
-	ld a, c
-	and $7f ; pretty silly, considering at most bits 0-2 would be set
-	ldh [hDMATransfer], a
-	call DelayFrame
-	pop af
-	rst Bankswitch
-
-	pop af
-	ldh [hBGMapMode], a
-	ret
-
 UpdatePlayerSprite::
 	farcall _UpdatePlayerSprite
 	ret
@@ -108,10 +32,6 @@ LoadFontsBattleExtra::
 
 LoadFontsExtra::
 	farcall _LoadFontsExtra1
-	farcall _LoadFontsExtra2
-	ret
-
-LoadFontsExtra2: ; unreferenced
 	farcall _LoadFontsExtra2
 	ret
 
@@ -149,7 +69,7 @@ FarCopyBytes::
 	rst Bankswitch
 	ret
 
-FarCopyBytesDouble:
+FarCopyBytesDouble::
 ; Copy bc bytes from a:hl to bc*2 bytes at de,
 ; doubling each byte in the process.
 
@@ -203,16 +123,6 @@ Request2bpp::
 	ld a, TILES_PER_CYCLE
 	ldh [hTilesPerCycle], a
 
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	jr nz, .NotMobile
-	ldh a, [hMobile]
-	and a
-	jr nz, .NotMobile
-	ld a, MOBILE_TILES_PER_CYCLE
-	ldh [hTilesPerCycle], a
-
-.NotMobile:
 	ld a, e
 	ld [wRequested2bppSource], a
 	ld a, d
@@ -277,16 +187,6 @@ Request1bpp::
 	ld a, TILES_PER_CYCLE
 	ldh [hTilesPerCycle], a
 
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	jr nz, .NotMobile
-	ldh a, [hMobile]
-	and a
-	jr nz, .NotMobile
-	ld a, MOBILE_TILES_PER_CYCLE
-	ldh [hTilesPerCycle], a
-
-.NotMobile:
 	ld a, e
 	ld [wRequested1bppSource], a
 	ld a, d

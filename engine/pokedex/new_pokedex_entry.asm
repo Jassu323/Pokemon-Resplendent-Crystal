@@ -16,11 +16,14 @@ NewPokedexEntry:
 	xor a
 	ld [wPokedexStatus], a
 	farcall _NewPokedexEntry
-	call WaitPressAorB_BlinkCursor
+	call .WaitPressAorB_AnimateFrontpic
 	ld a, 1 ; page 2
 	ld [wPokedexStatus], a
 	farcall DisplayDexEntry
-	call WaitPressAorB_BlinkCursor
+	call WaitBGMap
+	call .WaitPressAorB_AnimateFrontpic
+	xor a
+	ld [wFrameCounter], a
 	pop af
 	ld [wPokedexStatus], a
 	call MaxVolume
@@ -47,4 +50,45 @@ NewPokedexEntry:
 	ld b, SCGB_TRAINER_OR_MON_FRONTPIC_PALS
 	call GetSGBLayout
 	call SetDefaultBGPAndOBP
+	ret
+
+.WaitPressAorB_AnimateFrontpic:
+	ldh a, [hMapObjectIndex]
+	push af
+	ldh a, [hObjectStructIndex]
+	push af
+	xor a
+	ldh [hMapObjectIndex], a
+	ld a, 6
+	ldh [hObjectStructIndex], a
+
+.wait_loop
+	call .AnimateFrontpicFrame
+	call DelayFrame
+	push hl
+	hlcoord 18, 17
+	call BlinkCursor
+	pop hl
+	call JoyTextDelay
+	ldh a, [hJoyLast]
+	and PAD_A | PAD_B
+	jr z, .wait_loop
+
+	pop af
+	ldh [hObjectStructIndex], a
+	pop af
+	ldh [hMapObjectIndex], a
+	ret
+
+.AnimateFrontpicFrame:
+	ld a, [wFrameCounter]
+	and a
+	ret z
+	farcall SetUpPokeAnim
+	jr nc, .transfer
+	xor a
+	ld [wFrameCounter], a
+
+.transfer
+	farcall HDMATransferTilemapToWRAMBank3
 	ret
