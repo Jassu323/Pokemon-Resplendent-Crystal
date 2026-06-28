@@ -1,16 +1,8 @@
 LoadOverworldMonIcon:
 	ld a, e
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
-	ld l, a
-	ld h, 0
-	add hl, hl
-	ld de, IconPointers
-	add hl, de
-	ld a, [hli]
-	ld e, a
-	ld d, [hl]
-	jp GetIconBank
+	ld c, 8
+	ret
 
 SetMenuMonIconColor:
 	push hl
@@ -112,19 +104,9 @@ GetMenuMonIconPalette::
 GetMenuMonIconPalette_PredeterminedShininess:
 	push af
 	ld a, [wCurPartySpecies]
-	cp EGG
-	jr z, .egg
-	call GetPokemonIndexFromID
-	ld bc, MonMenuIconPals - 1
-	add hl, bc
-	ld e, [hl]
-	jr .got_palette
-
-.egg
-	ld a, [MonMenuIconPals_Egg]
+	call ReadMonMenuIcon
 	ld e, a
 
-.got_palette
 	pop af
 	ld a, e
 	jr c, .shiny
@@ -283,7 +265,6 @@ InitPartyMenuIcon:
 	add hl, de
 	ld a, [hl]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
 	call GetMemIconGFX
 	ldh a, [hObjectStructIndex]
 ; y coord
@@ -341,7 +322,6 @@ NamingScreen_InitAnimatedMonIcon:
 	call SetMenuMonIconColor
 	ld a, [wTempIconSpecies]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
 	xor a
 	call GetIconGFX
 	depixel 4, 4, 4, 0
@@ -358,7 +338,6 @@ MoveList_InitAnimatedMonIcon:
 	call SetMenuMonIconColor
 	ld a, [wTempIconSpecies]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
 	xor a
 	call GetIconGFX
 	ld d, 3 * TILE_WIDTH + 2 ; depixel 3, 4, 2, 4
@@ -373,33 +352,30 @@ MoveList_InitAnimatedMonIcon:
 Trade_LoadMonIconGFX:
 	ld a, [wTempIconSpecies]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
 	ld a, $62
 	ld [wCurIconTile], a
 	call GetMemIconGFX
 	ret
 
 GetSpeciesIcon:
-; Load species icon into VRAM at tile a
-	push de
+; Load species icon into VRAM at tile e.
+	ld a, e
+	push af
 	ld a, MON_DVS
 	call GetPartyParamLocation
 	call SetMenuMonIconColor
 	ld a, [wTempIconSpecies]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
-	pop de
-	ld a, e
+	pop af
 	call GetIconGFX
 	ret
 
 FlyFunction_GetMonIcon:
-	push de
+	ld a, e
+	push af
 	ld a, [wTempIconSpecies]
 	call ReadMonMenuIcon
-	ld [wCurIcon], a
-	pop de
-	ld a, e
+	pop af
 	call GetIcon_a
 	; Edit the OBJ 0 palette so that the flying Pokémon has the right colors.
 	ld a, [wTempIconSpecies]
@@ -413,15 +389,6 @@ FlyFunction_GetMonIcon:
 	ld e, a
 	farcall SetFirstOBJPalette
 
-	ret
-
-GetMonIconDE: ; unreferenced
-	push de
-	ld a, [wTempIconSpecies]
-	call ReadMonMenuIcon
-	ld [wCurIcon], a
-	pop de
-	call GetIcon_de
 	ret
 
 GetMemIconGFX:
@@ -442,58 +409,29 @@ HeldItemIcons:
 INCBIN "gfx/stats/mail.2bpp"
 INCBIN "gfx/stats/item.2bpp"
 
-GetIcon_de:
-; Load icon graphics into VRAM starting from tile de.
-	ld l, e
-	ld h, d
-	jr GetIcon
-
 GetIcon_a:
 ; Load icon graphics into VRAM starting from tile a.
 	ld l, a
 	ld h, 0
 
 GetIcon:
-; Load icon graphics into VRAM starting from tile hl.
+; Load icon graphics from b:de into VRAM starting from tile hl.
 
 ; One tile is 16 bytes long.
+	push de
 rept 4
 	add hl, hl
 endr
 
 	ld de, vTiles0
 	add hl, de
+	pop de
 	push hl
 
-; The icons are contiguous, in order and of the same
-; size, so the pointer table is somewhat redundant.
-	ld a, [wCurIcon]
-	push hl
-	ld l, a
-	ld h, 0
-	add hl, hl
-	ld de, IconPointers
-	add hl, de
-	ld a, [hli]
-	ld e, a
-	ld d, [hl]
-	pop hl
-
-	call GetIconBank
+	ld c, 8
 	call GetGFXUnlessMobile
 
 	pop hl
-	ret
-
-GetIconBank:
-	ld a, [wCurIcon]
-	cp ICON_MAGIKARP ; first icon in Icons2
-	lb bc, BANK("Mon Icons 1"), 8
-	ret c
-	cp ICON_TREECKO ; first icon in Icons3
-	ld b, BANK("Mon Icons 2")
-	ret c
-	ld b, BANK("Mon Icons 3")
 	ret
 
 GetGFXUnlessMobile:
@@ -591,18 +529,23 @@ ReadMonMenuIcon:
 	cp EGG
 	jr z, .egg
 	call GetPokemonIndexFromID
-	ld de, MonMenuIcons - 1
+	add hl, hl
+	add hl, hl
+	ld de, MonMenuIcons - 4
 	add hl, de
-	ld a, [hl]
-	ret
+	jr .read
 .egg
-	ld a, ICON_EGG
+	ld hl, MonMenuIconEgg
+.read
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hli]
+	ld d, a
+	ld a, [hl]
 	ret
 
 INCLUDE "data/pokemon/menu_icons.asm"
-
-INCLUDE "data/pokemon/menu_icon_pals.asm"
-
-INCLUDE "data/icon_pointers.asm"
 
 INCLUDE "gfx/icons.asm"
