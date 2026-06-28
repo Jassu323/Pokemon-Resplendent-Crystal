@@ -11,6 +11,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; MARSHTOMP
 	dw NoEggMoves3 ; SWAMPERT
 	dw NoEggMoves3 ; POOCHYENA
+	dw NoEggMoves3 ; MIGHTYENA
 .IndirectEnd::
 
 NoEggMoves3:

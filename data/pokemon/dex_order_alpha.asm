@@ -138,6 +138,7 @@ AlphabeticalPokedexOrder:
 	dw METAPOD
 	dw MEW
 	dw MEWTWO
+	dw MIGHTYENA
 	dw MILTANK
 	dw MISDREAVUS
 	dw MOLTRES

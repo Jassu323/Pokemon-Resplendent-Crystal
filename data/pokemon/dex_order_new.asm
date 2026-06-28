@@ -263,4 +263,5 @@ NewPokedexOrder:
 	dw MARSHTOMP
 	dw SWAMPERT
 	dw POOCHYENA
+	dw MIGHTYENA
 	assert_table_length NUM_POKEMON

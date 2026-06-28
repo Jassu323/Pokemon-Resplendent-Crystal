@@ -261,4 +261,5 @@ AnimationPointers:
 	dw MarshtompAnimation
 	dw SwampertAnimation
 	dw PoochyenaAnimation
+	dw MightyenaAnimation
 	assert_table_length NUM_POKEMON

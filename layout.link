@@ -129,6 +129,7 @@ ROMX $21
 ROMX $22
 	; Reserved for additional custom Pokemon front/back pics.
 	"Crystal Features 2"
+	"Pics 20"
 ROMX $23
 	"bank23"
 ROMX $24

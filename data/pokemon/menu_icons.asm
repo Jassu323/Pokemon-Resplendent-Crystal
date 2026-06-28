@@ -268,6 +268,7 @@ MonMenuIcons:
 	mon_menu_icon MarshtompIcon,      BLUE,   PURPLE ; MARSHTOMP
 	mon_menu_icon SwampertIcon,       BLUE,   PURPLE ; SWAMPERT
 	mon_menu_icon PoochyenaIcon,      GRAY,   BROWN  ; POOCHYENA
+	mon_menu_icon MightyenaIcon,      GRAY,   BROWN  ; MIGHTYENA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

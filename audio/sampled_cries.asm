@@ -11,6 +11,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_MARSHTOMP
 	const SAMPLED_CRY_SWAMPERT
 	const SAMPLED_CRY_POOCHYENA
+	const SAMPLED_CRY_MIGHTYENA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -106,6 +107,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SWAMPERT
 	elif sampled_cry_mon == POOCHYENA
 		db SAMPLED_CRY_POOCHYENA
+	elif sampled_cry_mon == MIGHTYENA
+		db SAMPLED_CRY_MIGHTYENA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -125,6 +128,7 @@ SampledCryPointers:
 	dba MarshtompSampledCry
 	dba SwampertSampledCry
 	dba PoochyenaSampledCry
+	dba MightyenaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -205,3 +209,10 @@ PoochyenaSampledCryData:
 	INCBIN "audio/sampled_cries/poochyena.mm2"
 PoochyenaSampledCryEnd:
 	assert (PoochyenaSampledCryEnd - PoochyenaSampledCryData) % 9 == 0
+
+MightyenaSampledCry::
+	dw (MightyenaSampledCryEnd - MightyenaSampledCryData) / 9
+MightyenaSampledCryData:
+	INCBIN "audio/sampled_cries/mightyena.mm2"
+MightyenaSampledCryEnd:
+	assert (MightyenaSampledCryEnd - MightyenaSampledCryData) % 9 == 0

@@ -794,3 +794,9 @@ INCBIN "gfx/pokemon/unown_y/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_p/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_i/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_r/back.2bpp.lz"
+
+
+SECTION "Pics 20", ROMX
+
+MightyenaFrontpic:  INCBIN "gfx/pokemon/mightyena/front.animated.2bpp.lz"
+MightyenaBackpic:   INCBIN "gfx/pokemon/mightyena/back.2bpp.lz"

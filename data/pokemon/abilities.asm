@@ -269,4 +269,5 @@ SpeciesAbilities::
 	mon_ability TORRENT ; 103 MARSHTOMP
 	mon_ability TORRENT ; 104 SWAMPERT
 	mon_ability NO_ABILITY ; 105 POOCHYENA
+	mon_ability NO_ABILITY ; 106 MIGHTYENA
 	assert_table_length NUM_POKEMON + 1

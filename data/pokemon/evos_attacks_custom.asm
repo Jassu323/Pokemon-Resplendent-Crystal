@@ -11,6 +11,7 @@ EvosAttacksPointers3::
 	dw MarshtompEvosAttacks
 	dw SwampertEvosAttacks
 	dw PoochyenaEvosAttacks
+	dw MightyenaEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -59,6 +60,11 @@ SwampertEvosAttacks:
 	db 0 ; no more level-up moves
 
 PoochyenaEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+MightyenaEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves
