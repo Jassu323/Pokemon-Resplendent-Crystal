@@ -31,6 +31,7 @@ SECTION "Mon Icons 3", ROMX
 
 CustomMonIcons::
 TreeckoIcon::       INCBIN "gfx/icons/treecko.2bpp"
+GrovyleIcon::       INCBIN "gfx/icons/grovyle.2bpp"
 
 
 SECTION "bank3", ROMX

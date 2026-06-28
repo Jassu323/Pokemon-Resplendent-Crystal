@@ -253,4 +253,5 @@ EvolutionMoves::
 	dw NO_MOVE ; HO_OH
 	dw NO_MOVE ; CELEBI
 	dw NO_MOVE ; TREECKO
+	dw NO_MOVE ; GROVYLE
 	assert_table_length NUM_POKEMON

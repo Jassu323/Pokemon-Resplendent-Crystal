@@ -259,6 +259,7 @@ MonMenuIcons:
 	mon_menu_icon HoOhIcon,           RED,    BROWN  ; HO_OH
 	mon_menu_icon CelebiIcon,         GREEN,  PINK   ; CELEBI
 	mon_menu_icon TreeckoIcon,        GREEN,  BLUE   ; TREECKO
+	mon_menu_icon GrovyleIcon,        GREEN,  BLUE   ; GROVYLE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
