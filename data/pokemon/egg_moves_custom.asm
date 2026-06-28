@@ -15,6 +15,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; WINGULL
 	dw NoEggMoves3 ; PELIPPER
 	dw NoEggMoves3 ; RALTS
+	dw NoEggMoves3 ; KIRLIA
 .IndirectEnd::
 
 NoEggMoves3:

@@ -15,6 +15,7 @@ EvosAttacksPointers3::
 	dw WingullEvosAttacks
 	dw PelipperEvosAttacks
 	dw RaltsEvosAttacks
+	dw KirliaEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -83,6 +84,11 @@ PelipperEvosAttacks:
 	db 0 ; no more level-up moves
 
 RaltsEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+KirliaEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

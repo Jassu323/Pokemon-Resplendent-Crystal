@@ -273,4 +273,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 107 WINGULL
 	mon_ability NO_ABILITY ; 108 PELIPPER
 	mon_ability NO_ABILITY ; 109 RALTS
+	mon_ability NO_ABILITY ; 10a KIRLIA
 	assert_table_length NUM_POKEMON + 1

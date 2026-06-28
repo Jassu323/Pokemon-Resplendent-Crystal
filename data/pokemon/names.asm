@@ -271,4 +271,5 @@ PokemonNames::
 	dname "Wingull"
 	dname "Pelipper"
 	dname "Ralts"
+	dname "Kirlia"
 	assert_table_length NUM_POKEMON

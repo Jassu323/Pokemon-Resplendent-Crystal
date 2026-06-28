@@ -107,6 +107,7 @@ AlphabeticalPokedexOrder:
 	dw KADABRA
 	dw KAKUNA
 	dw KANGASKHAN
+	dw KIRLIA
 	dw KINGDRA
 	dw KINGLER
 	dw KOFFING

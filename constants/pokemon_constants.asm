@@ -285,6 +285,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const WINGULL    ; 107, NatDex 278
 	const PELIPPER   ; 108, NatDex 279
 	const RALTS      ; 109, NatDex 280
+	const KIRLIA     ; 10a, NatDex 281
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

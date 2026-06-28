@@ -546,4 +546,6 @@ PokemonPicPointers::
 	dba PelipperBackpic
 	dba RaltsFrontpic
 	dba RaltsBackpic
+	dba KirliaFrontpic
+	dba KirliaBackpic
 	assert_table_length NUM_POKEMON + 1

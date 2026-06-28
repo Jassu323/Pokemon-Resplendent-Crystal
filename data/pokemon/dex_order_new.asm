@@ -267,4 +267,5 @@ NewPokedexOrder:
 	dw WINGULL
 	dw PELIPPER
 	dw RALTS
+	dw KIRLIA
 	assert_table_length NUM_POKEMON
