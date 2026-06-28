@@ -281,6 +281,7 @@ DEF BATTLE_STATUS_ICON_ENEMY_Y EQU 1
 	const ICON_HO_OH       ; HO_OH
 	const ICON_CELEBI      ; CELEBI
 	const ICON_EGG         ; EGG
+	const ICON_TREECKO     ; TREECKO
 DEF NUM_ICONS EQU const_value - 1
 
 ; LoadMenuMonIcon.Jumptable indexes (see engine/gfx/mon_icons.asm)

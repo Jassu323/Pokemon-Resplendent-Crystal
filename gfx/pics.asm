@@ -646,6 +646,8 @@ UnownDBackpic:       INCBIN "gfx/pokemon/unown_d/back.2bpp.lz"
 
 SECTION "Pics 18", ROMX
 
+TreeckoFrontpic:    INCBIN "gfx/pokemon/treecko/front.animated.2bpp.lz"
+TreeckoBackpic:     INCBIN "gfx/pokemon/treecko/back.2bpp.lz"
 HoOhFrontpic:        INCBIN "gfx/pokemon/ho_oh/front.animated.2bpp.lz"
 SpinarakBackpic:     INCBIN "gfx/pokemon/spinarak/back.2bpp.lz"
 RaikouBackpic:       INCBIN "gfx/pokemon/raikou/back.2bpp.lz"

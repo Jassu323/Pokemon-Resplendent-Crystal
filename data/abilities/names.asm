@@ -18,4 +18,5 @@ AbilityNames::
 	li "Insomnia"
 	li "Static"
 	li "Dragon Skin"
+	li "Overgrow"
 	assert_list_length NUM_ABILITIES + 1

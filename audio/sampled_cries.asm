@@ -1,5 +1,8 @@
-DEF NUM_SAMPLED_CRY_SLOTS EQU 60
 DEF NO_SAMPLED_CRY EQU $ff
+
+	const_def
+	const SAMPLED_CRY_TREECKO
+DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
 ; Load sampled cry metadata for a zero-based permanent Pokemon index.
@@ -72,17 +75,31 @@ TryLoadSampledCryBySpeciesIndex::
 
 SampledCryIndexByPokemon:
 	table_width 1
+DEF sampled_cry_mon = 1
 rept NUM_POKEMON
-	db NO_SAMPLED_CRY
+	if sampled_cry_mon == TREECKO
+		db SAMPLED_CRY_TREECKO
+	else
+		db NO_SAMPLED_CRY
+	endc
+DEF sampled_cry_mon += 1
 endr
 	assert_table_length NUM_POKEMON
 
 SampledCryPointers:
 	table_width 3
-rept NUM_SAMPLED_CRY_SLOTS
-	dba NullSampledCry
-endr
+	dba TreeckoSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
 	dw 0
+
+
+SECTION "Sampled Cry Payloads 1", ROMX
+
+TreeckoSampledCry::
+	dw (TreeckoSampledCryEnd - TreeckoSampledCryData) / 9
+TreeckoSampledCryData:
+	INCBIN "audio/sampled_cries/treecko.mm2"
+TreeckoSampledCryEnd:
+	assert (TreeckoSampledCryEnd - TreeckoSampledCryData) % 9 == 0

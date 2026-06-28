@@ -259,4 +259,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 0f9 LUGIA
 	mon_ability NO_ABILITY ; 0fa HO_OH
 	mon_ability NO_ABILITY ; 0fb CELEBI
+	mon_ability OVERGROW ; 0fc TREECKO
 	assert_table_length NUM_POKEMON + 1

@@ -18,4 +18,5 @@
 	const INSOMNIA
 	const STATIC
 	const DRAGON_SKIN
+	const OVERGROW
 DEF NUM_ABILITIES EQU const_value - 1

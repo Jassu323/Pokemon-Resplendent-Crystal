@@ -490,7 +490,10 @@ GetIconBank:
 	cp ICON_MAGIKARP ; first icon in Icons2
 	lb bc, BANK("Mon Icons 1"), 8
 	ret c
+	cp ICON_TREECKO ; first icon in Icons3
 	ld b, BANK("Mon Icons 2")
+	ret c
+	ld b, BANK("Mon Icons 3")
 	ret
 
 GetGFXUnlessMobile:

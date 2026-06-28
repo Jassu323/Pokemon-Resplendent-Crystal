@@ -30,6 +30,7 @@ INCLUDE "engine/events/halloffame.asm"
 SECTION "Mon Icons 3", ROMX
 
 CustomMonIcons::
+TreeckoIcon::       INCBIN "gfx/icons/treecko.2bpp"
 
 
 SECTION "bank3", ROMX

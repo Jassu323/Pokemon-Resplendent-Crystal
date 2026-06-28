@@ -19,6 +19,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; INSOMNIA
 	dw AbilityPlaceholderDescription ; STATIC
 	dw AbilityPlaceholderDescription ; DRAGON_SKIN
+	dw AbilityPlaceholderDescription ; OVERGROW
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

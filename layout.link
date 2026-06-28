@@ -200,6 +200,7 @@ ROMX $3f
 ROMX $40
 	; Reserved for sampled cry payloads.
 	"mobile40"
+	"Sampled Cry Payloads 1"
 ROMX $41
 	"bank41"
 	"Enemy Trainer Parties 1"
@@ -318,6 +319,7 @@ ROMX $73
 ROMX $74
 	; Reserved for custom Pokedex entries and dex order data.
 	"Pokedex Entries 193-251"
+	"Pokedex Entries Custom"
 	"Pokedex Order"
 ROMX $75
 	"16-bit ID stuff"
@@ -343,6 +345,7 @@ ROMX $7a
 	"Evolutions and Attacks Pointers"
 	"Evolutions and Attacks 1"
 	"Evolutions and Attacks 2"
+	"Evolutions and Attacks 3"
 ROMX $7b
 	; Battle engine only. Do not place species assets, sampled cries, or
 	; other non-battle payloads here; ability logic is expected to grow.

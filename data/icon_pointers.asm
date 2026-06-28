@@ -254,4 +254,5 @@ IconPointers:
 	dw HoOhIcon
 	dw CelebiIcon
 	dw EggIcon
+	dw TreeckoIcon
 	assert_table_length NUM_ICONS + 1
