@@ -225,6 +225,7 @@ AlphabeticalPokedexOrder:
 	dw SUICUNE
 	dw SUNFLORA
 	dw SUNKERN
+	dw SWAMPERT
 	dw SWINUB
 	dw TANGELA
 	dw TAUROS

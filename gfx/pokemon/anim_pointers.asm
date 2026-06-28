@@ -259,4 +259,5 @@ AnimationPointers:
 	dw BlazikenAnimation
 	dw MudkipAnimation
 	dw MarshtompAnimation
+	dw SwampertAnimation
 	assert_table_length NUM_POKEMON

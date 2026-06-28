@@ -266,6 +266,7 @@ MonMenuIcons:
 	mon_menu_icon BlazikenIcon,       RED,    BROWN  ; BLAZIKEN
 	mon_menu_icon MudkipIcon,         BLUE,   PURPLE ; MUDKIP
 	mon_menu_icon MarshtompIcon,      BLUE,   PURPLE ; MARSHTOMP
+	mon_menu_icon SwampertIcon,       BLUE,   PURPLE ; SWAMPERT
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

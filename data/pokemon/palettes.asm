@@ -551,5 +551,7 @@ INCBIN "gfx/pokemon/mudkip/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/mudkip/shiny.pal"
 INCBIN "gfx/pokemon/marshtomp/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/marshtomp/shiny.pal"
+INCBIN "gfx/pokemon/swampert/normal.gbcpal", middle_colors
+INCLUDE "gfx/pokemon/swampert/shiny.pal"
 
 	assert_table_length NUM_POKEMON + 1

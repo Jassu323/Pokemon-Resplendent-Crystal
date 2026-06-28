@@ -265,4 +265,5 @@ PokemonNames::
 	dname "Blaziken"
 	dname "Mudkip"
 	dname "Marshtomp"
+	dname "Swampert"
 	assert_table_length NUM_POKEMON
