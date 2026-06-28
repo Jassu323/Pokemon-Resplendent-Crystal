@@ -254,4 +254,5 @@ PokedexDataPointerTable:
 	dba CelebiPokedexEntry
 	dba TreeckoPokedexEntry
 	dba GrovylePokedexEntry
+	dba SceptilePokedexEntry
 	assert_table_length NUM_POKEMON

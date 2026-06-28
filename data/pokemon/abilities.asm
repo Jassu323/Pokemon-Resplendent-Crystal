@@ -261,4 +261,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 0fb CELEBI
 	mon_ability OVERGROW ; 0fc TREECKO
 	mon_ability OVERGROW ; 0fd GROVYLE
+	mon_ability OVERGROW ; 0fe SCEPTILE
 	assert_table_length NUM_POKEMON + 1

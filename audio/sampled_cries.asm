@@ -3,6 +3,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const_def
 	const SAMPLED_CRY_TREECKO
 	const SAMPLED_CRY_GROVYLE
+	const SAMPLED_CRY_SCEPTILE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -82,6 +83,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_TREECKO
 	elif sampled_cry_mon == GROVYLE
 		db SAMPLED_CRY_GROVYLE
+	elif sampled_cry_mon == SCEPTILE
+		db SAMPLED_CRY_SCEPTILE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -93,6 +96,7 @@ SampledCryPointers:
 	table_width 3
 	dba TreeckoSampledCry
 	dba GrovyleSampledCry
+	dba SceptileSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -114,3 +118,10 @@ GrovyleSampledCryData:
 	INCBIN "audio/sampled_cries/grovyle.mm2"
 GrovyleSampledCryEnd:
 	assert (GrovyleSampledCryEnd - GrovyleSampledCryData) % 9 == 0
+
+SceptileSampledCry::
+	dw (SceptileSampledCryEnd - SceptileSampledCryData) / 9
+SceptileSampledCryData:
+	INCBIN "audio/sampled_cries/sceptile.mm2"
+SceptileSampledCryEnd:
+	assert (SceptileSampledCryEnd - SceptileSampledCryData) % 9 == 0

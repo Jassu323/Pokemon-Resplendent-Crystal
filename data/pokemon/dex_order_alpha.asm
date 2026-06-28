@@ -191,6 +191,7 @@ AlphabeticalPokedexOrder:
 	dw SANDSHREW
 	dw SANDSLASH
 	dw SCIZOR
+	dw SCEPTILE
 	dw SCYTHER
 	dw SEADRA
 	dw SEAKING

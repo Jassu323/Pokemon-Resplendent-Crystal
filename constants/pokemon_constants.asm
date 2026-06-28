@@ -273,6 +273,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const CELEBI     ; fb
 	const TREECKO    ; fc, NatDex 252
 	const GROVYLE    ; fd, NatDex 253
+	const SCEPTILE   ; fe, NatDex 254
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

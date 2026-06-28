@@ -254,4 +254,5 @@ EvolutionMoves::
 	dw NO_MOVE ; CELEBI
 	dw NO_MOVE ; TREECKO
 	dw NO_MOVE ; GROVYLE
+	dw NO_MOVE ; SCEPTILE
 	assert_table_length NUM_POKEMON

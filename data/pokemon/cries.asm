@@ -259,4 +259,5 @@ PokemonCries::
 	mon_cry CRY_ENTEI,       330,  273 ; CELEBI
 	mon_cry CRY_BULBASAUR,   128,  129 ; TREECKO
 	mon_cry CRY_BULBASAUR,   128,  129 ; GROVYLE
+	mon_cry CRY_BULBASAUR,   128,  129 ; SCEPTILE
 	assert_table_length NUM_POKEMON

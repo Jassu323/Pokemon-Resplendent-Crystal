@@ -254,5 +254,6 @@ INCBIN "gfx/footprints/ho_oh.1bpp"
 INCBIN "gfx/footprints/celebi.1bpp"
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; treecko placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; grovyle placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; sceptile placeholder
 
 	assert_table_length NUM_POKEMON

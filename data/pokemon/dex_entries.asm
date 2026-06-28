@@ -269,3 +269,4 @@ SECTION "Pokedex Entries Custom", ROMX
 
 TreeckoPokedexEntry::    INCLUDE "data/pokemon/dex_entries/treecko.asm"
 GrovylePokedexEntry::    INCLUDE "data/pokemon/dex_entries/grovyle.asm"
+SceptilePokedexEntry::   INCLUDE "data/pokemon/dex_entries/sceptile.asm"

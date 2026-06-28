@@ -254,4 +254,5 @@ FirstEvoStages::
 	dw CELEBI
 	dw TREECKO
 	dw TREECKO
+	dw TREECKO
 	assert_table_length NUM_POKEMON
