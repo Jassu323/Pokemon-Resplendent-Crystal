@@ -169,6 +169,7 @@ AlphabeticalPokedexOrder:
 	dw PIDGEY
 	dw PIKACHU
 	dw PILOSWINE
+	dw POOCHYENA
 	dw PINECO
 	dw PINSIR
 	dw POLITOED

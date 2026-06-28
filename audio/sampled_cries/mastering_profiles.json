@@ -7,6 +7,7 @@
     "MUDKIP": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mudkip.wav",
     "MARSHTOMP": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/marshtomp.wav",
     "SWAMPERT": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/swampert.wav",
+    "POOCHYENA": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/poochyena.wav",
     "TREECKO": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
     "TORCHIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
     "COMBUSKEN": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/combusken.wav",
@@ -102,6 +103,49 @@
     },
     "swampert_17_v4_clarity_auto": {
       "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/swampert.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "poochyena_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/poochyena.wav",
       "target_rate": 10485.76,
       "prism_vol": 3.2,
       "allow_experimental_prism_vol": true,

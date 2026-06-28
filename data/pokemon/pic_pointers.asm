@@ -536,4 +536,6 @@ PokemonPicPointers::
 	dba MarshtompBackpic
 	dba SwampertFrontpic
 	dba SwampertBackpic
+	dba PoochyenaFrontpic
+	dba PoochyenaBackpic
 	assert_table_length NUM_POKEMON + 1

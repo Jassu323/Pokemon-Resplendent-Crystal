@@ -262,4 +262,5 @@ NewPokedexOrder:
 	dw MUDKIP
 	dw MARSHTOMP
 	dw SWAMPERT
+	dw POOCHYENA
 	assert_table_length NUM_POKEMON

@@ -261,4 +261,5 @@ EvolutionMoves::
 	dw NO_MOVE ; MUDKIP
 	dw NO_MOVE ; MARSHTOMP
 	dw NO_MOVE ; SWAMPERT
+	dw NO_MOVE ; POOCHYENA
 	assert_table_length NUM_POKEMON

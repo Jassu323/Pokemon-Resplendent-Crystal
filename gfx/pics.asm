@@ -731,6 +731,8 @@ MarshtompFrontpic:  INCBIN "gfx/pokemon/marshtomp/front.animated.2bpp.lz"
 MarshtompBackpic:   INCBIN "gfx/pokemon/marshtomp/back.2bpp.lz"
 SwampertFrontpic:   INCBIN "gfx/pokemon/swampert/front.animated.2bpp.lz"
 SwampertBackpic:    INCBIN "gfx/pokemon/swampert/back.2bpp.lz"
+PoochyenaFrontpic:  INCBIN "gfx/pokemon/poochyena/front.animated.2bpp.lz"
+PoochyenaBackpic:   INCBIN "gfx/pokemon/poochyena/back.2bpp.lz"
 
 INCBIN "gfx/pokemon/spinarak/back.2bpp.lz"
 INCBIN "gfx/pokemon/raikou/back.2bpp.lz"

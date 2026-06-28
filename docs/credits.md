@@ -70,3 +70,11 @@ aaaaaa1234567890 - https://github.com/aaaaaa123456789/pokecrystal16
 
 fellowship-of-the-roms
 - Updated and modernized pokecrystal16 project:  https://github.com/fellowship-of-the-roms/pokecrystal16
+
+---
+
+EeVeeeEe1999 - Gen 3 GBC Party Sprites - https://www.deviantart.com/eeveeee1999/art/Gen-3-GBC-Party-Sprites-830673924
+
+Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Pokemon-Crystal-Sprite-Sheet-by-Nuuk-938359828
+
+SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0

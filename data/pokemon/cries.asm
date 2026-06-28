@@ -266,4 +266,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MUDKIP
 	mon_cry CRY_BULBASAUR,   128,  129 ; MARSHTOMP
 	mon_cry CRY_BULBASAUR,   128,  129 ; SWAMPERT
+	mon_cry CRY_BULBASAUR,   128,  129 ; POOCHYENA
 	assert_table_length NUM_POKEMON

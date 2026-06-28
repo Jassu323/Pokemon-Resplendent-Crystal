@@ -39,6 +39,7 @@ BlazikenIcon::      INCBIN "gfx/icons/blaziken.2bpp"
 MudkipIcon::        INCBIN "gfx/icons/mudkip.2bpp"
 MarshtompIcon::     INCBIN "gfx/icons/marshtomp.2bpp"
 SwampertIcon::      INCBIN "gfx/icons/swampert.2bpp"
+PoochyenaIcon::     INCBIN "gfx/icons/poochyena.2bpp"
 
 
 SECTION "bank3", ROMX
