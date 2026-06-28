@@ -8,6 +8,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_COMBUSKEN
 	const SAMPLED_CRY_BLAZIKEN
 	const SAMPLED_CRY_MUDKIP
+	const SAMPLED_CRY_MARSHTOMP
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -97,6 +98,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_BLAZIKEN
 	elif sampled_cry_mon == MUDKIP
 		db SAMPLED_CRY_MUDKIP
+	elif sampled_cry_mon == MARSHTOMP
+		db SAMPLED_CRY_MARSHTOMP
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -113,6 +116,7 @@ SampledCryPointers:
 	dba CombuskenSampledCry
 	dba BlazikenSampledCry
 	dba MudkipSampledCry
+	dba MarshtompSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -172,3 +176,10 @@ MudkipSampledCryData:
 	INCBIN "audio/sampled_cries/mudkip.mm2"
 MudkipSampledCryEnd:
 	assert (MudkipSampledCryEnd - MudkipSampledCryData) % 9 == 0
+
+MarshtompSampledCry::
+	dw (MarshtompSampledCryEnd - MarshtompSampledCryData) / 9
+MarshtompSampledCryData:
+	INCBIN "audio/sampled_cries/marshtomp.mm2"
+MarshtompSampledCryEnd:
+	assert (MarshtompSampledCryEnd - MarshtompSampledCryData) % 9 == 0

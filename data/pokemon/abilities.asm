@@ -266,4 +266,5 @@ SpeciesAbilities::
 	mon_ability BLAZE ; 100 COMBUSKEN
 	mon_ability BLAZE ; 101 BLAZIKEN
 	mon_ability TORRENT ; 102 MUDKIP
+	mon_ability TORRENT ; 103 MARSHTOMP
 	assert_table_length NUM_POKEMON + 1

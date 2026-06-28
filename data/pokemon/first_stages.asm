@@ -259,4 +259,5 @@ FirstEvoStages::
 	dw TORCHIC
 	dw TORCHIC
 	dw MUDKIP
+	dw MUDKIP
 	assert_table_length NUM_POKEMON

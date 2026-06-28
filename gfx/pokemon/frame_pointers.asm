@@ -258,4 +258,5 @@ FramesPointers:
 	dba CombuskenFrames
 	dba BlazikenFrames
 	dba MudkipFrames
+	dba MarshtompFrames
 	assert_table_length NUM_POKEMON

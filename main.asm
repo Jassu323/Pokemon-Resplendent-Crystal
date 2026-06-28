@@ -37,6 +37,7 @@ TorchicIcon::       INCBIN "gfx/icons/torchic.2bpp"
 CombuskenIcon::     INCBIN "gfx/icons/combusken.2bpp"
 BlazikenIcon::      INCBIN "gfx/icons/blaziken.2bpp"
 MudkipIcon::        INCBIN "gfx/icons/mudkip.2bpp"
+MarshtompIcon::     INCBIN "gfx/icons/marshtomp.2bpp"
 
 
 SECTION "bank3", ROMX

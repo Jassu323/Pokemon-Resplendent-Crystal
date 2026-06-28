@@ -260,4 +260,5 @@ NewPokedexOrder:
 	dw COMBUSKEN
 	dw BLAZIKEN
 	dw MUDKIP
+	dw MARSHTOMP
 	assert_table_length NUM_POKEMON

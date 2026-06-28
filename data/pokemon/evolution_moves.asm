@@ -259,4 +259,5 @@ EvolutionMoves::
 	dw NO_MOVE ; COMBUSKEN
 	dw NO_MOVE ; BLAZIKEN
 	dw NO_MOVE ; MUDKIP
+	dw NO_MOVE ; MARSHTOMP
 	assert_table_length NUM_POKEMON

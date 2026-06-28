@@ -8,6 +8,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; COMBUSKEN
 	dw NoEggMoves3 ; BLAZIKEN
 	dw NoEggMoves3 ; MUDKIP
+	dw NoEggMoves3 ; MARSHTOMP
 .IndirectEnd::
 
 NoEggMoves3:

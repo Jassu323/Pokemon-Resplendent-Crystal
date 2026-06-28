@@ -727,6 +727,8 @@ BlazikenFrontpic:   INCBIN "gfx/pokemon/blaziken/front.animated.2bpp.lz"
 BlazikenBackpic:    INCBIN "gfx/pokemon/blaziken/back.2bpp.lz"
 MudkipFrontpic:     INCBIN "gfx/pokemon/mudkip/front.animated.2bpp.lz"
 MudkipBackpic:      INCBIN "gfx/pokemon/mudkip/back.2bpp.lz"
+MarshtompFrontpic:  INCBIN "gfx/pokemon/marshtomp/front.animated.2bpp.lz"
+MarshtompBackpic:   INCBIN "gfx/pokemon/marshtomp/back.2bpp.lz"
 
 INCBIN "gfx/pokemon/spinarak/back.2bpp.lz"
 INCBIN "gfx/pokemon/raikou/back.2bpp.lz"

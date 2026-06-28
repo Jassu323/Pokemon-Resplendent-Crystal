@@ -278,6 +278,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const COMBUSKEN  ; 100, NatDex 256
 	const BLAZIKEN   ; 101, NatDex 257
 	const MUDKIP     ; 102, NatDex 258
+	const MARSHTOMP  ; 103, NatDex 259
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3
