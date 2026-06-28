@@ -267,4 +267,5 @@ EvolutionMoves::
 	dw NO_MOVE ; PELIPPER
 	dw NO_MOVE ; RALTS
 	dw NO_MOVE ; KIRLIA
+	dw NO_MOVE ; GARDEVOIR
 	assert_table_length NUM_POKEMON

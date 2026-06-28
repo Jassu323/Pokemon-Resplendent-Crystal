@@ -266,4 +266,5 @@ AnimationPointers:
 	dw PelipperAnimation
 	dw RaltsAnimation
 	dw KirliaAnimation
+	dw GardevoirAnimation
 	assert_table_length NUM_POKEMON

@@ -273,6 +273,7 @@ MonMenuIcons:
 	mon_menu_icon PelipperIcon,       BLUE,   GREEN  ; PELIPPER
 	mon_menu_icon RaltsIcon,          GREEN,  BLUE   ; RALTS
 	mon_menu_icon KirliaIcon,         GREEN,  BLUE   ; KIRLIA
+	mon_menu_icon GardevoirIcon,      GREEN,  BLUE   ; GARDEVOIR
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

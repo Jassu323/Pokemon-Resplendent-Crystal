@@ -16,6 +16,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_PELIPPER
 	const SAMPLED_CRY_RALTS
 	const SAMPLED_CRY_KIRLIA
+	const SAMPLED_CRY_GARDEVOIR
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -121,6 +122,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_RALTS
 	elif sampled_cry_mon == KIRLIA
 		db SAMPLED_CRY_KIRLIA
+	elif sampled_cry_mon == GARDEVOIR
+		db SAMPLED_CRY_GARDEVOIR
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -145,6 +148,7 @@ SampledCryPointers:
 	dba PelipperSampledCry
 	dba RaltsSampledCry
 	dba KirliaSampledCry
+	dba GardevoirSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -263,3 +267,10 @@ KirliaSampledCryData:
 	INCBIN "audio/sampled_cries/kirlia.mm2"
 KirliaSampledCryEnd:
 	assert (KirliaSampledCryEnd - KirliaSampledCryData) % 9 == 0
+
+GardevoirSampledCry::
+	dw (GardevoirSampledCryEnd - GardevoirSampledCryData) / 9
+GardevoirSampledCryData:
+	INCBIN "audio/sampled_cries/gardevoir.mm2"
+GardevoirSampledCryEnd:
+	assert (GardevoirSampledCryEnd - GardevoirSampledCryData) % 9 == 0

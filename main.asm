@@ -45,6 +45,7 @@ WingullIcon::       INCBIN "gfx/icons/wingull.2bpp"
 PelipperIcon::      INCBIN "gfx/icons/pelipper.2bpp"
 RaltsIcon::         INCBIN "gfx/icons/ralts.2bpp"
 KirliaIcon::        INCBIN "gfx/icons/kirlia.2bpp"
+GardevoirIcon::     INCBIN "gfx/icons/gardevoir.2bpp"
 
 
 SECTION "bank3", ROMX

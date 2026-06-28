@@ -267,4 +267,5 @@ FirstEvoStages::
 	dw WINGULL
 	dw RALTS
 	dw RALTS
+	dw RALTS
 	assert_table_length NUM_POKEMON

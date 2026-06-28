@@ -268,4 +268,5 @@ NewPokedexOrder:
 	dw PELIPPER
 	dw RALTS
 	dw KIRLIA
+	dw GARDEVOIR
 	assert_table_length NUM_POKEMON

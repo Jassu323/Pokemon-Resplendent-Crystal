@@ -68,6 +68,7 @@ AlphabeticalPokedexOrder:
 	dw FLAREON
 	dw FORRETRESS
 	dw FURRET
+	dw GARDEVOIR
 	dw GASTLY
 	dw GENGAR
 	dw GEODUDE

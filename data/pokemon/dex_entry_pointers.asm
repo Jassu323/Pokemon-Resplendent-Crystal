@@ -267,4 +267,5 @@ PokedexDataPointerTable:
 	dba PelipperPokedexEntry
 	dba RaltsPokedexEntry
 	dba KirliaPokedexEntry
+	dba GardevoirPokedexEntry
 	assert_table_length NUM_POKEMON
