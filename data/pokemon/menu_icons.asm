@@ -262,6 +262,7 @@ MonMenuIcons:
 	mon_menu_icon GrovyleIcon,        GREEN,  BLUE   ; GROVYLE
 	mon_menu_icon SceptileIcon,       GREEN,  BLUE   ; SCEPTILE
 	mon_menu_icon TorchicIcon,        RED,    BROWN  ; TORCHIC
+	mon_menu_icon CombuskenIcon,      RED,    BROWN  ; COMBUSKEN
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

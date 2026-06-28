@@ -255,4 +255,5 @@ AnimationPointers:
 	dw GrovyleAnimation
 	dw SceptileAnimation
 	dw TorchicAnimation
+	dw CombuskenAnimation
 	assert_table_length NUM_POKEMON

@@ -257,4 +257,5 @@ NewPokedexOrder:
 	dw GROVYLE
 	dw SCEPTILE
 	dw TORCHIC
+	dw COMBUSKEN
 	assert_table_length NUM_POKEMON

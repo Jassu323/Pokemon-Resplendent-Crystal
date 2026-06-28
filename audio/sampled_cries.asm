@@ -5,6 +5,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GROVYLE
 	const SAMPLED_CRY_SCEPTILE
 	const SAMPLED_CRY_TORCHIC
+	const SAMPLED_CRY_COMBUSKEN
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -88,6 +89,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SCEPTILE
 	elif sampled_cry_mon == TORCHIC
 		db SAMPLED_CRY_TORCHIC
+	elif sampled_cry_mon == COMBUSKEN
+		db SAMPLED_CRY_COMBUSKEN
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -101,6 +104,7 @@ SampledCryPointers:
 	dba GrovyleSampledCry
 	dba SceptileSampledCry
 	dba TorchicSampledCry
+	dba CombuskenSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -136,3 +140,10 @@ TorchicSampledCryData:
 	INCBIN "audio/sampled_cries/torchic.mm2"
 TorchicSampledCryEnd:
 	assert (TorchicSampledCryEnd - TorchicSampledCryData) % 9 == 0
+
+CombuskenSampledCry::
+	dw (CombuskenSampledCryEnd - CombuskenSampledCryData) / 9
+CombuskenSampledCryData:
+	INCBIN "audio/sampled_cries/combusken.mm2"
+CombuskenSampledCryEnd:
+	assert (CombuskenSampledCryEnd - CombuskenSampledCryData) % 9 == 0

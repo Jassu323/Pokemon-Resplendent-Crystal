@@ -282,4 +282,5 @@ INCLUDE "data/pokemon/base_stats/treecko.asm"
 INCLUDE "data/pokemon/base_stats/grovyle.asm"
 INCLUDE "data/pokemon/base_stats/sceptile.asm"
 INCLUDE "data/pokemon/base_stats/torchic.asm"
+INCLUDE "data/pokemon/base_stats/combusken.asm"
 .IndirectEnd::
