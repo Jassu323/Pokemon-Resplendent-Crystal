@@ -14,6 +14,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_MIGHTYENA
 	const SAMPLED_CRY_WINGULL
 	const SAMPLED_CRY_PELIPPER
+	const SAMPLED_CRY_RALTS
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -115,6 +116,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_WINGULL
 	elif sampled_cry_mon == PELIPPER
 		db SAMPLED_CRY_PELIPPER
+	elif sampled_cry_mon == RALTS
+		db SAMPLED_CRY_RALTS
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -137,6 +140,7 @@ SampledCryPointers:
 	dba MightyenaSampledCry
 	dba WingullSampledCry
 	dba PelipperSampledCry
+	dba RaltsSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -241,3 +245,10 @@ PelipperSampledCryData:
 	INCBIN "audio/sampled_cries/pelipper.mm2"
 PelipperSampledCryEnd:
 	assert (PelipperSampledCryEnd - PelipperSampledCryData) % 9 == 0
+
+RaltsSampledCry::
+	dw (RaltsSampledCryEnd - RaltsSampledCryData) / 9
+RaltsSampledCryData:
+	INCBIN "audio/sampled_cries/ralts.mm2"
+RaltsSampledCryEnd:
+	assert (RaltsSampledCryEnd - RaltsSampledCryData) % 9 == 0

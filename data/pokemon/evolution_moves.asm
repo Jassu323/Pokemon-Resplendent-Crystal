@@ -265,4 +265,5 @@ EvolutionMoves::
 	dw NO_MOVE ; MIGHTYENA
 	dw NO_MOVE ; WINGULL
 	dw NO_MOVE ; PELIPPER
+	dw NO_MOVE ; RALTS
 	assert_table_length NUM_POKEMON

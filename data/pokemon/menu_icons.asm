@@ -271,6 +271,7 @@ MonMenuIcons:
 	mon_menu_icon MightyenaIcon,      GRAY,   BROWN  ; MIGHTYENA
 	mon_menu_icon WingullIcon,        BLUE,   GREEN  ; WINGULL
 	mon_menu_icon PelipperIcon,       BLUE,   GREEN  ; PELIPPER
+	mon_menu_icon RaltsIcon,          GREEN,  BLUE   ; RALTS
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

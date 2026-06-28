@@ -43,6 +43,7 @@ PoochyenaIcon::     INCBIN "gfx/icons/poochyena.2bpp"
 MightyenaIcon::     INCBIN "gfx/icons/mightyena.2bpp"
 WingullIcon::       INCBIN "gfx/icons/wingull.2bpp"
 PelipperIcon::      INCBIN "gfx/icons/pelipper.2bpp"
+RaltsIcon::         INCBIN "gfx/icons/ralts.2bpp"
 
 
 SECTION "bank3", ROMX

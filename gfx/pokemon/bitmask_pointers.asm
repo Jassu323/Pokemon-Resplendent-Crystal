@@ -264,4 +264,5 @@ BitmasksPointers:
 	dw MightyenaBitmasks
 	dw WingullBitmasks
 	dw PelipperBitmasks
+	dw RaltsBitmasks
 	assert_table_length NUM_POKEMON

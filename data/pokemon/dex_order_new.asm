@@ -266,4 +266,5 @@ NewPokedexOrder:
 	dw MIGHTYENA
 	dw WINGULL
 	dw PELIPPER
+	dw RALTS
 	assert_table_length NUM_POKEMON

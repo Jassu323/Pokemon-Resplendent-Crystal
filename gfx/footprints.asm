@@ -265,5 +265,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; poochyena placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; mightyena placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; wingull placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; pelipper placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; ralts placeholder
 
 	assert_table_length NUM_POKEMON

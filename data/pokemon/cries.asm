@@ -270,4 +270,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MIGHTYENA
 	mon_cry CRY_BULBASAUR,   128,  129 ; WINGULL
 	mon_cry CRY_BULBASAUR,   128,  129 ; PELIPPER
+	mon_cry CRY_BULBASAUR,   128,  129 ; RALTS
 	assert_table_length NUM_POKEMON

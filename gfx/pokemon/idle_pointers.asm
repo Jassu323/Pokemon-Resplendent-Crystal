@@ -264,4 +264,5 @@ AnimationIdlePointers:
 	dw MightyenaAnimationIdle
 	dw WingullAnimationIdle
 	dw PelipperAnimationIdle
+	dw RaltsAnimationIdle
 	assert_table_length NUM_POKEMON

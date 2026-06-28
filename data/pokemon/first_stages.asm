@@ -265,4 +265,5 @@ FirstEvoStages::
 	dw POOCHYENA
 	dw WINGULL
 	dw WINGULL
+	dw RALTS
 	assert_table_length NUM_POKEMON
