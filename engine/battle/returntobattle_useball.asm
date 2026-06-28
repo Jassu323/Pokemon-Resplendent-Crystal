@@ -1,6 +1,10 @@
 _ReturnToBattle_UseBall:
 	call ClearBGPalettes
+	call DisableLCD
+	call ClearSprites
+	call hTransferShadowOAM
 	call ClearTilemap
+	call ExitMenu
 	ld a, [wBattleType]
 	cp BATTLETYPE_TUTORIAL
 	jr z, .gettutorialbackpic
@@ -13,7 +17,7 @@ _ReturnToBattle_UseBall:
 	farcall GetEnemyMonFrontpic
 	farcall _LoadBattleFontsHPBar
 	call GetMemSGBLayout
-	call CloseWindow
 	call LoadStandardMenuHeader
+	call EnableLCD
 	call WaitBGMap
 	jp SetDefaultBGPAndOBP
