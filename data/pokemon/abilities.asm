@@ -271,4 +271,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 105 POOCHYENA
 	mon_ability NO_ABILITY ; 106 MIGHTYENA
 	mon_ability NO_ABILITY ; 107 WINGULL
+	mon_ability NO_ABILITY ; 108 PELIPPER
 	assert_table_length NUM_POKEMON + 1

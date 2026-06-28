@@ -13,6 +13,7 @@ EvosAttacksPointers3::
 	dw PoochyenaEvosAttacks
 	dw MightyenaEvosAttacks
 	dw WingullEvosAttacks
+	dw PelipperEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -71,6 +72,11 @@ MightyenaEvosAttacks:
 	db 0 ; no more level-up moves
 
 WingullEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+PelipperEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

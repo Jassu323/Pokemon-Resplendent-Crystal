@@ -163,6 +163,7 @@ AlphabeticalPokedexOrder:
 	dw PARAS
 	dw PARASECT
 	dw PERSIAN
+	dw PELIPPER
 	dw PHANPY
 	dw PICHU
 	dw PIDGEOT

@@ -263,4 +263,5 @@ AnimationPointers:
 	dw PoochyenaAnimation
 	dw MightyenaAnimation
 	dw WingullAnimation
+	dw PelipperAnimation
 	assert_table_length NUM_POKEMON

@@ -263,4 +263,5 @@ FramesPointers:
 	dba PoochyenaFrames
 	dba MightyenaFrames
 	dba WingullFrames
+	dba PelipperFrames
 	assert_table_length NUM_POKEMON

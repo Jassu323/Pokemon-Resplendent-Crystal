@@ -542,4 +542,6 @@ PokemonPicPointers::
 	dba MightyenaBackpic
 	dba WingullFrontpic
 	dba WingullBackpic
+	dba PelipperFrontpic
+	dba PelipperBackpic
 	assert_table_length NUM_POKEMON + 1

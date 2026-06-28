@@ -265,4 +265,5 @@ NewPokedexOrder:
 	dw POOCHYENA
 	dw MIGHTYENA
 	dw WINGULL
+	dw PELIPPER
 	assert_table_length NUM_POKEMON
