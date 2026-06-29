@@ -296,6 +296,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const ARON       ; 112, NatDex 304
 	const LAIRON     ; 113, NatDex 305
 	const AGGRON     ; 114, NatDex 306
+	const MEDITITE   ; 115, NatDex 307
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

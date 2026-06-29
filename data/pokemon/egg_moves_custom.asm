@@ -26,6 +26,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; ARON
 	dw NoEggMoves3 ; LAIRON
 	dw NoEggMoves3 ; AGGRON
+	dw NoEggMoves3 ; MEDITITE
 .IndirectEnd::
 
 NoEggMoves3:
