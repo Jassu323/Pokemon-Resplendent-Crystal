@@ -273,4 +273,5 @@ FirstEvoStages::
 	dw SHROOMISH
 	dw MAKUHITA
 	dw MAKUHITA
+	dw MAWILE
 	assert_table_length NUM_POKEMON

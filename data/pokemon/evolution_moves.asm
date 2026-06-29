@@ -273,4 +273,5 @@ EvolutionMoves::
 	dw NO_MOVE ; BRELOOM
 	dw NO_MOVE ; MAKUHITA
 	dw NO_MOVE ; HARIYAMA
+	dw NO_MOVE ; MAWILE
 	assert_table_length NUM_POKEMON

@@ -22,6 +22,7 @@ EvosAttacksPointers3::
 	dw BreloomEvosAttacks
 	dw MakuhitaEvosAttacks
 	dw HariyamaEvosAttacks
+	dw MawileEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -125,6 +126,11 @@ MakuhitaEvosAttacks:
 	db 0 ; no more level-up moves
 
 HariyamaEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+MawileEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

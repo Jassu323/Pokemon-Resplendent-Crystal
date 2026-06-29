@@ -3303,13 +3303,17 @@ wPartyMon{d:n}Nickname:: ds MON_NAME_LENGTH
 endr
 wPartyMonNicknamesEnd::
 
-	ds 18
+DEF POKEDEX_FLAG_BYTES EQU (NUM_POKEMON + 7) / 8
+DEF POKEDEX_FLAG_CAPACITY_BYTES EQU 43 ; 344 species
+	assert POKEDEX_FLAG_BYTES <= POKEDEX_FLAG_CAPACITY_BYTES
 
-wPokedexCaught:: flag_array NUM_POKEMON
+wPokedexCaught:: ds POKEDEX_FLAG_BYTES
 wEndPokedexCaught::
+	ds POKEDEX_FLAG_CAPACITY_BYTES - POKEDEX_FLAG_BYTES
 
-wPokedexSeen:: flag_array NUM_POKEMON
+wPokedexSeen:: ds POKEDEX_FLAG_BYTES
 wEndPokedexSeen::
+	ds POKEDEX_FLAG_CAPACITY_BYTES - POKEDEX_FLAG_BYTES
 
 wUnownDex:: ds NUM_UNOWN
 wUnlockedUnowns:: db

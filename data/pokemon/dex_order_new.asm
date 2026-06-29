@@ -274,4 +274,5 @@ NewPokedexOrder:
 	dw BRELOOM
 	dw MAKUHITA
 	dw HARIYAMA
+	dw MAWILE
 	assert_table_length NUM_POKEMON

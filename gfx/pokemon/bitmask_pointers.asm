@@ -272,4 +272,5 @@ BitmasksPointers:
 	dw BreloomBitmasks
 	dw MakuhitaBitmasks
 	dw HariyamaBitmasks
+	dw MawileBitmasks
 	assert_table_length NUM_POKEMON

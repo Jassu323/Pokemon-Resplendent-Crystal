@@ -272,4 +272,5 @@ AnimationPointers:
 	dw BreloomAnimation
 	dw MakuhitaAnimation
 	dw HariyamaAnimation
+	dw MawileAnimation
 	assert_table_length NUM_POKEMON

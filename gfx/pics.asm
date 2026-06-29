@@ -820,3 +820,9 @@ MakuhitaFrontpic:   INCBIN "gfx/pokemon/makuhita/front.animated.2bpp.lz"
 MakuhitaBackpic:    INCBIN "gfx/pokemon/makuhita/back.2bpp.lz"
 HariyamaFrontpic:   INCBIN "gfx/pokemon/hariyama/front.animated.2bpp.lz"
 HariyamaBackpic:    INCBIN "gfx/pokemon/hariyama/back.2bpp.lz"
+
+
+SECTION "Pics 21", ROMX
+
+MawileFrontpic:     INCBIN "gfx/pokemon/mawile/front.animated.2bpp.lz"
+MawileBackpic:      INCBIN "gfx/pokemon/mawile/back.2bpp.lz"

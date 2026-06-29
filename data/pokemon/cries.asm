@@ -278,4 +278,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; BRELOOM
 	mon_cry CRY_BULBASAUR,   128,  129 ; MAKUHITA
 	mon_cry CRY_BULBASAUR,   128,  129 ; HARIYAMA
+	mon_cry CRY_BULBASAUR,   128,  129 ; MAWILE
 	assert_table_length NUM_POKEMON

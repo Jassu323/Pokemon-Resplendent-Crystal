@@ -280,4 +280,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 10e BRELOOM
 	mon_ability NO_ABILITY ; 10f MAKUHITA
 	mon_ability NO_ABILITY ; 110 HARIYAMA
+	mon_ability NO_ABILITY ; 111 MAWILE
 	assert_table_length NUM_POKEMON + 1

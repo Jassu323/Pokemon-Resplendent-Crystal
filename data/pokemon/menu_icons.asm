@@ -279,6 +279,7 @@ MonMenuIcons:
 	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
 	mon_menu_icon MakuhitaIcon,       GRAY,   RED    ; MAKUHITA
 	mon_menu_icon HariyamaIcon,       BROWN,  PURPLE ; HARIYAMA
+	mon_menu_icon MawileIcon,         GRAY,   PURPLE ; MAWILE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
