@@ -63,8 +63,16 @@ NewPokedexEntry:
 	ldh [hObjectStructIndex], a
 
 .wait_loop
+	ld a, [wFrameCounter]
+	and a
+	jr z, .delay_frame
 	call .AnimateFrontpicFrame
+	jr .frame_done
+
+.delay_frame
 	call DelayFrame
+
+.frame_done
 	push hl
 	hlcoord 18, 17
 	call BlinkCursor
