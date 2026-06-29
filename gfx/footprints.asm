@@ -276,5 +276,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; hariyama placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; mawile placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; aron placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lairon placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; aggron placeholder
 
 	assert_table_length NUM_POKEMON

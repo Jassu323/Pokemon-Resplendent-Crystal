@@ -4,6 +4,7 @@ AlphabeticalPokedexOrder:
 	table_width 2
 	dw ABRA
 	dw AERODACTYL
+	dw AGGRON
 	dw AIPOM
 	dw ALAKAZAM
 	dw AMPHAROS

@@ -275,4 +275,5 @@ FramesPointers:
 	dba MawileFrames
 	dba AronFrames
 	dba LaironFrames
+	dba AggronFrames
 	assert_table_length NUM_POKEMON

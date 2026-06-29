@@ -281,4 +281,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MAWILE
 	mon_cry CRY_BULBASAUR,   128,  129 ; ARON
 	mon_cry CRY_BULBASAUR,   128,  129 ; LAIRON
+	mon_cry CRY_BULBASAUR,   128,  129 ; AGGRON
 	assert_table_length NUM_POKEMON

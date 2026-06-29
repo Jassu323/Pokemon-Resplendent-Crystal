@@ -282,6 +282,7 @@ MonMenuIcons:
 	mon_menu_icon MawileIcon,         GRAY,   PURPLE ; MAWILE
 	mon_menu_icon AronIcon,           GRAY,   TEAL   ; ARON
 	mon_menu_icon LaironIcon,         GRAY,   TEAL   ; LAIRON
+	mon_menu_icon AggronIcon,         GRAY,   TEAL   ; AGGRON
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

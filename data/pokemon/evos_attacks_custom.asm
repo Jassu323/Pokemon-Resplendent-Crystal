@@ -25,6 +25,7 @@ EvosAttacksPointers3::
 	dw MawileEvosAttacks
 	dw AronEvosAttacks
 	dw LaironEvosAttacks
+	dw AggronEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -143,6 +144,11 @@ AronEvosAttacks:
 	db 0 ; no more level-up moves
 
 LaironEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+AggronEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

@@ -283,4 +283,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 111 MAWILE
 	mon_ability IRONCLAD ; 112 ARON
 	mon_ability IRONCLAD ; 113 LAIRON
+	mon_ability IRONCLAD ; 114 AGGRON
 	assert_table_length NUM_POKEMON + 1

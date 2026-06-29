@@ -277,4 +277,5 @@ NewPokedexOrder:
 	dw MAWILE
 	dw ARON
 	dw LAIRON
+	dw AGGRON
 	assert_table_length NUM_POKEMON

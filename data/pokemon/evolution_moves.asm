@@ -276,4 +276,5 @@ EvolutionMoves::
 	dw NO_MOVE ; MAWILE
 	dw NO_MOVE ; ARON
 	dw NO_MOVE ; LAIRON
+	dw NO_MOVE ; AGGRON
 	assert_table_length NUM_POKEMON

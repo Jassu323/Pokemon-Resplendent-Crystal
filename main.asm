@@ -54,6 +54,7 @@ HariyamaIcon::      INCBIN "gfx/icons/hariyama.2bpp"
 MawileIcon::        INCBIN "gfx/icons/mawile.2bpp"
 AronIcon::          INCBIN "gfx/icons/aron.2bpp"
 LaironIcon::        INCBIN "gfx/icons/lairon.2bpp"
+AggronIcon::        INCBIN "gfx/icons/aggron.2bpp"
 
 
 SECTION "bank3", ROMX
