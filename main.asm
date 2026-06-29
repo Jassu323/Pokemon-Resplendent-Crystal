@@ -68,6 +68,7 @@ FlygonIcon::        INCBIN "gfx/icons/flygon.2bpp"
 SwabluIcon::        INCBIN "gfx/icons/swablu.2bpp"
 AltariaIcon::       INCBIN "gfx/icons/altaria.2bpp"
 ZangooseIcon::      INCBIN "gfx/icons/zangoose.2bpp"
+SeviperIcon::       INCBIN "gfx/icons/seviper.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -510,6 +511,7 @@ FlygonFrames:     INCLUDE "gfx/pokemon/flygon/frames.asm"
 SwabluFrames:     INCLUDE "gfx/pokemon/swablu/frames.asm"
 AltariaFrames:    INCLUDE "gfx/pokemon/altaria/frames.asm"
 ZangooseFrames:   INCLUDE "gfx/pokemon/zangoose/frames.asm"
+SeviperFrames:    INCLUDE "gfx/pokemon/seviper/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -289,4 +289,5 @@ AnimationIdlePointers:
 	dw SwabluAnimationIdle
 	dw AltariaAnimationIdle
 	dw ZangooseAnimationIdle
+	dw SeviperAnimationIdle
 	assert_table_length NUM_POKEMON

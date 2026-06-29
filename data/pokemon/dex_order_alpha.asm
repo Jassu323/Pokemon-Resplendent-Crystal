@@ -222,6 +222,7 @@ AlphabeticalPokedexOrder:
 	dw SEAKING
 	dw SEEL
 	dw SENTRET
+	dw SEVIPER
 	dw SHELLDER
 	dw SHARPEDO
 	dw SHROOMISH

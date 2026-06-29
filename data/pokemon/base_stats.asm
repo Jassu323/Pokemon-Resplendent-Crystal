@@ -316,4 +316,5 @@ INCLUDE "data/pokemon/base_stats/flygon.asm"
 INCLUDE "data/pokemon/base_stats/swablu.asm"
 INCLUDE "data/pokemon/base_stats/altaria.asm"
 INCLUDE "data/pokemon/base_stats/zangoose.asm"
+INCLUDE "data/pokemon/base_stats/seviper.asm"
 .IndirectEnd::

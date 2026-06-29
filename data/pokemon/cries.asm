@@ -295,4 +295,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SWABLU
 	mon_cry CRY_BULBASAUR,   128,  129 ; ALTARIA
 	mon_cry CRY_BULBASAUR,   128,  129 ; ZANGOOSE
+	mon_cry CRY_BULBASAUR,   128,  129 ; SEVIPER
 	assert_table_length NUM_POKEMON

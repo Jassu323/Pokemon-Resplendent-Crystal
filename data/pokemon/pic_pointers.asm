@@ -594,4 +594,6 @@ PokemonPicPointers::
 	dba AltariaBackpic
 	dba ZangooseFrontpic
 	dba ZangooseBackpic
+	dba SeviperFrontpic
+	dba SeviperBackpic
 	assert_table_length NUM_POKEMON + 1

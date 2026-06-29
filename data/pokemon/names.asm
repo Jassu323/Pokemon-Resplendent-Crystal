@@ -295,4 +295,5 @@ PokemonNames::
 	dname "Swablu"
 	dname "Altaria"
 	dname "Zangoose"
+	dname "Seviper"
 	assert_table_length NUM_POKEMON

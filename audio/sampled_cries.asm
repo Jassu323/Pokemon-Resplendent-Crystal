@@ -39,6 +39,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SWABLU
 	const SAMPLED_CRY_ALTARIA
 	const SAMPLED_CRY_ZANGOOSE
+	const SAMPLED_CRY_SEVIPER
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -190,6 +191,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_ALTARIA
 	elif sampled_cry_mon == ZANGOOSE
 		db SAMPLED_CRY_ZANGOOSE
+	elif sampled_cry_mon == SEVIPER
+		db SAMPLED_CRY_SEVIPER
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -237,6 +240,7 @@ SampledCryPointers:
 	dba SwabluSampledCry
 	dba AltariaSampledCry
 	dba ZangooseSampledCry
+	dba SeviperSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -525,3 +529,10 @@ ZangooseSampledCryData:
 	INCBIN "audio/sampled_cries/zangoose.mm2"
 ZangooseSampledCryEnd:
 	assert (ZangooseSampledCryEnd - ZangooseSampledCryData) % 9 == 0
+
+SeviperSampledCry::
+	dw (SeviperSampledCryEnd - SeviperSampledCryData) / 9
+SeviperSampledCryData:
+	INCBIN "audio/sampled_cries/seviper.mm2"
+SeviperSampledCryEnd:
+	assert (SeviperSampledCryEnd - SeviperSampledCryData) % 9 == 0

@@ -39,6 +39,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SWABLU
 	dw NoEggMoves3 ; ALTARIA
 	dw NoEggMoves3 ; ZANGOOSE
+	dw NoEggMoves3 ; SEVIPER
 .IndirectEnd::
 
 NoEggMoves3:

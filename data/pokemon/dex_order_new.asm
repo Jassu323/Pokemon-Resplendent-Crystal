@@ -291,4 +291,5 @@ NewPokedexOrder:
 	dw SWABLU
 	dw ALTARIA
 	dw ZANGOOSE
+	dw SEVIPER
 	assert_table_length NUM_POKEMON

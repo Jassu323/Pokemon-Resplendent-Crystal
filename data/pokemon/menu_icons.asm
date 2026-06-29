@@ -296,6 +296,7 @@ MonMenuIcons:
 	mon_menu_icon SwabluIcon,         BLUE,   BROWN  ; SWABLU
 	mon_menu_icon AltariaIcon,        BLUE,   BROWN  ; ALTARIA
 	mon_menu_icon ZangooseIcon,       RED,    BLUE   ; ZANGOOSE
+	mon_menu_icon SeviperIcon,        PURPLE, GREEN  ; SEVIPER
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
