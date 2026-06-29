@@ -277,4 +277,5 @@ FramesPointers:
 	dba LaironFrames
 	dba AggronFrames
 	dba MedititeFrames
+	dba MedichamFrames
 	assert_table_length NUM_POKEMON

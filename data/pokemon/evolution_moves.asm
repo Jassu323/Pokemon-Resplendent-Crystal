@@ -278,4 +278,5 @@ EvolutionMoves::
 	dw NO_MOVE ; LAIRON
 	dw NO_MOVE ; AGGRON
 	dw NO_MOVE ; MEDITITE
+	dw NO_MOVE ; MEDICHAM
 	assert_table_length NUM_POKEMON

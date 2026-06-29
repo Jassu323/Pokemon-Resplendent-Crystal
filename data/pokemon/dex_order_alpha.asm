@@ -144,6 +144,7 @@ AlphabeticalPokedexOrder:
 	dw MARSHTOMP
 	dw MAWILE
 	dw MEGANIUM
+	dw MEDICHAM
 	dw MEDITITE
 	dw MEOWTH
 	dw METAPOD

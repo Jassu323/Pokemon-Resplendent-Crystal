@@ -283,4 +283,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; LAIRON
 	mon_cry CRY_BULBASAUR,   128,  129 ; AGGRON
 	mon_cry CRY_BULBASAUR,   128,  129 ; MEDITITE
+	mon_cry CRY_BULBASAUR,   128,  129 ; MEDICHAM
 	assert_table_length NUM_POKEMON

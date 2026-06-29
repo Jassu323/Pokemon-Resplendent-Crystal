@@ -279,4 +279,5 @@ NewPokedexOrder:
 	dw LAIRON
 	dw AGGRON
 	dw MEDITITE
+	dw MEDICHAM
 	assert_table_length NUM_POKEMON

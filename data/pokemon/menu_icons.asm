@@ -284,6 +284,7 @@ MonMenuIcons:
 	mon_menu_icon LaironIcon,         GRAY,   TEAL   ; LAIRON
 	mon_menu_icon AggronIcon,         GRAY,   TEAL   ; AGGRON
 	mon_menu_icon MedititeIcon,       BLUE,   RED    ; MEDITITE
+	mon_menu_icon MedichamIcon,       PINK,    BLUE   ; MEDICHAM
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
