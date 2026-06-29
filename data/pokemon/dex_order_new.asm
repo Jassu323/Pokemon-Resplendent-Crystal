@@ -290,4 +290,5 @@ NewPokedexOrder:
 	dw FLYGON
 	dw SWABLU
 	dw ALTARIA
+	dw ZANGOOSE
 	assert_table_length NUM_POKEMON

@@ -288,4 +288,5 @@ FramesPointers:
 	dba FlygonFrames
 	dba SwabluFrames
 	dba AltariaFrames
+	dba ZangooseFrames
 	assert_table_length NUM_POKEMON

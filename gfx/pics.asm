@@ -860,3 +860,5 @@ SECTION "Pics 22", ROMX
 
 AltariaFrontpic:    INCBIN "gfx/pokemon/altaria/front.animated.2bpp.lz"
 AltariaBackpic:     INCBIN "gfx/pokemon/altaria/back.2bpp.lz"
+ZangooseFrontpic:   INCBIN "gfx/pokemon/zangoose/front.animated.2bpp.lz"
+ZangooseBackpic:    INCBIN "gfx/pokemon/zangoose/back.2bpp.lz"

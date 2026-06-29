@@ -38,6 +38,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; FLYGON
 	dw NoEggMoves3 ; SWABLU
 	dw NoEggMoves3 ; ALTARIA
+	dw NoEggMoves3 ; ZANGOOSE
 .IndirectEnd::
 
 NoEggMoves3:

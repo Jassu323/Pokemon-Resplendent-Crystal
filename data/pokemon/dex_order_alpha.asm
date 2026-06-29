@@ -288,6 +288,7 @@ AlphabeticalPokedexOrder:
 	dw WOOPER
 	dw XATU
 	dw YANMA
+	dw ZANGOOSE
 	dw ZAPDOS
 	dw ZUBAT
 	assert_table_length NUM_POKEMON

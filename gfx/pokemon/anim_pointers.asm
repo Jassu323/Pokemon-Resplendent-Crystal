@@ -288,4 +288,5 @@ AnimationPointers:
 	dw FlygonAnimation
 	dw SwabluAnimation
 	dw AltariaAnimation
+	dw ZangooseAnimation
 	assert_table_length NUM_POKEMON
