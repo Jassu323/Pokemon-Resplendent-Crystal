@@ -24,6 +24,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_HARIYAMA
 	const SAMPLED_CRY_MAWILE
 	const SAMPLED_CRY_ARON
+	const SAMPLED_CRY_LAIRON
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -145,6 +146,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MAWILE
 	elif sampled_cry_mon == ARON
 		db SAMPLED_CRY_ARON
+	elif sampled_cry_mon == LAIRON
+		db SAMPLED_CRY_LAIRON
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -177,6 +180,7 @@ SampledCryPointers:
 	dba HariyamaSampledCry
 	dba MawileSampledCry
 	dba AronSampledCry
+	dba LaironSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -354,3 +358,10 @@ AronSampledCryData:
 	INCBIN "audio/sampled_cries/aron.mm2"
 AronSampledCryEnd:
 	assert (AronSampledCryEnd - AronSampledCryData) % 9 == 0
+
+LaironSampledCry::
+	dw (LaironSampledCryEnd - LaironSampledCryData) / 9
+LaironSampledCryData:
+	INCBIN "audio/sampled_cries/lairon.mm2"
+LaironSampledCryEnd:
+	assert (LaironSampledCryEnd - LaironSampledCryData) % 9 == 0

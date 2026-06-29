@@ -118,6 +118,7 @@ AlphabeticalPokedexOrder:
 	dw KOFFING
 	dw KRABBY
 	dw LANTURN
+	dw LAIRON
 	dw LAPRAS
 	dw LARVITAR
 	dw LEDIAN

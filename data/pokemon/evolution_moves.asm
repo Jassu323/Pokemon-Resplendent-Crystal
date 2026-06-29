@@ -275,4 +275,5 @@ EvolutionMoves::
 	dw NO_MOVE ; HARIYAMA
 	dw NO_MOVE ; MAWILE
 	dw NO_MOVE ; ARON
+	dw NO_MOVE ; LAIRON
 	assert_table_length NUM_POKEMON

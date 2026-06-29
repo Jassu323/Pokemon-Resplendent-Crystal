@@ -301,4 +301,5 @@ INCLUDE "data/pokemon/base_stats/makuhita.asm"
 INCLUDE "data/pokemon/base_stats/hariyama.asm"
 INCLUDE "data/pokemon/base_stats/mawile.asm"
 INCLUDE "data/pokemon/base_stats/aron.asm"
+INCLUDE "data/pokemon/base_stats/lairon.asm"
 .IndirectEnd::

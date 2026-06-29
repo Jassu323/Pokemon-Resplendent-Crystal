@@ -276,4 +276,5 @@ NewPokedexOrder:
 	dw HARIYAMA
 	dw MAWILE
 	dw ARON
+	dw LAIRON
 	assert_table_length NUM_POKEMON

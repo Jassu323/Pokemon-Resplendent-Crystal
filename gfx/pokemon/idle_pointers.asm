@@ -274,4 +274,5 @@ AnimationIdlePointers:
 	dw HariyamaAnimationIdle
 	dw MawileAnimationIdle
 	dw AronAnimationIdle
+	dw LaironAnimationIdle
 	assert_table_length NUM_POKEMON

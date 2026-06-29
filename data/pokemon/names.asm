@@ -280,4 +280,5 @@ PokemonNames::
 	dname "Hariyama"
 	dname "Mawile"
 	dname "Aron"
+	dname "Lairon"
 	assert_table_length NUM_POKEMON

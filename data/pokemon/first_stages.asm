@@ -275,4 +275,5 @@ FirstEvoStages::
 	dw MAKUHITA
 	dw MAWILE
 	dw ARON
+	dw ARON
 	assert_table_length NUM_POKEMON
