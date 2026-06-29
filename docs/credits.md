@@ -5,6 +5,7 @@ Rangi42
 - Night music lgic:  https://github.com/pret/pokecrystal/wiki/Add-more-music-that-changes-at-night
 - Finite low health beeping:  https://github.com/pret/pokecrystal/wiki/Short-beeping-noise-for-low-HP
 - Remove 25% failure chance for AI status moves:  https://github.com/pret/pokecrystal/wiki/Remove-the-25%25-failure-chance-for-AI-status-moves
+- Hail weather effect:  https://github.com/pret/pokecrystal/wiki/Add-Hail-as-a-new-weather-condition
 
 TriteHexagon - Music Resources
 - Night themes:  https://github.com/TriteHexagon/Trite_ASM_Repository

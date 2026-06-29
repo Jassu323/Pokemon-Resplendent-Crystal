@@ -278,4 +278,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 10c GALLADE
 	mon_ability NO_ABILITY ; 10d SHROOMISH
 	mon_ability NO_ABILITY ; 10e BRELOOM
+	mon_ability NO_ABILITY ; 10f MAKUHITA
 	assert_table_length NUM_POKEMON + 1

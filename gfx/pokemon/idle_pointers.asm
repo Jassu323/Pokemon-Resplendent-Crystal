@@ -270,4 +270,5 @@ AnimationIdlePointers:
 	dw GalladeAnimationIdle
 	dw ShroomishAnimationIdle
 	dw BreloomAnimationIdle
+	dw MakuhitaAnimationIdle
 	assert_table_length NUM_POKEMON

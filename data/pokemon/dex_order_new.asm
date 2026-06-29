@@ -272,4 +272,5 @@ NewPokedexOrder:
 	dw GALLADE
 	dw SHROOMISH
 	dw BRELOOM
+	dw MAKUHITA
 	assert_table_length NUM_POKEMON

@@ -131,6 +131,7 @@ AlphabeticalPokedexOrder:
 	dw MAGMAR
 	dw MAGNEMITE
 	dw MAGNETON
+	dw MAKUHITA
 	dw MANKEY
 	dw MANTINE
 	dw MAREEP

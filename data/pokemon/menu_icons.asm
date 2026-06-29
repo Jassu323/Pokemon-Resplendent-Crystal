@@ -277,6 +277,7 @@ MonMenuIcons:
 	mon_menu_icon GalladeIcon,        GREEN,  BLUE   ; GALLADE
 	mon_menu_icon ShroomishIcon,      GREEN,  RED    ; SHROOMISH
 	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
+	mon_menu_icon MakuhitaIcon,       GRAY,   RED    ; MAKUHITA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

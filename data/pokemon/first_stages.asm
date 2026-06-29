@@ -271,4 +271,5 @@ FirstEvoStages::
 	dw RALTS
 	dw SHROOMISH
 	dw SHROOMISH
+	dw MAKUHITA
 	assert_table_length NUM_POKEMON

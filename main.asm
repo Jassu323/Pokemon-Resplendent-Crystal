@@ -49,6 +49,7 @@ GardevoirIcon::     INCBIN "gfx/icons/gardevoir.2bpp"
 GalladeIcon::       INCBIN "gfx/icons/gallade.2bpp"
 ShroomishIcon::     INCBIN "gfx/icons/shroomish.2bpp"
 BreloomIcon::       INCBIN "gfx/icons/breloom.2bpp"
+MakuhitaIcon::      INCBIN "gfx/icons/makuhita.2bpp"
 
 
 SECTION "bank3", ROMX

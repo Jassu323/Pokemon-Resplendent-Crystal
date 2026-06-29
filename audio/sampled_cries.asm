@@ -20,6 +20,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GALLADE
 	const SAMPLED_CRY_SHROOMISH
 	const SAMPLED_CRY_BRELOOM
+	const SAMPLED_CRY_MAKUHITA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -133,6 +134,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SHROOMISH
 	elif sampled_cry_mon == BRELOOM
 		db SAMPLED_CRY_BRELOOM
+	elif sampled_cry_mon == MAKUHITA
+		db SAMPLED_CRY_MAKUHITA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -161,6 +164,7 @@ SampledCryPointers:
 	dba GalladeSampledCry
 	dba ShroomishSampledCry
 	dba BreloomSampledCry
+	dba MakuhitaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -310,3 +314,10 @@ BreloomSampledCryData:
 	INCBIN "audio/sampled_cries/breloom.mm2"
 BreloomSampledCryEnd:
 	assert (BreloomSampledCryEnd - BreloomSampledCryData) % 9 == 0
+
+MakuhitaSampledCry::
+	dw (MakuhitaSampledCryEnd - MakuhitaSampledCryData) / 9
+MakuhitaSampledCryData:
+	INCBIN "audio/sampled_cries/makuhita.mm2"
+MakuhitaSampledCryEnd:
+	assert (MakuhitaSampledCryEnd - MakuhitaSampledCryData) % 9 == 0
