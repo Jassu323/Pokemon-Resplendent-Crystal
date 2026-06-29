@@ -286,4 +286,5 @@ SpeciesAbilities::
 	mon_ability IRONCLAD ; 114 AGGRON
 	mon_ability NO_ABILITY ; 115 MEDITITE
 	mon_ability NO_ABILITY ; 116 MEDICHAM
+	mon_ability NO_ABILITY ; 117 CARVANHA
 	assert_table_length NUM_POKEMON + 1

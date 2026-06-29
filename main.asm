@@ -57,6 +57,7 @@ LaironIcon::        INCBIN "gfx/icons/lairon.2bpp"
 AggronIcon::        INCBIN "gfx/icons/aggron.2bpp"
 MedititeIcon::      INCBIN "gfx/icons/meditite.2bpp"
 MedichamIcon::      INCBIN "gfx/icons/medicham.2bpp"
+CarvanhaIcon::      INCBIN "gfx/icons/carvanha.2bpp"
 
 
 SECTION "bank3", ROMX

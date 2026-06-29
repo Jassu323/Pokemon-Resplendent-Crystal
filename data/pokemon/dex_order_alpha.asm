@@ -25,6 +25,7 @@ AlphabeticalPokedexOrder:
 	dw BULBASAUR
 	dw BUTTERFREE
 	dw CATERPIE
+	dw CARVANHA
 	dw CELEBI
 	dw CHANSEY
 	dw CHARIZARD

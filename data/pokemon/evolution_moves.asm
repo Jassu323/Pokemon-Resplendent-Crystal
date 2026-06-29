@@ -279,4 +279,5 @@ EvolutionMoves::
 	dw NO_MOVE ; AGGRON
 	dw NO_MOVE ; MEDITITE
 	dw NO_MOVE ; MEDICHAM
+	dw NO_MOVE ; CARVANHA
 	assert_table_length NUM_POKEMON

@@ -278,4 +278,5 @@ FramesPointers:
 	dba AggronFrames
 	dba MedititeFrames
 	dba MedichamFrames
+	dba CarvanhaFrames
 	assert_table_length NUM_POKEMON

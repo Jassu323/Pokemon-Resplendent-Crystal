@@ -280,4 +280,5 @@ NewPokedexOrder:
 	dw AGGRON
 	dw MEDITITE
 	dw MEDICHAM
+	dw CARVANHA
 	assert_table_length NUM_POKEMON

@@ -28,6 +28,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_AGGRON
 	const SAMPLED_CRY_MEDITITE
 	const SAMPLED_CRY_MEDICHAM
+	const SAMPLED_CRY_CARVANHA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -157,6 +158,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MEDITITE
 	elif sampled_cry_mon == MEDICHAM
 		db SAMPLED_CRY_MEDICHAM
+	elif sampled_cry_mon == CARVANHA
+		db SAMPLED_CRY_CARVANHA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -193,6 +196,7 @@ SampledCryPointers:
 	dba AggronSampledCry
 	dba MedititeSampledCry
 	dba MedichamSampledCry
+	dba CarvanhaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -401,3 +405,10 @@ MedichamSampledCryData:
 	INCBIN "audio/sampled_cries/medicham.mm2"
 MedichamSampledCryEnd:
 	assert (MedichamSampledCryEnd - MedichamSampledCryData) % 9 == 0
+
+CarvanhaSampledCry::
+	dw (CarvanhaSampledCryEnd - CarvanhaSampledCryData) / 9
+CarvanhaSampledCryData:
+	INCBIN "audio/sampled_cries/carvanha.mm2"
+CarvanhaSampledCryEnd:
+	assert (CarvanhaSampledCryEnd - CarvanhaSampledCryData) % 9 == 0

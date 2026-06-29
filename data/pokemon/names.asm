@@ -284,4 +284,5 @@ PokemonNames::
 	dname "Aggron"
 	dname "Meditite"
 	dname "Medicham"
+	dname "Carvanha"
 	assert_table_length NUM_POKEMON

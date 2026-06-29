@@ -572,4 +572,6 @@ PokemonPicPointers::
 	dba MedititeBackpic
 	dba MedichamFrontpic
 	dba MedichamBackpic
+	dba CarvanhaFrontpic
+	dba CarvanhaBackpic
 	assert_table_length NUM_POKEMON + 1

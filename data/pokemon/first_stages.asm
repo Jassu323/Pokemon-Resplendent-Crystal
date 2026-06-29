@@ -279,4 +279,5 @@ FirstEvoStages::
 	dw ARON
 	dw MEDITITE
 	dw MEDITITE
+	dw CARVANHA
 	assert_table_length NUM_POKEMON

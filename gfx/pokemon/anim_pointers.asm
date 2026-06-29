@@ -278,4 +278,5 @@ AnimationPointers:
 	dw AggronAnimation
 	dw MedititeAnimation
 	dw MedichamAnimation
+	dw CarvanhaAnimation
 	assert_table_length NUM_POKEMON
