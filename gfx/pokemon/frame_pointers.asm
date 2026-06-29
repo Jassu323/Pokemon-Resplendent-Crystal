@@ -286,4 +286,5 @@ FramesPointers:
 	dba TrapinchFrames
 	dba VibravaFrames
 	dba FlygonFrames
+	dba SwabluFrames
 	assert_table_length NUM_POKEMON

@@ -287,4 +287,5 @@ FirstEvoStages::
 	dw TRAPINCH
 	dw TRAPINCH
 	dw TRAPINCH
+	dw SWABLU
 	assert_table_length NUM_POKEMON

@@ -287,4 +287,5 @@ PokedexDataPointerTable:
 	dba TrapinchPokedexEntry
 	dba VibravaPokedexEntry
 	dba FlygonPokedexEntry
+	dba SwabluPokedexEntry
 	assert_table_length NUM_POKEMON

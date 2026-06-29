@@ -306,6 +306,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const TRAPINCH   ; 11c, NatDex 328
 	const VIBRAVA    ; 11d, NatDex 329
 	const FLYGON     ; 11e, NatDex 330
+	const SWABLU     ; 11f, NatDex 333
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

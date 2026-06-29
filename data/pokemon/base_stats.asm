@@ -313,4 +313,5 @@ INCLUDE "data/pokemon/base_stats/torkoal.asm"
 INCLUDE "data/pokemon/base_stats/trapinch.asm"
 INCLUDE "data/pokemon/base_stats/vibrava.asm"
 INCLUDE "data/pokemon/base_stats/flygon.asm"
+INCLUDE "data/pokemon/base_stats/swablu.asm"
 .IndirectEnd::

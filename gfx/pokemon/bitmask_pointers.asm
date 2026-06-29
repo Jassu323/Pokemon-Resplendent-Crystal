@@ -286,4 +286,5 @@ BitmasksPointers:
 	dw TrapinchBitmasks
 	dw VibravaBitmasks
 	dw FlygonBitmasks
+	dw SwabluBitmasks
 	assert_table_length NUM_POKEMON

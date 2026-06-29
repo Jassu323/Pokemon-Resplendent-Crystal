@@ -588,4 +588,6 @@ PokemonPicPointers::
 	dba VibravaBackpic
 	dba FlygonFrontpic
 	dba FlygonBackpic
+	dba SwabluFrontpic
+	dba SwabluBackpic
 	assert_table_length NUM_POKEMON + 1

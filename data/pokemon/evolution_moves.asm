@@ -287,4 +287,5 @@ EvolutionMoves::
 	dw NO_MOVE ; TRAPINCH
 	dw NO_MOVE ; VIBRAVA
 	dw NO_MOVE ; FLYGON
+	dw NO_MOVE ; SWABLU
 	assert_table_length NUM_POKEMON

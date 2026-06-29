@@ -294,4 +294,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 11c TRAPINCH
 	mon_ability LEVITATE ; 11d VIBRAVA
 	mon_ability LEVITATE ; 11e FLYGON
+	mon_ability NO_ABILITY ; 11f SWABLU
 	assert_table_length NUM_POKEMON + 1

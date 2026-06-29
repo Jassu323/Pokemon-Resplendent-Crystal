@@ -288,4 +288,5 @@ NewPokedexOrder:
 	dw TRAPINCH
 	dw VIBRAVA
 	dw FLYGON
+	dw SWABLU
 	assert_table_length NUM_POKEMON

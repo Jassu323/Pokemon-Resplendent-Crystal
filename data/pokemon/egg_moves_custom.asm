@@ -36,6 +36,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; TRAPINCH
 	dw NoEggMoves3 ; VIBRAVA
 	dw NoEggMoves3 ; FLYGON
+	dw NoEggMoves3 ; SWABLU
 .IndirectEnd::
 
 NoEggMoves3:

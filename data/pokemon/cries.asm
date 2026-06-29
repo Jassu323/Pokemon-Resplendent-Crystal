@@ -292,4 +292,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; TRAPINCH
 	mon_cry CRY_BULBASAUR,   128,  129 ; VIBRAVA
 	mon_cry CRY_BULBASAUR,   128,  129 ; FLYGON
+	mon_cry CRY_BULBASAUR,   128,  129 ; SWABLU
 	assert_table_length NUM_POKEMON
