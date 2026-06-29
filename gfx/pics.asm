@@ -854,3 +854,9 @@ FlygonFrontpic:     INCBIN "gfx/pokemon/flygon/front.animated.2bpp.lz"
 FlygonBackpic:      INCBIN "gfx/pokemon/flygon/back.2bpp.lz"
 SwabluFrontpic:     INCBIN "gfx/pokemon/swablu/front.animated.2bpp.lz"
 SwabluBackpic:      INCBIN "gfx/pokemon/swablu/back.2bpp.lz"
+
+
+SECTION "Pics 22", ROMX
+
+AltariaFrontpic:    INCBIN "gfx/pokemon/altaria/front.animated.2bpp.lz"
+AltariaBackpic:     INCBIN "gfx/pokemon/altaria/back.2bpp.lz"

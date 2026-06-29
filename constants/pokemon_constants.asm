@@ -307,6 +307,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const VIBRAVA    ; 11d, NatDex 329
 	const FLYGON     ; 11e, NatDex 330
 	const SWABLU     ; 11f, NatDex 333
+	const ALTARIA    ; 120, NatDex 334
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

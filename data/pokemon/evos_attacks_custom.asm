@@ -37,6 +37,7 @@ EvosAttacksPointers3::
 	dw VibravaEvosAttacks
 	dw FlygonEvosAttacks
 	dw SwabluEvosAttacks
+	dw AltariaEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -215,6 +216,11 @@ FlygonEvosAttacks:
 	db 0 ; no more level-up moves
 
 SwabluEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+AltariaEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

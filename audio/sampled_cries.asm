@@ -37,6 +37,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_VIBRAVA
 	const SAMPLED_CRY_FLYGON
 	const SAMPLED_CRY_SWABLU
+	const SAMPLED_CRY_ALTARIA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -184,6 +185,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_FLYGON
 	elif sampled_cry_mon == SWABLU
 		db SAMPLED_CRY_SWABLU
+	elif sampled_cry_mon == ALTARIA
+		db SAMPLED_CRY_ALTARIA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -229,6 +232,7 @@ SampledCryPointers:
 	dba VibravaSampledCry
 	dba FlygonSampledCry
 	dba SwabluSampledCry
+	dba AltariaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -503,3 +507,10 @@ SwabluSampledCryData:
 	INCBIN "audio/sampled_cries/swablu.mm2"
 SwabluSampledCryEnd:
 	assert (SwabluSampledCryEnd - SwabluSampledCryData) % 9 == 0
+
+AltariaSampledCry::
+	dw (AltariaSampledCryEnd - AltariaSampledCryData) / 9
+AltariaSampledCryData:
+	INCBIN "audio/sampled_cries/altaria.mm2"
+AltariaSampledCryEnd:
+	assert (AltariaSampledCryEnd - AltariaSampledCryData) % 9 == 0

@@ -288,4 +288,5 @@ EvolutionMoves::
 	dw NO_MOVE ; VIBRAVA
 	dw NO_MOVE ; FLYGON
 	dw NO_MOVE ; SWABLU
+	dw NO_MOVE ; ALTARIA
 	assert_table_length NUM_POKEMON

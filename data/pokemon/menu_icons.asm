@@ -294,6 +294,7 @@ MonMenuIcons:
 	mon_menu_icon VibravaIcon,        GREEN,  RED    ; VIBRAVA
 	mon_menu_icon FlygonIcon,         GREEN,  TEAL   ; FLYGON
 	mon_menu_icon SwabluIcon,         BLUE,   BROWN  ; SWABLU
+	mon_menu_icon AltariaIcon,        BLUE,   BROWN  ; ALTARIA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

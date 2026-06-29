@@ -289,4 +289,5 @@ NewPokedexOrder:
 	dw VIBRAVA
 	dw FLYGON
 	dw SWABLU
+	dw ALTARIA
 	assert_table_length NUM_POKEMON

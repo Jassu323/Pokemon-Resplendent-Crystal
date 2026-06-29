@@ -590,4 +590,6 @@ PokemonPicPointers::
 	dba FlygonBackpic
 	dba SwabluFrontpic
 	dba SwabluBackpic
+	dba AltariaFrontpic
+	dba AltariaBackpic
 	assert_table_length NUM_POKEMON + 1

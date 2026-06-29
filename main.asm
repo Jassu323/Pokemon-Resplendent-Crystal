@@ -66,6 +66,7 @@ TrapinchIcon::      INCBIN "gfx/icons/trapinch.2bpp"
 VibravaIcon::       INCBIN "gfx/icons/vibrava.2bpp"
 FlygonIcon::        INCBIN "gfx/icons/flygon.2bpp"
 SwabluIcon::        INCBIN "gfx/icons/swablu.2bpp"
+AltariaIcon::       INCBIN "gfx/icons/altaria.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -506,6 +507,7 @@ INCLUDE "gfx/pokemon/unown_frames.asm"
 VibravaFrames:    INCLUDE "gfx/pokemon/vibrava/frames.asm"
 FlygonFrames:     INCLUDE "gfx/pokemon/flygon/frames.asm"
 SwabluFrames:     INCLUDE "gfx/pokemon/swablu/frames.asm"
+AltariaFrames:    INCLUDE "gfx/pokemon/altaria/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -293,4 +293,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; VIBRAVA
 	mon_cry CRY_BULBASAUR,   128,  129 ; FLYGON
 	mon_cry CRY_BULBASAUR,   128,  129 ; SWABLU
+	mon_cry CRY_BULBASAUR,   128,  129 ; ALTARIA
 	assert_table_length NUM_POKEMON

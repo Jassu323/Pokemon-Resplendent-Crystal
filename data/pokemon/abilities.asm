@@ -295,4 +295,5 @@ SpeciesAbilities::
 	mon_ability LEVITATE ; 11d VIBRAVA
 	mon_ability LEVITATE ; 11e FLYGON
 	mon_ability NO_ABILITY ; 11f SWABLU
+	mon_ability NO_ABILITY ; 120 ALTARIA
 	assert_table_length NUM_POKEMON + 1
