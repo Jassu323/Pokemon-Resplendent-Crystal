@@ -273,4 +273,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; RALTS
 	mon_cry CRY_BULBASAUR,   128,  129 ; KIRLIA
 	mon_cry CRY_BULBASAUR,   128,  129 ; GARDEVOIR
+	mon_cry CRY_BULBASAUR,   128,  129 ; GALLADE
 	assert_table_length NUM_POKEMON

@@ -269,4 +269,5 @@ NewPokedexOrder:
 	dw RALTS
 	dw KIRLIA
 	dw GARDEVOIR
+	dw GALLADE
 	assert_table_length NUM_POKEMON

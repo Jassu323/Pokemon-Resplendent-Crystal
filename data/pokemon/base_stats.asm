@@ -294,4 +294,5 @@ INCLUDE "data/pokemon/base_stats/pelipper.asm"
 INCLUDE "data/pokemon/base_stats/ralts.asm"
 INCLUDE "data/pokemon/base_stats/kirlia.asm"
 INCLUDE "data/pokemon/base_stats/gardevoir.asm"
+INCLUDE "data/pokemon/base_stats/gallade.asm"
 .IndirectEnd::

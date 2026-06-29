@@ -287,6 +287,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const RALTS      ; 109, NatDex 280
 	const KIRLIA     ; 10a, NatDex 281
 	const GARDEVOIR  ; 10b, NatDex 282
+	const GALLADE    ; 10c, NatDex 475
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

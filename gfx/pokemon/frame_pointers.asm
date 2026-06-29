@@ -267,4 +267,5 @@ FramesPointers:
 	dba RaltsFrames
 	dba KirliaFrames
 	dba GardevoirFrames
+	dba GalladeFrames
 	assert_table_length NUM_POKEMON

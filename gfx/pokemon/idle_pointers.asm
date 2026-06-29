@@ -267,4 +267,5 @@ AnimationIdlePointers:
 	dw RaltsAnimationIdle
 	dw KirliaAnimationIdle
 	dw GardevoirAnimationIdle
+	dw GalladeAnimationIdle
 	assert_table_length NUM_POKEMON

@@ -17,6 +17,7 @@ EvosAttacksPointers3::
 	dw RaltsEvosAttacks
 	dw KirliaEvosAttacks
 	dw GardevoirEvosAttacks
+	dw GalladeEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -95,6 +96,11 @@ KirliaEvosAttacks:
 	db 0 ; no more level-up moves
 
 GardevoirEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+GalladeEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

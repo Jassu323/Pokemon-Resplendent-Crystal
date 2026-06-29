@@ -17,6 +17,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; RALTS
 	dw NoEggMoves3 ; KIRLIA
 	dw NoEggMoves3 ; GARDEVOIR
+	dw NoEggMoves3 ; GALLADE
 .IndirectEnd::
 
 NoEggMoves3:

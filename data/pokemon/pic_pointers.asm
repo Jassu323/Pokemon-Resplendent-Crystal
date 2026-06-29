@@ -550,4 +550,6 @@ PokemonPicPointers::
 	dba KirliaBackpic
 	dba GardevoirFrontpic
 	dba GardevoirBackpic
+	dba GalladeFrontpic
+	dba GalladeBackpic
 	assert_table_length NUM_POKEMON + 1

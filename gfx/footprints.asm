@@ -268,5 +268,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; pelipper placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; ralts placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; kirlia placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; gardevoir placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; gallade placeholder
 
 	assert_table_length NUM_POKEMON

@@ -69,6 +69,7 @@ AlphabeticalPokedexOrder:
 	dw FORRETRESS
 	dw FURRET
 	dw GARDEVOIR
+	dw GALLADE
 	dw GASTLY
 	dw GENGAR
 	dw GEODUDE

@@ -275,4 +275,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 109 RALTS
 	mon_ability NO_ABILITY ; 10a KIRLIA
 	mon_ability NO_ABILITY ; 10b GARDEVOIR
+	mon_ability NO_ABILITY ; 10c GALLADE
 	assert_table_length NUM_POKEMON + 1
