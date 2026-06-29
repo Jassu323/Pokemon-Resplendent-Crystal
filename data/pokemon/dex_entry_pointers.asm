@@ -269,4 +269,5 @@ PokedexDataPointerTable:
 	dba KirliaPokedexEntry
 	dba GardevoirPokedexEntry
 	dba GalladePokedexEntry
+	dba ShroomishPokedexEntry
 	assert_table_length NUM_POKEMON

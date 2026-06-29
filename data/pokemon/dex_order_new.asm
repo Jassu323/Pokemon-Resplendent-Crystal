@@ -270,4 +270,5 @@ NewPokedexOrder:
 	dw KIRLIA
 	dw GARDEVOIR
 	dw GALLADE
+	dw SHROOMISH
 	assert_table_length NUM_POKEMON

@@ -268,4 +268,5 @@ AnimationPointers:
 	dw KirliaAnimation
 	dw GardevoirAnimation
 	dw GalladeAnimation
+	dw ShroomishAnimation
 	assert_table_length NUM_POKEMON

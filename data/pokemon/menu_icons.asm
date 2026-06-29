@@ -275,6 +275,7 @@ MonMenuIcons:
 	mon_menu_icon KirliaIcon,         GREEN,  BLUE   ; KIRLIA
 	mon_menu_icon GardevoirIcon,      GREEN,  BLUE   ; GARDEVOIR
 	mon_menu_icon GalladeIcon,        GREEN,  BLUE   ; GALLADE
+	mon_menu_icon ShroomishIcon,      GREEN,  RED    ; SHROOMISH
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
