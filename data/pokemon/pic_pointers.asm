@@ -562,4 +562,6 @@ PokemonPicPointers::
 	dba HariyamaBackpic
 	dba MawileFrontpic
 	dba MawileBackpic
+	dba AronFrontpic
+	dba AronBackpic
 	assert_table_length NUM_POKEMON + 1

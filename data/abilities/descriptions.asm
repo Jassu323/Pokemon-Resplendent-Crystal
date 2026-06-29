@@ -22,6 +22,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; OVERGROW
 	dw AbilityPlaceholderDescription ; BLAZE
 	dw AbilityPlaceholderDescription ; TORRENT
+	dw AbilityPlaceholderDescription ; IRONCLAD
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

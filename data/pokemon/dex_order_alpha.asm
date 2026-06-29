@@ -10,6 +10,7 @@ AlphabeticalPokedexOrder:
 	dw ARBOK
 	dw ARCANINE
 	dw ARIADOS
+	dw ARON
 	dw ARTICUNO
 	dw AZUMARILL
 	dw BAYLEEF

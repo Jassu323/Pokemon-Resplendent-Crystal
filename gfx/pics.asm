@@ -826,3 +826,5 @@ SECTION "Pics 21", ROMX
 
 MawileFrontpic:     INCBIN "gfx/pokemon/mawile/front.animated.2bpp.lz"
 MawileBackpic:      INCBIN "gfx/pokemon/mawile/back.2bpp.lz"
+AronFrontpic:       INCBIN "gfx/pokemon/aron/front.animated.2bpp.lz"
+AronBackpic:        INCBIN "gfx/pokemon/aron/back.2bpp.lz"

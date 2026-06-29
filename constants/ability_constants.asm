@@ -21,4 +21,5 @@
 	const OVERGROW
 	const BLAZE
 	const TORRENT
+	const IRONCLAD
 DEF NUM_ABILITIES EQU const_value - 1

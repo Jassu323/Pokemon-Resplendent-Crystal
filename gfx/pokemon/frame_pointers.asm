@@ -273,4 +273,5 @@ FramesPointers:
 	dba MakuhitaFrames
 	dba HariyamaFrames
 	dba MawileFrames
+	dba AronFrames
 	assert_table_length NUM_POKEMON

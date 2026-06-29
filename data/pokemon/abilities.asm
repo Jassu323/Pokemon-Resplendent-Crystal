@@ -281,4 +281,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 10f MAKUHITA
 	mon_ability NO_ABILITY ; 110 HARIYAMA
 	mon_ability NO_ABILITY ; 111 MAWILE
+	mon_ability IRONCLAD ; 112 ARON
 	assert_table_length NUM_POKEMON + 1

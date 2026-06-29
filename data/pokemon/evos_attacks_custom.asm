@@ -23,6 +23,7 @@ EvosAttacksPointers3::
 	dw MakuhitaEvosAttacks
 	dw HariyamaEvosAttacks
 	dw MawileEvosAttacks
+	dw AronEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -131,6 +132,11 @@ HariyamaEvosAttacks:
 	db 0 ; no more level-up moves
 
 MawileEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+AronEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

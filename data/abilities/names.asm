@@ -21,4 +21,5 @@ AbilityNames::
 	li "Overgrow"
 	li "Blaze"
 	li "Torrent"
+	li "Ironclad"
 	assert_list_length NUM_ABILITIES + 1

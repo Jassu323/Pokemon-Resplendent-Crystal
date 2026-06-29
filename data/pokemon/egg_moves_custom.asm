@@ -23,6 +23,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; MAKUHITA
 	dw NoEggMoves3 ; HARIYAMA
 	dw NoEggMoves3 ; MAWILE
+	dw NoEggMoves3 ; ARON
 .IndirectEnd::
 
 NoEggMoves3:
