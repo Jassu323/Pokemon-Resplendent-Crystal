@@ -282,4 +282,5 @@ FramesPointers:
 	dba SharpedoFrames
 	dba NumelFrames
 	dba CameruptFrames
+	dba TorkoalFrames
 	assert_table_length NUM_POKEMON

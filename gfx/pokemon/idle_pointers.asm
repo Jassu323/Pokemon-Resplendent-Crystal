@@ -282,4 +282,5 @@ AnimationIdlePointers:
 	dw SharpedoAnimationIdle
 	dw NumelAnimationIdle
 	dw CameruptAnimationIdle
+	dw TorkoalAnimationIdle
 	assert_table_length NUM_POKEMON

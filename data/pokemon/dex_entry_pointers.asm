@@ -283,4 +283,5 @@ PokedexDataPointerTable:
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry
 	dba CameruptPokedexEntry
+	dba TorkoalPokedexEntry
 	assert_table_length NUM_POKEMON

@@ -283,4 +283,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SHARPEDO
 	dw NO_MOVE ; NUMEL
 	dw NO_MOVE ; CAMERUPT
+	dw NO_MOVE ; TORKOAL
 	assert_table_length NUM_POKEMON

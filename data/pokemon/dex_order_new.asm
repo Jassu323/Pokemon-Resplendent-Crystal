@@ -284,4 +284,5 @@ NewPokedexOrder:
 	dw SHARPEDO
 	dw NUMEL
 	dw CAMERUPT
+	dw TORKOAL
 	assert_table_length NUM_POKEMON

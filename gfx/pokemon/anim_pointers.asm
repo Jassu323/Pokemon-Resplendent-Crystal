@@ -282,4 +282,5 @@ AnimationPointers:
 	dw SharpedoAnimation
 	dw NumelAnimation
 	dw CameruptAnimation
+	dw TorkoalAnimation
 	assert_table_length NUM_POKEMON
