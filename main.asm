@@ -63,6 +63,7 @@ NumelIcon::         INCBIN "gfx/icons/numel.2bpp"
 CameruptIcon::      INCBIN "gfx/icons/camerupt.2bpp"
 TorkoalIcon::       INCBIN "gfx/icons/torkoal.2bpp"
 TrapinchIcon::      INCBIN "gfx/icons/trapinch.2bpp"
+VibravaIcon::       INCBIN "gfx/icons/vibrava.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -491,11 +492,15 @@ SECTION "Pic Animations 3", ROMX
 
 INCLUDE "gfx/pokemon/johto_frames.asm"
 INCLUDE "gfx/pokemon/unown_frame_pointers.asm"
-INCLUDE "gfx/pokemon/unown_frames.asm"
 INCLUDE "gfx/pokemon/bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/bitmasks.asm"
 INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/unown_bitmasks.asm"
+
+
+SECTION "Pic Animations 4", ROMX
+
+INCLUDE "gfx/pokemon/unown_frames.asm"
 
 
 SECTION "bank38", ROMX

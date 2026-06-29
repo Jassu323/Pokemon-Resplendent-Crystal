@@ -22,4 +22,5 @@ AbilityNames::
 	li "Blaze"
 	li "Torrent"
 	li "Ironclad"
+	li "Levitate"
 	assert_list_length NUM_ABILITIES + 1

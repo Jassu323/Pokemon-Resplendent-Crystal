@@ -22,4 +22,5 @@
 	const BLAZE
 	const TORRENT
 	const IRONCLAD
+	const LEVITATE
 DEF NUM_ABILITIES EQU const_value - 1

@@ -34,6 +34,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_CAMERUPT
 	const SAMPLED_CRY_TORKOAL
 	const SAMPLED_CRY_TRAPINCH
+	const SAMPLED_CRY_VIBRAVA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -175,6 +176,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_TORKOAL
 	elif sampled_cry_mon == TRAPINCH
 		db SAMPLED_CRY_TRAPINCH
+	elif sampled_cry_mon == VIBRAVA
+		db SAMPLED_CRY_VIBRAVA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -217,6 +220,7 @@ SampledCryPointers:
 	dba CameruptSampledCry
 	dba TorkoalSampledCry
 	dba TrapinchSampledCry
+	dba VibravaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -467,3 +471,10 @@ TrapinchSampledCryData:
 	INCBIN "audio/sampled_cries/trapinch.mm2"
 TrapinchSampledCryEnd:
 	assert (TrapinchSampledCryEnd - TrapinchSampledCryData) % 9 == 0
+
+VibravaSampledCry::
+	dw (VibravaSampledCryEnd - VibravaSampledCryData) / 9
+VibravaSampledCryData:
+	INCBIN "audio/sampled_cries/vibrava.mm2"
+VibravaSampledCryEnd:
+	assert (VibravaSampledCryEnd - VibravaSampledCryData) % 9 == 0

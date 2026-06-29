@@ -286,4 +286,5 @@ NewPokedexOrder:
 	dw CAMERUPT
 	dw TORKOAL
 	dw TRAPINCH
+	dw VIBRAVA
 	assert_table_length NUM_POKEMON

@@ -23,6 +23,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; BLAZE
 	dw AbilityPlaceholderDescription ; TORRENT
 	dw AbilityPlaceholderDescription ; IRONCLAD
+	dw AbilityPlaceholderDescription ; LEVITATE
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

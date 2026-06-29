@@ -291,6 +291,7 @@ MonMenuIcons:
 	mon_menu_icon CameruptIcon,       RED,    GRAY   ; CAMERUPT
 	mon_menu_icon TorkoalIcon,        RED,    BROWN  ; TORKOAL
 	mon_menu_icon TrapinchIcon,       RED,    GREEN  ; TRAPINCH
+	mon_menu_icon VibravaIcon,        GREEN,  RED    ; VIBRAVA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

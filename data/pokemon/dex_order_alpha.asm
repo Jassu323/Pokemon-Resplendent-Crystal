@@ -271,6 +271,7 @@ AlphabeticalPokedexOrder:
 	dw VENONAT
 	dw VENUSAUR
 	dw VICTREEBEL
+	dw VIBRAVA
 	dw VILEPLUME
 	dw VOLTORB
 	dw VULPIX

@@ -285,5 +285,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; numel placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; camerupt placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; torkoal placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; trapinch placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; vibrava placeholder
 
 	assert_table_length NUM_POKEMON

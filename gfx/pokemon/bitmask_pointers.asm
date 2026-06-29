@@ -284,4 +284,5 @@ BitmasksPointers:
 	dw CameruptBitmasks
 	dw TorkoalBitmasks
 	dw TrapinchBitmasks
+	dw VibravaBitmasks
 	assert_table_length NUM_POKEMON

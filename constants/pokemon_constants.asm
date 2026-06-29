@@ -304,6 +304,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const CAMERUPT   ; 11a, NatDex 323
 	const TORKOAL    ; 11b, NatDex 324
 	const TRAPINCH   ; 11c, NatDex 328
+	const VIBRAVA    ; 11d, NatDex 329
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3
