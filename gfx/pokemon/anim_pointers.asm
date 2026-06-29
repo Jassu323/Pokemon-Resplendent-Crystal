@@ -285,4 +285,5 @@ AnimationPointers:
 	dw TorkoalAnimation
 	dw TrapinchAnimation
 	dw VibravaAnimation
+	dw FlygonAnimation
 	assert_table_length NUM_POKEMON

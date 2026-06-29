@@ -381,6 +381,9 @@ ROMX $83
 	; Reserved for pic animation overflow.
 	"Pic Animations 4"
 ROMX $84
+	; MBC30 high ROM bank.
+	; Reserved for sampled cry payload overflow.
+	"Sampled Cry Payloads 6"
 ROMX $85
 ROMX $86
 ROMX $87

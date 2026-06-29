@@ -285,4 +285,5 @@ AnimationIdlePointers:
 	dw TorkoalAnimationIdle
 	dw TrapinchAnimationIdle
 	dw VibravaAnimationIdle
+	dw FlygonAnimationIdle
 	assert_table_length NUM_POKEMON

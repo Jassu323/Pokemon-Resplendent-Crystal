@@ -292,6 +292,7 @@ MonMenuIcons:
 	mon_menu_icon TorkoalIcon,        RED,    BROWN  ; TORKOAL
 	mon_menu_icon TrapinchIcon,       RED,    GREEN  ; TRAPINCH
 	mon_menu_icon VibravaIcon,        GREEN,  RED    ; VIBRAVA
+	mon_menu_icon FlygonIcon,         GREEN,  TEAL   ; FLYGON
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

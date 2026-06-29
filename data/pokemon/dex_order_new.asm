@@ -287,4 +287,5 @@ NewPokedexOrder:
 	dw TORKOAL
 	dw TRAPINCH
 	dw VIBRAVA
+	dw FLYGON
 	assert_table_length NUM_POKEMON
