@@ -291,4 +291,5 @@ FirstEvoStages::
 	dw SWABLU
 	dw ZANGOOSE
 	dw SEVIPER
+	dw LUNATONE
 	assert_table_length NUM_POKEMON

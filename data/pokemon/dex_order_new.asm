@@ -292,4 +292,5 @@ NewPokedexOrder:
 	dw ALTARIA
 	dw ZANGOOSE
 	dw SEVIPER
+	dw LUNATONE
 	assert_table_length NUM_POKEMON

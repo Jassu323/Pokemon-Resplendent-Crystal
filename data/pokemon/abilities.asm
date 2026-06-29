@@ -298,4 +298,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 120 ALTARIA
 	mon_ability NO_ABILITY ; 121 ZANGOOSE
 	mon_ability NO_ABILITY ; 122 SEVIPER
+	mon_ability NO_ABILITY ; 123 LUNATONE
 	assert_table_length NUM_POKEMON + 1

@@ -40,6 +40,7 @@ EvosAttacksPointers3::
 	dw AltariaEvosAttacks
 	dw ZangooseEvosAttacks
 	dw SeviperEvosAttacks
+	dw LunatoneEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -233,6 +234,11 @@ ZangooseEvosAttacks:
 	db 0 ; no more level-up moves
 
 SeviperEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+LunatoneEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

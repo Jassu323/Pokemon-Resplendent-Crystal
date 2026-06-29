@@ -291,5 +291,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; swablu placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; altaria placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; zangoose placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; seviper placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; lunatone placeholder
 
 	assert_table_length NUM_POKEMON

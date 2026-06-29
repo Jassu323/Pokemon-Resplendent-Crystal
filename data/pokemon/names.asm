@@ -296,4 +296,5 @@ PokemonNames::
 	dname "Altaria"
 	dname "Zangoose"
 	dname "Seviper"
+	dname "Lunatone"
 	assert_table_length NUM_POKEMON
