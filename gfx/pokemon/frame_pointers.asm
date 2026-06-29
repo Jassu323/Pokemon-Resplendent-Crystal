@@ -281,4 +281,5 @@ FramesPointers:
 	dba CarvanhaFrames
 	dba SharpedoFrames
 	dba NumelFrames
+	dba CameruptFrames
 	assert_table_length NUM_POKEMON

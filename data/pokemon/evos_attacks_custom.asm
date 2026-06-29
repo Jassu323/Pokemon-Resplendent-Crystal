@@ -31,6 +31,7 @@ EvosAttacksPointers3::
 	dw CarvanhaEvosAttacks
 	dw SharpedoEvosAttacks
 	dw NumelEvosAttacks
+	dw CameruptEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -179,6 +180,11 @@ SharpedoEvosAttacks:
 	db 0 ; no more level-up moves
 
 NumelEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+CameruptEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

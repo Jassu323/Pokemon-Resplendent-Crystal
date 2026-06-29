@@ -31,6 +31,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; CARVANHA
 	dw NoEggMoves3 ; SHARPEDO
 	dw NoEggMoves3 ; NUMEL
+	dw NoEggMoves3 ; CAMERUPT
 .IndirectEnd::
 
 NoEggMoves3:

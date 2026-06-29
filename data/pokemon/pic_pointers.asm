@@ -578,4 +578,6 @@ PokemonPicPointers::
 	dba SharpedoBackpic
 	dba NumelFrontpic
 	dba NumelBackpic
+	dba CameruptFrontpic
+	dba CameruptBackpic
 	assert_table_length NUM_POKEMON + 1

@@ -60,6 +60,7 @@ MedichamIcon::      INCBIN "gfx/icons/medicham.2bpp"
 CarvanhaIcon::      INCBIN "gfx/icons/carvanha.2bpp"
 SharpedoIcon::      INCBIN "gfx/icons/sharpedo.2bpp"
 NumelIcon::         INCBIN "gfx/icons/numel.2bpp"
+CameruptIcon::      INCBIN "gfx/icons/camerupt.2bpp"
 
 
 SECTION "bank3", ROMX

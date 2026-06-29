@@ -289,4 +289,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 117 CARVANHA
 	mon_ability NO_ABILITY ; 118 SHARPEDO
 	mon_ability NO_ABILITY ; 119 NUMEL
+	mon_ability NO_ABILITY ; 11a CAMERUPT
 	assert_table_length NUM_POKEMON + 1

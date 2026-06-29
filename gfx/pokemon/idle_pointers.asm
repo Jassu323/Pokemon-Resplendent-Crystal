@@ -281,4 +281,5 @@ AnimationIdlePointers:
 	dw CarvanhaAnimationIdle
 	dw SharpedoAnimationIdle
 	dw NumelAnimationIdle
+	dw CameruptAnimationIdle
 	assert_table_length NUM_POKEMON

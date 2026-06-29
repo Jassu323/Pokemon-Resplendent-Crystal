@@ -282,4 +282,5 @@ FirstEvoStages::
 	dw CARVANHA
 	dw CARVANHA
 	dw NUMEL
+	dw NUMEL
 	assert_table_length NUM_POKEMON

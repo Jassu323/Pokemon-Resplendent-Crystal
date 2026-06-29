@@ -282,4 +282,5 @@ PokedexDataPointerTable:
 	dba CarvanhaPokedexEntry
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry
+	dba CameruptPokedexEntry
 	assert_table_length NUM_POKEMON

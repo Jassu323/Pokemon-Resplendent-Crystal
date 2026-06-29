@@ -288,6 +288,7 @@ MonMenuIcons:
 	mon_menu_icon CarvanhaIcon,       RED,    TEAL   ; CARVANHA
 	mon_menu_icon SharpedoIcon,       BLUE,   PURPLE ; SHARPEDO
 	mon_menu_icon NumelIcon,          GREEN,  BLUE   ; NUMEL
+	mon_menu_icon CameruptIcon,       RED,    GRAY   ; CAMERUPT
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

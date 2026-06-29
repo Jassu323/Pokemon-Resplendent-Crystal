@@ -31,6 +31,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_CARVANHA
 	const SAMPLED_CRY_SHARPEDO
 	const SAMPLED_CRY_NUMEL
+	const SAMPLED_CRY_CAMERUPT
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -166,6 +167,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SHARPEDO
 	elif sampled_cry_mon == NUMEL
 		db SAMPLED_CRY_NUMEL
+	elif sampled_cry_mon == CAMERUPT
+		db SAMPLED_CRY_CAMERUPT
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -205,6 +208,7 @@ SampledCryPointers:
 	dba CarvanhaSampledCry
 	dba SharpedoSampledCry
 	dba NumelSampledCry
+	dba CameruptSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -434,3 +438,10 @@ NumelSampledCryData:
 	INCBIN "audio/sampled_cries/numel.mm2"
 NumelSampledCryEnd:
 	assert (NumelSampledCryEnd - NumelSampledCryData) % 9 == 0
+
+CameruptSampledCry::
+	dw (CameruptSampledCryEnd - CameruptSampledCryData) / 9
+CameruptSampledCryData:
+	INCBIN "audio/sampled_cries/camerupt.mm2"
+CameruptSampledCryEnd:
+	assert (CameruptSampledCryEnd - CameruptSampledCryData) % 9 == 0

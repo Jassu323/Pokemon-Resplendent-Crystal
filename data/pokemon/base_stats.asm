@@ -308,4 +308,5 @@ INCLUDE "data/pokemon/base_stats/medicham.asm"
 INCLUDE "data/pokemon/base_stats/carvanha.asm"
 INCLUDE "data/pokemon/base_stats/sharpedo.asm"
 INCLUDE "data/pokemon/base_stats/numel.asm"
+INCLUDE "data/pokemon/base_stats/camerupt.asm"
 .IndirectEnd::

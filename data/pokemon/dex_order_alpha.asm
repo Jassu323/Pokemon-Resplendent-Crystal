@@ -24,6 +24,7 @@ AlphabeticalPokedexOrder:
 	dw BRELOOM
 	dw BULBASAUR
 	dw BUTTERFREE
+	dw CAMERUPT
 	dw CATERPIE
 	dw CARVANHA
 	dw CELEBI
