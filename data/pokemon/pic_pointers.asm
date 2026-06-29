@@ -582,4 +582,6 @@ PokemonPicPointers::
 	dba CameruptBackpic
 	dba TorkoalFrontpic
 	dba TorkoalBackpic
+	dba TrapinchFrontpic
+	dba TrapinchBackpic
 	assert_table_length NUM_POKEMON + 1

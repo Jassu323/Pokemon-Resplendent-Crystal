@@ -289,4 +289,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; NUMEL
 	mon_cry CRY_BULBASAUR,   128,  129 ; CAMERUPT
 	mon_cry CRY_BULBASAUR,   128,  129 ; TORKOAL
+	mon_cry CRY_BULBASAUR,   128,  129 ; TRAPINCH
 	assert_table_length NUM_POKEMON

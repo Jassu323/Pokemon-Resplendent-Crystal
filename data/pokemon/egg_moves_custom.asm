@@ -33,6 +33,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; NUMEL
 	dw NoEggMoves3 ; CAMERUPT
 	dw NoEggMoves3 ; TORKOAL
+	dw NoEggMoves3 ; TRAPINCH
 .IndirectEnd::
 
 NoEggMoves3:

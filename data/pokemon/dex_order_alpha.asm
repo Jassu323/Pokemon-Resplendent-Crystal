@@ -258,6 +258,7 @@ AlphabeticalPokedexOrder:
 	dw TORCHIC
 	dw TORKOAL
 	dw TOTODILE
+	dw TRAPINCH
 	dw TREECKO
 	dw TYPHLOSION
 	dw TYRANITAR

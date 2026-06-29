@@ -284,4 +284,5 @@ FirstEvoStages::
 	dw NUMEL
 	dw NUMEL
 	dw TORKOAL
+	dw TRAPINCH
 	assert_table_length NUM_POKEMON

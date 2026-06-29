@@ -291,4 +291,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 119 NUMEL
 	mon_ability NO_ABILITY ; 11a CAMERUPT
 	mon_ability NO_ABILITY ; 11b TORKOAL
+	mon_ability NO_ABILITY ; 11c TRAPINCH
 	assert_table_length NUM_POKEMON + 1

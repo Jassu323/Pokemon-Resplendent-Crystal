@@ -62,6 +62,7 @@ SharpedoIcon::      INCBIN "gfx/icons/sharpedo.2bpp"
 NumelIcon::         INCBIN "gfx/icons/numel.2bpp"
 CameruptIcon::      INCBIN "gfx/icons/camerupt.2bpp"
 TorkoalIcon::       INCBIN "gfx/icons/torkoal.2bpp"
+TrapinchIcon::      INCBIN "gfx/icons/trapinch.2bpp"
 
 
 SECTION "bank3", ROMX

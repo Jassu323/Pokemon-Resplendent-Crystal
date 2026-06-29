@@ -285,4 +285,5 @@ NewPokedexOrder:
 	dw NUMEL
 	dw CAMERUPT
 	dw TORKOAL
+	dw TRAPINCH
 	assert_table_length NUM_POKEMON

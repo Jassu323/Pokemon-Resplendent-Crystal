@@ -310,4 +310,5 @@ INCLUDE "data/pokemon/base_stats/sharpedo.asm"
 INCLUDE "data/pokemon/base_stats/numel.asm"
 INCLUDE "data/pokemon/base_stats/camerupt.asm"
 INCLUDE "data/pokemon/base_stats/torkoal.asm"
+INCLUDE "data/pokemon/base_stats/trapinch.asm"
 .IndirectEnd::

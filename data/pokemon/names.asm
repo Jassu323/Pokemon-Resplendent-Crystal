@@ -289,4 +289,5 @@ PokemonNames::
 	dname "Numel"
 	dname "Camerupt"
 	dname "Torkoal"
+	dname "Trapinch"
 	assert_table_length NUM_POKEMON
