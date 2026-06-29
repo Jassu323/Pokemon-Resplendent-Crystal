@@ -281,4 +281,5 @@ FirstEvoStages::
 	dw MEDITITE
 	dw CARVANHA
 	dw CARVANHA
+	dw NUMEL
 	assert_table_length NUM_POKEMON

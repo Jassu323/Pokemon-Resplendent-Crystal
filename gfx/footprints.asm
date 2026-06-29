@@ -281,5 +281,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; meditite placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; medicham placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; carvanha placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; sharpedo placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; numel placeholder
 
 	assert_table_length NUM_POKEMON

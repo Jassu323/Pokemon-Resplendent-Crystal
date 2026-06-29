@@ -282,4 +282,5 @@ NewPokedexOrder:
 	dw MEDICHAM
 	dw CARVANHA
 	dw SHARPEDO
+	dw NUMEL
 	assert_table_length NUM_POKEMON

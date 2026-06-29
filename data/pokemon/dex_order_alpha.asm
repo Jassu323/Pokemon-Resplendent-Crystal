@@ -159,6 +159,7 @@ AlphabeticalPokedexOrder:
 	dw MUDKIP
 	dw MUK
 	dw MURKROW
+	dw NUMEL
 	dw NATU
 	dw NIDOKING
 	dw NIDOQUEEN

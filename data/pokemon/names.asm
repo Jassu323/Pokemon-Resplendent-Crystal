@@ -286,4 +286,5 @@ PokemonNames::
 	dname "Medicham"
 	dname "Carvanha"
 	dname "Sharpedo"
+	dname "Numel"
 	assert_table_length NUM_POKEMON
