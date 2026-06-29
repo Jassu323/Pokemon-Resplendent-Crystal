@@ -275,4 +275,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; GARDEVOIR
 	mon_cry CRY_BULBASAUR,   128,  129 ; GALLADE
 	mon_cry CRY_BULBASAUR,   128,  129 ; SHROOMISH
+	mon_cry CRY_BULBASAUR,   128,  129 ; BRELOOM
 	assert_table_length NUM_POKEMON

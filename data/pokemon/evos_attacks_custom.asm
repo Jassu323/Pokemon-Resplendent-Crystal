@@ -19,6 +19,7 @@ EvosAttacksPointers3::
 	dw GardevoirEvosAttacks
 	dw GalladeEvosAttacks
 	dw ShroomishEvosAttacks
+	dw BreloomEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -107,6 +108,11 @@ GalladeEvosAttacks:
 	db 0 ; no more level-up moves
 
 ShroomishEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+BreloomEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

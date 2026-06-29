@@ -275,4 +275,5 @@ PokemonNames::
 	dname "Gardevoir"
 	dname "Gallade"
 	dname "Shroomish"
+	dname "Breloom"
 	assert_table_length NUM_POKEMON

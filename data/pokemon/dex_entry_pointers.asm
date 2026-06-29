@@ -270,4 +270,5 @@ PokedexDataPointerTable:
 	dba GardevoirPokedexEntry
 	dba GalladePokedexEntry
 	dba ShroomishPokedexEntry
+	dba BreloomPokedexEntry
 	assert_table_length NUM_POKEMON

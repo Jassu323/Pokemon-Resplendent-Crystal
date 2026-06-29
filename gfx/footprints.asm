@@ -270,5 +270,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; kirlia placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; gardevoir placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; gallade placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; shroomish placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; breloom placeholder
 
 	assert_table_length NUM_POKEMON

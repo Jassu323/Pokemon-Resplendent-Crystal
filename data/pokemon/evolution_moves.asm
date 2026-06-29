@@ -270,4 +270,5 @@ EvolutionMoves::
 	dw NO_MOVE ; GARDEVOIR
 	dw NO_MOVE ; GALLADE
 	dw NO_MOVE ; SHROOMISH
+	dw NO_MOVE ; BRELOOM
 	assert_table_length NUM_POKEMON

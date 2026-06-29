@@ -269,4 +269,5 @@ FramesPointers:
 	dba GardevoirFrames
 	dba GalladeFrames
 	dba ShroomishFrames
+	dba BreloomFrames
 	assert_table_length NUM_POKEMON

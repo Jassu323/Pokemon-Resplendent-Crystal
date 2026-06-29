@@ -269,4 +269,5 @@ BitmasksPointers:
 	dw GardevoirBitmasks
 	dw GalladeBitmasks
 	dw ShroomishBitmasks
+	dw BreloomBitmasks
 	assert_table_length NUM_POKEMON

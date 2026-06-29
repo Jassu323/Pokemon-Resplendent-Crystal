@@ -554,4 +554,6 @@ PokemonPicPointers::
 	dba GalladeBackpic
 	dba ShroomishFrontpic
 	dba ShroomishBackpic
+	dba BreloomFrontpic
+	dba BreloomBackpic
 	assert_table_length NUM_POKEMON + 1

@@ -296,4 +296,5 @@ INCLUDE "data/pokemon/base_stats/kirlia.asm"
 INCLUDE "data/pokemon/base_stats/gardevoir.asm"
 INCLUDE "data/pokemon/base_stats/gallade.asm"
 INCLUDE "data/pokemon/base_stats/shroomish.asm"
+INCLUDE "data/pokemon/base_stats/breloom.asm"
 .IndirectEnd::

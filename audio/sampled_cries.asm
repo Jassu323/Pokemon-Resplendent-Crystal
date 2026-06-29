@@ -19,6 +19,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GARDEVOIR
 	const SAMPLED_CRY_GALLADE
 	const SAMPLED_CRY_SHROOMISH
+	const SAMPLED_CRY_BRELOOM
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -130,6 +131,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_GALLADE
 	elif sampled_cry_mon == SHROOMISH
 		db SAMPLED_CRY_SHROOMISH
+	elif sampled_cry_mon == BRELOOM
+		db SAMPLED_CRY_BRELOOM
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -157,6 +160,7 @@ SampledCryPointers:
 	dba GardevoirSampledCry
 	dba GalladeSampledCry
 	dba ShroomishSampledCry
+	dba BreloomSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -296,3 +300,13 @@ ShroomishSampledCryData:
 	INCBIN "audio/sampled_cries/shroomish.mm2"
 ShroomishSampledCryEnd:
 	assert (ShroomishSampledCryEnd - ShroomishSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 4", ROMX
+
+BreloomSampledCry::
+	dw (BreloomSampledCryEnd - BreloomSampledCryData) / 9
+BreloomSampledCryData:
+	INCBIN "audio/sampled_cries/breloom.mm2"
+BreloomSampledCryEnd:
+	assert (BreloomSampledCryEnd - BreloomSampledCryData) % 9 == 0

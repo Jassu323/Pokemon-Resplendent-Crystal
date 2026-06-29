@@ -271,4 +271,5 @@ NewPokedexOrder:
 	dw GARDEVOIR
 	dw GALLADE
 	dw SHROOMISH
+	dw BRELOOM
 	assert_table_length NUM_POKEMON

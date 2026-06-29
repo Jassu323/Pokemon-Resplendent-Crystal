@@ -276,6 +276,7 @@ MonMenuIcons:
 	mon_menu_icon GardevoirIcon,      GREEN,  BLUE   ; GARDEVOIR
 	mon_menu_icon GalladeIcon,        GREEN,  BLUE   ; GALLADE
 	mon_menu_icon ShroomishIcon,      GREEN,  RED    ; SHROOMISH
+	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
