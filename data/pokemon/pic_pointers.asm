@@ -558,4 +558,6 @@ PokemonPicPointers::
 	dba BreloomBackpic
 	dba MakuhitaFrontpic
 	dba MakuhitaBackpic
+	dba HariyamaFrontpic
+	dba HariyamaBackpic
 	assert_table_length NUM_POKEMON + 1

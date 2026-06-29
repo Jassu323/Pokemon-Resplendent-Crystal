@@ -272,4 +272,5 @@ PokedexDataPointerTable:
 	dba ShroomishPokedexEntry
 	dba BreloomPokedexEntry
 	dba MakuhitaPokedexEntry
+	dba HariyamaPokedexEntry
 	assert_table_length NUM_POKEMON

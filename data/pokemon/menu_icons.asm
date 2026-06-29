@@ -278,6 +278,7 @@ MonMenuIcons:
 	mon_menu_icon ShroomishIcon,      GREEN,  RED    ; SHROOMISH
 	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
 	mon_menu_icon MakuhitaIcon,       GRAY,   RED    ; MAKUHITA
+	mon_menu_icon HariyamaIcon,       BROWN,  PURPLE ; HARIYAMA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

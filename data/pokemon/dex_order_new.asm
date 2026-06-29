@@ -273,4 +273,5 @@ NewPokedexOrder:
 	dw SHROOMISH
 	dw BRELOOM
 	dw MAKUHITA
+	dw HARIYAMA
 	assert_table_length NUM_POKEMON

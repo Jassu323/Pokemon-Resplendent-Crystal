@@ -291,6 +291,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SHROOMISH  ; 10d, NatDex 285
 	const BRELOOM    ; 10e, NatDex 286
 	const MAKUHITA   ; 10f, NatDex 296
+	const HARIYAMA   ; 110, NatDex 297
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

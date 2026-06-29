@@ -277,4 +277,5 @@ PokemonNames::
 	dname "Shroomish"
 	dname "Breloom"
 	dname "Makuhita"
+	dname "Hariyama"
 	assert_table_length NUM_POKEMON

@@ -21,6 +21,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SHROOMISH
 	dw NoEggMoves3 ; BRELOOM
 	dw NoEggMoves3 ; MAKUHITA
+	dw NoEggMoves3 ; HARIYAMA
 .IndirectEnd::
 
 NoEggMoves3:

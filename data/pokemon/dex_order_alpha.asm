@@ -88,6 +88,7 @@ AlphabeticalPokedexOrder:
 	dw GROWLITHE
 	dw GYARADOS
 	dw HAUNTER
+	dw HARIYAMA
 	dw HERACROSS
 	dw HITMONCHAN
 	dw HITMONLEE
