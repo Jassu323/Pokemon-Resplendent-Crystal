@@ -219,6 +219,7 @@ AlphabeticalPokedexOrder:
 	dw SEEL
 	dw SENTRET
 	dw SHELLDER
+	dw SHARPEDO
 	dw SHROOMISH
 	dw SHUCKLE
 	dw SKARMORY

@@ -574,4 +574,6 @@ PokemonPicPointers::
 	dba MedichamBackpic
 	dba CarvanhaFrontpic
 	dba CarvanhaBackpic
+	dba SharpedoFrontpic
+	dba SharpedoBackpic
 	assert_table_length NUM_POKEMON + 1

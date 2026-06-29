@@ -29,6 +29,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; MEDITITE
 	dw NoEggMoves3 ; MEDICHAM
 	dw NoEggMoves3 ; CARVANHA
+	dw NoEggMoves3 ; SHARPEDO
 .IndirectEnd::
 
 NoEggMoves3:

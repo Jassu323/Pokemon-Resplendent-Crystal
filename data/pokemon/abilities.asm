@@ -287,4 +287,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 115 MEDITITE
 	mon_ability NO_ABILITY ; 116 MEDICHAM
 	mon_ability NO_ABILITY ; 117 CARVANHA
+	mon_ability NO_ABILITY ; 118 SHARPEDO
 	assert_table_length NUM_POKEMON + 1

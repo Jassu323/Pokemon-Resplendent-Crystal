@@ -286,6 +286,7 @@ MonMenuIcons:
 	mon_menu_icon MedititeIcon,       BLUE,   RED    ; MEDITITE
 	mon_menu_icon MedichamIcon,       PINK,   BLUE   ; MEDICHAM
 	mon_menu_icon CarvanhaIcon,       RED,    TEAL   ; CARVANHA
+	mon_menu_icon SharpedoIcon,       BLUE,   PURPLE ; SHARPEDO
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -280,4 +280,5 @@ PokedexDataPointerTable:
 	dba MedititePokedexEntry
 	dba MedichamPokedexEntry
 	dba CarvanhaPokedexEntry
+	dba SharpedoPokedexEntry
 	assert_table_length NUM_POKEMON

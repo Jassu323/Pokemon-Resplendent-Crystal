@@ -279,4 +279,5 @@ BitmasksPointers:
 	dw MedititeBitmasks
 	dw MedichamBitmasks
 	dw CarvanhaBitmasks
+	dw SharpedoBitmasks
 	assert_table_length NUM_POKEMON

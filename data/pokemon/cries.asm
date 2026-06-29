@@ -285,4 +285,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MEDITITE
 	mon_cry CRY_BULBASAUR,   128,  129 ; MEDICHAM
 	mon_cry CRY_BULBASAUR,   128,  129 ; CARVANHA
+	mon_cry CRY_BULBASAUR,   128,  129 ; SHARPEDO
 	assert_table_length NUM_POKEMON
