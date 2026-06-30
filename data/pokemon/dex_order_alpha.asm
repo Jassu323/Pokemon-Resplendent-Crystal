@@ -239,6 +239,7 @@ AlphabeticalPokedexOrder:
 	dw SNEASEL
 	dw SNORLAX
 	dw SNUBBULL
+	dw SOLROCK
 	dw SPEAROW
 	dw SPINARAK
 	dw SQUIRTLE

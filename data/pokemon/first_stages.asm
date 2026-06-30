@@ -292,4 +292,5 @@ FirstEvoStages::
 	dw ZANGOOSE
 	dw SEVIPER
 	dw LUNATONE
+	dw SOLROCK
 	assert_table_length NUM_POKEMON

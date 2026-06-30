@@ -41,6 +41,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; ZANGOOSE
 	dw NoEggMoves3 ; SEVIPER
 	dw NoEggMoves3 ; LUNATONE
+	dw NoEggMoves3 ; SOLROCK
 .IndirectEnd::
 
 NoEggMoves3:

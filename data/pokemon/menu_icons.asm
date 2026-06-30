@@ -298,6 +298,7 @@ MonMenuIcons:
 	mon_menu_icon ZangooseIcon,       RED,    BLUE   ; ZANGOOSE
 	mon_menu_icon SeviperIcon,        PURPLE, GREEN  ; SEVIPER
 	mon_menu_icon LunatoneIcon,       RED,    BLUE   ; LUNATONE
+	mon_menu_icon SolrockIcon,        BROWN,  RED    ; SOLROCK
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

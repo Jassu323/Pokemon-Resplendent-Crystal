@@ -292,4 +292,5 @@ PokedexDataPointerTable:
 	dba ZangoosePokedexEntry
 	dba SeviperPokedexEntry
 	dba LunatonePokedexEntry
+	dba SolrockPokedexEntry
 	assert_table_length NUM_POKEMON

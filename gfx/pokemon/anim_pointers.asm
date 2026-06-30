@@ -291,4 +291,5 @@ AnimationPointers:
 	dw ZangooseAnimation
 	dw SeviperAnimation
 	dw LunatoneAnimation
+	dw SolrockAnimation
 	assert_table_length NUM_POKEMON

@@ -70,6 +70,7 @@ AltariaIcon::       INCBIN "gfx/icons/altaria.2bpp"
 ZangooseIcon::      INCBIN "gfx/icons/zangoose.2bpp"
 SeviperIcon::       INCBIN "gfx/icons/seviper.2bpp"
 LunatoneIcon::      INCBIN "gfx/icons/lunatone.2bpp"
+SolrockIcon::       INCBIN "gfx/icons/solrock.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -514,6 +515,7 @@ AltariaFrames:    INCLUDE "gfx/pokemon/altaria/frames.asm"
 ZangooseFrames:   INCLUDE "gfx/pokemon/zangoose/frames.asm"
 SeviperFrames:    INCLUDE "gfx/pokemon/seviper/frames.asm"
 LunatoneFrames:   INCLUDE "gfx/pokemon/lunatone/frames.asm"
+SolrockFrames:    INCLUDE "gfx/pokemon/solrock/frames.asm"
 
 
 SECTION "bank38", ROMX

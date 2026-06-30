@@ -292,4 +292,5 @@ EvolutionMoves::
 	dw NO_MOVE ; ZANGOOSE
 	dw NO_MOVE ; SEVIPER
 	dw NO_MOVE ; LUNATONE
+	dw NO_MOVE ; SOLROCK
 	assert_table_length NUM_POKEMON
