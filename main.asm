@@ -81,6 +81,7 @@ AnorithIcon::       INCBIN "gfx/icons/anorith.2bpp"
 ArmaldoIcon::       INCBIN "gfx/icons/armaldo.2bpp"
 FeebasIcon::        INCBIN "gfx/icons/feebas.2bpp"
 MiloticIcon::       INCBIN "gfx/icons/milotic.2bpp"
+ShuppetIcon::       INCBIN "gfx/icons/shuppet.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -536,6 +537,7 @@ AnorithFrames:    INCLUDE "gfx/pokemon/anorith/frames.asm"
 ArmaldoFrames:    INCLUDE "gfx/pokemon/armaldo/frames.asm"
 FeebasFrames:     INCLUDE "gfx/pokemon/feebas/frames.asm"
 MiloticFrames:    INCLUDE "gfx/pokemon/milotic/frames.asm"
+ShuppetFrames:    INCLUDE "gfx/pokemon/shuppet/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -52,6 +52,7 @@ EvosAttacksPointers3::
 	dw ArmaldoEvosAttacks
 	dw FeebasEvosAttacks
 	dw MiloticEvosAttacks
+	dw ShuppetEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -305,6 +306,11 @@ FeebasEvosAttacks:
 	db 0 ; no more level-up moves
 
 MiloticEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+ShuppetEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

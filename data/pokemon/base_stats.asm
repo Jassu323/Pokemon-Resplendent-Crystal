@@ -329,4 +329,5 @@ INCLUDE "data/pokemon/base_stats/anorith.asm"
 INCLUDE "data/pokemon/base_stats/armaldo.asm"
 INCLUDE "data/pokemon/base_stats/feebas.asm"
 INCLUDE "data/pokemon/base_stats/milotic.asm"
+INCLUDE "data/pokemon/base_stats/shuppet.asm"
 .IndirectEnd::

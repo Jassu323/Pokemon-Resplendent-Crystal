@@ -892,3 +892,5 @@ SECTION "Pics 23", ROMX
 
 MiloticFrontpic:    INCBIN "gfx/pokemon/milotic/front.animated.2bpp.lz"
 MiloticBackpic:     INCBIN "gfx/pokemon/milotic/back.2bpp.lz"
+ShuppetFrontpic:    INCBIN "gfx/pokemon/shuppet/front.animated.2bpp.lz"
+ShuppetBackpic:     INCBIN "gfx/pokemon/shuppet/back.2bpp.lz"

@@ -308,4 +308,5 @@ PokemonNames::
 	dname "Armaldo"
 	dname "Feebas"
 	dname "Milotic"
+	dname "Shuppet"
 	assert_table_length NUM_POKEMON

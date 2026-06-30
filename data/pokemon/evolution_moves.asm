@@ -303,4 +303,5 @@ EvolutionMoves::
 	dw NO_MOVE ; ARMALDO
 	dw NO_MOVE ; FEEBAS
 	dw NO_MOVE ; MILOTIC
+	dw NO_MOVE ; SHUPPET
 	assert_table_length NUM_POKEMON

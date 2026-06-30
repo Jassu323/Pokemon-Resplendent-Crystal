@@ -75,6 +75,12 @@ fellowship-of-the-roms - https://github.com/fellowship-of-the-roms/pokecrystal16
 RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Used as a reference point for sampled cry playback system.  While my system differs substantially, I used theirs as a basis to avoid fully reinventing the wheel
 - Gallade party menu sprite
+- Armaldo sprite
+- Shuppet sprite
+- Banette sprite
+
+JohtoLegends Team & Blue Emerald - https://github.com/aforward9600/JohtoLegends
+- Milotic sprite
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon

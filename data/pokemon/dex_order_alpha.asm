@@ -236,6 +236,7 @@ AlphabeticalPokedexOrder:
 	dw SHELLDER
 	dw SHARPEDO
 	dw SHROOMISH
+	dw SHUPPET
 	dw SHUCKLE
 	dw SKARMORY
 	dw SKIPLOOM

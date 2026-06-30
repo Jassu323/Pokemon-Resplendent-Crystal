@@ -304,4 +304,5 @@ NewPokedexOrder:
 	dw ARMALDO
 	dw FEEBAS
 	dw MILOTIC
+	dw SHUPPET
 	assert_table_length NUM_POKEMON

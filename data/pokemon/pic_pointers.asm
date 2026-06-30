@@ -620,4 +620,6 @@ PokemonPicPointers::
 	dba FeebasBackpic
 	dba MiloticFrontpic
 	dba MiloticBackpic
+	dba ShuppetFrontpic
+	dba ShuppetBackpic
 	assert_table_length NUM_POKEMON + 1
