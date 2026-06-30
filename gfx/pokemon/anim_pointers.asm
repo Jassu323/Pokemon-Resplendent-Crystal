@@ -299,4 +299,5 @@ AnimationPointers:
 	dw LileepAnimation
 	dw CradilyAnimation
 	dw AnorithAnimation
+	dw ArmaldoAnimation
 	assert_table_length NUM_POKEMON

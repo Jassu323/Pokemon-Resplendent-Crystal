@@ -300,4 +300,5 @@ FirstEvoStages::
 	dw LILEEP
 	dw LILEEP
 	dw ANORITH
+	dw ANORITH
 	assert_table_length NUM_POKEMON

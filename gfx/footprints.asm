@@ -300,5 +300,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; crawdaunt placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lileep placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; cradily placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; anorith placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; armaldo placeholder
 
 	assert_table_length NUM_POKEMON

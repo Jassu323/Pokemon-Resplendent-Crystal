@@ -306,6 +306,7 @@ MonMenuIcons:
 	mon_menu_icon LileepIcon,         PURPLE, GREEN  ; LILEEP
 	mon_menu_icon CradilyIcon,        GREEN,  PINK   ; CRADILY
 	mon_menu_icon AnorithIcon,        GREEN,  BROWN  ; ANORITH
+	mon_menu_icon ArmaldoIcon,        BLUE,   BROWN  ; ARMALDO
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

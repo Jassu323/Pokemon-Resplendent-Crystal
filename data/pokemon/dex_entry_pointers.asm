@@ -300,4 +300,5 @@ PokedexDataPointerTable:
 	dba LileepPokedexEntry
 	dba CradilyPokedexEntry
 	dba AnorithPokedexEntry
+	dba ArmaldoPokedexEntry
 	assert_table_length NUM_POKEMON

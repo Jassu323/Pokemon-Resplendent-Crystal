@@ -49,6 +49,7 @@ EvosAttacksPointers3::
 	dw LileepEvosAttacks
 	dw CradilyEvosAttacks
 	dw AnorithEvosAttacks
+	dw ArmaldoEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -287,6 +288,11 @@ CradilyEvosAttacks:
 	db 0 ; no more level-up moves
 
 AnorithEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+ArmaldoEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

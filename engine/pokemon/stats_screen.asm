@@ -11,9 +11,13 @@ DEF STATS_SCREEN_STATUS_ICON_LOADED EQU 3
 	const STATS_SCREEN_ANIMATE_MON    ; 5
 	const STATS_SCREEN_ANIMATE_EGG    ; 6
 
-DEF TYPE_ICON_SLOT_1_TILE EQU $68 ; uses $68-$6f
-DEF TYPE_ICON_SLOT_2_TILE EQU $70 ; uses $70-$77
-DEF STATUS_ICON_STATS_TILE EQU $78 ; uses $78-$7a
+DEF TYPE_ICON_SLOT_1_TILE EQU $80 ; uses $80-$87 in VRAM bank 1
+DEF TYPE_ICON_SLOT_2_TILE EQU $88 ; uses $88-$8f in VRAM bank 1
+DEF STATUS_ICON_STATS_TILE EQU $90 ; uses $90-$92 in VRAM bank 1
+
+DEF TYPE_ICON_SLOT_1_DEST_TILE EQU TYPE_ICON_SLOT_1_TILE - $80
+DEF TYPE_ICON_SLOT_2_DEST_TILE EQU TYPE_ICON_SLOT_2_TILE - $80
+DEF STATUS_ICON_STATS_DEST_TILE EQU STATUS_ICON_STATS_TILE - $80
 
 DEF TYPE_ICON_SLOT_1_ATTR EQU $0e ; VRAM bank 1, BG palette 6
 DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
@@ -1057,7 +1061,7 @@ StatsScreen_LoadCurrentStatusIconGFX:
 	set STATS_SCREEN_STATUS_ICON_LOADED, [hl]
 	pop af
 
-	ld hl, vTiles2 tile STATUS_ICON_STATS_TILE
+	ld hl, vTiles1 tile STATUS_ICON_STATS_DEST_TILE
 	jp Icon_LoadStatsStatusIconGFX
 
 .loaded
@@ -1153,7 +1157,7 @@ StatsScreen_ClearStatusIconAttrs:
 
 StatsScreen_LoadCurrentMonTypeIconGFX:
 	ld a, [wStatsScreenType1]
-	ld hl, vTiles2 tile TYPE_ICON_SLOT_1_TILE
+	ld hl, vTiles1 tile TYPE_ICON_SLOT_1_DEST_TILE
 	call StatsScreen_LoadTypeIconGFX
 
 	ld a, [wStatsScreenType1]
@@ -1162,7 +1166,7 @@ StatsScreen_LoadCurrentMonTypeIconGFX:
 	cp b
 	ret z
 
-	ld hl, vTiles2 tile TYPE_ICON_SLOT_2_TILE
+	ld hl, vTiles1 tile TYPE_ICON_SLOT_2_DEST_TILE
 	call StatsScreen_LoadTypeIconGFX
 	ret
 

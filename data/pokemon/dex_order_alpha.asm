@@ -13,6 +13,7 @@ AlphabeticalPokedexOrder:
 	dw ARBOK
 	dw ARCANINE
 	dw ARIADOS
+	dw ARMALDO
 	dw ARON
 	dw ARTICUNO
 	dw AZUMARILL
