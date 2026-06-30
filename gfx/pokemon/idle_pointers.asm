@@ -300,4 +300,5 @@ AnimationIdlePointers:
 	dw CradilyAnimationIdle
 	dw AnorithAnimationIdle
 	dw ArmaldoAnimationIdle
+	dw FeebasAnimationIdle
 	assert_table_length NUM_POKEMON

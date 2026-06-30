@@ -50,6 +50,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; CRADILY
 	dw NoEggMoves3 ; ANORITH
 	dw NoEggMoves3 ; ARMALDO
+	dw NoEggMoves3 ; FEEBAS
 .IndirectEnd::
 
 NoEggMoves3:

@@ -306,4 +306,5 @@ PokemonNames::
 	dname "Cradily"
 	dname "Anorith"
 	dname "Armaldo"
+	dname "Feebas"
 	assert_table_length NUM_POKEMON

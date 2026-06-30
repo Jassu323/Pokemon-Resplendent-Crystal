@@ -79,6 +79,7 @@ LileepIcon::        INCBIN "gfx/icons/lileep.2bpp"
 CradilyIcon::       INCBIN "gfx/icons/cradily.2bpp"
 AnorithIcon::       INCBIN "gfx/icons/anorith.2bpp"
 ArmaldoIcon::       INCBIN "gfx/icons/armaldo.2bpp"
+FeebasIcon::        INCBIN "gfx/icons/feebas.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -532,6 +533,7 @@ LileepFrames:     INCLUDE "gfx/pokemon/lileep/frames.asm"
 CradilyFrames:    INCLUDE "gfx/pokemon/cradily/frames.asm"
 AnorithFrames:    INCLUDE "gfx/pokemon/anorith/frames.asm"
 ArmaldoFrames:    INCLUDE "gfx/pokemon/armaldo/frames.asm"
+FeebasFrames:     INCLUDE "gfx/pokemon/feebas/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -308,4 +308,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 12a CRADILY
 	mon_ability NO_ABILITY ; 12b ANORITH
 	mon_ability NO_ABILITY ; 12c ARMALDO
+	mon_ability NO_ABILITY ; 12d FEEBAS
 	assert_table_length NUM_POKEMON + 1

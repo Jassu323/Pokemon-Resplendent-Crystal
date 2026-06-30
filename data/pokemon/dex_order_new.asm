@@ -302,4 +302,5 @@ NewPokedexOrder:
 	dw CRADILY
 	dw ANORITH
 	dw ARMALDO
+	dw FEEBAS
 	assert_table_length NUM_POKEMON

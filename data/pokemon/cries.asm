@@ -306,4 +306,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; CRADILY
 	mon_cry CRY_BULBASAUR,   128,  129 ; ANORITH
 	mon_cry CRY_BULBASAUR,   128,  129 ; ARMALDO
+	mon_cry CRY_BULBASAUR,   128,  129 ; FEEBAS
 	assert_table_length NUM_POKEMON

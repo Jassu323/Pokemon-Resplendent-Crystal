@@ -320,6 +320,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const CRADILY    ; 12a, NatDex 346
 	const ANORITH    ; 12b, NatDex 347
 	const ARMALDO    ; 12c, NatDex 348
+	const FEEBAS     ; 12d, NatDex 349
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

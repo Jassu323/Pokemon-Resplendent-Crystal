@@ -300,4 +300,5 @@ BitmasksPointers:
 	dw CradilyBitmasks
 	dw AnorithBitmasks
 	dw ArmaldoBitmasks
+	dw FeebasBitmasks
 	assert_table_length NUM_POKEMON
