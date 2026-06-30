@@ -296,4 +296,5 @@ FramesPointers:
 	dba WhiscashFrames
 	dba CorphishFrames
 	dba CrawdauntFrames
+	dba LileepFrames
 	assert_table_length NUM_POKEMON

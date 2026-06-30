@@ -297,4 +297,5 @@ EvolutionMoves::
 	dw NO_MOVE ; WHISCASH
 	dw NO_MOVE ; CORPHISH
 	dw NO_MOVE ; CRAWDAUNT
+	dw NO_MOVE ; LILEEP
 	assert_table_length NUM_POKEMON

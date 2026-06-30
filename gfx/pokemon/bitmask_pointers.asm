@@ -296,4 +296,5 @@ BitmasksPointers:
 	dw WhiscashBitmasks
 	dw CorphishBitmasks
 	dw CrawdauntBitmasks
+	dw LileepBitmasks
 	assert_table_length NUM_POKEMON

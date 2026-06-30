@@ -298,4 +298,5 @@ NewPokedexOrder:
 	dw WHISCASH
 	dw CORPHISH
 	dw CRAWDAUNT
+	dw LILEEP
 	assert_table_length NUM_POKEMON

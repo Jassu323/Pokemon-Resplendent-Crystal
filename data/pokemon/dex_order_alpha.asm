@@ -132,6 +132,7 @@ AlphabeticalPokedexOrder:
 	dw LEDIAN
 	dw LEDYBA
 	dw LICKITUNG
+	dw LILEEP
 	dw LUGIA
 	dw LUNATONE
 	dw MACHAMP

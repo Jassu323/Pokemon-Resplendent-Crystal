@@ -46,6 +46,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; WHISCASH
 	dw NoEggMoves3 ; CORPHISH
 	dw NoEggMoves3 ; CRAWDAUNT
+	dw NoEggMoves3 ; LILEEP
 .IndirectEnd::
 
 NoEggMoves3:

@@ -75,6 +75,7 @@ BarboachIcon::      INCBIN "gfx/icons/barboach.2bpp"
 WhiscashIcon::      INCBIN "gfx/icons/whiscash.2bpp"
 CorphishIcon::      INCBIN "gfx/icons/corphish.2bpp"
 CrawdauntIcon::     INCBIN "gfx/icons/crawdaunt.2bpp"
+LileepIcon::        INCBIN "gfx/icons/lileep.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -524,6 +525,7 @@ BarboachFrames:   INCLUDE "gfx/pokemon/barboach/frames.asm"
 WhiscashFrames:   INCLUDE "gfx/pokemon/whiscash/frames.asm"
 CorphishFrames:   INCLUDE "gfx/pokemon/corphish/frames.asm"
 CrawdauntFrames:  INCLUDE "gfx/pokemon/crawdaunt/frames.asm"
+LileepFrames:     INCLUDE "gfx/pokemon/lileep/frames.asm"
 
 
 SECTION "bank38", ROMX
