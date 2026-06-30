@@ -307,4 +307,5 @@ PokedexDataPointerTable:
 	dba BanettePokedexEntry
 	dba DuskullPokedexEntry
 	dba DusclopsPokedexEntry
+	dba DusknoirPokedexEntry
 	assert_table_length NUM_POKEMON

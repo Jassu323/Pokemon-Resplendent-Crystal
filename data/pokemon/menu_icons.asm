@@ -313,6 +313,7 @@ MonMenuIcons:
 	mon_menu_icon BanetteIcon,        GRAY,   TEAL   ; BANETTE
 	mon_menu_icon DuskullIcon,        GRAY,   RED    ; DUSKULL
 	mon_menu_icon DusclopsIcon,       GRAY,   RED    ; DUSCLOPS
+	mon_menu_icon DusknoirIcon,       GRAY,   BLUE   ; DUSKNOIR
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

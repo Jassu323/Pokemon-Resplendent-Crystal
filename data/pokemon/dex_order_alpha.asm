@@ -66,6 +66,7 @@ AlphabeticalPokedexOrder:
 	dw DUGTRIO
 	dw DUNSPARCE
 	dw DUSCLOPS
+	dw DUSKNOIR
 	dw DUSKULL
 	dw EEVEE
 	dw EKANS

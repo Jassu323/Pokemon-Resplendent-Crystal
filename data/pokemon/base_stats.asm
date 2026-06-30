@@ -333,4 +333,5 @@ INCLUDE "data/pokemon/base_stats/shuppet.asm"
 INCLUDE "data/pokemon/base_stats/banette.asm"
 INCLUDE "data/pokemon/base_stats/duskull.asm"
 INCLUDE "data/pokemon/base_stats/dusclops.asm"
+INCLUDE "data/pokemon/base_stats/dusknoir.asm"
 .IndirectEnd::

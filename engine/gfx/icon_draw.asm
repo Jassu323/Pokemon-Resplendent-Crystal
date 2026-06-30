@@ -87,7 +87,6 @@ TypeIconGFXPointers:
 	ASSERT .end - TypeIconGFXPointers == TYPES_END * 3
 
 Icon_LoadTypeIconGFX::
-StatsScreen_LoadTypeIconGFX::
 ; Load one type icon into VRAM bank 1.
 ; input:
 ;   a  = type constant
@@ -115,6 +114,43 @@ StatsScreen_LoadTypeIconGFX::
 	ldh a, [rVBK]
 	push af
 	ld a, $1
+	ldh [rVBK], a
+
+	ld c, ICON_4X2_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+StatsScreen_LoadTypeIconGFX::
+; Load one stats-page type icon into VRAM bank 0.
+; input:
+;   a  = type constant
+;   hl = destination tile address, e.g. vTiles1 tile TYPE_ICON_SLOT_1_DEST_TILE
+	push hl
+
+	; de = a * 3, because TypeIconGFXPointers entries are dba: bank + word
+	ld e, a
+	ld d, 0
+	ld hl, TypeIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	; b = bank, de = pointer
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	xor a
 	ldh [rVBK], a
 
 	ld c, ICON_4X2_TILES
@@ -181,7 +217,7 @@ Icon_LoadMoveCategoryIconGFX::
 	ret
 
 Icon_LoadStatsStatusIconGFX::
-; Load one stats-page status icon into VRAM bank 1.
+; Load one stats-page status icon into VRAM bank 0.
 ; input:
 ;   a  = STATUS_ICON_* constant
 ;   hl = destination tile address
@@ -205,7 +241,7 @@ Icon_LoadStatsStatusIconGFX::
 
 	ldh a, [rVBK]
 	push af
-	ld a, $1
+	xor a
 	ldh [rVBK], a
 
 	ld c, STATUS_ICON_TILES

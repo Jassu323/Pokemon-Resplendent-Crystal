@@ -11,17 +11,17 @@ DEF STATS_SCREEN_STATUS_ICON_LOADED EQU 3
 	const STATS_SCREEN_ANIMATE_MON    ; 5
 	const STATS_SCREEN_ANIMATE_EGG    ; 6
 
-DEF TYPE_ICON_SLOT_1_TILE EQU $80 ; uses $80-$87 in VRAM bank 1
-DEF TYPE_ICON_SLOT_2_TILE EQU $88 ; uses $88-$8f in VRAM bank 1
-DEF STATUS_ICON_STATS_TILE EQU $90 ; uses $90-$92 in VRAM bank 1
+DEF STATUS_ICON_STATS_TILE EQU $ba ; uses $ba-$bc in VRAM bank 0
+DEF TYPE_ICON_SLOT_1_TILE EQU $c6 ; uses $c6-$cd in VRAM bank 0
+DEF TYPE_ICON_SLOT_2_TILE EQU $d7 ; uses $d7-$de in VRAM bank 0
 
 DEF TYPE_ICON_SLOT_1_DEST_TILE EQU TYPE_ICON_SLOT_1_TILE - $80
 DEF TYPE_ICON_SLOT_2_DEST_TILE EQU TYPE_ICON_SLOT_2_TILE - $80
 DEF STATUS_ICON_STATS_DEST_TILE EQU STATUS_ICON_STATS_TILE - $80
 
-DEF TYPE_ICON_SLOT_1_ATTR EQU $0e ; VRAM bank 1, BG palette 6
-DEF TYPE_ICON_SLOT_2_ATTR EQU $0f ; VRAM bank 1, BG palette 7
-DEF STATUS_ICON_STATS_ATTR EQU $0d ; VRAM bank 1, BG palette 5
+DEF TYPE_ICON_SLOT_1_ATTR EQU $06 ; VRAM bank 0, BG palette 6
+DEF TYPE_ICON_SLOT_2_ATTR EQU $07 ; VRAM bank 0, BG palette 7
+DEF STATUS_ICON_STATS_ATTR EQU $05 ; VRAM bank 0, BG palette 5
 DEF STATS_SCREEN_PINK_BG_COLOR EQU palred 31 + palgreen 19 + palblue 31
 
 BattleStatsScreenInit:
@@ -572,7 +572,7 @@ StatsScreen_LoadGFX:
 
 	call SetDefaultBGPAndOBP
 	call StatsScreen_FinalizeTypeIconArea
-	; Type icons use CGB attrmap bits for VRAM bank 1 and BG palettes 6/7.
+	; Type icons use stats-screen font holes in VRAM bank 0 and BG palettes 6/7.
 	; Transfer both tilemap and attrmap here; tilemap-only backup causes stale
 	; icon attrs/tiles to appear during page transitions and mon animation.
 	call HDMATransferTilemapAndAttrmap_Menu
