@@ -296,4 +296,5 @@ NewPokedexOrder:
 	dw SOLROCK
 	dw BARBOACH
 	dw WHISCASH
+	dw CORPHISH
 	assert_table_length NUM_POKEMON

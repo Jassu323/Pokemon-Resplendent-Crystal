@@ -295,5 +295,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; lunatone placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; solrock placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; barboach placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; whiscash placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; corphish placeholder
 
 	assert_table_length NUM_POKEMON

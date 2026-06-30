@@ -73,6 +73,7 @@ LunatoneIcon::      INCBIN "gfx/icons/lunatone.2bpp"
 SolrockIcon::       INCBIN "gfx/icons/solrock.2bpp"
 BarboachIcon::      INCBIN "gfx/icons/barboach.2bpp"
 WhiscashIcon::      INCBIN "gfx/icons/whiscash.2bpp"
+CorphishIcon::      INCBIN "gfx/icons/corphish.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -520,6 +521,7 @@ LunatoneFrames:   INCLUDE "gfx/pokemon/lunatone/frames.asm"
 SolrockFrames:    INCLUDE "gfx/pokemon/solrock/frames.asm"
 BarboachFrames:   INCLUDE "gfx/pokemon/barboach/frames.asm"
 WhiscashFrames:   INCLUDE "gfx/pokemon/whiscash/frames.asm"
+CorphishFrames:   INCLUDE "gfx/pokemon/corphish/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -314,6 +314,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SOLROCK    ; 124, NatDex 338
 	const BARBOACH   ; 125, NatDex 339
 	const WHISCASH   ; 126, NatDex 340
+	const CORPHISH   ; 127, NatDex 341
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

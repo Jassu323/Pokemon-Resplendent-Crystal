@@ -604,4 +604,6 @@ PokemonPicPointers::
 	dba BarboachBackpic
 	dba WhiscashFrontpic
 	dba WhiscashBackpic
+	dba CorphishFrontpic
+	dba CorphishBackpic
 	assert_table_length NUM_POKEMON + 1

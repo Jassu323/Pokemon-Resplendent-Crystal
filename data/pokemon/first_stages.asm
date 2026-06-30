@@ -295,4 +295,5 @@ FirstEvoStages::
 	dw SOLROCK
 	dw BARBOACH
 	dw BARBOACH
+	dw CORPHISH
 	assert_table_length NUM_POKEMON

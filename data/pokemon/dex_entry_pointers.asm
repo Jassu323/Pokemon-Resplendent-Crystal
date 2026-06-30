@@ -295,4 +295,5 @@ PokedexDataPointerTable:
 	dba SolrockPokedexEntry
 	dba BarboachPokedexEntry
 	dba WhiscashPokedexEntry
+	dba CorphishPokedexEntry
 	assert_table_length NUM_POKEMON

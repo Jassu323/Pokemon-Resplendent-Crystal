@@ -295,4 +295,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SOLROCK
 	dw NO_MOVE ; BARBOACH
 	dw NO_MOVE ; WHISCASH
+	dw NO_MOVE ; CORPHISH
 	assert_table_length NUM_POKEMON
