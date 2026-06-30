@@ -54,6 +54,7 @@ EvosAttacksPointers3::
 	dw MiloticEvosAttacks
 	dw ShuppetEvosAttacks
 	dw BanetteEvosAttacks
+	dw DuskullEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -317,6 +318,11 @@ ShuppetEvosAttacks:
 	db 0 ; no more level-up moves
 
 BanetteEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+DuskullEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

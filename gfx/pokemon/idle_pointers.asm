@@ -304,4 +304,5 @@ AnimationIdlePointers:
 	dw MiloticAnimationIdle
 	dw ShuppetAnimationIdle
 	dw BanetteAnimationIdle
+	dw DuskullAnimationIdle
 	assert_table_length NUM_POKEMON

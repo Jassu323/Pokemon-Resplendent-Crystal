@@ -305,4 +305,5 @@ PokedexDataPointerTable:
 	dba MiloticPokedexEntry
 	dba ShuppetPokedexEntry
 	dba BanettePokedexEntry
+	dba DuskullPokedexEntry
 	assert_table_length NUM_POKEMON

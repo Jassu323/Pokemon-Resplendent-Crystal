@@ -79,8 +79,9 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Shuppet sprite
 - Banette sprite
 
-JohtoLegends Team & Blue Emerald - https://github.com/aforward9600/JohtoLegends
-- Milotic sprite
+JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
+- Milotic sprite (JohtoLegends credits Blue Emerald)
+- Duskull sprite (JohtoLegends credits the Prism Team)
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon
@@ -107,5 +108,38 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Kirlia
 - Gardevoir
 - Gallade
+- Shroomish
+- Breloom
+- Makuhita
+- Hariyama
+- Mawile
+- Aron
+- Lairon
+- Aggron
+- Meditite
+- Medicham
+- Carvanha
+- Sharpedo
+- Numel
+- Camerupt
+- Torkoal
+- Trapinch
+- Vibrava
+- Flygon
+- Swablu
+- Altaria
+- Zangoose
+- Seviper
+- Lunatone
+- Solrock
+- Barboach
+- Whiscash
+- Corphish
+- Crawdaunt
+
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
+- Anorith
+- Lileep
+- Cradily
+- Feebas

@@ -311,6 +311,7 @@ MonMenuIcons:
 	mon_menu_icon MiloticIcon,        RED,    PURPLE ; MILOTIC
 	mon_menu_icon ShuppetIcon,        PURPLE, TEAL   ; SHUPPET
 	mon_menu_icon BanetteIcon,        GRAY,   TEAL   ; BANETTE
+	mon_menu_icon DuskullIcon,        GRAY,   RED    ; DUSKULL
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

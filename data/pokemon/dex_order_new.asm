@@ -306,4 +306,5 @@ NewPokedexOrder:
 	dw MILOTIC
 	dw SHUPPET
 	dw BANETTE
+	dw DUSKULL
 	assert_table_length NUM_POKEMON

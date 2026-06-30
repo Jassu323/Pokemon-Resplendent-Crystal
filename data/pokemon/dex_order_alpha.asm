@@ -65,6 +65,7 @@ AlphabeticalPokedexOrder:
 	dw DROWZEE
 	dw DUGTRIO
 	dw DUNSPARCE
+	dw DUSKULL
 	dw EEVEE
 	dw EKANS
 	dw ELECTABUZZ

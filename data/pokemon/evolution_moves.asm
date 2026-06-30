@@ -305,4 +305,5 @@ EvolutionMoves::
 	dw NO_MOVE ; MILOTIC
 	dw NO_MOVE ; SHUPPET
 	dw NO_MOVE ; BANETTE
+	dw NO_MOVE ; DUSKULL
 	assert_table_length NUM_POKEMON

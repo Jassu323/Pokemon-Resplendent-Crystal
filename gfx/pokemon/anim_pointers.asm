@@ -304,4 +304,5 @@ AnimationPointers:
 	dw MiloticAnimation
 	dw ShuppetAnimation
 	dw BanetteAnimation
+	dw DuskullAnimation
 	assert_table_length NUM_POKEMON

@@ -312,4 +312,5 @@ SpeciesAbilities::
 	mon_ability MARVEL_SCALE ; 12e MILOTIC
 	mon_ability NO_ABILITY ; 12f SHUPPET
 	mon_ability NO_ABILITY ; 130 BANETTE
+	mon_ability NO_ABILITY ; 131 DUSKULL
 	assert_table_length NUM_POKEMON + 1
