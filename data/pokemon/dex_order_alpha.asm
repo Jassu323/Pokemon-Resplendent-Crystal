@@ -43,6 +43,7 @@ AlphabeticalPokedexOrder:
 	dw COMBUSKEN
 	dw CORPHISH
 	dw CORSOLA
+	dw CRADILY
 	dw CRAWDAUNT
 	dw CROBAT
 	dw CROCONAW

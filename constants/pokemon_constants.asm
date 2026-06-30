@@ -317,6 +317,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const CORPHISH   ; 127, NatDex 341
 	const CRAWDAUNT  ; 128, NatDex 342
 	const LILEEP     ; 129, NatDex 345
+	const CRADILY    ; 12a, NatDex 346
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

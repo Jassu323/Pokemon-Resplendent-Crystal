@@ -610,4 +610,6 @@ PokemonPicPointers::
 	dba CrawdauntBackpic
 	dba LileepFrontpic
 	dba LileepBackpic
+	dba CradilyFrontpic
+	dba CradilyBackpic
 	assert_table_length NUM_POKEMON + 1

@@ -305,4 +305,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 127 CORPHISH
 	mon_ability NO_ABILITY ; 128 CRAWDAUNT
 	mon_ability NO_ABILITY ; 129 LILEEP
+	mon_ability NO_ABILITY ; 12a CRADILY
 	assert_table_length NUM_POKEMON + 1

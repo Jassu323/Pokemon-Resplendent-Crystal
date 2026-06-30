@@ -298,4 +298,5 @@ FirstEvoStages::
 	dw CORPHISH
 	dw CORPHISH
 	dw LILEEP
+	dw LILEEP
 	assert_table_length NUM_POKEMON

@@ -304,6 +304,7 @@ MonMenuIcons:
 	mon_menu_icon CorphishIcon,       RED,    PINK   ; CORPHISH
 	mon_menu_icon CrawdauntIcon,      RED,    PINK   ; CRAWDAUNT
 	mon_menu_icon LileepIcon,         PURPLE, GREEN  ; LILEEP
+	mon_menu_icon CradilyIcon,        GREEN,  PINK   ; CRADILY
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

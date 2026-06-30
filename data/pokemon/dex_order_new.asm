@@ -299,4 +299,5 @@ NewPokedexOrder:
 	dw CORPHISH
 	dw CRAWDAUNT
 	dw LILEEP
+	dw CRADILY
 	assert_table_length NUM_POKEMON
