@@ -74,6 +74,7 @@ SolrockIcon::       INCBIN "gfx/icons/solrock.2bpp"
 BarboachIcon::      INCBIN "gfx/icons/barboach.2bpp"
 WhiscashIcon::      INCBIN "gfx/icons/whiscash.2bpp"
 CorphishIcon::      INCBIN "gfx/icons/corphish.2bpp"
+CrawdauntIcon::     INCBIN "gfx/icons/crawdaunt.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -522,6 +523,7 @@ SolrockFrames:    INCLUDE "gfx/pokemon/solrock/frames.asm"
 BarboachFrames:   INCLUDE "gfx/pokemon/barboach/frames.asm"
 WhiscashFrames:   INCLUDE "gfx/pokemon/whiscash/frames.asm"
 CorphishFrames:   INCLUDE "gfx/pokemon/corphish/frames.asm"
+CrawdauntFrames:  INCLUDE "gfx/pokemon/crawdaunt/frames.asm"
 
 
 SECTION "bank38", ROMX

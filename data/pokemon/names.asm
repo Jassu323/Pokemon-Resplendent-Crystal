@@ -301,4 +301,5 @@ PokemonNames::
 	dname "Barboach"
 	dname "Whiscash"
 	dname "Corphish"
+	dname "Crawdaunt"
 	assert_table_length NUM_POKEMON

@@ -302,6 +302,7 @@ MonMenuIcons:
 	mon_menu_icon BarboachIcon,       GRAY,   BROWN  ; BARBOACH
 	mon_menu_icon WhiscashIcon,       BLUE,   GRAY   ; WHISCASH
 	mon_menu_icon CorphishIcon,       RED,    PINK   ; CORPHISH
+	mon_menu_icon CrawdauntIcon,      RED,    PINK   ; CRAWDAUNT
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -41,8 +41,9 @@ AlphabeticalPokedexOrder:
 	dw CLEFFA
 	dw CLOYSTER
 	dw COMBUSKEN
-	dw CORSOLA
 	dw CORPHISH
+	dw CORSOLA
+	dw CRAWDAUNT
 	dw CROBAT
 	dw CROCONAW
 	dw CUBONE

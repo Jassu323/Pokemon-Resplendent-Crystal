@@ -45,6 +45,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BARBOACH
 	const SAMPLED_CRY_WHISCASH
 	const SAMPLED_CRY_CORPHISH
+	const SAMPLED_CRY_CRAWDAUNT
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -208,6 +209,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_WHISCASH
 	elif sampled_cry_mon == CORPHISH
 		db SAMPLED_CRY_CORPHISH
+	elif sampled_cry_mon == CRAWDAUNT
+		db SAMPLED_CRY_CRAWDAUNT
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -261,6 +264,7 @@ SampledCryPointers:
 	dba BarboachSampledCry
 	dba WhiscashSampledCry
 	dba CorphishSampledCry
+	dba CrawdauntSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -594,3 +598,10 @@ CorphishSampledCryData:
 	INCBIN "audio/sampled_cries/corphish.mm2"
 CorphishSampledCryEnd:
 	assert (CorphishSampledCryEnd - CorphishSampledCryData) % 9 == 0
+
+CrawdauntSampledCry::
+	dw (CrawdauntSampledCryEnd - CrawdauntSampledCryData) / 9
+CrawdauntSampledCryData:
+	INCBIN "audio/sampled_cries/crawdaunt.mm2"
+CrawdauntSampledCryEnd:
+	assert (CrawdauntSampledCryEnd - CrawdauntSampledCryData) % 9 == 0

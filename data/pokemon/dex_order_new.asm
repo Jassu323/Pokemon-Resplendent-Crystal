@@ -297,4 +297,5 @@ NewPokedexOrder:
 	dw BARBOACH
 	dw WHISCASH
 	dw CORPHISH
+	dw CRAWDAUNT
 	assert_table_length NUM_POKEMON
