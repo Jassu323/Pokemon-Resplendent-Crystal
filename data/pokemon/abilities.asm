@@ -300,4 +300,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 122 SEVIPER
 	mon_ability NO_ABILITY ; 123 LUNATONE
 	mon_ability NO_ABILITY ; 124 SOLROCK
+	mon_ability NO_ABILITY ; 125 BARBOACH
 	assert_table_length NUM_POKEMON + 1

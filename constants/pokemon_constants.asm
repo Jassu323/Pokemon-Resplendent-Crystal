@@ -312,6 +312,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SEVIPER    ; 122, NatDex 336
 	const LUNATONE   ; 123, NatDex 337
 	const SOLROCK    ; 124, NatDex 338
+	const BARBOACH   ; 125, NatDex 339
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

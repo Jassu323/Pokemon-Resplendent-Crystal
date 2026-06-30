@@ -298,4 +298,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SEVIPER
 	mon_cry CRY_BULBASAUR,   128,  129 ; LUNATONE
 	mon_cry CRY_BULBASAUR,   128,  129 ; SOLROCK
+	mon_cry CRY_BULBASAUR,   128,  129 ; BARBOACH
 	assert_table_length NUM_POKEMON

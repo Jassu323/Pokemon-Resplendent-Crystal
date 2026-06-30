@@ -600,4 +600,6 @@ PokemonPicPointers::
 	dba LunatoneBackpic
 	dba SolrockFrontpic
 	dba SolrockBackpic
+	dba BarboachFrontpic
+	dba BarboachBackpic
 	assert_table_length NUM_POKEMON + 1

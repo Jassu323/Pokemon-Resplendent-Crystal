@@ -292,4 +292,5 @@ AnimationPointers:
 	dw SeviperAnimation
 	dw LunatoneAnimation
 	dw SolrockAnimation
+	dw BarboachAnimation
 	assert_table_length NUM_POKEMON

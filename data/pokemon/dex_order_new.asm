@@ -294,4 +294,5 @@ NewPokedexOrder:
 	dw SEVIPER
 	dw LUNATONE
 	dw SOLROCK
+	dw BARBOACH
 	assert_table_length NUM_POKEMON

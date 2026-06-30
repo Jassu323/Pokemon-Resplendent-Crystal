@@ -15,6 +15,7 @@ AlphabeticalPokedexOrder:
 	dw ARON
 	dw ARTICUNO
 	dw AZUMARILL
+	dw BARBOACH
 	dw BAYLEEF
 	dw BEEDRILL
 	dw BELLOSSOM
