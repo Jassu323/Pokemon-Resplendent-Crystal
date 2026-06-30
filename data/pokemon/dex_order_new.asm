@@ -305,4 +305,5 @@ NewPokedexOrder:
 	dw FEEBAS
 	dw MILOTIC
 	dw SHUPPET
+	dw BANETTE
 	assert_table_length NUM_POKEMON

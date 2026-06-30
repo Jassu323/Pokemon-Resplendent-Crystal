@@ -310,6 +310,7 @@ MonMenuIcons:
 	mon_menu_icon FeebasIcon,         BLUE,   PURPLE ; FEEBAS
 	mon_menu_icon MiloticIcon,        RED,    PURPLE ; MILOTIC
 	mon_menu_icon ShuppetIcon,        PURPLE, TEAL   ; SHUPPET
+	mon_menu_icon BanetteIcon,        GRAY,   TEAL   ; BANETTE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

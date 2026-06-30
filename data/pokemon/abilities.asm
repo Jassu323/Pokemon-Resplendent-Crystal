@@ -310,5 +310,6 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 12c ARMALDO
 	mon_ability NO_ABILITY ; 12d FEEBAS
 	mon_ability MARVEL_SCALE ; 12e MILOTIC
-	mon_ability INSOMNIA ; 12f SHUPPET
+	mon_ability NO_ABILITY ; 12f SHUPPET
+	mon_ability NO_ABILITY ; 130 BANETTE
 	assert_table_length NUM_POKEMON + 1

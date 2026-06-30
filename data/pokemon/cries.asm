@@ -309,4 +309,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; FEEBAS
 	mon_cry CRY_BULBASAUR,   128,  129 ; MILOTIC
 	mon_cry CRY_BULBASAUR,   128,  129 ; SHUPPET
+	mon_cry CRY_BULBASAUR,   128,  129 ; BANETTE
 	assert_table_length NUM_POKEMON

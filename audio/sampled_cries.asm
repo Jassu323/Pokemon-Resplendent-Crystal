@@ -53,6 +53,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_FEEBAS
 	const SAMPLED_CRY_MILOTIC
 	const SAMPLED_CRY_SHUPPET
+	const SAMPLED_CRY_BANETTE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -232,6 +233,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MILOTIC
 	elif sampled_cry_mon == SHUPPET
 		db SAMPLED_CRY_SHUPPET
+	elif sampled_cry_mon == BANETTE
+		db SAMPLED_CRY_BANETTE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -293,6 +296,7 @@ SampledCryPointers:
 	dba FeebasSampledCry
 	dba MiloticSampledCry
 	dba ShuppetSampledCry
+	dba BanetteSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -685,3 +689,10 @@ ShuppetSampledCryData:
 	INCBIN "audio/sampled_cries/shuppet.mm2"
 ShuppetSampledCryEnd:
 	assert (ShuppetSampledCryEnd - ShuppetSampledCryData) % 9 == 0
+
+BanetteSampledCry::
+	dw (BanetteSampledCryEnd - BanetteSampledCryData) / 9
+BanetteSampledCryData:
+	INCBIN "audio/sampled_cries/banette.mm2"
+BanetteSampledCryEnd:
+	assert (BanetteSampledCryEnd - BanetteSampledCryData) % 9 == 0
