@@ -325,6 +325,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SHUPPET    ; 12f, NatDex 353
 	const BANETTE    ; 130, NatDex 354
 	const DUSKULL    ; 131, NatDex 355
+	const DUSCLOPS   ; 132, NatDex 356
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

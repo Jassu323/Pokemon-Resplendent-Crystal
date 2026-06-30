@@ -84,6 +84,7 @@ MiloticIcon::       INCBIN "gfx/icons/milotic.2bpp"
 ShuppetIcon::       INCBIN "gfx/icons/shuppet.2bpp"
 BanetteIcon::       INCBIN "gfx/icons/banette.2bpp"
 DuskullIcon::       INCBIN "gfx/icons/duskull.2bpp"
+DusclopsIcon::      INCBIN "gfx/icons/dusclops.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -542,6 +543,7 @@ MiloticFrames:    INCLUDE "gfx/pokemon/milotic/frames.asm"
 ShuppetFrames:    INCLUDE "gfx/pokemon/shuppet/frames.asm"
 BanetteFrames:    INCLUDE "gfx/pokemon/banette/frames.asm"
 DuskullFrames:    INCLUDE "gfx/pokemon/duskull/frames.asm"
+DusclopsFrames:   INCLUDE "gfx/pokemon/dusclops/frames.asm"
 
 
 SECTION "bank38", ROMX

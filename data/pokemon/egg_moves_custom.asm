@@ -55,6 +55,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SHUPPET
 	dw NoEggMoves3 ; BANETTE
 	dw NoEggMoves3 ; DUSKULL
+	dw NoEggMoves3 ; DUSCLOPS
 .IndirectEnd::
 
 NoEggMoves3:

@@ -626,4 +626,6 @@ PokemonPicPointers::
 	dba BanetteBackpic
 	dba DuskullFrontpic
 	dba DuskullBackpic
+	dba DusclopsFrontpic
+	dba DusclopsBackpic
 	assert_table_length NUM_POKEMON + 1

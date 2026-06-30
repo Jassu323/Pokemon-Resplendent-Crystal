@@ -307,4 +307,5 @@ NewPokedexOrder:
 	dw SHUPPET
 	dw BANETTE
 	dw DUSKULL
+	dw DUSCLOPS
 	assert_table_length NUM_POKEMON

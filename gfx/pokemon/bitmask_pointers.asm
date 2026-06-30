@@ -305,4 +305,5 @@ BitmasksPointers:
 	dw ShuppetBitmasks
 	dw BanetteBitmasks
 	dw DuskullBitmasks
+	dw DusclopsBitmasks
 	assert_table_length NUM_POKEMON

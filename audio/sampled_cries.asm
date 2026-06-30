@@ -55,6 +55,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SHUPPET
 	const SAMPLED_CRY_BANETTE
 	const SAMPLED_CRY_DUSKULL
+	const SAMPLED_CRY_DUSCLOPS
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -238,6 +239,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_BANETTE
 	elif sampled_cry_mon == DUSKULL
 		db SAMPLED_CRY_DUSKULL
+	elif sampled_cry_mon == DUSCLOPS
+		db SAMPLED_CRY_DUSCLOPS
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -301,6 +304,7 @@ SampledCryPointers:
 	dba ShuppetSampledCry
 	dba BanetteSampledCry
 	dba DuskullSampledCry
+	dba DusclopsSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -707,3 +711,10 @@ DuskullSampledCryData:
 	INCBIN "audio/sampled_cries/duskull.mm2"
 DuskullSampledCryEnd:
 	assert (DuskullSampledCryEnd - DuskullSampledCryData) % 9 == 0
+
+DusclopsSampledCry::
+	dw (DusclopsSampledCryEnd - DusclopsSampledCryData) / 9
+DusclopsSampledCryData:
+	INCBIN "audio/sampled_cries/dusclops.mm2"
+DusclopsSampledCryEnd:
+	assert (DusclopsSampledCryEnd - DusclopsSampledCryData) % 9 == 0

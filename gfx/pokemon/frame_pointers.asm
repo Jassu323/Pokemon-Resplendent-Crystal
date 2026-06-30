@@ -305,4 +305,5 @@ FramesPointers:
 	dba ShuppetFrames
 	dba BanetteFrames
 	dba DuskullFrames
+	dba DusclopsFrames
 	assert_table_length NUM_POKEMON

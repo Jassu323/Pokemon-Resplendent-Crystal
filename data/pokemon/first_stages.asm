@@ -306,4 +306,5 @@ FirstEvoStages::
 	dw SHUPPET
 	dw SHUPPET
 	dw DUSKULL
+	dw DUSKULL
 	assert_table_length NUM_POKEMON

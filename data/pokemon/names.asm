@@ -311,4 +311,5 @@ PokemonNames::
 	dname "Shuppet"
 	dname "Banette"
 	dname "Duskull"
+	dname "Dusclops"
 	assert_table_length NUM_POKEMON

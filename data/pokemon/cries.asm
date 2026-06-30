@@ -311,4 +311,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SHUPPET
 	mon_cry CRY_BULBASAUR,   128,  129 ; BANETTE
 	mon_cry CRY_BULBASAUR,   128,  129 ; DUSKULL
+	mon_cry CRY_BULBASAUR,   128,  129 ; DUSCLOPS
 	assert_table_length NUM_POKEMON

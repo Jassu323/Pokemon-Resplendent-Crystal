@@ -313,4 +313,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 12f SHUPPET
 	mon_ability NO_ABILITY ; 130 BANETTE
 	mon_ability NO_ABILITY ; 131 DUSKULL
+	mon_ability NO_ABILITY ; 132 DUSCLOPS
 	assert_table_length NUM_POKEMON + 1
