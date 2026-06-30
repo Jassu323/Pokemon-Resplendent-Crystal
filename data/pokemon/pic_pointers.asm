@@ -612,4 +612,6 @@ PokemonPicPointers::
 	dba LileepBackpic
 	dba CradilyFrontpic
 	dba CradilyBackpic
+	dba AnorithFrontpic
+	dba AnorithBackpic
 	assert_table_length NUM_POKEMON + 1

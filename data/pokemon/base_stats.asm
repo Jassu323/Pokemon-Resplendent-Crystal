@@ -325,4 +325,5 @@ INCLUDE "data/pokemon/base_stats/corphish.asm"
 INCLUDE "data/pokemon/base_stats/crawdaunt.asm"
 INCLUDE "data/pokemon/base_stats/lileep.asm"
 INCLUDE "data/pokemon/base_stats/cradily.asm"
+INCLUDE "data/pokemon/base_stats/anorith.asm"
 .IndirectEnd::

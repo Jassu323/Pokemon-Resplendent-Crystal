@@ -300,4 +300,5 @@ NewPokedexOrder:
 	dw CRAWDAUNT
 	dw LILEEP
 	dw CRADILY
+	dw ANORITH
 	assert_table_length NUM_POKEMON

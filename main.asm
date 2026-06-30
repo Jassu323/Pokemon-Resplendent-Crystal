@@ -77,6 +77,7 @@ CorphishIcon::      INCBIN "gfx/icons/corphish.2bpp"
 CrawdauntIcon::     INCBIN "gfx/icons/crawdaunt.2bpp"
 LileepIcon::        INCBIN "gfx/icons/lileep.2bpp"
 CradilyIcon::       INCBIN "gfx/icons/cradily.2bpp"
+AnorithIcon::       INCBIN "gfx/icons/anorith.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -528,6 +529,7 @@ CorphishFrames:   INCLUDE "gfx/pokemon/corphish/frames.asm"
 CrawdauntFrames:  INCLUDE "gfx/pokemon/crawdaunt/frames.asm"
 LileepFrames:     INCLUDE "gfx/pokemon/lileep/frames.asm"
 CradilyFrames:    INCLUDE "gfx/pokemon/cradily/frames.asm"
+AnorithFrames:    INCLUDE "gfx/pokemon/anorith/frames.asm"
 
 
 SECTION "bank38", ROMX

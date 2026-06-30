@@ -305,6 +305,7 @@ MonMenuIcons:
 	mon_menu_icon CrawdauntIcon,      RED,    PINK   ; CRAWDAUNT
 	mon_menu_icon LileepIcon,         PURPLE, GREEN  ; LILEEP
 	mon_menu_icon CradilyIcon,        GREEN,  PINK   ; CRADILY
+	mon_menu_icon AnorithIcon,        GREEN,  BROWN  ; ANORITH
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

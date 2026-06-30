@@ -48,6 +48,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; CRAWDAUNT
 	dw NoEggMoves3 ; LILEEP
 	dw NoEggMoves3 ; CRADILY
+	dw NoEggMoves3 ; ANORITH
 .IndirectEnd::
 
 NoEggMoves3:

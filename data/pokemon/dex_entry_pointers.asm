@@ -299,4 +299,5 @@ PokedexDataPointerTable:
 	dba CrawdauntPokedexEntry
 	dba LileepPokedexEntry
 	dba CradilyPokedexEntry
+	dba AnorithPokedexEntry
 	assert_table_length NUM_POKEMON

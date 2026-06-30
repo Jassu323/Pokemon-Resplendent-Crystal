@@ -304,4 +304,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; CRAWDAUNT
 	mon_cry CRY_BULBASAUR,   128,  129 ; LILEEP
 	mon_cry CRY_BULBASAUR,   128,  129 ; CRADILY
+	mon_cry CRY_BULBASAUR,   128,  129 ; ANORITH
 	assert_table_length NUM_POKEMON
