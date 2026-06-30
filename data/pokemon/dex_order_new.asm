@@ -295,4 +295,5 @@ NewPokedexOrder:
 	dw LUNATONE
 	dw SOLROCK
 	dw BARBOACH
+	dw WHISCASH
 	assert_table_length NUM_POKEMON

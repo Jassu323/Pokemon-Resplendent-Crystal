@@ -43,6 +43,7 @@ EvosAttacksPointers3::
 	dw LunatoneEvosAttacks
 	dw SolrockEvosAttacks
 	dw BarboachEvosAttacks
+	dw WhiscashEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -251,6 +252,11 @@ SolrockEvosAttacks:
 	db 0 ; no more level-up moves
 
 BarboachEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+WhiscashEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

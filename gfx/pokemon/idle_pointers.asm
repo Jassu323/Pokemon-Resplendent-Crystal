@@ -293,4 +293,5 @@ AnimationIdlePointers:
 	dw LunatoneAnimationIdle
 	dw SolrockAnimationIdle
 	dw BarboachAnimationIdle
+	dw WhiscashAnimationIdle
 	assert_table_length NUM_POKEMON

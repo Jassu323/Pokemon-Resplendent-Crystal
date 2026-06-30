@@ -293,4 +293,5 @@ FramesPointers:
 	dba LunatoneFrames
 	dba SolrockFrames
 	dba BarboachFrames
+	dba WhiscashFrames
 	assert_table_length NUM_POKEMON

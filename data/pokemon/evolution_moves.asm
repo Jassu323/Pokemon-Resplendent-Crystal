@@ -294,4 +294,5 @@ EvolutionMoves::
 	dw NO_MOVE ; LUNATONE
 	dw NO_MOVE ; SOLROCK
 	dw NO_MOVE ; BARBOACH
+	dw NO_MOVE ; WHISCASH
 	assert_table_length NUM_POKEMON

@@ -43,6 +43,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_LUNATONE
 	const SAMPLED_CRY_SOLROCK
 	const SAMPLED_CRY_BARBOACH
+	const SAMPLED_CRY_WHISCASH
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -202,6 +203,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SOLROCK
 	elif sampled_cry_mon == BARBOACH
 		db SAMPLED_CRY_BARBOACH
+	elif sampled_cry_mon == WHISCASH
+		db SAMPLED_CRY_WHISCASH
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -253,6 +256,7 @@ SampledCryPointers:
 	dba LunatoneSampledCry
 	dba SolrockSampledCry
 	dba BarboachSampledCry
+	dba WhiscashSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -569,3 +573,13 @@ BarboachSampledCryData:
 	INCBIN "audio/sampled_cries/barboach.mm2"
 BarboachSampledCryEnd:
 	assert (BarboachSampledCryEnd - BarboachSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 7", ROMX
+
+WhiscashSampledCry::
+	dw (WhiscashSampledCryEnd - WhiscashSampledCryData) / 9
+WhiscashSampledCryData:
+	INCBIN "audio/sampled_cries/whiscash.mm2"
+WhiscashSampledCryEnd:
+	assert (WhiscashSampledCryEnd - WhiscashSampledCryData) % 9 == 0

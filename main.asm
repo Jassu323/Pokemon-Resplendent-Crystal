@@ -72,6 +72,7 @@ SeviperIcon::       INCBIN "gfx/icons/seviper.2bpp"
 LunatoneIcon::      INCBIN "gfx/icons/lunatone.2bpp"
 SolrockIcon::       INCBIN "gfx/icons/solrock.2bpp"
 BarboachIcon::      INCBIN "gfx/icons/barboach.2bpp"
+WhiscashIcon::      INCBIN "gfx/icons/whiscash.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -518,6 +519,7 @@ SeviperFrames:    INCLUDE "gfx/pokemon/seviper/frames.asm"
 LunatoneFrames:   INCLUDE "gfx/pokemon/lunatone/frames.asm"
 SolrockFrames:    INCLUDE "gfx/pokemon/solrock/frames.asm"
 BarboachFrames:   INCLUDE "gfx/pokemon/barboach/frames.asm"
+WhiscashFrames:   INCLUDE "gfx/pokemon/whiscash/frames.asm"
 
 
 SECTION "bank38", ROMX

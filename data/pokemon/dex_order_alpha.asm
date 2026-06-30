@@ -286,6 +286,7 @@ AlphabeticalPokedexOrder:
 	dw WEEDLE
 	dw WEEPINBELL
 	dw WEEZING
+	dw WHISCASH
 	dw WIGGLYTUFF
 	dw WINGULL
 	dw WOBBUFFET

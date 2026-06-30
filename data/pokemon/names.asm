@@ -299,4 +299,5 @@ PokemonNames::
 	dname "Lunatone"
 	dname "Solrock"
 	dname "Barboach"
+	dname "Whiscash"
 	assert_table_length NUM_POKEMON

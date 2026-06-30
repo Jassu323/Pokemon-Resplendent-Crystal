@@ -602,4 +602,6 @@ PokemonPicPointers::
 	dba SolrockBackpic
 	dba BarboachFrontpic
 	dba BarboachBackpic
+	dba WhiscashFrontpic
+	dba WhiscashBackpic
 	assert_table_length NUM_POKEMON + 1

@@ -320,4 +320,5 @@ INCLUDE "data/pokemon/base_stats/seviper.asm"
 INCLUDE "data/pokemon/base_stats/lunatone.asm"
 INCLUDE "data/pokemon/base_stats/solrock.asm"
 INCLUDE "data/pokemon/base_stats/barboach.asm"
+INCLUDE "data/pokemon/base_stats/whiscash.asm"
 .IndirectEnd::

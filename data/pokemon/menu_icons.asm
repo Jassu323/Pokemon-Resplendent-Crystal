@@ -300,6 +300,7 @@ MonMenuIcons:
 	mon_menu_icon LunatoneIcon,       RED,    BLUE   ; LUNATONE
 	mon_menu_icon SolrockIcon,        BROWN,  RED    ; SOLROCK
 	mon_menu_icon BarboachIcon,       GRAY,   BROWN  ; BARBOACH
+	mon_menu_icon WhiscashIcon,       BLUE,   GRAY   ; WHISCASH
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -294,4 +294,5 @@ PokedexDataPointerTable:
 	dba LunatonePokedexEntry
 	dba SolrockPokedexEntry
 	dba BarboachPokedexEntry
+	dba WhiscashPokedexEntry
 	assert_table_length NUM_POKEMON
