@@ -618,4 +618,6 @@ PokemonPicPointers::
 	dba ArmaldoBackpic
 	dba FeebasFrontpic
 	dba FeebasBackpic
+	dba MiloticFrontpic
+	dba MiloticBackpic
 	assert_table_length NUM_POKEMON + 1

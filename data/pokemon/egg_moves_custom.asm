@@ -51,6 +51,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; ANORITH
 	dw NoEggMoves3 ; ARMALDO
 	dw NoEggMoves3 ; FEEBAS
+	dw NoEggMoves3 ; MILOTIC
 .IndirectEnd::
 
 NoEggMoves3:

@@ -80,6 +80,7 @@ CradilyIcon::       INCBIN "gfx/icons/cradily.2bpp"
 AnorithIcon::       INCBIN "gfx/icons/anorith.2bpp"
 ArmaldoIcon::       INCBIN "gfx/icons/armaldo.2bpp"
 FeebasIcon::        INCBIN "gfx/icons/feebas.2bpp"
+MiloticIcon::       INCBIN "gfx/icons/milotic.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -534,6 +535,7 @@ CradilyFrames:    INCLUDE "gfx/pokemon/cradily/frames.asm"
 AnorithFrames:    INCLUDE "gfx/pokemon/anorith/frames.asm"
 ArmaldoFrames:    INCLUDE "gfx/pokemon/armaldo/frames.asm"
 FeebasFrames:     INCLUDE "gfx/pokemon/feebas/frames.asm"
+MiloticFrames:    INCLUDE "gfx/pokemon/milotic/frames.asm"
 
 
 SECTION "bank38", ROMX

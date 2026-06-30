@@ -51,6 +51,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_ANORITH
 	const SAMPLED_CRY_ARMALDO
 	const SAMPLED_CRY_FEEBAS
+	const SAMPLED_CRY_MILOTIC
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -226,6 +227,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_ARMALDO
 	elif sampled_cry_mon == FEEBAS
 		db SAMPLED_CRY_FEEBAS
+	elif sampled_cry_mon == MILOTIC
+		db SAMPLED_CRY_MILOTIC
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -285,6 +288,7 @@ SampledCryPointers:
 	dba AnorithSampledCry
 	dba ArmaldoSampledCry
 	dba FeebasSampledCry
+	dba MiloticSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -663,3 +667,10 @@ FeebasSampledCryData:
 	INCBIN "audio/sampled_cries/feebas.mm2"
 FeebasSampledCryEnd:
 	assert (FeebasSampledCryEnd - FeebasSampledCryData) % 9 == 0
+
+MiloticSampledCry::
+	dw (MiloticSampledCryEnd - MiloticSampledCryData) / 9
+MiloticSampledCryData:
+	INCBIN "audio/sampled_cries/milotic.mm2"
+MiloticSampledCryEnd:
+	assert (MiloticSampledCryEnd - MiloticSampledCryData) % 9 == 0

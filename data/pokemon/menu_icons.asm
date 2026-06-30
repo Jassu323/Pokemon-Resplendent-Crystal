@@ -308,6 +308,7 @@ MonMenuIcons:
 	mon_menu_icon AnorithIcon,        GREEN,  BROWN  ; ANORITH
 	mon_menu_icon ArmaldoIcon,        BLUE,   BROWN  ; ARMALDO
 	mon_menu_icon FeebasIcon,         BLUE,   PURPLE ; FEEBAS
+	mon_menu_icon MiloticIcon,        RED,    PURPLE ; MILOTIC
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

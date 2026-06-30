@@ -301,4 +301,5 @@ FramesPointers:
 	dba AnorithFrames
 	dba ArmaldoFrames
 	dba FeebasFrames
+	dba MiloticFrames
 	assert_table_length NUM_POKEMON

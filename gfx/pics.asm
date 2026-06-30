@@ -886,3 +886,9 @@ ArmaldoFrontpic:    INCBIN "gfx/pokemon/armaldo/front.animated.2bpp.lz"
 ArmaldoBackpic:     INCBIN "gfx/pokemon/armaldo/back.2bpp.lz"
 FeebasFrontpic:     INCBIN "gfx/pokemon/feebas/front.animated.2bpp.lz"
 FeebasBackpic:      INCBIN "gfx/pokemon/feebas/back.2bpp.lz"
+
+
+SECTION "Pics 23", ROMX
+
+MiloticFrontpic:    INCBIN "gfx/pokemon/milotic/front.animated.2bpp.lz"
+MiloticBackpic:     INCBIN "gfx/pokemon/milotic/back.2bpp.lz"
