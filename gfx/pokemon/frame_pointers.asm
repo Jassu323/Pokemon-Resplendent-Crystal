@@ -308,4 +308,5 @@ FramesPointers:
 	dba DusclopsFrames
 	dba DusknoirFrames
 	dba AbsolFrames
+	dba SnoruntFrames
 	assert_table_length NUM_POKEMON

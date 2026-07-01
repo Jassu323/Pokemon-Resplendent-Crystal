@@ -309,4 +309,5 @@ EvolutionMoves::
 	dw NO_MOVE ; DUSCLOPS
 	dw NO_MOVE ; DUSKNOIR
 	dw NO_MOVE ; ABSOL
+	dw NO_MOVE ; SNORUNT
 	assert_table_length NUM_POKEMON

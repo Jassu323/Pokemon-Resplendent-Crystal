@@ -58,6 +58,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; DUSCLOPS
 	dw NoEggMoves3 ; DUSKNOIR
 	dw NoEggMoves3 ; ABSOL
+	dw NoEggMoves3 ; SNORUNT
 .IndirectEnd::
 
 NoEggMoves3:

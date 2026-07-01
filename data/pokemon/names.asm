@@ -314,4 +314,5 @@ PokemonNames::
 	dname "Dusclops"
 	dname "Dusknoir"
 	dname "Absol"
+	dname "Snorunt"
 	assert_table_length NUM_POKEMON

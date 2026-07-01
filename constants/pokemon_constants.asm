@@ -328,6 +328,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const DUSCLOPS   ; 132, NatDex 356
 	const DUSKNOIR   ; 133, NatDex 477
 	const ABSOL      ; 134, NatDex 359
+	const SNORUNT    ; 135, NatDex 361
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

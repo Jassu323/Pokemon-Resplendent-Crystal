@@ -309,5 +309,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; duskull placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; dusclops placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; dusknoir placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; absol placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; snorunt placeholder
 
 	assert_table_length NUM_POKEMON

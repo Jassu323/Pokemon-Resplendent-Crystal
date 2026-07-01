@@ -316,4 +316,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 132 DUSCLOPS
 	mon_ability NO_ABILITY ; 133 DUSKNOIR
 	mon_ability NO_ABILITY ; 134 ABSOL
+	mon_ability NO_ABILITY ; 135 SNORUNT
 	assert_table_length NUM_POKEMON + 1

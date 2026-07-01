@@ -58,6 +58,7 @@ EvosAttacksPointers3::
 	dw DusclopsEvosAttacks
 	dw DusknoirEvosAttacks
 	dw AbsolEvosAttacks
+	dw SnoruntEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -341,6 +342,11 @@ DusknoirEvosAttacks:
 	db 0 ; no more level-up moves
 
 AbsolEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+SnoruntEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

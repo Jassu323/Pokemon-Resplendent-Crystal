@@ -138,6 +138,7 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Whiscash
 - Corphish
 - Crawdaunt
+- Snorunt
 
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
@@ -145,3 +146,4 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Lileep
 - Cradily
 - Feebas
+- Absol

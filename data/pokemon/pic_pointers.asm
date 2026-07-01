@@ -632,4 +632,6 @@ PokemonPicPointers::
 	dba DusknoirBackpic
 	dba AbsolFrontpic
 	dba AbsolBackpic
+	dba SnoruntFrontpic
+	dba SnoruntBackpic
 	assert_table_length NUM_POKEMON + 1
