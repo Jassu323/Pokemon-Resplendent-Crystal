@@ -237,6 +237,7 @@ AlphabeticalPokedexOrder:
 	dw SCYTHER
 	dw SEADRA
 	dw SEAKING
+	dw SEALEO
 	dw SEEL
 	dw SENTRET
 	dw SEVIPER

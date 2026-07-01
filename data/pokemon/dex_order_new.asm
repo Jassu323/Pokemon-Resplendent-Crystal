@@ -314,4 +314,5 @@ NewPokedexOrder:
 	dw GLALIE
 	dw FROSLASS
 	dw SPHEAL
+	dw SEALEO
 	assert_table_length NUM_POKEMON

@@ -319,6 +319,7 @@ MonMenuIcons:
 	mon_menu_icon GlalieIcon,         BLUE,   RED    ; GLALIE
 	mon_menu_icon FroslassIcon,       BLUE,   PINK   ; FROSLASS
 	mon_menu_icon SphealIcon,         PURPLE, PINK   ; SPHEAL
+	mon_menu_icon SealeoIcon,         PURPLE, PINK   ; SEALEO
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

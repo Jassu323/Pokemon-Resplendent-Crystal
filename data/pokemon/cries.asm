@@ -318,4 +318,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; GLALIE
 	mon_cry CRY_BULBASAUR,   128,  129 ; FROSLASS
 	mon_cry CRY_BULBASAUR,   128,  129 ; SPHEAL
+	mon_cry CRY_BULBASAUR,   128,  129 ; SEALEO
 	assert_table_length NUM_POKEMON

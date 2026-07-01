@@ -640,4 +640,6 @@ PokemonPicPointers::
 	dba FroslassBackpic
 	dba SphealFrontpic
 	dba SphealBackpic
+	dba SealeoFrontpic
+	dba SealeoBackpic
 	assert_table_length NUM_POKEMON + 1
