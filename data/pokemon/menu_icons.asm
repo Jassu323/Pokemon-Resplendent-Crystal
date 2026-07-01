@@ -316,6 +316,7 @@ MonMenuIcons:
 	mon_menu_icon DusknoirIcon,       GRAY,   BLUE   ; DUSKNOIR
 	mon_menu_icon AbsolIcon,          GRAY,   RED    ; ABSOL
 	mon_menu_icon SnoruntIcon,        RED,    TEAL   ; SNORUNT
+	mon_menu_icon GlalieIcon,         BLUE,   RED    ; GLALIE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

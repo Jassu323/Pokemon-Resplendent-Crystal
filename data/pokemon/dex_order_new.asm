@@ -311,4 +311,5 @@ NewPokedexOrder:
 	dw DUSKNOIR
 	dw ABSOL
 	dw SNORUNT
+	dw GLALIE
 	assert_table_length NUM_POKEMON

@@ -78,12 +78,13 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Armaldo sprite
 - Shuppet sprite
 - Banette sprite
+- Duskull sprite
+- Dusclops sprite
+- Dusknoir sprite and party menu sprite
+- Snorunt party menu sprite
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
-- Duskull sprite (JohtoLegends credits the Prism Team)
-- Dusclops sprite (JohtoLegends credits the Prism Team)
-- Dusknoir sprite and party menu sprite (JohtoLegends credits the Prism Team)
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon
@@ -91,6 +92,7 @@ Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 ---
 
 EeVeeeEe1999 - Gen 3 GBC Party Sprites - https://www.deviantart.com/eeveeee1999/art/Gen-3-GBC-Party-Sprites-830673924
+- Nearly all of them, with a few exceptions credited above
 
 Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Pokemon-Crystal-Sprite-Sheet-by-Nuuk-938359828
 - Treecko
@@ -147,3 +149,4 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Cradily
 - Feebas
 - Absol
+- Glalie

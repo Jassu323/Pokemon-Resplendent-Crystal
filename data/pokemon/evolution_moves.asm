@@ -310,4 +310,5 @@ EvolutionMoves::
 	dw NO_MOVE ; DUSKNOIR
 	dw NO_MOVE ; ABSOL
 	dw NO_MOVE ; SNORUNT
+	dw NO_MOVE ; GLALIE
 	assert_table_length NUM_POKEMON

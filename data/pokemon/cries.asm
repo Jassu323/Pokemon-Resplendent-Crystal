@@ -315,4 +315,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; DUSKNOIR
 	mon_cry CRY_BULBASAUR,   128,  129 ; ABSOL
 	mon_cry CRY_BULBASAUR,   128,  129 ; SNORUNT
+	mon_cry CRY_BULBASAUR,   128,  129 ; GLALIE
 	assert_table_length NUM_POKEMON

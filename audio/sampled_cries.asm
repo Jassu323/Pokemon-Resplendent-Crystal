@@ -59,6 +59,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_DUSKNOIR
 	const SAMPLED_CRY_ABSOL
 	const SAMPLED_CRY_SNORUNT
+	const SAMPLED_CRY_GLALIE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -250,6 +251,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_ABSOL
 	elif sampled_cry_mon == SNORUNT
 		db SAMPLED_CRY_SNORUNT
+	elif sampled_cry_mon == GLALIE
+		db SAMPLED_CRY_GLALIE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -317,6 +320,7 @@ SampledCryPointers:
 	dba DusknoirSampledCry
 	dba AbsolSampledCry
 	dba SnoruntSampledCry
+	dba GlalieSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -754,3 +758,10 @@ SnoruntSampledCryData:
 	INCBIN "audio/sampled_cries/snorunt.mm2"
 SnoruntSampledCryEnd:
 	assert (SnoruntSampledCryEnd - SnoruntSampledCryData) % 9 == 0
+
+GlalieSampledCry::
+	dw (GlalieSampledCryEnd - GlalieSampledCryData) / 9
+GlalieSampledCryData:
+	INCBIN "audio/sampled_cries/glalie.mm2"
+GlalieSampledCryEnd:
+	assert (GlalieSampledCryEnd - GlalieSampledCryData) % 9 == 0
