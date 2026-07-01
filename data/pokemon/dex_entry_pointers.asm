@@ -315,4 +315,5 @@ PokedexDataPointerTable:
 	dba SphealPokedexEntry
 	dba SealeoPokedexEntry
 	dba WalreinPokedexEntry
+	dba BagonPokedexEntry
 	assert_table_length NUM_POKEMON

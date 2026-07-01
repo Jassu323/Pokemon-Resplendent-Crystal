@@ -18,6 +18,7 @@ AlphabeticalPokedexOrder:
 	dw ARON
 	dw ARTICUNO
 	dw AZUMARILL
+	dw BAGON
 	dw BANETTE
 	dw BARBOACH
 	dw BAYLEEF

@@ -916,3 +916,9 @@ SealeoFrontpic:     INCBIN "gfx/pokemon/sealeo/front.animated.2bpp.lz"
 SealeoBackpic:      INCBIN "gfx/pokemon/sealeo/back.2bpp.lz"
 WalreinFrontpic:    INCBIN "gfx/pokemon/walrein/front.animated.2bpp.lz"
 WalreinBackpic:     INCBIN "gfx/pokemon/walrein/back.2bpp.lz"
+
+
+SECTION "Pics 24", ROMX
+
+BagonFrontpic:      INCBIN "gfx/pokemon/bagon/front.animated.2bpp.lz"
+BagonBackpic:       INCBIN "gfx/pokemon/bagon/back.2bpp.lz"

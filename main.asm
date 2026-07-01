@@ -93,6 +93,7 @@ FroslassIcon::      INCBIN "gfx/icons/froslass.2bpp"
 SphealIcon::        INCBIN "gfx/icons/spheal.2bpp"
 SealeoIcon::        INCBIN "gfx/icons/sealeo.2bpp"
 WalreinIcon::       INCBIN "gfx/icons/walrein.2bpp"
+BagonIcon::         INCBIN "gfx/icons/bagon.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -562,6 +563,7 @@ FroslassFrames:   INCLUDE "gfx/pokemon/froslass/frames.asm"
 SphealFrames:     INCLUDE "gfx/pokemon/spheal/frames.asm"
 SealeoFrames:     INCLUDE "gfx/pokemon/sealeo/frames.asm"
 WalreinFrames:    INCLUDE "gfx/pokemon/walrein/frames.asm"
+BagonFrames:      INCLUDE "gfx/pokemon/bagon/frames.asm"
 
 
 SECTION "bank38", ROMX

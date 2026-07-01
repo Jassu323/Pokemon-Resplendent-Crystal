@@ -315,5 +315,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; froslass placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; spheal placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; sealeo placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; walrein placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; bagon placeholder
 
 	assert_table_length NUM_POKEMON

@@ -314,4 +314,5 @@ AnimationIdlePointers:
 	dw SphealAnimationIdle
 	dw SealeoAnimationIdle
 	dw WalreinAnimationIdle
+	dw BagonAnimationIdle
 	assert_table_length NUM_POKEMON

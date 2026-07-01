@@ -64,6 +64,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SPHEAL
 	dw NoEggMoves3 ; SEALEO
 	dw NoEggMoves3 ; WALREIN
+	dw NoEggMoves3 ; BAGON
 .IndirectEnd::
 
 NoEggMoves3:

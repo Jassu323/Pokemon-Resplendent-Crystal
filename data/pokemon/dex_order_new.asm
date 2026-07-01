@@ -316,4 +316,5 @@ NewPokedexOrder:
 	dw SPHEAL
 	dw SEALEO
 	dw WALREIN
+	dw BAGON
 	assert_table_length NUM_POKEMON
