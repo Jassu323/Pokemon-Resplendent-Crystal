@@ -311,4 +311,5 @@ FramesPointers:
 	dba SnoruntFrames
 	dba GlalieFrames
 	dba FroslassFrames
+	dba SphealFrames
 	assert_table_length NUM_POKEMON

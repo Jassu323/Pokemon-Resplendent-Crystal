@@ -259,6 +259,7 @@ AlphabeticalPokedexOrder:
 	dw SNUBBULL
 	dw SOLROCK
 	dw SPEAROW
+	dw SPHEAL
 	dw SPINARAK
 	dw SQUIRTLE
 	dw STANTLER

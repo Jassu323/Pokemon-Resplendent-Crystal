@@ -90,6 +90,7 @@ AbsolIcon::         INCBIN "gfx/icons/absol.2bpp"
 SnoruntIcon::       INCBIN "gfx/icons/snorunt.2bpp"
 GlalieIcon::        INCBIN "gfx/icons/glalie.2bpp"
 FroslassIcon::      INCBIN "gfx/icons/froslass.2bpp"
+SphealIcon::        INCBIN "gfx/icons/spheal.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -527,6 +528,7 @@ INCLUDE "gfx/pokemon/unown_bitmasks.asm"
 SECTION "Pic Animations 4", ROMX
 
 INCLUDE "gfx/pokemon/unown_frames.asm"
+TrapinchFrames:   INCLUDE "gfx/pokemon/trapinch/frames.asm"
 VibravaFrames:    INCLUDE "gfx/pokemon/vibrava/frames.asm"
 FlygonFrames:     INCLUDE "gfx/pokemon/flygon/frames.asm"
 SwabluFrames:     INCLUDE "gfx/pokemon/swablu/frames.asm"
@@ -554,6 +556,7 @@ AbsolFrames:      INCLUDE "gfx/pokemon/absol/frames.asm"
 SnoruntFrames:    INCLUDE "gfx/pokemon/snorunt/frames.asm"
 GlalieFrames:     INCLUDE "gfx/pokemon/glalie/frames.asm"
 FroslassFrames:   INCLUDE "gfx/pokemon/froslass/frames.asm"
+SphealFrames:     INCLUDE "gfx/pokemon/spheal/frames.asm"
 
 
 SECTION "bank38", ROMX

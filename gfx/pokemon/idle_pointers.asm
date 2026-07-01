@@ -311,4 +311,5 @@ AnimationIdlePointers:
 	dw SnoruntAnimationIdle
 	dw GlalieAnimationIdle
 	dw FroslassAnimationIdle
+	dw SphealAnimationIdle
 	assert_table_length NUM_POKEMON

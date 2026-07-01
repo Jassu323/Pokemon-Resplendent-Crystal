@@ -312,4 +312,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SNORUNT
 	dw NO_MOVE ; GLALIE
 	dw NO_MOVE ; FROSLASS
+	dw NO_MOVE ; SPHEAL
 	assert_table_length NUM_POKEMON

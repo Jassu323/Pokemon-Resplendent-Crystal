@@ -319,4 +319,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 135 SNORUNT
 	mon_ability NO_ABILITY ; 136 GLALIE
 	mon_ability NO_ABILITY ; 137 FROSLASS
+	mon_ability NO_ABILITY ; 138 SPHEAL
 	assert_table_length NUM_POKEMON + 1

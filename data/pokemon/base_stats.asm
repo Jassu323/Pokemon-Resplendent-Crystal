@@ -338,4 +338,5 @@ INCLUDE "data/pokemon/base_stats/absol.asm"
 INCLUDE "data/pokemon/base_stats/snorunt.asm"
 INCLUDE "data/pokemon/base_stats/glalie.asm"
 INCLUDE "data/pokemon/base_stats/froslass.asm"
+INCLUDE "data/pokemon/base_stats/spheal.asm"
 .IndirectEnd::

@@ -61,6 +61,7 @@ EvosAttacksPointers3::
 	dw SnoruntEvosAttacks
 	dw GlalieEvosAttacks
 	dw FroslassEvosAttacks
+	dw SphealEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -359,6 +360,11 @@ GlalieEvosAttacks:
 	db 0 ; no more level-up moves
 
 FroslassEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+SphealEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

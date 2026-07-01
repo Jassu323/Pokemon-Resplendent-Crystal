@@ -313,4 +313,5 @@ NewPokedexOrder:
 	dw SNORUNT
 	dw GLALIE
 	dw FROSLASS
+	dw SPHEAL
 	assert_table_length NUM_POKEMON

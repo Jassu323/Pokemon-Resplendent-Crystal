@@ -318,6 +318,7 @@ MonMenuIcons:
 	mon_menu_icon SnoruntIcon,        RED,    TEAL   ; SNORUNT
 	mon_menu_icon GlalieIcon,         BLUE,   RED    ; GLALIE
 	mon_menu_icon FroslassIcon,       BLUE,   PINK   ; FROSLASS
+	mon_menu_icon SphealIcon,         PURPLE, PINK   ; SPHEAL
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

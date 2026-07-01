@@ -311,4 +311,5 @@ AnimationPointers:
 	dw SnoruntAnimation
 	dw GlalieAnimation
 	dw FroslassAnimation
+	dw SphealAnimation
 	assert_table_length NUM_POKEMON
