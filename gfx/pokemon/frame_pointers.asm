@@ -313,4 +313,5 @@ FramesPointers:
 	dba FroslassFrames
 	dba SphealFrames
 	dba SealeoFrames
+	dba WalreinFrames
 	assert_table_length NUM_POKEMON

@@ -314,4 +314,5 @@ FirstEvoStages::
 	dw SNORUNT
 	dw SPHEAL
 	dw SPHEAL
+	dw SPHEAL
 	assert_table_length NUM_POKEMON

@@ -333,6 +333,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const FROSLASS   ; 137, NatDex 478
 	const SPHEAL     ; 138, NatDex 363
 	const SEALEO     ; 139, NatDex 364
+	const WALREIN    ; 140, NatDex 365
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

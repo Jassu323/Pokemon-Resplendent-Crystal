@@ -63,6 +63,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_FROSLASS
 	const SAMPLED_CRY_SPHEAL
 	const SAMPLED_CRY_SEALEO
+	const SAMPLED_CRY_WALREIN
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -262,6 +263,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SPHEAL
 	elif sampled_cry_mon == SEALEO
 		db SAMPLED_CRY_SEALEO
+	elif sampled_cry_mon == WALREIN
+		db SAMPLED_CRY_WALREIN
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -333,6 +336,7 @@ SampledCryPointers:
 	dba FroslassSampledCry
 	dba SphealSampledCry
 	dba SealeoSampledCry
+	dba WalreinSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -801,3 +805,10 @@ SealeoSampledCryData:
 	INCBIN "audio/sampled_cries/sealeo.mm2"
 SealeoSampledCryEnd:
 	assert (SealeoSampledCryEnd - SealeoSampledCryData) % 9 == 0
+
+WalreinSampledCry::
+	dw (WalreinSampledCryEnd - WalreinSampledCryData) / 9
+WalreinSampledCryData:
+	INCBIN "audio/sampled_cries/walrein.mm2"
+WalreinSampledCryEnd:
+	assert (WalreinSampledCryEnd - WalreinSampledCryData) % 9 == 0

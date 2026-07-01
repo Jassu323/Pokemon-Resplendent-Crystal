@@ -301,6 +301,7 @@ AlphabeticalPokedexOrder:
 	dw VILEPLUME
 	dw VOLTORB
 	dw VULPIX
+	dw WALREIN
 	dw WARTORTLE
 	dw WEEDLE
 	dw WEEPINBELL

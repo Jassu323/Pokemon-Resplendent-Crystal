@@ -321,4 +321,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 137 FROSLASS
 	mon_ability NO_ABILITY ; 138 SPHEAL
 	mon_ability NO_ABILITY ; 139 SEALEO
+	mon_ability NO_ABILITY ; 140 WALREIN
 	assert_table_length NUM_POKEMON + 1

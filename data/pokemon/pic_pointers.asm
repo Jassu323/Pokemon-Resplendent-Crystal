@@ -642,4 +642,6 @@ PokemonPicPointers::
 	dba SphealBackpic
 	dba SealeoFrontpic
 	dba SealeoBackpic
+	dba WalreinFrontpic
+	dba WalreinBackpic
 	assert_table_length NUM_POKEMON + 1

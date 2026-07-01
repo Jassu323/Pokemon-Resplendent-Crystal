@@ -319,4 +319,5 @@ PokemonNames::
 	dname "Froslass"
 	dname "Spheal"
 	dname "Sealeo"
+	dname "Walrein"
 	assert_table_length NUM_POKEMON

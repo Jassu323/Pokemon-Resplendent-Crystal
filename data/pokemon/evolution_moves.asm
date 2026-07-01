@@ -314,4 +314,5 @@ EvolutionMoves::
 	dw NO_MOVE ; FROSLASS
 	dw NO_MOVE ; SPHEAL
 	dw NO_MOVE ; SEALEO
+	dw NO_MOVE ; WALREIN
 	assert_table_length NUM_POKEMON

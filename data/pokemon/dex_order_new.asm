@@ -315,4 +315,5 @@ NewPokedexOrder:
 	dw FROSLASS
 	dw SPHEAL
 	dw SEALEO
+	dw WALREIN
 	assert_table_length NUM_POKEMON
