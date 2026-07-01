@@ -308,4 +308,5 @@ FirstEvoStages::
 	dw DUSKULL
 	dw DUSKULL
 	dw DUSKULL
+	dw ABSOL
 	assert_table_length NUM_POKEMON

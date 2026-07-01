@@ -309,4 +309,5 @@ NewPokedexOrder:
 	dw DUSKULL
 	dw DUSCLOPS
 	dw DUSKNOIR
+	dw ABSOL
 	assert_table_length NUM_POKEMON

@@ -86,6 +86,7 @@ BanetteIcon::       INCBIN "gfx/icons/banette.2bpp"
 DuskullIcon::       INCBIN "gfx/icons/duskull.2bpp"
 DusclopsIcon::      INCBIN "gfx/icons/dusclops.2bpp"
 DusknoirIcon::      INCBIN "gfx/icons/dusknoir.2bpp"
+AbsolIcon::         INCBIN "gfx/icons/absol.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -546,6 +547,7 @@ BanetteFrames:    INCLUDE "gfx/pokemon/banette/frames.asm"
 DuskullFrames:    INCLUDE "gfx/pokemon/duskull/frames.asm"
 DusclopsFrames:   INCLUDE "gfx/pokemon/dusclops/frames.asm"
 DusknoirFrames:   INCLUDE "gfx/pokemon/dusknoir/frames.asm"
+AbsolFrames:      INCLUDE "gfx/pokemon/absol/frames.asm"
 
 
 SECTION "bank38", ROMX

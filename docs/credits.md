@@ -82,6 +82,8 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
 - Duskull sprite (JohtoLegends credits the Prism Team)
+- Dusclops sprite (JohtoLegends credits the Prism Team)
+- Dusknoir sprite and party menu sprite (JohtoLegends credits the Prism Team)
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon

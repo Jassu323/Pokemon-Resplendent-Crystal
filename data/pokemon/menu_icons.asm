@@ -314,6 +314,7 @@ MonMenuIcons:
 	mon_menu_icon DuskullIcon,        GRAY,   RED    ; DUSKULL
 	mon_menu_icon DusclopsIcon,       GRAY,   RED    ; DUSCLOPS
 	mon_menu_icon DusknoirIcon,       GRAY,   BLUE   ; DUSKNOIR
+	mon_menu_icon AbsolIcon,          GRAY,   RED    ; ABSOL
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
