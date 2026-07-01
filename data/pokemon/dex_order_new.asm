@@ -312,4 +312,5 @@ NewPokedexOrder:
 	dw ABSOL
 	dw SNORUNT
 	dw GLALIE
+	dw FROSLASS
 	assert_table_length NUM_POKEMON

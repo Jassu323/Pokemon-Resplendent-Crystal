@@ -310,4 +310,5 @@ BitmasksPointers:
 	dw AbsolBitmasks
 	dw SnoruntBitmasks
 	dw GlalieBitmasks
+	dw FroslassBitmasks
 	assert_table_length NUM_POKEMON

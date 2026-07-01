@@ -89,6 +89,7 @@ DusknoirIcon::      INCBIN "gfx/icons/dusknoir.2bpp"
 AbsolIcon::         INCBIN "gfx/icons/absol.2bpp"
 SnoruntIcon::       INCBIN "gfx/icons/snorunt.2bpp"
 GlalieIcon::        INCBIN "gfx/icons/glalie.2bpp"
+FroslassIcon::      INCBIN "gfx/icons/froslass.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -552,6 +553,7 @@ DusknoirFrames:   INCLUDE "gfx/pokemon/dusknoir/frames.asm"
 AbsolFrames:      INCLUDE "gfx/pokemon/absol/frames.asm"
 SnoruntFrames:    INCLUDE "gfx/pokemon/snorunt/frames.asm"
 GlalieFrames:     INCLUDE "gfx/pokemon/glalie/frames.asm"
+FroslassFrames:   INCLUDE "gfx/pokemon/froslass/frames.asm"
 
 
 SECTION "bank38", ROMX

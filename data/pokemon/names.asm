@@ -316,4 +316,5 @@ PokemonNames::
 	dname "Absol"
 	dname "Snorunt"
 	dname "Glalie"
+	dname "Froslass"
 	assert_table_length NUM_POKEMON

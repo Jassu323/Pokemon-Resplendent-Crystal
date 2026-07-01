@@ -311,4 +311,5 @@ EvolutionMoves::
 	dw NO_MOVE ; ABSOL
 	dw NO_MOVE ; SNORUNT
 	dw NO_MOVE ; GLALIE
+	dw NO_MOVE ; FROSLASS
 	assert_table_length NUM_POKEMON

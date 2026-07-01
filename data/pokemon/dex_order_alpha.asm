@@ -86,6 +86,7 @@ AlphabeticalPokedexOrder:
 	dw FLAREON
 	dw FLYGON
 	dw FORRETRESS
+	dw FROSLASS
 	dw FURRET
 	dw GARDEVOIR
 	dw GALLADE

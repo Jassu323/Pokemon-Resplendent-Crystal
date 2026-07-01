@@ -311,4 +311,5 @@ PokedexDataPointerTable:
 	dba AbsolPokedexEntry
 	dba SnoruntPokedexEntry
 	dba GlaliePokedexEntry
+	dba FroslassPokedexEntry
 	assert_table_length NUM_POKEMON

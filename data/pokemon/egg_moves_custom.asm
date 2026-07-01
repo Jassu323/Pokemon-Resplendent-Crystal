@@ -60,6 +60,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; ABSOL
 	dw NoEggMoves3 ; SNORUNT
 	dw NoEggMoves3 ; GLALIE
+	dw NoEggMoves3 ; FROSLASS
 .IndirectEnd::
 
 NoEggMoves3:
