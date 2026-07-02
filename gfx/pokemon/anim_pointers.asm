@@ -318,4 +318,5 @@ AnimationPointers:
 	dw ShelgonAnimation
 	dw SalamenceAnimation
 	dw BeldumAnimation
+	dw MetangAnimation
 	assert_table_length NUM_POKEMON

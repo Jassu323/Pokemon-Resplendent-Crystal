@@ -170,6 +170,7 @@ AlphabeticalPokedexOrder:
 	dw MEDITITE
 	dw MEOWTH
 	dw METAPOD
+	dw METANG
 	dw MEW
 	dw MEWTWO
 	dw MIGHTYENA

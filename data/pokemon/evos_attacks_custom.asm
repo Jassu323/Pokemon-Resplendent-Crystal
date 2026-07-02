@@ -68,6 +68,7 @@ EvosAttacksPointers3::
 	dw ShelgonEvosAttacks
 	dw SalamenceEvosAttacks
 	dw BeldumEvosAttacks
+	dw MetangEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -401,6 +402,11 @@ SalamenceEvosAttacks:
 	db 0 ; no more level-up moves
 
 BeldumEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+MetangEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

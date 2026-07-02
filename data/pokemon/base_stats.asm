@@ -345,4 +345,5 @@ INCLUDE "data/pokemon/base_stats/bagon.asm"
 INCLUDE "data/pokemon/base_stats/shelgon.asm"
 INCLUDE "data/pokemon/base_stats/salamence.asm"
 INCLUDE "data/pokemon/base_stats/beldum.asm"
+INCLUDE "data/pokemon/base_stats/metang.asm"
 .IndirectEnd::

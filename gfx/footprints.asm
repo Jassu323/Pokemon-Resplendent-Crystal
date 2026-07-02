@@ -319,5 +319,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; bagon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; shelgon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; salamence placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; beldum placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; metang placeholder
 
 	assert_table_length NUM_POKEMON

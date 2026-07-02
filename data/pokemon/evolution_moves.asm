@@ -319,4 +319,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SHELGON
 	dw NO_MOVE ; SALAMENCE
 	dw NO_MOVE ; BELDUM
+	dw NO_MOVE ; METANG
 	assert_table_length NUM_POKEMON

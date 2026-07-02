@@ -318,4 +318,5 @@ AnimationIdlePointers:
 	dw ShelgonAnimationIdle
 	dw SalamenceAnimationIdle
 	dw BeldumAnimationIdle
+	dw MetangAnimationIdle
 	assert_table_length NUM_POKEMON

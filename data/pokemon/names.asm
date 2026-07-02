@@ -324,4 +324,5 @@ PokemonNames::
 	dname "Shelgon"
 	dname "Salamence"
 	dname "Beldum"
+	dname "Metang"
 	assert_table_length NUM_POKEMON

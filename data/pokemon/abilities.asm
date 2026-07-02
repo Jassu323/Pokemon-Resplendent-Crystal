@@ -326,4 +326,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 142 SHELGON
 	mon_ability NO_ABILITY ; 143 SALAMENCE
 	mon_ability NO_ABILITY ; 144 BELDUM
+	mon_ability NO_ABILITY ; 145 METANG
 	assert_table_length NUM_POKEMON + 1

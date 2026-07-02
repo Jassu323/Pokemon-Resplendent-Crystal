@@ -319,4 +319,5 @@ PokedexDataPointerTable:
 	dba ShelgonPokedexEntry
 	dba SalamencePokedexEntry
 	dba BeldumPokedexEntry
+	dba MetangPokedexEntry
 	assert_table_length NUM_POKEMON
