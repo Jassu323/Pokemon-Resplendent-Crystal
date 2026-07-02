@@ -317,4 +317,5 @@ FirstEvoStages::
 	dw SPHEAL
 	dw BAGON
 	dw BAGON
+	dw BAGON
 	assert_table_length NUM_POKEMON

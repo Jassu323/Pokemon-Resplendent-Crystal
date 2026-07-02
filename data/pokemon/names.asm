@@ -322,4 +322,5 @@ PokemonNames::
 	dname "Walrein"
 	dname "Bagon"
 	dname "Shelgon"
+	dname "Salamence"
 	assert_table_length NUM_POKEMON

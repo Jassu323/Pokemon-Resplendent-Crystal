@@ -95,6 +95,7 @@ SealeoIcon::        INCBIN "gfx/icons/sealeo.2bpp"
 WalreinIcon::       INCBIN "gfx/icons/walrein.2bpp"
 BagonIcon::         INCBIN "gfx/icons/bagon.2bpp"
 ShelgonIcon::       INCBIN "gfx/icons/shelgon.2bpp"
+SalamenceIcon::     INCBIN "gfx/icons/salamence.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -525,13 +526,13 @@ INCLUDE "gfx/pokemon/johto_frames.asm"
 INCLUDE "gfx/pokemon/unown_frame_pointers.asm"
 INCLUDE "gfx/pokemon/bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/bitmasks.asm"
-INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
-INCLUDE "gfx/pokemon/unown_bitmasks.asm"
 
 
 SECTION "Pic Animations 4", ROMX
 
 INCLUDE "gfx/pokemon/unown_frames.asm"
+INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
+INCLUDE "gfx/pokemon/unown_bitmasks.asm"
 TorkoalFrames:    INCLUDE "gfx/pokemon/torkoal/frames.asm"
 TrapinchFrames:   INCLUDE "gfx/pokemon/trapinch/frames.asm"
 VibravaFrames:    INCLUDE "gfx/pokemon/vibrava/frames.asm"
@@ -566,6 +567,7 @@ SealeoFrames:     INCLUDE "gfx/pokemon/sealeo/frames.asm"
 WalreinFrames:    INCLUDE "gfx/pokemon/walrein/frames.asm"
 BagonFrames:      INCLUDE "gfx/pokemon/bagon/frames.asm"
 ShelgonFrames:    INCLUDE "gfx/pokemon/shelgon/frames.asm"
+SalamenceFrames:  INCLUDE "gfx/pokemon/salamence/frames.asm"
 
 
 SECTION "bank38", ROMX

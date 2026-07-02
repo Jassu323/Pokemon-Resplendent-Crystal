@@ -318,4 +318,5 @@ NewPokedexOrder:
 	dw WALREIN
 	dw BAGON
 	dw SHELGON
+	dw SALAMENCE
 	assert_table_length NUM_POKEMON
