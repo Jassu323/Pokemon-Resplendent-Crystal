@@ -664,4 +664,6 @@ PokemonPicPointers::
 	dba RegisteelBackpic
 	dba KyogreFrontpic
 	dba KyogreBackpic
+	dba GroudonFrontpic
+	dba GroudonBackpic
 	assert_table_length NUM_POKEMON + 1

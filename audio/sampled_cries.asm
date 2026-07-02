@@ -74,6 +74,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_REGICE
 	const SAMPLED_CRY_REGISTEEL
 	const SAMPLED_CRY_KYOGRE
+	const SAMPLED_CRY_GROUDON
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -295,6 +296,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_REGISTEEL
 	elif sampled_cry_mon == KYOGRE
 		db SAMPLED_CRY_KYOGRE
+	elif sampled_cry_mon == GROUDON
+		db SAMPLED_CRY_GROUDON
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -377,6 +380,7 @@ SampledCryPointers:
 	dba RegiceSampledCry
 	dba RegisteelSampledCry
 	dba KyogreSampledCry
+	dba GroudonSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -931,3 +935,10 @@ KyogreSampledCryData:
 	INCBIN "audio/sampled_cries/kyogre.mm2"
 KyogreSampledCryEnd:
 	assert (KyogreSampledCryEnd - KyogreSampledCryData) % 9 == 0
+
+GroudonSampledCry::
+	dw (GroudonSampledCryEnd - GroudonSampledCryData) / 9
+GroudonSampledCryData:
+	INCBIN "audio/sampled_cries/groudon.mm2"
+GroudonSampledCryEnd:
+	assert (GroudonSampledCryEnd - GroudonSampledCryData) % 9 == 0

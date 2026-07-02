@@ -344,6 +344,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const REGICE     ; 148, NatDex 378
 	const REGISTEEL  ; 149, NatDex 379
 	const KYOGRE     ; 150, NatDex 382
+	const GROUDON    ; 151, NatDex 383
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

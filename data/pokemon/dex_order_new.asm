@@ -326,4 +326,5 @@ NewPokedexOrder:
 	dw REGICE
 	dw REGISTEEL
 	dw KYOGRE
+	dw GROUDON
 	assert_table_length NUM_POKEMON

@@ -74,6 +74,7 @@ EvosAttacksPointers3::
 	dw RegiceEvosAttacks
 	dw RegisteelEvosAttacks
 	dw KyogreEvosAttacks
+	dw GroudonEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -437,6 +438,11 @@ RegisteelEvosAttacks:
 	db 0 ; no more level-up moves
 
 KyogreEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+GroudonEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

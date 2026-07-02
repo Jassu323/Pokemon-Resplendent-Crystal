@@ -330,4 +330,5 @@ PokemonNames::
 	dname "Regice"
 	dname "Registeel"
 	dname "Kyogre"
+	dname "Groudon"
 	assert_table_length NUM_POKEMON

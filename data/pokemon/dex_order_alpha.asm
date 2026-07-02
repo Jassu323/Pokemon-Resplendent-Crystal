@@ -106,6 +106,7 @@ AlphabeticalPokedexOrder:
 	dw GRANBULL
 	dw GRAVELER
 	dw GRIMER
+	dw GROUDON
 	dw GROVYLE
 	dw GROWLITHE
 	dw GYARADOS

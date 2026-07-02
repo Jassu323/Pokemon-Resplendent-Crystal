@@ -25,4 +25,5 @@
 	const LEVITATE
 	const MARVEL_SCALE
 	const DRIZZLE
+	const DROUGHT
 DEF NUM_ABILITIES EQU const_value - 1

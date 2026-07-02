@@ -25,4 +25,5 @@ AbilityNames::
 	li "Levitate"
 	li "Marvel Scale"
 	li "Drizzle"
+	li "Drought"
 	assert_list_length NUM_ABILITIES + 1
