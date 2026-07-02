@@ -332,4 +332,5 @@ PokemonNames::
 	dname "Kyogre"
 	dname "Groudon"
 	dname "Rayquaza"
+	dname "Shinx"
 	assert_table_length NUM_POKEMON

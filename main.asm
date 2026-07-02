@@ -105,6 +105,7 @@ RegisteelIcon::     INCBIN "gfx/icons/registeel.2bpp"
 KyogreIcon::        INCBIN "gfx/icons/kyogre.2bpp"
 GroudonIcon::       INCBIN "gfx/icons/groudon.2bpp"
 RayquazaIcon::      INCBIN "gfx/icons/rayquaza.2bpp"
+ShinxIcon::         INCBIN "gfx/icons/shinx.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -586,6 +587,7 @@ RegisteelFrames:  INCLUDE "gfx/pokemon/registeel/frames.asm"
 KyogreFrames:     INCLUDE "gfx/pokemon/kyogre/frames.asm"
 GroudonFrames:    INCLUDE "gfx/pokemon/groudon/frames.asm"
 RayquazaFrames:   INCLUDE "gfx/pokemon/rayquaza/frames.asm"
+ShinxFrames:      INCLUDE "gfx/pokemon/shinx/frames.asm"
 
 
 SECTION "bank38", ROMX

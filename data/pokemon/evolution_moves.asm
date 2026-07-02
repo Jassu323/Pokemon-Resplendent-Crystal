@@ -327,4 +327,5 @@ EvolutionMoves::
 	dw NO_MOVE ; KYOGRE
 	dw NO_MOVE ; GROUDON
 	dw NO_MOVE ; RAYQUAZA
+	dw NO_MOVE ; SHINX
 	assert_table_length NUM_POKEMON

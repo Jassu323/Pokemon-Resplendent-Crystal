@@ -12,7 +12,7 @@
     "TORCHIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
     "COMBUSKEN": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/combusken.wav",
     "BLAZIKEN": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/blaziken.wav",
-    "SHINX": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav",
+    "SHINX": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/shinx.wav",
     "FEEBAS": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/feebas.wav",
     "MILOTIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/milotic.wav",
     "SHUPPET": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/shuppet.wav",
@@ -3254,7 +3254,7 @@
       }
     },
     "shinx_17_v4_clarity_auto": {
-      "source": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav",
+    "source": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/shinx.wav",
       "target_rate": 10485.76,
       "prism_vol": 3.2,
       "allow_experimental_prism_vol": true,

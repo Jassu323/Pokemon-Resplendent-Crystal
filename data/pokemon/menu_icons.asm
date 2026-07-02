@@ -333,6 +333,7 @@ MonMenuIcons:
 	mon_menu_icon KyogreIcon,         BLUE,   PURPLE ; KYOGRE
 	mon_menu_icon GroudonIcon,        RED,    BROWN  ; GROUDON
 	mon_menu_icon RayquazaIcon,       GREEN,  GRAY   ; RAYQUAZA
+	mon_menu_icon ShinxIcon,          BLUE,   BROWN  ; SHINX
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

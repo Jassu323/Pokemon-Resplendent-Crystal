@@ -353,4 +353,5 @@ INCLUDE "data/pokemon/base_stats/registeel.asm"
 INCLUDE "data/pokemon/base_stats/kyogre.asm"
 INCLUDE "data/pokemon/base_stats/groudon.asm"
 INCLUDE "data/pokemon/base_stats/rayquaza.asm"
+INCLUDE "data/pokemon/base_stats/shinx.asm"
 .IndirectEnd::

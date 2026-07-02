@@ -668,4 +668,6 @@ PokemonPicPointers::
 	dba GroudonBackpic
 	dba RayquazaFrontpic
 	dba RayquazaBackpic
+	dba ShinxFrontpic
+	dba ShinxBackpic
 	assert_table_length NUM_POKEMON + 1

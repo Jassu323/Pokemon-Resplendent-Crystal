@@ -327,4 +327,5 @@ PokedexDataPointerTable:
 	dba KyogrePokedexEntry
 	dba GroudonPokedexEntry
 	dba RayquazaPokedexEntry
+	dba ShinxPokedexEntry
 	assert_table_length NUM_POKEMON

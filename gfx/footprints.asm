@@ -327,5 +327,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; registeel placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; kyogre placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; groudon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; rayquaza placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; shinx placeholder
 
 	assert_table_length NUM_POKEMON
