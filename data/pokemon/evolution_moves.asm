@@ -323,4 +323,5 @@ EvolutionMoves::
 	dw NO_MOVE ; METAGROSS
 	dw NO_MOVE ; REGIROCK
 	dw NO_MOVE ; REGICE
+	dw NO_MOVE ; REGISTEEL
 	assert_table_length NUM_POKEMON

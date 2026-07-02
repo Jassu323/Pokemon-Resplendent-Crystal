@@ -101,6 +101,7 @@ MetangIcon::        INCBIN "gfx/icons/metang.2bpp"
 MetagrossIcon::     INCBIN "gfx/icons/metagross.2bpp"
 RegirockIcon::      INCBIN "gfx/icons/regirock.2bpp"
 RegiceIcon::        INCBIN "gfx/icons/regice.2bpp"
+RegisteelIcon::     INCBIN "gfx/icons/registeel.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -578,6 +579,7 @@ MetangFrames:     INCLUDE "gfx/pokemon/metang/frames.asm"
 MetagrossFrames:  INCLUDE "gfx/pokemon/metagross/frames.asm"
 RegirockFrames:   INCLUDE "gfx/pokemon/regirock/frames.asm"
 RegiceFrames:     INCLUDE "gfx/pokemon/regice/frames.asm"
+RegisteelFrames:  INCLUDE "gfx/pokemon/registeel/frames.asm"
 
 
 SECTION "bank38", ROMX

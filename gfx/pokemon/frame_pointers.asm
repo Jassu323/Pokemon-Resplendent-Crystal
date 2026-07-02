@@ -322,4 +322,5 @@ FramesPointers:
 	dba MetagrossFrames
 	dba RegirockFrames
 	dba RegiceFrames
+	dba RegisteelFrames
 	assert_table_length NUM_POKEMON

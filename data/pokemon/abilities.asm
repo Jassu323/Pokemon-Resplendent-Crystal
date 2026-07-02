@@ -330,4 +330,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 146 METAGROSS
 	mon_ability NO_ABILITY ; 147 REGIROCK
 	mon_ability NO_ABILITY ; 148 REGICE
+	mon_ability NO_ABILITY ; 149 REGISTEEL
 	assert_table_length NUM_POKEMON + 1

@@ -322,4 +322,5 @@ AnimationPointers:
 	dw MetagrossAnimation
 	dw RegirockAnimation
 	dw RegiceAnimation
+	dw RegisteelAnimation
 	assert_table_length NUM_POKEMON

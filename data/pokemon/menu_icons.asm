@@ -329,6 +329,7 @@ MonMenuIcons:
 	mon_menu_icon MetagrossIcon,      BLUE,   GRAY   ; METAGROSS
 	mon_menu_icon RegirockIcon,       RED,    BROWN  ; REGIROCK
 	mon_menu_icon RegiceIcon,         GRAY,   PINK   ; REGICE
+	mon_menu_icon RegisteelIcon,      GRAY,   GREEN  ; REGISTEEL
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

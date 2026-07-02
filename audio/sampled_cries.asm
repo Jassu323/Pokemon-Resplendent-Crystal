@@ -72,6 +72,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_METAGROSS
 	const SAMPLED_CRY_REGIROCK
 	const SAMPLED_CRY_REGICE
+	const SAMPLED_CRY_REGISTEEL
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -289,6 +290,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_REGIROCK
 	elif sampled_cry_mon == REGICE
 		db SAMPLED_CRY_REGICE
+	elif sampled_cry_mon == REGISTEEL
+		db SAMPLED_CRY_REGISTEEL
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -369,6 +372,7 @@ SampledCryPointers:
 	dba MetagrossSampledCry
 	dba RegirockSampledCry
 	dba RegiceSampledCry
+	dba RegisteelSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -906,3 +910,10 @@ RegiceSampledCryData:
 	INCBIN "audio/sampled_cries/regice.mm2"
 RegiceSampledCryEnd:
 	assert (RegiceSampledCryEnd - RegiceSampledCryData) % 9 == 0
+
+RegisteelSampledCry::
+	dw (RegisteelSampledCryEnd - RegisteelSampledCryData) / 9
+RegisteelSampledCryData:
+	INCBIN "audio/sampled_cries/registeel.mm2"
+RegisteelSampledCryEnd:
+	assert (RegisteelSampledCryEnd - RegisteelSampledCryData) % 9 == 0

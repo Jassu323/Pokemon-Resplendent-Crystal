@@ -233,6 +233,7 @@ AlphabeticalPokedexOrder:
 	dw RATTATA
 	dw REGICE
 	dw REGIROCK
+	dw REGISTEEL
 	dw REMORAID
 	dw RHYDON
 	dw RHYHORN

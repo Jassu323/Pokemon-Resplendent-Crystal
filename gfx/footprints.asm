@@ -323,5 +323,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; metang placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; metagross placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; regirock placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; regice placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; registeel placeholder
 
 	assert_table_length NUM_POKEMON
