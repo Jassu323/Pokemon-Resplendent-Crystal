@@ -77,6 +77,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GROUDON
 	const SAMPLED_CRY_RAYQUAZA
 	const SAMPLED_CRY_SHINX
+	const SAMPLED_CRY_LUXIO
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -304,6 +305,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_RAYQUAZA
 	elif sampled_cry_mon == SHINX
 		db SAMPLED_CRY_SHINX
+	elif sampled_cry_mon == LUXIO
+		db SAMPLED_CRY_LUXIO
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -389,6 +392,7 @@ SampledCryPointers:
 	dba GroudonSampledCry
 	dba RayquazaSampledCry
 	dba ShinxSampledCry
+	dba LuxioSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -964,3 +968,13 @@ ShinxSampledCryData:
 	INCBIN "audio/sampled_cries/shinx.mm2"
 ShinxSampledCryEnd:
 	assert (ShinxSampledCryEnd - ShinxSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 14", ROMX
+
+LuxioSampledCry::
+	dw (LuxioSampledCryEnd - LuxioSampledCryData) / 9
+LuxioSampledCryData:
+	INCBIN "audio/sampled_cries/luxio.mm2"
+LuxioSampledCryEnd:
+	assert (LuxioSampledCryEnd - LuxioSampledCryData) % 9 == 0

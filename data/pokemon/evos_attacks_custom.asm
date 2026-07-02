@@ -77,6 +77,7 @@ EvosAttacksPointers3::
 	dw GroudonEvosAttacks
 	dw RayquazaEvosAttacks
 	dw ShinxEvosAttacks
+	dw LuxioEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -455,6 +456,11 @@ RayquazaEvosAttacks:
 	db 0 ; no more level-up moves
 
 ShinxEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+LuxioEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

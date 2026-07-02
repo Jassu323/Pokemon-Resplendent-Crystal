@@ -347,6 +347,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const GROUDON    ; 151, NatDex 383
 	const RAYQUAZA   ; 152, NatDex 384
 	const SHINX      ; 153, NatDex 403
+	const LUXIO      ; 154, NatDex 404
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

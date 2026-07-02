@@ -150,6 +150,7 @@ AlphabeticalPokedexOrder:
 	dw LILEEP
 	dw LUGIA
 	dw LUNATONE
+	dw LUXIO
 	dw MACHAMP
 	dw MACHOKE
 	dw MACHOP

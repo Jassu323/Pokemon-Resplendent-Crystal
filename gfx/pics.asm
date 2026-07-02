@@ -946,3 +946,9 @@ RayquazaFrontpic:   INCBIN "gfx/pokemon/rayquaza/front.animated.2bpp.lz"
 RayquazaBackpic:    INCBIN "gfx/pokemon/rayquaza/back.2bpp.lz"
 ShinxFrontpic:      INCBIN "gfx/pokemon/shinx/front.animated.2bpp.lz"
 ShinxBackpic:       INCBIN "gfx/pokemon/shinx/back.2bpp.lz"
+
+
+SECTION "Pics 25", ROMX
+
+LuxioFrontpic:      INCBIN "gfx/pokemon/luxio/front.animated.2bpp.lz"
+LuxioBackpic:       INCBIN "gfx/pokemon/luxio/back.2bpp.lz"

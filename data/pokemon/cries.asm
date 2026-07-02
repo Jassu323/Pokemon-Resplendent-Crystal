@@ -333,4 +333,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; GROUDON
 	mon_cry CRY_BULBASAUR,   128,  129 ; RAYQUAZA
 	mon_cry CRY_BULBASAUR,   128,  129 ; SHINX
+	mon_cry CRY_BULBASAUR,   128,  129 ; LUXIO
 	assert_table_length NUM_POKEMON

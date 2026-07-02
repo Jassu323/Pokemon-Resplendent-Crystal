@@ -333,4 +333,5 @@ PokemonNames::
 	dname "Groudon"
 	dname "Rayquaza"
 	dname "Shinx"
+	dname "Luxio"
 	assert_table_length NUM_POKEMON

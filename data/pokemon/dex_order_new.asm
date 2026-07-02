@@ -329,4 +329,5 @@ NewPokedexOrder:
 	dw GROUDON
 	dw RAYQUAZA
 	dw SHINX
+	dw LUXIO
 	assert_table_length NUM_POKEMON

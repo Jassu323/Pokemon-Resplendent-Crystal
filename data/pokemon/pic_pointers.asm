@@ -670,4 +670,6 @@ PokemonPicPointers::
 	dba RayquazaBackpic
 	dba ShinxFrontpic
 	dba ShinxBackpic
+	dba LuxioFrontpic
+	dba LuxioBackpic
 	assert_table_length NUM_POKEMON + 1

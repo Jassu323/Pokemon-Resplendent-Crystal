@@ -328,4 +328,5 @@ FirstEvoStages::
 	dw GROUDON
 	dw RAYQUAZA
 	dw SHINX
+	dw SHINX
 	assert_table_length NUM_POKEMON
