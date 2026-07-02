@@ -98,6 +98,7 @@ ShelgonIcon::       INCBIN "gfx/icons/shelgon.2bpp"
 SalamenceIcon::     INCBIN "gfx/icons/salamence.2bpp"
 BeldumIcon::        INCBIN "gfx/icons/beldum.2bpp"
 MetangIcon::        INCBIN "gfx/icons/metang.2bpp"
+MetagrossIcon::     INCBIN "gfx/icons/metagross.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -572,6 +573,7 @@ ShelgonFrames:    INCLUDE "gfx/pokemon/shelgon/frames.asm"
 SalamenceFrames:  INCLUDE "gfx/pokemon/salamence/frames.asm"
 BeldumFrames:     INCLUDE "gfx/pokemon/beldum/frames.asm"
 MetangFrames:     INCLUDE "gfx/pokemon/metang/frames.asm"
+MetagrossFrames:  INCLUDE "gfx/pokemon/metagross/frames.asm"
 
 
 SECTION "bank38", ROMX

@@ -326,6 +326,7 @@ MonMenuIcons:
 	mon_menu_icon SalamenceIcon,      BLUE,   GREEN  ; SALAMENCE
 	mon_menu_icon BeldumIcon,         BLUE,   GRAY   ; BELDUM
 	mon_menu_icon MetangIcon,         BLUE,   GRAY   ; METANG
+	mon_menu_icon MetagrossIcon,      BLUE,   GRAY   ; METAGROSS
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

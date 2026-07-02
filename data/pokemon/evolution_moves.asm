@@ -320,4 +320,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SALAMENCE
 	dw NO_MOVE ; BELDUM
 	dw NO_MOVE ; METANG
+	dw NO_MOVE ; METAGROSS
 	assert_table_length NUM_POKEMON

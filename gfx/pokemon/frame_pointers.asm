@@ -319,4 +319,5 @@ FramesPointers:
 	dba SalamenceFrames
 	dba BeldumFrames
 	dba MetangFrames
+	dba MetagrossFrames
 	assert_table_length NUM_POKEMON

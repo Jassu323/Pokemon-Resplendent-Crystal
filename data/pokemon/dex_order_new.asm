@@ -321,4 +321,5 @@ NewPokedexOrder:
 	dw SALAMENCE
 	dw BELDUM
 	dw METANG
+	dw METAGROSS
 	assert_table_length NUM_POKEMON

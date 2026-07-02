@@ -169,8 +169,9 @@ AlphabeticalPokedexOrder:
 	dw MEDICHAM
 	dw MEDITITE
 	dw MEOWTH
-	dw METAPOD
+	dw METAGROSS
 	dw METANG
+	dw METAPOD
 	dw MEW
 	dw MEWTWO
 	dw MIGHTYENA
