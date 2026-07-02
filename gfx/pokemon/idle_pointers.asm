@@ -317,4 +317,5 @@ AnimationIdlePointers:
 	dw BagonAnimationIdle
 	dw ShelgonAnimationIdle
 	dw SalamenceAnimationIdle
+	dw BeldumAnimationIdle
 	assert_table_length NUM_POKEMON

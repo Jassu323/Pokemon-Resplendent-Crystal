@@ -96,6 +96,7 @@ WalreinIcon::       INCBIN "gfx/icons/walrein.2bpp"
 BagonIcon::         INCBIN "gfx/icons/bagon.2bpp"
 ShelgonIcon::       INCBIN "gfx/icons/shelgon.2bpp"
 SalamenceIcon::     INCBIN "gfx/icons/salamence.2bpp"
+BeldumIcon::        INCBIN "gfx/icons/beldum.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -568,6 +569,7 @@ WalreinFrames:    INCLUDE "gfx/pokemon/walrein/frames.asm"
 BagonFrames:      INCLUDE "gfx/pokemon/bagon/frames.asm"
 ShelgonFrames:    INCLUDE "gfx/pokemon/shelgon/frames.asm"
 SalamenceFrames:  INCLUDE "gfx/pokemon/salamence/frames.asm"
+BeldumFrames:     INCLUDE "gfx/pokemon/beldum/frames.asm"
 
 
 SECTION "bank38", ROMX

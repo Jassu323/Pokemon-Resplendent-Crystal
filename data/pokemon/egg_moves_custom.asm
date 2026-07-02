@@ -67,6 +67,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; BAGON
 	dw NoEggMoves3 ; SHELGON
 	dw NoEggMoves3 ; SALAMENCE
+	dw NoEggMoves3 ; BELDUM
 .IndirectEnd::
 
 NoEggMoves3:

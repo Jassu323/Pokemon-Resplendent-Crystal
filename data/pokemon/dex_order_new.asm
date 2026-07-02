@@ -319,4 +319,5 @@ NewPokedexOrder:
 	dw BAGON
 	dw SHELGON
 	dw SALAMENCE
+	dw BELDUM
 	assert_table_length NUM_POKEMON

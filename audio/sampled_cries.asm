@@ -67,6 +67,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BAGON
 	const SAMPLED_CRY_SHELGON
 	const SAMPLED_CRY_SALAMENCE
+	const SAMPLED_CRY_BELDUM
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -274,6 +275,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SHELGON
 	elif sampled_cry_mon == SALAMENCE
 		db SAMPLED_CRY_SALAMENCE
+	elif sampled_cry_mon == BELDUM
+		db SAMPLED_CRY_BELDUM
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -349,6 +352,7 @@ SampledCryPointers:
 	dba BagonSampledCry
 	dba ShelgonSampledCry
 	dba SalamenceSampledCry
+	dba BeldumSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -848,3 +852,10 @@ SalamenceSampledCryData:
 	INCBIN "audio/sampled_cries/salamence.mm2"
 SalamenceSampledCryEnd:
 	assert (SalamenceSampledCryEnd - SalamenceSampledCryData) % 9 == 0
+
+BeldumSampledCry::
+	dw (BeldumSampledCryEnd - BeldumSampledCryData) / 9
+BeldumSampledCryData:
+	INCBIN "audio/sampled_cries/beldum.mm2"
+BeldumSampledCryEnd:
+	assert (BeldumSampledCryEnd - BeldumSampledCryData) % 9 == 0

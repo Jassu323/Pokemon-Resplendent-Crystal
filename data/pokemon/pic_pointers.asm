@@ -650,4 +650,6 @@ PokemonPicPointers::
 	dba ShelgonBackpic
 	dba SalamenceFrontpic
 	dba SalamenceBackpic
+	dba BeldumFrontpic
+	dba BeldumBackpic
 	assert_table_length NUM_POKEMON + 1

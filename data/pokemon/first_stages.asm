@@ -318,4 +318,5 @@ FirstEvoStages::
 	dw BAGON
 	dw BAGON
 	dw BAGON
+	dw BELDUM
 	assert_table_length NUM_POKEMON

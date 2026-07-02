@@ -318,4 +318,5 @@ EvolutionMoves::
 	dw NO_MOVE ; BAGON
 	dw NO_MOVE ; SHELGON
 	dw NO_MOVE ; SALAMENCE
+	dw NO_MOVE ; BELDUM
 	assert_table_length NUM_POKEMON

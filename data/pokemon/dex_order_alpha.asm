@@ -23,6 +23,7 @@ AlphabeticalPokedexOrder:
 	dw BARBOACH
 	dw BAYLEEF
 	dw BEEDRILL
+	dw BELDUM
 	dw BELLOSSOM
 	dw BELLSPROUT
 	dw BLASTOISE

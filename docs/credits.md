@@ -85,6 +85,9 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
+- Beldum sprite (JohtoLegends credits Blue Emerald)
+- Metang sprite (JohtoLegends credits Blue Emerald)
+- Metagross sprite (JohtoLegends credits Blue Emerald)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
 - Spheal sprite (original BW3G sources COMBOY collection)
@@ -152,3 +155,6 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Feebas
 - Absol
 - Glalie
+- Bagon
+- Shelgon
+- Salamence

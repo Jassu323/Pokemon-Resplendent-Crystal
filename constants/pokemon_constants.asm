@@ -337,6 +337,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const BAGON      ; 141, NatDex 371
 	const SHELGON    ; 142, NatDex 372
 	const SALAMENCE  ; 143, NatDex 373
+	const BELDUM     ; 144, NatDex 374
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3
