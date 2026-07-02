@@ -165,7 +165,7 @@ StartMenu_PrintBugContestStatus:
 	hlcoord 1, 1
 	ld de, .CaughtString
 	call PlaceString
-	ld a, [wContestMon]
+	farcall BugContest_GetContestMonSpecies
 	and a
 	ld de, .NoneString
 	jr z, .no_contest_mon
@@ -175,13 +175,15 @@ StartMenu_PrintBugContestStatus:
 .no_contest_mon
 	hlcoord 8, 1
 	call PlaceString
-	ld a, [wContestMon]
+	farcall BugContest_GetContestMonSpecies
 	and a
 	jr z, .skip_level
+	farcall BugContest_GetContestMonLevel
+	push af
 	hlcoord 1, 3
 	ld de, .LevelString
 	call PlaceString
-	ld a, [wContestMonLevel]
+	pop af
 	ld h, b
 	ld l, c
 	inc hl

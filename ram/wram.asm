@@ -3304,7 +3304,7 @@ endr
 wPartyMonNicknamesEnd::
 
 DEF POKEDEX_FLAG_BYTES EQU (NUM_POKEMON + 7) / 8
-DEF POKEDEX_FLAG_CAPACITY_BYTES EQU 43 ; 344 species
+DEF POKEDEX_FLAG_CAPACITY_BYTES EQU 64 ; 512 species
 	assert POKEDEX_FLAG_BYTES <= POKEDEX_FLAG_CAPACITY_BYTES
 
 wPokedexCaught:: ds POKEDEX_FLAG_BYTES
@@ -3351,7 +3351,6 @@ wEggMonOT:: ds NAME_LENGTH
 wEggMon:: box_struct wEggMon
 
 wBugContestSecondPartySpecies:: db
-wContestMon:: party_struct wContestMon
 
 wDunsparceMapGroup:: db
 wDunsparceMapNumber:: db
@@ -3418,6 +3417,11 @@ SECTION "16-bit WRAM tables", WRAMX
 ; align this section to $100
 	wram_conversion_table wPokemonIndexTable, MON_TABLE
 	wram_conversion_table wMoveIndexTable, MOVE_TABLE
+
+
+SECTION "Bug Contest WRAM", WRAMX, BANK[2]
+
+wContestMon:: party_struct wContestMon
 
 
 SECTION "Battle Tower RAM", WRAMX

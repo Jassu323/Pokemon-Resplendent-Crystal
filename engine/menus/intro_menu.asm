@@ -85,6 +85,7 @@ ResetWRAM:
 	xor a
 	ldh [hBGMapMode], a
 	call _ResetWRAM
+	farcall BugContest_ClearContestMon
 	ret
 
 _ResetWRAM:

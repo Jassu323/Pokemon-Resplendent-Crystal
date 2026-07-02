@@ -143,10 +143,11 @@ BugContest_GetPlayersResult:
 BugContest_JudgeContestants:
 	call ClearContestResults
 	call ComputeAIContestantScores
+	farcall BugContest_CopyContestMonToTempMon
 	ld hl, wBugContestTempWinnerID
 	ld a, BUG_CONTEST_PLAYER
 	ld [hli], a
-	ld a, [wContestMon]
+	ld a, [wTempMonSpecies]
 	ld [hli], a
 	ldh a, [hProduct]
 	ld [hli], a
@@ -290,40 +291,41 @@ ComputeAIContestantScores:
 ContestScore:
 ; Determine the player's score in the Bug Catching Contest.
 
+	farcall BugContest_CopyContestMonToTempMon
 	xor a
 	ldh [hProduct], a
 	ldh [hMultiplicand], a
 
-	ld a, [wContestMonSpecies] ; Species
+	ld a, [wTempMonSpecies] ; Species
 	and a
 	jr z, .done
 
 	; Tally the following:
 
 	; Max HP * 4
-	ld a, [wContestMonMaxHP + 1]
+	ld a, [wTempMonMaxHP + 1]
 	call .AddContestStat
-	ld a, [wContestMonMaxHP + 1]
+	ld a, [wTempMonMaxHP + 1]
 	call .AddContestStat
-	ld a, [wContestMonMaxHP + 1]
+	ld a, [wTempMonMaxHP + 1]
 	call .AddContestStat
-	ld a, [wContestMonMaxHP + 1]
+	ld a, [wTempMonMaxHP + 1]
 	call .AddContestStat
 
 	; Stats
-	ld a, [wContestMonAttack  + 1]
+	ld a, [wTempMonAttack  + 1]
 	call .AddContestStat
-	ld a, [wContestMonDefense + 1]
+	ld a, [wTempMonDefense + 1]
 	call .AddContestStat
-	ld a, [wContestMonSpeed   + 1]
+	ld a, [wTempMonSpeed   + 1]
 	call .AddContestStat
-	ld a, [wContestMonSpclAtk + 1]
+	ld a, [wTempMonSpclAtk + 1]
 	call .AddContestStat
-	ld a, [wContestMonSpclDef + 1]
+	ld a, [wTempMonSpclDef + 1]
 	call .AddContestStat
 
 	; DVs
-	ld a, [wContestMonDVs + 0]
+	ld a, [wTempMonDVs + 0]
 	ld b, a
 	and %0010
 	add a
@@ -337,7 +339,7 @@ ContestScore:
 	add c
 	ld d, a
 
-	ld a, [wContestMonDVs + 1]
+	ld a, [wTempMonDVs + 1]
 	ld b, a
 	and %0010
 	ld c, a
@@ -354,14 +356,14 @@ ContestScore:
 	call .AddContestStat
 
 	; Remaining HP / 8
-	ld a, [wContestMonHP + 1]
+	ld a, [wTempMonHP + 1]
 	srl a
 	srl a
 	srl a
 	call .AddContestStat
 
 	; Whether it's holding an item
-	ld a, [wContestMonItem]
+	ld a, [wTempMonItem]
 	and a
 	jr z, .done
 

@@ -772,6 +772,7 @@ LoadPokemonData:
 	ld bc, wPokemonDataEnd - wPokemonData
 	call CopyBytes
 	call CloseSRAM
+	farcall BugContest_ClearContestMon
 	ret
 
 LoadIndexTables:
@@ -870,6 +871,7 @@ LoadBackupPokemonData:
 	ld bc, wPokemonDataEnd - wPokemonData
 	call CopyBytes
 	call CloseSRAM
+	farcall BugContest_ClearContestMon
 	ret
 
 LoadBackupIndexTables:
