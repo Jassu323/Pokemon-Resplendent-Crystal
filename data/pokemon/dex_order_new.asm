@@ -322,4 +322,5 @@ NewPokedexOrder:
 	dw BELDUM
 	dw METANG
 	dw METAGROSS
+	dw REGIROCK
 	assert_table_length NUM_POKEMON

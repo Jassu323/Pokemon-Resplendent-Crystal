@@ -70,6 +70,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; BELDUM
 	dw NoEggMoves3 ; METANG
 	dw NoEggMoves3 ; METAGROSS
+	dw NoEggMoves3 ; REGIROCK
 .IndirectEnd::
 
 NoEggMoves3:

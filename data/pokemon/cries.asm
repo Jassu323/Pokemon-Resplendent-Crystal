@@ -326,4 +326,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; BELDUM
 	mon_cry CRY_BULBASAUR,   128,  129 ; METANG
 	mon_cry CRY_BULBASAUR,   128,  129 ; METAGROSS
+	mon_cry CRY_BULBASAUR,   128,  129 ; REGIROCK
 	assert_table_length NUM_POKEMON

@@ -328,4 +328,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 144 BELDUM
 	mon_ability NO_ABILITY ; 145 METANG
 	mon_ability NO_ABILITY ; 146 METAGROSS
+	mon_ability NO_ABILITY ; 147 REGIROCK
 	assert_table_length NUM_POKEMON + 1

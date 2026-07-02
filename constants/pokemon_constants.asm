@@ -340,6 +340,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const BELDUM     ; 144, NatDex 374
 	const METANG     ; 145, NatDex 375
 	const METAGROSS  ; 146, NatDex 376
+	const REGIROCK   ; 147, NatDex 377
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

@@ -326,4 +326,5 @@ PokemonNames::
 	dname "Beldum"
 	dname "Metang"
 	dname "Metagross"
+	dname "Regirock"
 	assert_table_length NUM_POKEMON

@@ -321,4 +321,5 @@ FirstEvoStages::
 	dw BELDUM
 	dw BELDUM
 	dw BELDUM
+	dw REGIROCK
 	assert_table_length NUM_POKEMON

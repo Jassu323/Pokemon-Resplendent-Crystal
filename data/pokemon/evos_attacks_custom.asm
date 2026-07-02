@@ -70,6 +70,7 @@ EvosAttacksPointers3::
 	dw BeldumEvosAttacks
 	dw MetangEvosAttacks
 	dw MetagrossEvosAttacks
+	dw RegirockEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -413,6 +414,11 @@ MetangEvosAttacks:
 	db 0 ; no more level-up moves
 
 MetagrossEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+RegirockEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves
