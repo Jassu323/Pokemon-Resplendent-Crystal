@@ -330,4 +330,5 @@ NewPokedexOrder:
 	dw RAYQUAZA
 	dw SHINX
 	dw LUXIO
+	dw LUXRAY
 	assert_table_length NUM_POKEMON

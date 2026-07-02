@@ -329,4 +329,5 @@ EvolutionMoves::
 	dw NO_MOVE ; RAYQUAZA
 	dw NO_MOVE ; SHINX
 	dw NO_MOVE ; LUXIO
+	dw NO_MOVE ; LUXRAY
 	assert_table_length NUM_POKEMON

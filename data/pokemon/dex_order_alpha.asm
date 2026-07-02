@@ -151,6 +151,7 @@ AlphabeticalPokedexOrder:
 	dw LUGIA
 	dw LUNATONE
 	dw LUXIO
+	dw LUXRAY
 	dw MACHAMP
 	dw MACHOKE
 	dw MACHOP

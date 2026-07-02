@@ -335,6 +335,7 @@ MonMenuIcons:
 	mon_menu_icon RayquazaIcon,       GREEN,  GRAY   ; RAYQUAZA
 	mon_menu_icon ShinxIcon,          BLUE,   BROWN  ; SHINX
 	mon_menu_icon LuxioIcon,          BLUE,   BROWN  ; LUXIO
+	mon_menu_icon LuxrayIcon,         BLUE,   BROWN  ; LUXRAY
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

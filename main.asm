@@ -107,6 +107,7 @@ GroudonIcon::       INCBIN "gfx/icons/groudon.2bpp"
 RayquazaIcon::      INCBIN "gfx/icons/rayquaza.2bpp"
 ShinxIcon::         INCBIN "gfx/icons/shinx.2bpp"
 LuxioIcon::         INCBIN "gfx/icons/luxio.2bpp"
+LuxrayIcon::        INCBIN "gfx/icons/luxray.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -544,6 +545,7 @@ SECTION "Pic Animations 4", ROMX
 INCLUDE "gfx/pokemon/unown_frames.asm"
 INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/unown_bitmasks.asm"
+CameruptFrames:   INCLUDE "gfx/pokemon/camerupt/frames.asm"
 TorkoalFrames:    INCLUDE "gfx/pokemon/torkoal/frames.asm"
 TrapinchFrames:   INCLUDE "gfx/pokemon/trapinch/frames.asm"
 VibravaFrames:    INCLUDE "gfx/pokemon/vibrava/frames.asm"
@@ -590,6 +592,7 @@ GroudonFrames:    INCLUDE "gfx/pokemon/groudon/frames.asm"
 RayquazaFrames:   INCLUDE "gfx/pokemon/rayquaza/frames.asm"
 ShinxFrames:      INCLUDE "gfx/pokemon/shinx/frames.asm"
 LuxioFrames:      INCLUDE "gfx/pokemon/luxio/frames.asm"
+LuxrayFrames:     INCLUDE "gfx/pokemon/luxray/frames.asm"
 
 
 SECTION "bank38", ROMX

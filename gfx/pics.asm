@@ -952,3 +952,5 @@ SECTION "Pics 25", ROMX
 
 LuxioFrontpic:      INCBIN "gfx/pokemon/luxio/front.animated.2bpp.lz"
 LuxioBackpic:       INCBIN "gfx/pokemon/luxio/back.2bpp.lz"
+LuxrayFrontpic:     INCBIN "gfx/pokemon/luxray/front.animated.2bpp.lz"
+LuxrayBackpic:      INCBIN "gfx/pokemon/luxray/back.2bpp.lz"

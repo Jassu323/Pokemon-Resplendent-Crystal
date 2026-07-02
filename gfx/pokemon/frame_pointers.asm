@@ -328,4 +328,5 @@ FramesPointers:
 	dba RayquazaFrames
 	dba ShinxFrames
 	dba LuxioFrames
+	dba LuxrayFrames
 	assert_table_length NUM_POKEMON

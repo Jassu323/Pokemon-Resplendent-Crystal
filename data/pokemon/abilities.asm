@@ -336,4 +336,5 @@ SpeciesAbilities::
 	mon_ability AIR_LOCK ; 152 RAYQUAZA
 	mon_ability NO_ABILITY ; 153 SHINX
 	mon_ability NO_ABILITY ; 154 LUXIO
+	mon_ability NO_ABILITY ; 155 LUXRAY
 	assert_table_length NUM_POKEMON + 1

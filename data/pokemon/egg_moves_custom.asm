@@ -78,6 +78,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; RAYQUAZA
 	dw NoEggMoves3 ; SHINX
 	dw NoEggMoves3 ; LUXIO
+	dw NoEggMoves3 ; LUXRAY
 .IndirectEnd::
 
 NoEggMoves3:
