@@ -65,6 +65,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SEALEO
 	const SAMPLED_CRY_WALREIN
 	const SAMPLED_CRY_BAGON
+	const SAMPLED_CRY_SHELGON
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -268,6 +269,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_WALREIN
 	elif sampled_cry_mon == BAGON
 		db SAMPLED_CRY_BAGON
+	elif sampled_cry_mon == SHELGON
+		db SAMPLED_CRY_SHELGON
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -341,6 +344,7 @@ SampledCryPointers:
 	dba SealeoSampledCry
 	dba WalreinSampledCry
 	dba BagonSampledCry
+	dba ShelgonSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -823,3 +827,13 @@ BagonSampledCryData:
 	INCBIN "audio/sampled_cries/bagon.mm2"
 BagonSampledCryEnd:
 	assert (BagonSampledCryEnd - BagonSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 11", ROMX
+
+ShelgonSampledCry::
+	dw (ShelgonSampledCryEnd - ShelgonSampledCryData) / 9
+ShelgonSampledCryData:
+	INCBIN "audio/sampled_cries/shelgon.mm2"
+ShelgonSampledCryEnd:
+	assert (ShelgonSampledCryEnd - ShelgonSampledCryData) % 9 == 0

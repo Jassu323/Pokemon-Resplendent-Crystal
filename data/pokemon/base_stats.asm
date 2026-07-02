@@ -342,4 +342,5 @@ INCLUDE "data/pokemon/base_stats/spheal.asm"
 INCLUDE "data/pokemon/base_stats/sealeo.asm"
 INCLUDE "data/pokemon/base_stats/walrein.asm"
 INCLUDE "data/pokemon/base_stats/bagon.asm"
+INCLUDE "data/pokemon/base_stats/shelgon.asm"
 .IndirectEnd::

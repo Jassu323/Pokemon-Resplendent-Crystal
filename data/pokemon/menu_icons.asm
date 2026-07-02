@@ -322,6 +322,7 @@ MonMenuIcons:
 	mon_menu_icon SealeoIcon,         PURPLE, PINK   ; SEALEO
 	mon_menu_icon WalreinIcon,        TEAL,   PINK   ; WALREIN
 	mon_menu_icon BagonIcon,          BLUE,   GREEN  ; BAGON
+	mon_menu_icon ShelgonIcon,        GRAY,   GREEN  ; SHELGON
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

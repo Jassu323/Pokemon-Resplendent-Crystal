@@ -321,4 +321,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; SEALEO
 	mon_cry CRY_BULBASAUR,   128,  129 ; WALREIN
 	mon_cry CRY_BULBASAUR,   128,  129 ; BAGON
+	mon_cry CRY_BULBASAUR,   128,  129 ; SHELGON
 	assert_table_length NUM_POKEMON

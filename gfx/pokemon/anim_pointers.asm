@@ -315,4 +315,5 @@ AnimationPointers:
 	dw SealeoAnimation
 	dw WalreinAnimation
 	dw BagonAnimation
+	dw ShelgonAnimation
 	assert_table_length NUM_POKEMON

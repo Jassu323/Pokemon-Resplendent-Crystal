@@ -922,3 +922,5 @@ SECTION "Pics 24", ROMX
 
 BagonFrontpic:      INCBIN "gfx/pokemon/bagon/front.animated.2bpp.lz"
 BagonBackpic:       INCBIN "gfx/pokemon/bagon/back.2bpp.lz"
+ShelgonFrontpic:    INCBIN "gfx/pokemon/shelgon/front.animated.2bpp.lz"
+ShelgonBackpic:     INCBIN "gfx/pokemon/shelgon/back.2bpp.lz"

@@ -646,4 +646,6 @@ PokemonPicPointers::
 	dba WalreinBackpic
 	dba BagonFrontpic
 	dba BagonBackpic
+	dba ShelgonFrontpic
+	dba ShelgonBackpic
 	assert_table_length NUM_POKEMON + 1

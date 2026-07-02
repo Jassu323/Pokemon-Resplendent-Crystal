@@ -316,4 +316,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SEALEO
 	dw NO_MOVE ; WALREIN
 	dw NO_MOVE ; BAGON
+	dw NO_MOVE ; SHELGON
 	assert_table_length NUM_POKEMON
