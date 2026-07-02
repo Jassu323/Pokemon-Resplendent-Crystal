@@ -325,4 +325,5 @@ NewPokedexOrder:
 	dw REGIROCK
 	dw REGICE
 	dw REGISTEEL
+	dw KYOGRE
 	assert_table_length NUM_POKEMON

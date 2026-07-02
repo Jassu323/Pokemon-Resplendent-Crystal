@@ -330,6 +330,7 @@ MonMenuIcons:
 	mon_menu_icon RegirockIcon,       RED,    BROWN  ; REGIROCK
 	mon_menu_icon RegiceIcon,         GRAY,   PINK   ; REGICE
 	mon_menu_icon RegisteelIcon,      GRAY,   GREEN  ; REGISTEEL
+	mon_menu_icon KyogreIcon,         BLUE,   PURPLE ; KYOGRE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

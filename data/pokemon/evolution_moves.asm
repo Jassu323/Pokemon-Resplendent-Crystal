@@ -324,4 +324,5 @@ EvolutionMoves::
 	dw NO_MOVE ; REGIROCK
 	dw NO_MOVE ; REGICE
 	dw NO_MOVE ; REGISTEEL
+	dw NO_MOVE ; KYOGRE
 	assert_table_length NUM_POKEMON

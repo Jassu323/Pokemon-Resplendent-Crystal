@@ -138,6 +138,7 @@ AlphabeticalPokedexOrder:
 	dw KINGLER
 	dw KOFFING
 	dw KRABBY
+	dw KYOGRE
 	dw LANTURN
 	dw LAIRON
 	dw LAPRAS

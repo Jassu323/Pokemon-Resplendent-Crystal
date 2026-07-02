@@ -82,6 +82,9 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Dusclops sprite
 - Dusknoir sprite and party menu sprite
 - Snorunt party menu sprite
+- Kyogre sprite
+- Groudon sprite
+- Rayquaza sprite
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
@@ -158,3 +161,6 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Bagon
 - Shelgon
 - Salamence
+- Regirock
+- Regice
+- Registeel

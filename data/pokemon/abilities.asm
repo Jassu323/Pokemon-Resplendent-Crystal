@@ -331,4 +331,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 147 REGIROCK
 	mon_ability NO_ABILITY ; 148 REGICE
 	mon_ability NO_ABILITY ; 149 REGISTEEL
+	mon_ability DRIZZLE ; 150 KYOGRE
 	assert_table_length NUM_POKEMON + 1

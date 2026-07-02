@@ -329,4 +329,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; REGIROCK
 	mon_cry CRY_BULBASAUR,   128,  129 ; REGICE
 	mon_cry CRY_BULBASAUR,   128,  129 ; REGISTEEL
+	mon_cry CRY_BULBASAUR,   128,  129 ; KYOGRE
 	assert_table_length NUM_POKEMON

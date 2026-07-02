@@ -73,6 +73,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; REGIROCK
 	dw NoEggMoves3 ; REGICE
 	dw NoEggMoves3 ; REGISTEEL
+	dw NoEggMoves3 ; KYOGRE
 .IndirectEnd::
 
 NoEggMoves3:

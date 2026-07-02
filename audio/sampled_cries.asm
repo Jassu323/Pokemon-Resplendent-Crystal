@@ -73,6 +73,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_REGIROCK
 	const SAMPLED_CRY_REGICE
 	const SAMPLED_CRY_REGISTEEL
+	const SAMPLED_CRY_KYOGRE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -292,6 +293,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_REGICE
 	elif sampled_cry_mon == REGISTEEL
 		db SAMPLED_CRY_REGISTEEL
+	elif sampled_cry_mon == KYOGRE
+		db SAMPLED_CRY_KYOGRE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -373,6 +376,7 @@ SampledCryPointers:
 	dba RegirockSampledCry
 	dba RegiceSampledCry
 	dba RegisteelSampledCry
+	dba KyogreSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -917,3 +921,13 @@ RegisteelSampledCryData:
 	INCBIN "audio/sampled_cries/registeel.mm2"
 RegisteelSampledCryEnd:
 	assert (RegisteelSampledCryEnd - RegisteelSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 13", ROMX
+
+KyogreSampledCry::
+	dw (KyogreSampledCryEnd - KyogreSampledCryData) / 9
+KyogreSampledCryData:
+	INCBIN "audio/sampled_cries/kyogre.mm2"
+KyogreSampledCryEnd:
+	assert (KyogreSampledCryEnd - KyogreSampledCryData) % 9 == 0

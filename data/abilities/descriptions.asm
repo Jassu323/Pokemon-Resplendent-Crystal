@@ -25,6 +25,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; IRONCLAD
 	dw AbilityPlaceholderDescription ; LEVITATE
 	dw AbilityPlaceholderDescription ; MARVEL_SCALE
+	dw AbilityPlaceholderDescription ; DRIZZLE
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

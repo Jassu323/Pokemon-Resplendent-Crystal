@@ -24,4 +24,5 @@
 	const IRONCLAD
 	const LEVITATE
 	const MARVEL_SCALE
+	const DRIZZLE
 DEF NUM_ABILITIES EQU const_value - 1

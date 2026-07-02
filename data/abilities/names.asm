@@ -24,4 +24,5 @@ AbilityNames::
 	li "Ironclad"
 	li "Levitate"
 	li "Marvel Scale"
+	li "Drizzle"
 	assert_list_length NUM_ABILITIES + 1

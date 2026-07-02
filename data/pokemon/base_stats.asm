@@ -350,4 +350,5 @@ INCLUDE "data/pokemon/base_stats/metagross.asm"
 INCLUDE "data/pokemon/base_stats/regirock.asm"
 INCLUDE "data/pokemon/base_stats/regice.asm"
 INCLUDE "data/pokemon/base_stats/registeel.asm"
+INCLUDE "data/pokemon/base_stats/kyogre.asm"
 .IndirectEnd::
