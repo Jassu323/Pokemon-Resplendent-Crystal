@@ -330,4 +330,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SHINX
 	dw NO_MOVE ; LUXIO
 	dw NO_MOVE ; LUXRAY
+	dw NO_MOVE ; CRANIDOS
 	assert_table_length NUM_POKEMON

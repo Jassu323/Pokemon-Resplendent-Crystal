@@ -330,4 +330,5 @@ FirstEvoStages::
 	dw SHINX
 	dw SHINX
 	dw SHINX
+	dw CRANIDOS
 	assert_table_length NUM_POKEMON

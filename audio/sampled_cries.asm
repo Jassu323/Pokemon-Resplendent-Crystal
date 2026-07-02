@@ -79,6 +79,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SHINX
 	const SAMPLED_CRY_LUXIO
 	const SAMPLED_CRY_LUXRAY
+	const SAMPLED_CRY_CRANIDOS
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -310,6 +311,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_LUXIO
 	elif sampled_cry_mon == LUXRAY
 		db SAMPLED_CRY_LUXRAY
+	elif sampled_cry_mon == CRANIDOS
+		db SAMPLED_CRY_CRANIDOS
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -397,6 +400,7 @@ SampledCryPointers:
 	dba ShinxSampledCry
 	dba LuxioSampledCry
 	dba LuxraySampledCry
+	dba CranidosSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -989,3 +993,10 @@ LuxraySampledCryData:
 	INCBIN "audio/sampled_cries/luxray.mm2"
 LuxraySampledCryEnd:
 	assert (LuxraySampledCryEnd - LuxraySampledCryData) % 9 == 0
+
+CranidosSampledCry::
+	dw (CranidosSampledCryEnd - CranidosSampledCryData) / 9
+CranidosSampledCryData:
+	INCBIN "audio/sampled_cries/cranidos.mm2"
+CranidosSampledCryEnd:
+	assert (CranidosSampledCryEnd - CranidosSampledCryData) % 9 == 0

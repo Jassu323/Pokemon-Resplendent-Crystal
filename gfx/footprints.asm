@@ -330,5 +330,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; rayquaza placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; shinx placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; luxio placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; luxray placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; cranidos placeholder
 
 	assert_table_length NUM_POKEMON

@@ -108,6 +108,7 @@ RayquazaIcon::      INCBIN "gfx/icons/rayquaza.2bpp"
 ShinxIcon::         INCBIN "gfx/icons/shinx.2bpp"
 LuxioIcon::         INCBIN "gfx/icons/luxio.2bpp"
 LuxrayIcon::        INCBIN "gfx/icons/luxray.2bpp"
+CranidosIcon::      INCBIN "gfx/icons/cranidos.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -593,6 +594,7 @@ RayquazaFrames:   INCLUDE "gfx/pokemon/rayquaza/frames.asm"
 ShinxFrames:      INCLUDE "gfx/pokemon/shinx/frames.asm"
 LuxioFrames:      INCLUDE "gfx/pokemon/luxio/frames.asm"
 LuxrayFrames:     INCLUDE "gfx/pokemon/luxray/frames.asm"
+CranidosFrames:   INCLUDE "gfx/pokemon/cranidos/frames.asm"
 
 
 SECTION "bank38", ROMX

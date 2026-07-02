@@ -50,6 +50,7 @@ AlphabeticalPokedexOrder:
 	dw CORPHISH
 	dw CORSOLA
 	dw CRADILY
+	dw CRANIDOS
 	dw CRAWDAUNT
 	dw CROBAT
 	dw CROCONAW

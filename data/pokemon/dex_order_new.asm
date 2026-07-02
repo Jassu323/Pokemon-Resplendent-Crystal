@@ -331,4 +331,5 @@ NewPokedexOrder:
 	dw SHINX
 	dw LUXIO
 	dw LUXRAY
+	dw CRANIDOS
 	assert_table_length NUM_POKEMON
