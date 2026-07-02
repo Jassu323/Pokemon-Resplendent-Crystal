@@ -321,4 +321,5 @@ BitmasksPointers:
 	dw MetangBitmasks
 	dw MetagrossBitmasks
 	dw RegirockBitmasks
+	dw RegiceBitmasks
 	assert_table_length NUM_POKEMON

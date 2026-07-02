@@ -231,6 +231,7 @@ AlphabeticalPokedexOrder:
 	dw RAPIDASH
 	dw RATICATE
 	dw RATTATA
+	dw REGICE
 	dw REGIROCK
 	dw REMORAID
 	dw RHYDON
