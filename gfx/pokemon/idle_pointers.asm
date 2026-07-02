@@ -325,4 +325,5 @@ AnimationIdlePointers:
 	dw RegisteelAnimationIdle
 	dw KyogreAnimationIdle
 	dw GroudonAnimationIdle
+	dw RayquazaAnimationIdle
 	assert_table_length NUM_POKEMON

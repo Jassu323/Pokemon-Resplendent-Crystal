@@ -75,6 +75,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_REGISTEEL
 	const SAMPLED_CRY_KYOGRE
 	const SAMPLED_CRY_GROUDON
+	const SAMPLED_CRY_RAYQUAZA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -298,6 +299,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_KYOGRE
 	elif sampled_cry_mon == GROUDON
 		db SAMPLED_CRY_GROUDON
+	elif sampled_cry_mon == RAYQUAZA
+		db SAMPLED_CRY_RAYQUAZA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -381,6 +384,7 @@ SampledCryPointers:
 	dba RegisteelSampledCry
 	dba KyogreSampledCry
 	dba GroudonSampledCry
+	dba RayquazaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -942,3 +946,10 @@ GroudonSampledCryData:
 	INCBIN "audio/sampled_cries/groudon.mm2"
 GroudonSampledCryEnd:
 	assert (GroudonSampledCryEnd - GroudonSampledCryData) % 9 == 0
+
+RayquazaSampledCry::
+	dw (RayquazaSampledCryEnd - RayquazaSampledCryData) / 9
+RayquazaSampledCryData:
+	INCBIN "audio/sampled_cries/rayquaza.mm2"
+RayquazaSampledCryEnd:
+	assert (RayquazaSampledCryEnd - RayquazaSampledCryData) % 9 == 0

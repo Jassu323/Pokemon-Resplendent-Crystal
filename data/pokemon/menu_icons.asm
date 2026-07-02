@@ -332,6 +332,7 @@ MonMenuIcons:
 	mon_menu_icon RegisteelIcon,      GRAY,   GREEN  ; REGISTEEL
 	mon_menu_icon KyogreIcon,         BLUE,   PURPLE ; KYOGRE
 	mon_menu_icon GroudonIcon,        RED,    BROWN  ; GROUDON
+	mon_menu_icon RayquazaIcon,       GREEN,  GRAY   ; RAYQUAZA
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

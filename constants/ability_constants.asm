@@ -26,4 +26,5 @@
 	const MARVEL_SCALE
 	const DRIZZLE
 	const DROUGHT
+	const AIR_LOCK
 DEF NUM_ABILITIES EQU const_value - 1

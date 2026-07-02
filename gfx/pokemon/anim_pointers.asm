@@ -325,4 +325,5 @@ AnimationPointers:
 	dw RegisteelAnimation
 	dw KyogreAnimation
 	dw GroudonAnimation
+	dw RayquazaAnimation
 	assert_table_length NUM_POKEMON

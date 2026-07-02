@@ -326,4 +326,5 @@ FirstEvoStages::
 	dw REGISTEEL
 	dw KYOGRE
 	dw GROUDON
+	dw RAYQUAZA
 	assert_table_length NUM_POKEMON

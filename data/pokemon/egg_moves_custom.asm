@@ -75,6 +75,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; REGISTEEL
 	dw NoEggMoves3 ; KYOGRE
 	dw NoEggMoves3 ; GROUDON
+	dw NoEggMoves3 ; RAYQUAZA
 .IndirectEnd::
 
 NoEggMoves3:
