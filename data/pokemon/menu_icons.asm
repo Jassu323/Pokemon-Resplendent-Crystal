@@ -341,6 +341,7 @@ MonMenuIcons:
 	mon_menu_icon ShieldonIcon,       GRAY,   BLUE   ; SHIELDON
 	mon_menu_icon BastiodonIcon,      GRAY,   BLUE   ; BASTIODON
 	mon_menu_icon AmbipomIcon,        PURPLE, PINK   ; AMBIPOM
+	mon_menu_icon MismagiusIcon,      PURPLE, BROWN  ; MISMAGIUS
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

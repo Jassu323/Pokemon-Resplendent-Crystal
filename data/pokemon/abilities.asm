@@ -342,4 +342,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 158 SHIELDON
 	mon_ability NO_ABILITY ; 159 BASTIODON
 	mon_ability NO_ABILITY ; 160 AMBIPOM
+	mon_ability NO_ABILITY ; 161 MISMAGIUS
 	assert_table_length NUM_POKEMON + 1

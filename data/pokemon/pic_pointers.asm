@@ -684,4 +684,6 @@ PokemonPicPointers::
 	dba BastiodonBackpic
 	dba AmbipomFrontpic
 	dba AmbipomBackpic
+	dba MismagiusFrontpic
+	dba MismagiusBackpic
 	assert_table_length NUM_POKEMON + 1

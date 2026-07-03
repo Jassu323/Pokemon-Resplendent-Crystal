@@ -335,4 +335,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SHIELDON
 	dw NO_MOVE ; BASTIODON
 	dw NO_MOVE ; AMBIPOM
+	dw NO_MOVE ; MISMAGIUS
 	assert_table_length NUM_POKEMON

@@ -185,6 +185,7 @@ AlphabeticalPokedexOrder:
 	dw MILOTIC
 	dw MILTANK
 	dw MISDREAVUS
+	dw MISMAGIUS
 	dw MOLTRES
 	dw MR__MIME
 	dw MUDKIP

@@ -86,6 +86,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Kyogre sprite
 - Groudon sprite
 - Rayquaza sprite
+- Mismagius sprite and party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)

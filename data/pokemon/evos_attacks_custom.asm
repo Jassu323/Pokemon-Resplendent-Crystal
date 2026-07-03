@@ -84,6 +84,7 @@ EvosAttacksPointers3::
 	dw ShieldonEvosAttacks
 	dw BastiodonEvosAttacks
 	dw AmbipomEvosAttacks
+	dw MismagiusEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -497,6 +498,11 @@ BastiodonEvosAttacks:
 	db 0 ; no more level-up moves
 
 AmbipomEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+MismagiusEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

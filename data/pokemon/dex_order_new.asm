@@ -336,4 +336,5 @@ NewPokedexOrder:
 	dw SHIELDON
 	dw BASTIODON
 	dw AMBIPOM
+	dw MISMAGIUS
 	assert_table_length NUM_POKEMON

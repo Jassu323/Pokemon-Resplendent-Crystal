@@ -334,4 +334,5 @@ FramesPointers:
 	dba ShieldonFrames
 	dba BastiodonFrames
 	dba AmbipomFrames
+	dba MismagiusFrames
 	assert_table_length NUM_POKEMON

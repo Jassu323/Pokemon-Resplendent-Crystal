@@ -361,4 +361,5 @@ INCLUDE "data/pokemon/base_stats/rampardos.asm"
 INCLUDE "data/pokemon/base_stats/shieldon.asm"
 INCLUDE "data/pokemon/base_stats/bastiodon.asm"
 INCLUDE "data/pokemon/base_stats/ambipom.asm"
+INCLUDE "data/pokemon/base_stats/mismagius.asm"
 .IndirectEnd::
