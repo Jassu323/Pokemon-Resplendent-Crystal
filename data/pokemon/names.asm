@@ -344,4 +344,5 @@ PokemonNames::
 	dname "Honchkrow"
 	dname "Bronzor"
 	dname "Bronzong"
+	dname "Riolu"
 	assert_table_length NUM_POKEMON

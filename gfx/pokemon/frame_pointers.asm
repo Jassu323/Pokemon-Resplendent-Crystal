@@ -338,4 +338,5 @@ FramesPointers:
 	dba HonchkrowFrames
 	dba BronzorFrames
 	dba BronzongFrames
+	dba RioluFrames
 	assert_table_length NUM_POKEMON

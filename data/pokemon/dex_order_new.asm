@@ -340,4 +340,5 @@ NewPokedexOrder:
 	dw HONCHKROW
 	dw BRONZOR
 	dw BRONZONG
+	dw RIOLU
 	assert_table_length NUM_POKEMON

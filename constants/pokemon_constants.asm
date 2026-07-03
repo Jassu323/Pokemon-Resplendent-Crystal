@@ -358,6 +358,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const HONCHKROW  ; 162, NatDex 430
 	const BRONZOR    ; 163, NatDex 436
 	const BRONZONG   ; 164, NatDex 437
+	const RIOLU      ; 165, NatDex 447
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

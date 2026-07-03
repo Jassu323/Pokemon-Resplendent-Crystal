@@ -338,4 +338,5 @@ AnimationPointers:
 	dw HonchkrowAnimation
 	dw BronzorAnimation
 	dw BronzongAnimation
+	dw RioluAnimation
 	assert_table_length NUM_POKEMON

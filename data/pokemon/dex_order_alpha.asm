@@ -250,6 +250,7 @@ AlphabeticalPokedexOrder:
 	dw REMORAID
 	dw RHYDON
 	dw RHYHORN
+	dw RIOLU
 	dw SALAMENCE
 	dw SANDSHREW
 	dw SANDSLASH

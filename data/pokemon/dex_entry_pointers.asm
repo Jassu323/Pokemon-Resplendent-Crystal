@@ -339,4 +339,5 @@ PokedexDataPointerTable:
 	dba HonchkrowPokedexEntry
 	dba BronzorPokedexEntry
 	dba BronzongPokedexEntry
+	dba RioluPokedexEntry
 	assert_table_length NUM_POKEMON
