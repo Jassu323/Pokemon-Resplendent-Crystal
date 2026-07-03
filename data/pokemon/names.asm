@@ -356,4 +356,5 @@ PokemonNames::
 	dname "Rhyperior"
 	dname "Tangrowth"
 	dname "Togekiss"
+	dname "Yanmega"
 	assert_table_length NUM_POKEMON

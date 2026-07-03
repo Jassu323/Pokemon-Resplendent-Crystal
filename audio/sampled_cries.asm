@@ -100,6 +100,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_RHYPERIOR
 	const SAMPLED_CRY_TANGROWTH
 	const SAMPLED_CRY_TOGEKISS
+	const SAMPLED_CRY_YANMEGA
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -373,6 +374,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_TANGROWTH
 	elif sampled_cry_mon == TOGEKISS
 		db SAMPLED_CRY_TOGEKISS
+	elif sampled_cry_mon == YANMEGA
+		db SAMPLED_CRY_YANMEGA
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -481,6 +484,7 @@ SampledCryPointers:
 	dba RhyperiorSampledCry
 	dba TangrowthSampledCry
 	dba TogekissSampledCry
+	dba YanmegaSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1235,3 +1239,10 @@ TogekissSampledCryData:
 	INCBIN "audio/sampled_cries/togekiss.mm2"
 TogekissSampledCryEnd:
 	assert (TogekissSampledCryEnd - TogekissSampledCryData) % 9 == 0
+
+YanmegaSampledCry::
+	dw (YanmegaSampledCryEnd - YanmegaSampledCryData) / 9
+YanmegaSampledCryData:
+	INCBIN "audio/sampled_cries/yanmega.mm2"
+YanmegaSampledCryEnd:
+	assert (YanmegaSampledCryEnd - YanmegaSampledCryData) % 9 == 0

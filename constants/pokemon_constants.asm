@@ -370,6 +370,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const RHYPERIOR  ; 174, NatDex 464
 	const TANGROWTH  ; 175, NatDex 465
 	const TOGEKISS   ; 176, NatDex 468
+	const YANMEGA    ; 177, NatDex 469
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

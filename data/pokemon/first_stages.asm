@@ -351,4 +351,5 @@ FirstEvoStages::
 	dw RHYHORN
 	dw TANGELA
 	dw TOGEPI
+	dw YANMA
 	assert_table_length NUM_POKEMON

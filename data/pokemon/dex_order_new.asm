@@ -352,4 +352,5 @@ NewPokedexOrder:
 	dw RHYPERIOR
 	dw TANGROWTH
 	dw TOGEKISS
+	dw YANMEGA
 	assert_table_length NUM_POKEMON

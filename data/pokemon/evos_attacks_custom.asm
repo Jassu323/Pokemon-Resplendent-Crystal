@@ -100,6 +100,7 @@ EvosAttacksPointers3::
 	dw RhyperiorEvosAttacks
 	dw TangrowthEvosAttacks
 	dw TogekissEvosAttacks
+	dw YanmegaEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -593,6 +594,11 @@ TangrowthEvosAttacks:
 	db 0 ; no more level-up moves
 
 TogekissEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+YanmegaEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

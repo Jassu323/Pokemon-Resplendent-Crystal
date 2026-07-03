@@ -356,4 +356,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; RHYPERIOR
 	mon_cry CRY_BULBASAUR,   128,  129 ; TANGROWTH
 	mon_cry CRY_BULBASAUR,   128,  129 ; TOGEKISS
+	mon_cry CRY_BULBASAUR,   128,  129 ; YANMEGA
 	assert_table_length NUM_POKEMON

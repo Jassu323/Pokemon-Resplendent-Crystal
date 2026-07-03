@@ -351,4 +351,5 @@ EvolutionMoves::
 	dw NO_MOVE ; RHYPERIOR
 	dw NO_MOVE ; TANGROWTH
 	dw NO_MOVE ; TOGEKISS
+	dw NO_MOVE ; YANMEGA
 	assert_table_length NUM_POKEMON
