@@ -83,6 +83,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_RAMPARDOS
 	const SAMPLED_CRY_SHIELDON
 	const SAMPLED_CRY_BASTIODON
+	const SAMPLED_CRY_AMBIPOM
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -322,6 +323,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SHIELDON
 	elif sampled_cry_mon == BASTIODON
 		db SAMPLED_CRY_BASTIODON
+	elif sampled_cry_mon == AMBIPOM
+		db SAMPLED_CRY_AMBIPOM
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -413,6 +416,7 @@ SampledCryPointers:
 	dba RampardosSampledCry
 	dba ShieldonSampledCry
 	dba BastiodonSampledCry
+	dba AmbipomSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1036,3 +1040,10 @@ BastiodonSampledCryData:
 	INCBIN "audio/sampled_cries/bastiodon.mm2"
 BastiodonSampledCryEnd:
 	assert (BastiodonSampledCryEnd - BastiodonSampledCryData) % 9 == 0
+
+AmbipomSampledCry::
+	dw (AmbipomSampledCryEnd - AmbipomSampledCryData) / 9
+AmbipomSampledCryData:
+	INCBIN "audio/sampled_cries/ambipom.mm2"
+AmbipomSampledCryEnd:
+	assert (AmbipomSampledCryEnd - AmbipomSampledCryData) % 9 == 0

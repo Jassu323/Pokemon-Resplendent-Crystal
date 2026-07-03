@@ -17,3 +17,16 @@ Salamence while avoiding the yellow/olive shift caused by GBC correction.
 
 For saturated shiny greens, bias the source color cooler than the desired final
 color by lowering red significantly and adding a small amount of blue.
+
+## Purples
+
+Ambipom's normal purple was tuned against the shared party-menu icon purple.
+Uneven red/blue values tended to shift too blue or too dusty after GBC
+correction.
+
+- Palette source value: `RGB 18, 04, 18`
+- Raw screenshot sample: `#902090`
+
+For clear sprite purples, keep red and blue equal or nearly equal, and keep
+green low. Good starting points are `RGB 16, 03, 16`, `RGB 18, 04, 18`, and
+`RGB 20, 04, 20`.

@@ -112,6 +112,7 @@ CranidosIcon::      INCBIN "gfx/icons/cranidos.2bpp"
 RampardosIcon::     INCBIN "gfx/icons/rampardos.2bpp"
 ShieldonIcon::      INCBIN "gfx/icons/shieldon.2bpp"
 BastiodonIcon::     INCBIN "gfx/icons/bastiodon.2bpp"
+AmbipomIcon::       INCBIN "gfx/icons/ambipom.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -549,6 +550,7 @@ SECTION "Pic Animations 4", ROMX
 INCLUDE "gfx/pokemon/unown_frames.asm"
 INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/unown_bitmasks.asm"
+SharpedoFrames:   INCLUDE "gfx/pokemon/sharpedo/frames.asm"
 NumelFrames:      INCLUDE "gfx/pokemon/numel/frames.asm"
 CameruptFrames:   INCLUDE "gfx/pokemon/camerupt/frames.asm"
 TorkoalFrames:    INCLUDE "gfx/pokemon/torkoal/frames.asm"
@@ -602,6 +604,7 @@ CranidosFrames:   INCLUDE "gfx/pokemon/cranidos/frames.asm"
 RampardosFrames:  INCLUDE "gfx/pokemon/rampardos/frames.asm"
 ShieldonFrames:   INCLUDE "gfx/pokemon/shieldon/frames.asm"
 BastiodonFrames:  INCLUDE "gfx/pokemon/bastiodon/frames.asm"
+AmbipomFrames:    INCLUDE "gfx/pokemon/ambipom/frames.asm"
 
 
 SECTION "bank38", ROMX

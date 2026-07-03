@@ -333,4 +333,5 @@ AnimationPointers:
 	dw RampardosAnimation
 	dw ShieldonAnimation
 	dw BastiodonAnimation
+	dw AmbipomAnimation
 	assert_table_length NUM_POKEMON

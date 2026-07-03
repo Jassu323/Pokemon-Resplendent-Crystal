@@ -59,9 +59,10 @@ NickJam
 MajorAgnostic - Pokémon Crystal Ultimate - https://github.com/MajorAgnostic/Pokemon-Crystal-Ultimate
 - In-battle Poké Ball animations and source graphics
 
-Rangi42 and the broader Polished Crystal team - https://github.com/Rangi42/polishedcrystal
+Rangi42 and the Polished Crystal team - https://github.com/Rangi42/polishedcrystal
 - Used as a reference point for some feature development (such as the Ability system)
 - Used as a reference point for graphical assets (item icons for the Pack UI)
+- Ambipom sprite and party menu icon (Polished Crystal credits Scarlax)
 
 Pret Team - https://github.com/pret/pokecrystal
 - pokecrystal disassembly project
@@ -74,14 +75,14 @@ fellowship-of-the-roms - https://github.com/fellowship-of-the-roms/pokecrystal16
 
 RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Used as a reference point for sampled cry playback system.  While my system differs substantially, I used theirs as a basis to avoid fully reinventing the wheel
-- Gallade party menu sprite
+- Gallade party menu icon
 - Armaldo sprite
 - Shuppet sprite
 - Banette sprite
 - Duskull sprite
 - Dusclops sprite
-- Dusknoir sprite and party menu sprite
-- Snorunt party menu sprite
+- Dusknoir sprite and party menu icon
+- Snorunt party menu icon
 - Kyogre sprite
 - Groudon sprite
 - Rayquaza sprite
@@ -100,7 +101,7 @@ AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon
 
-EeVeeeEe1999 - Gen 3 GBC Party Sprites - https://www.deviantart.com/eeveeee1999/art/Gen-3-GBC-Party-Sprites-830673924
+EeVeeeEe1999 - Gen 3 GBC Party Icons - https://www.deviantart.com/eeveeee1999/art/Gen-3-GBC-Party-Sprites-830673924
 - Nearly all of them, with a few exceptions credited above
 
 Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Pokemon-Crystal-Sprite-Sheet-by-Nuuk-938359828

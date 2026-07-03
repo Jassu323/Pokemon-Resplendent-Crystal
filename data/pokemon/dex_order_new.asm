@@ -335,4 +335,5 @@ NewPokedexOrder:
 	dw RAMPARDOS
 	dw SHIELDON
 	dw BASTIODON
+	dw AMBIPOM
 	assert_table_length NUM_POKEMON

@@ -334,5 +334,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; cranidos placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; rampardos placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; shieldon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; bastiodon placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; ambipom placeholder
 
 	assert_table_length NUM_POKEMON

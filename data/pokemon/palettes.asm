@@ -699,5 +699,7 @@ INCBIN "gfx/pokemon/shieldon/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/shieldon/shiny.pal"
 INCBIN "gfx/pokemon/bastiodon/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/bastiodon/shiny.pal"
+INCBIN "gfx/pokemon/ambipom/normal.gbcpal", middle_colors
+INCLUDE "gfx/pokemon/ambipom/shiny.pal"
 
 	assert_table_length NUM_POKEMON + 1

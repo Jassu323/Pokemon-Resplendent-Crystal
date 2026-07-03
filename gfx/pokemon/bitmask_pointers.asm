@@ -333,4 +333,5 @@ BitmasksPointers:
 	dw RampardosBitmasks
 	dw ShieldonBitmasks
 	dw BastiodonBitmasks
+	dw AmbipomBitmasks
 	assert_table_length NUM_POKEMON
