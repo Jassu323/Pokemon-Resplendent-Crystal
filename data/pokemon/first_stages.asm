@@ -348,4 +348,5 @@ FirstEvoStages::
 	dw SNEASEL
 	dw MAGNEMITE
 	dw LICKITUNG
+	dw RHYHORN
 	assert_table_length NUM_POKEMON

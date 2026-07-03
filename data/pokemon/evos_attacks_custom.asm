@@ -97,6 +97,7 @@ EvosAttacksPointers3::
 	dw WeavileEvosAttacks
 	dw MagnezoneEvosAttacks
 	dw LickilickyEvosAttacks
+	dw RhyperiorEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -575,6 +576,11 @@ MagnezoneEvosAttacks:
 	db 0 ; no more level-up moves
 
 LickilickyEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+RhyperiorEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

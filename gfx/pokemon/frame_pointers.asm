@@ -347,4 +347,5 @@ FramesPointers:
 	dba WeavileFrames
 	dba MagnezoneFrames
 	dba LickilickyFrames
+	dba RhyperiorFrames
 	assert_table_length NUM_POKEMON

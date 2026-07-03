@@ -97,6 +97,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; WEAVILE
 	dw NoEggMoves3 ; MAGNEZONE
 	dw NoEggMoves3 ; LICKILICKY
+	dw NoEggMoves3 ; RHYPERIOR
 .IndirectEnd::
 
 NoEggMoves3:

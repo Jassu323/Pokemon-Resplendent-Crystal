@@ -353,4 +353,5 @@ PokemonNames::
 	dname "Weavile"
 	dname "Magnezone"
 	dname "Lickilicky"
+	dname "Rhyperior"
 	assert_table_length NUM_POKEMON

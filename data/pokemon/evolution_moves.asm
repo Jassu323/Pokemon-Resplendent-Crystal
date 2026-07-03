@@ -348,4 +348,5 @@ EvolutionMoves::
 	dw NO_MOVE ; WEAVILE
 	dw NO_MOVE ; MAGNEZONE
 	dw NO_MOVE ; LICKILICKY
+	dw NO_MOVE ; RHYPERIOR
 	assert_table_length NUM_POKEMON

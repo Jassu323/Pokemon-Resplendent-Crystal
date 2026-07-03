@@ -96,7 +96,6 @@ ROMX $13
 	"bank13_2"
 ROMX $14
 	"bank14"
-	"Unused Egg Pic"
 ROMX $15
 	"Map Scripts 1"
 ROMX $16
@@ -447,6 +446,7 @@ ROMX $94
 	; MBC30 high ROM bank.
 	; Reserved for front/back pic overflow.
 	"Pics 26"
+	"Unused Egg Pic"
 ROMX $95
 	; MBC30 high ROM bank.
 	; Reserved for sampled cry payload overflow.

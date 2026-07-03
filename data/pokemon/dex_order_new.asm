@@ -349,4 +349,5 @@ NewPokedexOrder:
 	dw WEAVILE
 	dw MAGNEZONE
 	dw LICKILICKY
+	dw RHYPERIOR
 	assert_table_length NUM_POKEMON
