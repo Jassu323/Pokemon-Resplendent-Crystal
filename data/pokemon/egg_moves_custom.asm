@@ -98,6 +98,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; MAGNEZONE
 	dw NoEggMoves3 ; LICKILICKY
 	dw NoEggMoves3 ; RHYPERIOR
+	dw NoEggMoves3 ; TANGROWTH
 .IndirectEnd::
 
 NoEggMoves3:

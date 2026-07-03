@@ -350,4 +350,5 @@ NewPokedexOrder:
 	dw MAGNEZONE
 	dw LICKILICKY
 	dw RHYPERIOR
+	dw TANGROWTH
 	assert_table_length NUM_POKEMON

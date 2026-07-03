@@ -349,4 +349,5 @@ FirstEvoStages::
 	dw MAGNEMITE
 	dw LICKITUNG
 	dw RHYHORN
+	dw TANGELA
 	assert_table_length NUM_POKEMON

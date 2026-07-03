@@ -307,6 +307,7 @@ AlphabeticalPokedexOrder:
 	dw SWINUB
 	dw SNOVER
 	dw TANGELA
+	dw TANGROWTH
 	dw TAUROS
 	dw TEDDIURSA
 	dw TENTACOOL

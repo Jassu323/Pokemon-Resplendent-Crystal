@@ -98,6 +98,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_MAGNEZONE
 	const SAMPLED_CRY_LICKILICKY
 	const SAMPLED_CRY_RHYPERIOR
+	const SAMPLED_CRY_TANGROWTH
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -367,6 +368,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_LICKILICKY
 	elif sampled_cry_mon == RHYPERIOR
 		db SAMPLED_CRY_RHYPERIOR
+	elif sampled_cry_mon == TANGROWTH
+		db SAMPLED_CRY_TANGROWTH
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -473,6 +476,7 @@ SampledCryPointers:
 	dba MagnezoneSampledCry
 	dba LickilickySampledCry
 	dba RhyperiorSampledCry
+	dba TangrowthSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1210,3 +1214,10 @@ RhyperiorSampledCryData:
 	INCBIN "audio/sampled_cries/rhyperior.mm2"
 RhyperiorSampledCryEnd:
 	assert (RhyperiorSampledCryEnd - RhyperiorSampledCryData) % 9 == 0
+
+TangrowthSampledCry::
+	dw (TangrowthSampledCryEnd - TangrowthSampledCryData) / 9
+TangrowthSampledCryData:
+	INCBIN "audio/sampled_cries/tangrowth.mm2"
+TangrowthSampledCryEnd:
+	assert (TangrowthSampledCryEnd - TangrowthSampledCryData) % 9 == 0

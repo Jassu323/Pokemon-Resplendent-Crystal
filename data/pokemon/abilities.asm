@@ -356,4 +356,5 @@ SpeciesAbilities::
 	mon_ability MAGNETISM ; 172 MAGNEZONE
 	mon_ability NO_ABILITY ; 173 LICKILICKY
 	mon_ability NO_ABILITY ; 174 RHYPERIOR
+	mon_ability NO_ABILITY ; 175 TANGROWTH
 	assert_table_length NUM_POKEMON + 1

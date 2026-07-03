@@ -94,6 +94,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Weavile sprite and party menu icon
 - Magnezone party menu icon
 - Rhyperior sprite and party menu icon
+- Tangrowth party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
@@ -183,3 +184,4 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Regice
 - Registeel
 - Lickilicky
+- Tangrowth

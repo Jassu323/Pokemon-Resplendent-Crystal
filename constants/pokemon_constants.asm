@@ -368,6 +368,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const MAGNEZONE  ; 172, NatDex 462
 	const LICKILICKY ; 173, NatDex 463
 	const RHYPERIOR  ; 174, NatDex 464
+	const TANGROWTH  ; 175, NatDex 465
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

@@ -354,4 +354,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MAGNEZONE
 	mon_cry CRY_BULBASAUR,   128,  129 ; LICKILICKY
 	mon_cry CRY_BULBASAUR,   128,  129 ; RHYPERIOR
+	mon_cry CRY_BULBASAUR,   128,  129 ; TANGROWTH
 	assert_table_length NUM_POKEMON

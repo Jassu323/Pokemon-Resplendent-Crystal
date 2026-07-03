@@ -355,6 +355,7 @@ MonMenuIcons:
 	mon_menu_icon MagnezoneIcon,      BLUE,   BROWN  ; MAGNEZONE
 	mon_menu_icon LickilickyIcon,     PINK,   BROWN  ; LICKILICKY
 	mon_menu_icon RhyperiorIcon,      RED,    BROWN  ; RHYPERIOR
+	mon_menu_icon TangrowthIcon,      BLUE,   GREEN  ; TANGROWTH
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
