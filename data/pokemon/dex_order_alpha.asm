@@ -2,6 +2,7 @@
 
 AlphabeticalPokedexOrder:
 	table_width 2
+	dw ABOMASNOW
 	dw ABSOL
 	dw ABRA
 	dw AERODACTYL

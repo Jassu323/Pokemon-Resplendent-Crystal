@@ -345,4 +345,5 @@ NewPokedexOrder:
 	dw CROAGUNK
 	dw TOXICROAK
 	dw SNOVER
+	dw ABOMASNOW
 	assert_table_length NUM_POKEMON

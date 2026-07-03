@@ -344,4 +344,5 @@ FirstEvoStages::
 	dw CROAGUNK
 	dw CROAGUNK
 	dw SNOVER
+	dw SNOVER
 	assert_table_length NUM_POKEMON

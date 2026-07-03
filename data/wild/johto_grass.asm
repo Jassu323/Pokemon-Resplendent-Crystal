@@ -1282,29 +1282,29 @@ JohtoGrassWildMons:
 	db 10 percent, 10 percent, 10 percent ; encounter rates: morn/day/nite
 	; morn
 	; encounterPercent, SPECIES, minLevel, maxLevel
-	dbwbb 30, PIDGEY,        2,  2
-	dbwbb 30, SENTRET,       2,  2
-	dbwbb 20, PIDGEY,        3,  3
-	dbwbb 10, SENTRET,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOPPIP,        3,  3
-	dbwbb  1, HOPPIP,        3,  3
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 20, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 10, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  5, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  4, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  1, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
 	; day
-	dbwbb 30, PIDGEY,        2,  2
-	dbwbb 30, SENTRET,       2,  2
-	dbwbb 20, PIDGEY,        3,  3
-	dbwbb 10, SENTRET,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOPPIP,        3,  3
-	dbwbb  1, HOPPIP,        3,  3
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 20, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 10, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  5, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  4, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  1, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
 	; nite
-	dbwbb 30, HOOTHOOT,      2,  2
-	dbwbb 30, RATTATA,       2,  2
-	dbwbb 20, HOOTHOOT,      3,  3
-	dbwbb 10, RATTATA,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOOTHOOT,      3,  3
-	dbwbb  1, HOOTHOOT,      3,  3
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 30, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 20, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb 10, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  5, ABOMASNOW,     2,  2 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  4, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
+	dbwbb  1, ABOMASNOW,     3,  3 ; TEMP TEST: Abomasnow Route 29 encounters
 	end_grass_wildmons
 
 	def_grass_wildmons ROUTE_30

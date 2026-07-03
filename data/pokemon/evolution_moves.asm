@@ -344,4 +344,5 @@ EvolutionMoves::
 	dw NO_MOVE ; CROAGUNK
 	dw NO_MOVE ; TOXICROAK
 	dw NO_MOVE ; SNOVER
+	dw NO_MOVE ; ABOMASNOW
 	assert_table_length NUM_POKEMON

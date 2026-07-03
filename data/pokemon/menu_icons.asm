@@ -350,6 +350,7 @@ MonMenuIcons:
 	mon_menu_icon CroagunkIcon,       BLUE,   TEAL   ; CROAGUNK
 	mon_menu_icon ToxicroakIcon,      BLUE,   TEAL   ; TOXICROAK
 	mon_menu_icon SnoverIcon,         GREEN,  BLUE   ; SNOVER
+	mon_menu_icon AbomasnowIcon,      GREEN,  BLUE   ; ABOMASNOW
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -122,6 +122,7 @@ LucarioIcon::       INCBIN "gfx/icons/lucario.2bpp"
 CroagunkIcon::      INCBIN "gfx/icons/croagunk.2bpp"
 ToxicroakIcon::     INCBIN "gfx/icons/toxicroak.2bpp"
 SnoverIcon::        INCBIN "gfx/icons/snover.2bpp"
+AbomasnowIcon::     INCBIN "gfx/icons/abomasnow.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -624,6 +625,7 @@ LucarioFrames:    INCLUDE "gfx/pokemon/lucario/frames.asm"
 CroagunkFrames:   INCLUDE "gfx/pokemon/croagunk/frames.asm"
 ToxicroakFrames:  INCLUDE "gfx/pokemon/toxicroak/frames.asm"
 SnoverFrames:     INCLUDE "gfx/pokemon/snover/frames.asm"
+AbomasnowFrames:  INCLUDE "gfx/pokemon/abomasnow/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

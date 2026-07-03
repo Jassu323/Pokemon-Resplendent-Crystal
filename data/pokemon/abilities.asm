@@ -351,4 +351,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 167 CROAGUNK
 	mon_ability NO_ABILITY ; 168 TOXICROAK
 	mon_ability SNOW_WARNING ; 169 SNOVER
+	mon_ability SNOW_WARNING ; 170 ABOMASNOW
 	assert_table_length NUM_POKEMON + 1
