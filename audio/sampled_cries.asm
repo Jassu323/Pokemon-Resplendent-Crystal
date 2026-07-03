@@ -85,6 +85,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BASTIODON
 	const SAMPLED_CRY_AMBIPOM
 	const SAMPLED_CRY_MISMAGIUS
+	const SAMPLED_CRY_HONCHKROW
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -328,6 +329,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_AMBIPOM
 	elif sampled_cry_mon == MISMAGIUS
 		db SAMPLED_CRY_MISMAGIUS
+	elif sampled_cry_mon == HONCHKROW
+		db SAMPLED_CRY_HONCHKROW
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -421,6 +424,7 @@ SampledCryPointers:
 	dba BastiodonSampledCry
 	dba AmbipomSampledCry
 	dba MismagiusSampledCry
+	dba HonchkrowSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1058,3 +1062,13 @@ MismagiusSampledCryData:
 	INCBIN "audio/sampled_cries/mismagius.mm2"
 MismagiusSampledCryEnd:
 	assert (MismagiusSampledCryEnd - MismagiusSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 16", ROMX
+
+HonchkrowSampledCry::
+	dw (HonchkrowSampledCryEnd - HonchkrowSampledCryData) / 9
+HonchkrowSampledCryData:
+	INCBIN "audio/sampled_cries/honchkrow.mm2"
+HonchkrowSampledCryEnd:
+	assert (HonchkrowSampledCryEnd - HonchkrowSampledCryData) % 9 == 0

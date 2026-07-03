@@ -440,6 +440,9 @@ ROMX $92
 	; Reserved for sampled cry payload overflow.
 	"Sampled Cry Payloads 15"
 ROMX $93
+	; MBC30 high ROM bank.
+	; Reserved for sampled cry payload overflow.
+	"Sampled Cry Payloads 16"
 ROMX $94
 ROMX $95
 ROMX $96

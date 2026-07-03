@@ -355,6 +355,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const BASTIODON  ; 159, NatDex 411
 	const AMBIPOM    ; 160, NatDex 424
 	const MISMAGIUS  ; 161, NatDex 429
+	const HONCHKROW  ; 162, NatDex 430
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

@@ -85,6 +85,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; BASTIODON
 	dw NoEggMoves3 ; AMBIPOM
 	dw NoEggMoves3 ; MISMAGIUS
+	dw NoEggMoves3 ; HONCHKROW
 .IndirectEnd::
 
 NoEggMoves3:

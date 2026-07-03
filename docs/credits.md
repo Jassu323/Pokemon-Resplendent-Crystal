@@ -93,6 +93,7 @@ JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Beldum sprite (JohtoLegends credits Blue Emerald)
 - Metang sprite (JohtoLegends credits Blue Emerald)
 - Metagross sprite (JohtoLegends credits Blue Emerald)
+- Honchkrow party menu icon (JohtoLegends credits Bronzeswagger)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
 - Spheal sprite (original BW3G sources COMBOY collection)
@@ -152,6 +153,7 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Corphish
 - Crawdaunt
 - Snorunt
+- Honchkrow
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
 - Anorith

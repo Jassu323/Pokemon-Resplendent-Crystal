@@ -337,4 +337,5 @@ NewPokedexOrder:
 	dw BASTIODON
 	dw AMBIPOM
 	dw MISMAGIUS
+	dw HONCHKROW
 	assert_table_length NUM_POKEMON

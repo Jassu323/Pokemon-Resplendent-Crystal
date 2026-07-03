@@ -114,6 +114,7 @@ ShieldonIcon::      INCBIN "gfx/icons/shieldon.2bpp"
 BastiodonIcon::     INCBIN "gfx/icons/bastiodon.2bpp"
 AmbipomIcon::       INCBIN "gfx/icons/ambipom.2bpp"
 MismagiusIcon::     INCBIN "gfx/icons/mismagius.2bpp"
+HonchkrowIcon::     INCBIN "gfx/icons/honchkrow.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -608,6 +609,7 @@ ShieldonFrames:   INCLUDE "gfx/pokemon/shieldon/frames.asm"
 BastiodonFrames:  INCLUDE "gfx/pokemon/bastiodon/frames.asm"
 AmbipomFrames:    INCLUDE "gfx/pokemon/ambipom/frames.asm"
 MismagiusFrames:  INCLUDE "gfx/pokemon/mismagius/frames.asm"
+HonchkrowFrames:  INCLUDE "gfx/pokemon/honchkrow/frames.asm"
 
 
 SECTION "bank38", ROMX
