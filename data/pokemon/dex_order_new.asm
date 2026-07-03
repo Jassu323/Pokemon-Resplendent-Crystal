@@ -341,4 +341,5 @@ NewPokedexOrder:
 	dw BRONZOR
 	dw BRONZONG
 	dw RIOLU
+	dw LUCARIO
 	assert_table_length NUM_POKEMON

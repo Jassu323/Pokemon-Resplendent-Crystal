@@ -974,3 +974,9 @@ BronzongFrontpic:   INCBIN "gfx/pokemon/bronzong/front.animated.2bpp.lz"
 BronzongBackpic:    INCBIN "gfx/pokemon/bronzong/back.2bpp.lz"
 RioluFrontpic:      INCBIN "gfx/pokemon/riolu/front.animated.2bpp.lz"
 RioluBackpic:       INCBIN "gfx/pokemon/riolu/back.2bpp.lz"
+
+
+SECTION "Pics 26", ROMX
+
+LucarioFrontpic:    INCBIN "gfx/pokemon/lucario/front.animated.2bpp.lz"
+LucarioBackpic:     INCBIN "gfx/pokemon/lucario/back.2bpp.lz"

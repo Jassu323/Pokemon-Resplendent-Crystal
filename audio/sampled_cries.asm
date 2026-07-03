@@ -89,6 +89,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BRONZOR
 	const SAMPLED_CRY_BRONZONG
 	const SAMPLED_CRY_RIOLU
+	const SAMPLED_CRY_LUCARIO
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -340,6 +341,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_BRONZONG
 	elif sampled_cry_mon == RIOLU
 		db SAMPLED_CRY_RIOLU
+	elif sampled_cry_mon == LUCARIO
+		db SAMPLED_CRY_LUCARIO
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -437,6 +440,7 @@ SampledCryPointers:
 	dba BronzorSampledCry
 	dba BronzongSampledCry
 	dba RioluSampledCry
+	dba LucarioSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1105,3 +1109,10 @@ RioluSampledCryData:
 	INCBIN "audio/sampled_cries/riolu.mm2"
 RioluSampledCryEnd:
 	assert (RioluSampledCryEnd - RioluSampledCryData) % 9 == 0
+
+LucarioSampledCry::
+	dw (LucarioSampledCryEnd - LucarioSampledCryData) / 9
+LucarioSampledCryData:
+	INCBIN "audio/sampled_cries/lucario.mm2"
+LucarioSampledCryEnd:
+	assert (LucarioSampledCryEnd - LucarioSampledCryData) % 9 == 0

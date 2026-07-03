@@ -340,4 +340,5 @@ FirstEvoStages::
 	dw BRONZOR
 	dw BRONZOR
 	dw RIOLU
+	dw RIOLU
 	assert_table_length NUM_POKEMON

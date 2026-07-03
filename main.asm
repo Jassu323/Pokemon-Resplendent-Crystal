@@ -118,6 +118,7 @@ HonchkrowIcon::     INCBIN "gfx/icons/honchkrow.2bpp"
 BronzorIcon::       INCBIN "gfx/icons/bronzor.2bpp"
 BronzongIcon::      INCBIN "gfx/icons/bronzong.2bpp"
 RioluIcon::         INCBIN "gfx/icons/riolu.2bpp"
+LucarioIcon::       INCBIN "gfx/icons/lucario.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -616,6 +617,7 @@ HonchkrowFrames:  INCLUDE "gfx/pokemon/honchkrow/frames.asm"
 BronzorFrames:    INCLUDE "gfx/pokemon/bronzor/frames.asm"
 BronzongFrames:   INCLUDE "gfx/pokemon/bronzong/frames.asm"
 RioluFrames:      INCLUDE "gfx/pokemon/riolu/frames.asm"
+LucarioFrames:    INCLUDE "gfx/pokemon/lucario/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

@@ -154,6 +154,7 @@ AlphabeticalPokedexOrder:
 	dw LEDYBA
 	dw LICKITUNG
 	dw LILEEP
+	dw LUCARIO
 	dw LUGIA
 	dw LUNATONE
 	dw LUXIO

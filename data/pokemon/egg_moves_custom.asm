@@ -89,6 +89,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; BRONZOR
 	dw NoEggMoves3 ; BRONZONG
 	dw NoEggMoves3 ; RIOLU
+	dw NoEggMoves3 ; LUCARIO
 .IndirectEnd::
 
 NoEggMoves3:
