@@ -95,6 +95,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SNOVER
 	dw NoEggMoves3 ; ABOMASNOW
 	dw NoEggMoves3 ; WEAVILE
+	dw NoEggMoves3 ; MAGNEZONE
 .IndirectEnd::
 
 NoEggMoves3:

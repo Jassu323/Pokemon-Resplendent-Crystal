@@ -345,4 +345,5 @@ BitmasksPointers:
 	dba SnoverBitmasks
 	dba AbomasnowBitmasks
 	dba WeavileBitmasks
+	dba MagnezoneBitmasks
 	assert_table_length NUM_POKEMON

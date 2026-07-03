@@ -345,4 +345,5 @@ AnimationPointers:
 	dw SnoverAnimation
 	dw AbomasnowAnimation
 	dw WeavileAnimation
+	dw MagnezoneAnimation
 	assert_table_length NUM_POKEMON

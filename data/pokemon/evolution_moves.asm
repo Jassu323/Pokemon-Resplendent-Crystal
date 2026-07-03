@@ -346,4 +346,5 @@ EvolutionMoves::
 	dw NO_MOVE ; SNOVER
 	dw NO_MOVE ; ABOMASNOW
 	dw NO_MOVE ; WEAVILE
+	dw NO_MOVE ; MAGNEZONE
 	assert_table_length NUM_POKEMON

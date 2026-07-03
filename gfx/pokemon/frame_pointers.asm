@@ -345,4 +345,5 @@ FramesPointers:
 	dba SnoverFrames
 	dba AbomasnowFrames
 	dba WeavileFrames
+	dba MagnezoneFrames
 	assert_table_length NUM_POKEMON

@@ -347,4 +347,5 @@ NewPokedexOrder:
 	dw SNOVER
 	dw ABOMASNOW
 	dw WEAVILE
+	dw MAGNEZONE
 	assert_table_length NUM_POKEMON

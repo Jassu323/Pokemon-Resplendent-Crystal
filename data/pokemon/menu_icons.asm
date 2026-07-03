@@ -352,6 +352,7 @@ MonMenuIcons:
 	mon_menu_icon SnoverIcon,         GREEN,  BLUE   ; SNOVER
 	mon_menu_icon AbomasnowIcon,      GREEN,  BLUE   ; ABOMASNOW
 	mon_menu_icon WeavileIcon,        GRAY,   PINK   ; WEAVILE
+	mon_menu_icon MagnezoneIcon,      BLUE,   BROWN  ; MAGNEZONE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

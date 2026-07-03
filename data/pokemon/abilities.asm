@@ -353,4 +353,5 @@ SpeciesAbilities::
 	mon_ability SNOW_WARNING ; 169 SNOVER
 	mon_ability SNOW_WARNING ; 170 ABOMASNOW
 	mon_ability NO_ABILITY ; 171 WEAVILE
+	mon_ability MAGNETISM ; 172 MAGNEZONE
 	assert_table_length NUM_POKEMON + 1

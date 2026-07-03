@@ -365,6 +365,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const SNOVER     ; 169, NatDex 459
 	const ABOMASNOW  ; 170, NatDex 460
 	const WEAVILE    ; 171, NatDex 461
+	const MAGNEZONE  ; 172, NatDex 462
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

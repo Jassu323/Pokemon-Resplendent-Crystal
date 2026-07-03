@@ -345,4 +345,5 @@ AnimationIdlePointers:
 	dw SnoverAnimationIdle
 	dw AbomasnowAnimationIdle
 	dw WeavileAnimationIdle
+	dw MagnezoneAnimationIdle
 	assert_table_length NUM_POKEMON

@@ -95,6 +95,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SNOVER
 	const SAMPLED_CRY_ABOMASNOW
 	const SAMPLED_CRY_WEAVILE
+	const SAMPLED_CRY_MAGNEZONE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -358,6 +359,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_ABOMASNOW
 	elif sampled_cry_mon == WEAVILE
 		db SAMPLED_CRY_WEAVILE
+	elif sampled_cry_mon == MAGNEZONE
+		db SAMPLED_CRY_MAGNEZONE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -461,6 +464,7 @@ SampledCryPointers:
 	dba SnoverSampledCry
 	dba AbomasnowSampledCry
 	dba WeavileSampledCry
+	dba MagnezoneSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1174,3 +1178,13 @@ WeavileSampledCryData:
 	INCBIN "audio/sampled_cries/weavile.mm2"
 WeavileSampledCryEnd:
 	assert (WeavileSampledCryEnd - WeavileSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 18", ROMX
+
+MagnezoneSampledCry::
+	dw (MagnezoneSampledCryEnd - MagnezoneSampledCryData) / 9
+MagnezoneSampledCryData:
+	INCBIN "audio/sampled_cries/magnezone.mm2"
+MagnezoneSampledCryEnd:
+	assert (MagnezoneSampledCryEnd - MagnezoneSampledCryData) % 9 == 0

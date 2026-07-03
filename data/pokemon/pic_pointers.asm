@@ -706,4 +706,6 @@ PokemonPicPointers::
 	dba AbomasnowBackpic
 	dba WeavileFrontpic
 	dba WeavileBackpic
+	dba MagnezoneFrontpic
+	dba MagnezoneBackpic
 	assert_table_length NUM_POKEMON + 1

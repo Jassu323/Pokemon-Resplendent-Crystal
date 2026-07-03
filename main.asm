@@ -124,6 +124,7 @@ ToxicroakIcon::     INCBIN "gfx/icons/toxicroak.2bpp"
 SnoverIcon::        INCBIN "gfx/icons/snover.2bpp"
 AbomasnowIcon::     INCBIN "gfx/icons/abomasnow.2bpp"
 WeavileIcon::       INCBIN "gfx/icons/weavile.2bpp"
+MagnezoneIcon::     INCBIN "gfx/icons/magnezone.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -628,6 +629,7 @@ ToxicroakFrames:  INCLUDE "gfx/pokemon/toxicroak/frames.asm"
 SnoverFrames:     INCLUDE "gfx/pokemon/snover/frames.asm"
 AbomasnowFrames:  INCLUDE "gfx/pokemon/abomasnow/frames.asm"
 WeavileFrames:    INCLUDE "gfx/pokemon/weavile/frames.asm"
+MagnezoneFrames:  INCLUDE "gfx/pokemon/magnezone/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

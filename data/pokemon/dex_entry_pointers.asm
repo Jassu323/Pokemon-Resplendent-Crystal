@@ -346,4 +346,5 @@ PokedexDataPointerTable:
 	dba SnoverPokedexEntry
 	dba AbomasnowPokedexEntry
 	dba WeavilePokedexEntry
+	dba MagnezonePokedexEntry
 	assert_table_length NUM_POKEMON
