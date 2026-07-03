@@ -349,4 +349,5 @@ FramesPointers:
 	dba LickilickyFrames
 	dba RhyperiorFrames
 	dba TangrowthFrames
+	dba TogekissFrames
 	assert_table_length NUM_POKEMON

@@ -128,6 +128,7 @@ MagnezoneIcon::     INCBIN "gfx/icons/magnezone.2bpp"
 LickilickyIcon::    INCBIN "gfx/icons/lickilicky.2bpp"
 RhyperiorIcon::     INCBIN "gfx/icons/rhyperior.2bpp"
 TangrowthIcon::     INCBIN "gfx/icons/tangrowth.2bpp"
+TogekissIcon::      INCBIN "gfx/icons/togekiss.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -636,6 +637,7 @@ MagnezoneFrames:  INCLUDE "gfx/pokemon/magnezone/frames.asm"
 LickilickyFrames: INCLUDE "gfx/pokemon/lickilicky/frames.asm"
 RhyperiorFrames:  INCLUDE "gfx/pokemon/rhyperior/frames.asm"
 TangrowthFrames:  INCLUDE "gfx/pokemon/tangrowth/frames.asm"
+TogekissFrames:   INCLUDE "gfx/pokemon/togekiss/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

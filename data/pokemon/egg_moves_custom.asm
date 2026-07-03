@@ -99,6 +99,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; LICKILICKY
 	dw NoEggMoves3 ; RHYPERIOR
 	dw NoEggMoves3 ; TANGROWTH
+	dw NoEggMoves3 ; TOGEKISS
 .IndirectEnd::
 
 NoEggMoves3:

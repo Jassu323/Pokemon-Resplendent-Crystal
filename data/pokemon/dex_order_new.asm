@@ -351,4 +351,5 @@ NewPokedexOrder:
 	dw LICKILICKY
 	dw RHYPERIOR
 	dw TANGROWTH
+	dw TOGEKISS
 	assert_table_length NUM_POKEMON

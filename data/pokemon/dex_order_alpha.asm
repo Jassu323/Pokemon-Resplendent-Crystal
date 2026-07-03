@@ -314,6 +314,7 @@ AlphabeticalPokedexOrder:
 	dw TENTACRUEL
 	dw TOGEPI
 	dw TOGETIC
+	dw TOGEKISS
 	dw TORCHIC
 	dw TORKOAL
 	dw TOTODILE

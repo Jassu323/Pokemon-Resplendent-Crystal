@@ -349,4 +349,5 @@ BitmasksPointers:
 	dba LickilickyBitmasks
 	dba RhyperiorBitmasks
 	dba TangrowthBitmasks
+	dba TogekissBitmasks
 	assert_table_length NUM_POKEMON

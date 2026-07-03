@@ -350,4 +350,5 @@ EvolutionMoves::
 	dw NO_MOVE ; LICKILICKY
 	dw NO_MOVE ; RHYPERIOR
 	dw NO_MOVE ; TANGROWTH
+	dw NO_MOVE ; TOGEKISS
 	assert_table_length NUM_POKEMON

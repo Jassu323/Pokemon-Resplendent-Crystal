@@ -350,5 +350,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; magnezone placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lickilicky placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; rhyperior placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; tangrowth placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; togekiss placeholder
 
 	assert_table_length NUM_POKEMON
