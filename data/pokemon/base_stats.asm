@@ -373,4 +373,5 @@ INCLUDE "data/pokemon/base_stats/snover.asm"
 INCLUDE "data/pokemon/base_stats/abomasnow.asm"
 INCLUDE "data/pokemon/base_stats/weavile.asm"
 INCLUDE "data/pokemon/base_stats/magnezone.asm"
+INCLUDE "data/pokemon/base_stats/lickilicky.asm"
 .IndirectEnd::

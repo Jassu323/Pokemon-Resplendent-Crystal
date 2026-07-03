@@ -353,6 +353,7 @@ MonMenuIcons:
 	mon_menu_icon AbomasnowIcon,      GREEN,  BLUE   ; ABOMASNOW
 	mon_menu_icon WeavileIcon,        GRAY,   PINK   ; WEAVILE
 	mon_menu_icon MagnezoneIcon,      BLUE,   BROWN  ; MAGNEZONE
+	mon_menu_icon LickilickyIcon,     PINK,   BROWN  ; LICKILICKY
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

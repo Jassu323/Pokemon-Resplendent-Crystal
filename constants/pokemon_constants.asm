@@ -366,6 +366,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const ABOMASNOW  ; 170, NatDex 460
 	const WEAVILE    ; 171, NatDex 461
 	const MAGNEZONE  ; 172, NatDex 462
+	const LICKILICKY ; 173, NatDex 463
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

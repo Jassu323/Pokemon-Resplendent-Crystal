@@ -154,6 +154,7 @@ AlphabeticalPokedexOrder:
 	dw LARVITAR
 	dw LEDIAN
 	dw LEDYBA
+	dw LICKILICKY
 	dw LICKITUNG
 	dw LILEEP
 	dw LUCARIO

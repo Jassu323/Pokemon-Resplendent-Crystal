@@ -347,4 +347,5 @@ FirstEvoStages::
 	dw SNOVER
 	dw SNEASEL
 	dw MAGNEMITE
+	dw LICKITUNG
 	assert_table_length NUM_POKEMON

@@ -352,4 +352,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; ABOMASNOW
 	mon_cry CRY_BULBASAUR,   128,  129 ; WEAVILE
 	mon_cry CRY_BULBASAUR,   128,  129 ; MAGNEZONE
+	mon_cry CRY_BULBASAUR,   128,  129 ; LICKILICKY
 	assert_table_length NUM_POKEMON

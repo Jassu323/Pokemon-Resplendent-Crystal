@@ -708,4 +708,6 @@ PokemonPicPointers::
 	dba WeavileBackpic
 	dba MagnezoneFrontpic
 	dba MagnezoneBackpic
+	dba LickilickyFrontpic
+	dba LickilickyBackpic
 	assert_table_length NUM_POKEMON + 1
