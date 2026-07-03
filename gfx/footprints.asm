@@ -338,5 +338,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; ambipom placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; mismagius placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; honchkrow placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; bronzor placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; bronzong placeholder
 
 	assert_table_length NUM_POKEMON

@@ -337,4 +337,5 @@ AnimationPointers:
 	dw MismagiusAnimation
 	dw HonchkrowAnimation
 	dw BronzorAnimation
+	dw BronzongAnimation
 	assert_table_length NUM_POKEMON

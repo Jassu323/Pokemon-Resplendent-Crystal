@@ -87,6 +87,7 @@ EvosAttacksPointers3::
 	dw MismagiusEvosAttacks
 	dw HonchkrowEvosAttacks
 	dw BronzorEvosAttacks
+	dw BronzongEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -515,6 +516,11 @@ HonchkrowEvosAttacks:
 	db 0 ; no more level-up moves
 
 BronzorEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+BronzongEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

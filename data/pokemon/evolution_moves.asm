@@ -338,4 +338,5 @@ EvolutionMoves::
 	dw NO_MOVE ; MISMAGIUS
 	dw NO_MOVE ; HONCHKROW
 	dw NO_MOVE ; BRONZOR
+	dw NO_MOVE ; BRONZONG
 	assert_table_length NUM_POKEMON

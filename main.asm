@@ -116,6 +116,7 @@ AmbipomIcon::       INCBIN "gfx/icons/ambipom.2bpp"
 MismagiusIcon::     INCBIN "gfx/icons/mismagius.2bpp"
 HonchkrowIcon::     INCBIN "gfx/icons/honchkrow.2bpp"
 BronzorIcon::       INCBIN "gfx/icons/bronzor.2bpp"
+BronzongIcon::      INCBIN "gfx/icons/bronzong.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -612,6 +613,7 @@ AmbipomFrames:    INCLUDE "gfx/pokemon/ambipom/frames.asm"
 MismagiusFrames:  INCLUDE "gfx/pokemon/mismagius/frames.asm"
 HonchkrowFrames:  INCLUDE "gfx/pokemon/honchkrow/frames.asm"
 BronzorFrames:    INCLUDE "gfx/pokemon/bronzor/frames.asm"
+BronzongFrames:   INCLUDE "gfx/pokemon/bronzong/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

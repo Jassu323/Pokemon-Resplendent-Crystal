@@ -344,6 +344,7 @@ MonMenuIcons:
 	mon_menu_icon MismagiusIcon,      PURPLE, BROWN  ; MISMAGIUS
 	mon_menu_icon HonchkrowIcon,      GRAY,   PURPLE ; HONCHKROW
 	mon_menu_icon BronzorIcon,        BLUE,   GREEN  ; BRONZOR
+	mon_menu_icon BronzongIcon,       BLUE,   GREEN  ; BRONZONG
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

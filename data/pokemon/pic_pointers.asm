@@ -690,4 +690,6 @@ PokemonPicPointers::
 	dba HonchkrowBackpic
 	dba BronzorFrontpic
 	dba BronzorBackpic
+	dba BronzongFrontpic
+	dba BronzongBackpic
 	assert_table_length NUM_POKEMON + 1

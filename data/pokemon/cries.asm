@@ -343,4 +343,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; MISMAGIUS
 	mon_cry CRY_BULBASAUR,   128,  129 ; HONCHKROW
 	mon_cry CRY_BULBASAUR,   128,  129 ; BRONZOR
+	mon_cry CRY_BULBASAUR,   128,  129 ; BRONZONG
 	assert_table_length NUM_POKEMON

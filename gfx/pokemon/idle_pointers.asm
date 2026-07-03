@@ -337,4 +337,5 @@ AnimationIdlePointers:
 	dw MismagiusAnimationIdle
 	dw HonchkrowAnimationIdle
 	dw BronzorAnimationIdle
+	dw BronzongAnimationIdle
 	assert_table_length NUM_POKEMON
