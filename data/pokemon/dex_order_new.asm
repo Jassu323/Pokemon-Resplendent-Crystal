@@ -344,4 +344,5 @@ NewPokedexOrder:
 	dw LUCARIO
 	dw CROAGUNK
 	dw TOXICROAK
+	dw SNOVER
 	assert_table_length NUM_POKEMON

@@ -343,4 +343,5 @@ PokedexDataPointerTable:
 	dba LucarioPokedexEntry
 	dba CroagunkPokedexEntry
 	dba ToxicroakPokedexEntry
+	dba SnoverPokedexEntry
 	assert_table_length NUM_POKEMON

@@ -102,9 +102,11 @@ JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Toxicroak (JohtoLegends credits the Prism Team)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
-- Spheal sprite (original BW3G sources COMBOY collection)
-- Sealeo sprite (original BW3G sources COMBOY collection)
-- Walrein sprite (original BW3G sources COMBOY collection)
+- Spheal sprite (original BW3G credits COMBOY collection)
+- Sealeo sprite (original BW3G credits COMBOY collection)
+- Walrein sprite (original BW3G credits COMBOY collection)
+- Snover party menu icon (original BW3G credits COMBOY collection)
+- Abomasnow party menu icon (original BW3G credits COMBOY collection)
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon
@@ -160,6 +162,8 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Crawdaunt
 - Snorunt
 - Honchkrow
+- Snover
+- Abomasnow
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
 - Anorith

@@ -343,5 +343,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; riolu placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lucario placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; croagunk placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; toxicroak placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; snover placeholder
 
 	assert_table_length NUM_POKEMON

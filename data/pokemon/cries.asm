@@ -348,4 +348,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; LUCARIO
 	mon_cry CRY_BULBASAUR,   128,  129 ; CROAGUNK
 	mon_cry CRY_BULBASAUR,   128,  129 ; TOXICROAK
+	mon_cry CRY_BULBASAUR,   128,  129 ; SNOVER
 	assert_table_length NUM_POKEMON

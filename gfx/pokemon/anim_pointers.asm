@@ -342,4 +342,5 @@ AnimationPointers:
 	dw LucarioAnimation
 	dw CroagunkAnimation
 	dw ToxicroakAnimation
+	dw SnoverAnimation
 	assert_table_length NUM_POKEMON

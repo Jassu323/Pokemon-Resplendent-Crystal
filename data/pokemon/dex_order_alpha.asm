@@ -301,6 +301,7 @@ AlphabeticalPokedexOrder:
 	dw SWABLU
 	dw SWAMPERT
 	dw SWINUB
+	dw SNOVER
 	dw TANGELA
 	dw TAUROS
 	dw TEDDIURSA

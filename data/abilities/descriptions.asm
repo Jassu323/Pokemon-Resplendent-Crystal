@@ -28,6 +28,7 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; DRIZZLE
 	dw AbilityPlaceholderDescription ; DROUGHT
 	dw AbilityPlaceholderDescription ; AIR_LOCK
+	dw AbilityPlaceholderDescription ; SNOW_WARNING
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

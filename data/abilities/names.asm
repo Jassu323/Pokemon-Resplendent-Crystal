@@ -27,4 +27,5 @@ AbilityNames::
 	li "Drizzle"
 	li "Drought"
 	li "Air Lock"
+	li "Snow Warning"
 	assert_list_length NUM_ABILITIES + 1

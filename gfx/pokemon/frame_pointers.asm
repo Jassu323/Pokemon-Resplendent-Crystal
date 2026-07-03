@@ -342,4 +342,5 @@ FramesPointers:
 	dba LucarioFrames
 	dba CroagunkFrames
 	dba ToxicroakFrames
+	dba SnoverFrames
 	assert_table_length NUM_POKEMON

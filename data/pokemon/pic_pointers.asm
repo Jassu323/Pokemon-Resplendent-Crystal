@@ -700,4 +700,6 @@ PokemonPicPointers::
 	dba CroagunkBackpic
 	dba ToxicroakFrontpic
 	dba ToxicroakBackpic
+	dba SnoverFrontpic
+	dba SnoverBackpic
 	assert_table_length NUM_POKEMON + 1

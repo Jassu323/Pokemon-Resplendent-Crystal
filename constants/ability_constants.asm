@@ -27,4 +27,5 @@
 	const DRIZZLE
 	const DROUGHT
 	const AIR_LOCK
+	const SNOW_WARNING
 DEF NUM_ABILITIES EQU const_value - 1
