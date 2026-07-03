@@ -338,4 +338,5 @@ PokemonNames::
 	dname "Cranidos"
 	dname "Rampardos"
 	dname "Shieldon"
+	dname "Bastiodon"
 	assert_table_length NUM_POKEMON

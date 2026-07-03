@@ -340,4 +340,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 156 CRANIDOS
 	mon_ability NO_ABILITY ; 157 RAMPARDOS
 	mon_ability NO_ABILITY ; 158 SHIELDON
+	mon_ability NO_ABILITY ; 159 BASTIODON
 	assert_table_length NUM_POKEMON + 1

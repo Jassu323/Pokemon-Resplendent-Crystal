@@ -111,6 +111,7 @@ LuxrayIcon::        INCBIN "gfx/icons/luxray.2bpp"
 CranidosIcon::      INCBIN "gfx/icons/cranidos.2bpp"
 RampardosIcon::     INCBIN "gfx/icons/rampardos.2bpp"
 ShieldonIcon::      INCBIN "gfx/icons/shieldon.2bpp"
+BastiodonIcon::     INCBIN "gfx/icons/bastiodon.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -600,6 +601,7 @@ LuxrayFrames:     INCLUDE "gfx/pokemon/luxray/frames.asm"
 CranidosFrames:   INCLUDE "gfx/pokemon/cranidos/frames.asm"
 RampardosFrames:  INCLUDE "gfx/pokemon/rampardos/frames.asm"
 ShieldonFrames:   INCLUDE "gfx/pokemon/shieldon/frames.asm"
+BastiodonFrames:  INCLUDE "gfx/pokemon/bastiodon/frames.asm"
 
 
 SECTION "bank38", ROMX

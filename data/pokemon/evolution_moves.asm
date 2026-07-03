@@ -333,4 +333,5 @@ EvolutionMoves::
 	dw NO_MOVE ; CRANIDOS
 	dw NO_MOVE ; RAMPARDOS
 	dw NO_MOVE ; SHIELDON
+	dw NO_MOVE ; BASTIODON
 	assert_table_length NUM_POKEMON

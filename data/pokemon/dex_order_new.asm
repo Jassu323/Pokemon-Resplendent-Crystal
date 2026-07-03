@@ -334,4 +334,5 @@ NewPokedexOrder:
 	dw CRANIDOS
 	dw RAMPARDOS
 	dw SHIELDON
+	dw BASTIODON
 	assert_table_length NUM_POKEMON

@@ -338,4 +338,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; CRANIDOS
 	mon_cry CRY_BULBASAUR,   128,  129 ; RAMPARDOS
 	mon_cry CRY_BULBASAUR,   128,  129 ; SHIELDON
+	mon_cry CRY_BULBASAUR,   128,  129 ; BASTIODON
 	assert_table_length NUM_POKEMON

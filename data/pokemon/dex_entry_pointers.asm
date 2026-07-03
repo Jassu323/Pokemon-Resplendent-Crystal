@@ -333,4 +333,5 @@ PokedexDataPointerTable:
 	dba CranidosPokedexEntry
 	dba RampardosPokedexEntry
 	dba ShieldonPokedexEntry
+	dba BastiodonPokedexEntry
 	assert_table_length NUM_POKEMON

@@ -21,6 +21,7 @@ AlphabeticalPokedexOrder:
 	dw BAGON
 	dw BANETTE
 	dw BARBOACH
+	dw BASTIODON
 	dw BAYLEEF
 	dw BEEDRILL
 	dw BELDUM

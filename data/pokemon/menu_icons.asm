@@ -339,6 +339,7 @@ MonMenuIcons:
 	mon_menu_icon CranidosIcon,       BLUE,   RED    ; CRANIDOS
 	mon_menu_icon RampardosIcon,      BLUE,   RED    ; RAMPARDOS
 	mon_menu_icon ShieldonIcon,       GRAY,   BLUE   ; SHIELDON
+	mon_menu_icon BastiodonIcon,      GRAY,   BLUE   ; BASTIODON
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
