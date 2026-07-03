@@ -333,4 +333,5 @@ NewPokedexOrder:
 	dw LUXRAY
 	dw CRANIDOS
 	dw RAMPARDOS
+	dw SHIELDON
 	assert_table_length NUM_POKEMON

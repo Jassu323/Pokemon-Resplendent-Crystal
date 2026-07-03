@@ -351,6 +351,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const LUXRAY     ; 155, NatDex 405
 	const CRANIDOS   ; 156, NatDex 408
 	const RAMPARDOS  ; 157, NatDex 409
+	const SHIELDON   ; 158, NatDex 410
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

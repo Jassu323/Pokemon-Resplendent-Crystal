@@ -259,6 +259,7 @@ AlphabeticalPokedexOrder:
 	dw SHELLDER
 	dw SHARPEDO
 	dw SHELGON
+	dw SHIELDON
 	dw SHINX
 	dw SHROOMISH
 	dw SHUPPET

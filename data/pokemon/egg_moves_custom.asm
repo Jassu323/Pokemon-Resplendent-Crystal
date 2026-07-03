@@ -81,6 +81,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; LUXRAY
 	dw NoEggMoves3 ; CRANIDOS
 	dw NoEggMoves3 ; RAMPARDOS
+	dw NoEggMoves3 ; SHIELDON
 .IndirectEnd::
 
 NoEggMoves3:

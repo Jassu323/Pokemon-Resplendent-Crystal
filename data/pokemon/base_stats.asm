@@ -358,4 +358,5 @@ INCLUDE "data/pokemon/base_stats/luxio.asm"
 INCLUDE "data/pokemon/base_stats/luxray.asm"
 INCLUDE "data/pokemon/base_stats/cranidos.asm"
 INCLUDE "data/pokemon/base_stats/rampardos.asm"
+INCLUDE "data/pokemon/base_stats/shieldon.asm"
 .IndirectEnd::

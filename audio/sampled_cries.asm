@@ -81,6 +81,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_LUXRAY
 	const SAMPLED_CRY_CRANIDOS
 	const SAMPLED_CRY_RAMPARDOS
+	const SAMPLED_CRY_SHIELDON
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -316,6 +317,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_CRANIDOS
 	elif sampled_cry_mon == RAMPARDOS
 		db SAMPLED_CRY_RAMPARDOS
+	elif sampled_cry_mon == SHIELDON
+		db SAMPLED_CRY_SHIELDON
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -405,6 +408,7 @@ SampledCryPointers:
 	dba LuxraySampledCry
 	dba CranidosSampledCry
 	dba RampardosSampledCry
+	dba ShieldonSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1011,3 +1015,13 @@ RampardosSampledCryData:
 	INCBIN "audio/sampled_cries/rampardos.mm2"
 RampardosSampledCryEnd:
 	assert (RampardosSampledCryEnd - RampardosSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 15", ROMX
+
+ShieldonSampledCry::
+	dw (ShieldonSampledCryEnd - ShieldonSampledCryData) / 9
+ShieldonSampledCryData:
+	INCBIN "audio/sampled_cries/shieldon.mm2"
+ShieldonSampledCryEnd:
+	assert (ShieldonSampledCryEnd - ShieldonSampledCryData) % 9 == 0

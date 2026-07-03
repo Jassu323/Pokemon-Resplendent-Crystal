@@ -436,6 +436,9 @@ ROMX $91
 	; Footprint table overflow for custom species.
 	"Footprints"
 ROMX $92
+	; MBC30 high ROM bank.
+	; Reserved for sampled cry payload overflow.
+	"Sampled Cry Payloads 15"
 ROMX $93
 ROMX $94
 ROMX $95

@@ -339,4 +339,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 155 LUXRAY
 	mon_ability NO_ABILITY ; 156 CRANIDOS
 	mon_ability NO_ABILITY ; 157 RAMPARDOS
+	mon_ability NO_ABILITY ; 158 SHIELDON
 	assert_table_length NUM_POKEMON + 1
