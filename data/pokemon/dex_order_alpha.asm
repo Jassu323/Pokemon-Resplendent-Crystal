@@ -233,6 +233,7 @@ AlphabeticalPokedexOrder:
 	dw RAICHU
 	dw RAIKOU
 	dw RALTS
+	dw RAMPARDOS
 	dw RAPIDASH
 	dw RATICATE
 	dw RATTATA

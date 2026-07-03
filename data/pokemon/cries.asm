@@ -336,4 +336,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; LUXIO
 	mon_cry CRY_BULBASAUR,   128,  129 ; LUXRAY
 	mon_cry CRY_BULBASAUR,   128,  129 ; CRANIDOS
+	mon_cry CRY_BULBASAUR,   128,  129 ; RAMPARDOS
 	assert_table_length NUM_POKEMON

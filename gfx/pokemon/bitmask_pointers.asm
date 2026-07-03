@@ -330,4 +330,5 @@ BitmasksPointers:
 	dw LuxioBitmasks
 	dw LuxrayBitmasks
 	dw CranidosBitmasks
+	dw RampardosBitmasks
 	assert_table_length NUM_POKEMON

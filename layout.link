@@ -274,7 +274,6 @@ ROMX $5e
 	"UpdateBattleHUDs"
 	"Songs 5"
 	"Crystal Sound Effects"
-	"Footprints"
 ROMX $5f
 	"mobile5F"
 ROMX $60
@@ -433,6 +432,9 @@ ROMX $90
 	; Reserved for front/back pic overflow.
 	"Pics 25"
 ROMX $91
+	; MBC30 high ROM bank.
+	; Footprint table overflow for custom species.
+	"Footprints"
 ROMX $92
 ROMX $93
 ROMX $94

@@ -332,4 +332,5 @@ NewPokedexOrder:
 	dw LUXIO
 	dw LUXRAY
 	dw CRANIDOS
+	dw RAMPARDOS
 	assert_table_length NUM_POKEMON

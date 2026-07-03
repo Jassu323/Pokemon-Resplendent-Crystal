@@ -337,6 +337,7 @@ MonMenuIcons:
 	mon_menu_icon LuxioIcon,          BLUE,   BROWN  ; LUXIO
 	mon_menu_icon LuxrayIcon,         BLUE,   BROWN  ; LUXRAY
 	mon_menu_icon CranidosIcon,       BLUE,   RED    ; CRANIDOS
+	mon_menu_icon RampardosIcon,      BLUE,   RED    ; RAMPARDOS
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

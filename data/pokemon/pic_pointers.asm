@@ -676,4 +676,6 @@ PokemonPicPointers::
 	dba LuxrayBackpic
 	dba CranidosFrontpic
 	dba CranidosBackpic
+	dba RampardosFrontpic
+	dba RampardosBackpic
 	assert_table_length NUM_POKEMON + 1

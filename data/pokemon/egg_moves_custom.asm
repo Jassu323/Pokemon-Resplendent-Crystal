@@ -80,6 +80,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; LUXIO
 	dw NoEggMoves3 ; LUXRAY
 	dw NoEggMoves3 ; CRANIDOS
+	dw NoEggMoves3 ; RAMPARDOS
 .IndirectEnd::
 
 NoEggMoves3:
