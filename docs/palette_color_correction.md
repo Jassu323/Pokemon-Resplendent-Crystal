@@ -4,6 +4,39 @@ These notes capture known-good source colors for sprites viewed through the
 RetroArch `gbc-color.slangp` color-correction shader. Use them as calibration
 points when tuning future palettes.
 
+## Analysis Workflow
+
+The active SameBoy RetroArch preset is a two-pass color path, not just the
+`gbc-color.slang` matrix:
+
+1. `handheld/color-mod/gbc-color.slangp`
+2. `handheld/shaders/color/lut/GBC-LUT.slang`, using `gbc-grey2.png`
+3. `handheld/shaders/color/gbc-color.slang`
+
+The second pass linearizes the LUT output, applies the GBC matrix, and converts
+back to gamma space. Because of that LUT pass, hand-estimating against only the
+matrix can get the direction right while still missing the actual screenshot
+color.
+
+Use NumPy to brute-force all `RGB 0..31` source colors through the shader model
+when tuning important palettes. During Weavile tuning, NumPy was installed
+locally at:
+
+```text
+/private/tmp/codex_numpy
+```
+
+Run analysis scripts with:
+
+```sh
+PYTHONPATH=/private/tmp/codex_numpy python3 <script>
+```
+
+For future palette tuning, run candidate colors through NumPy each time and
+compare predicted corrected output against both a raw screenshot and a
+color-corrected screenshot. The raw screenshot confirms the source still reads
+reasonably, while the corrected screenshot is the final target.
+
 ## Bright Greens
 
 Salamence's shiny green was tuned to better match later-generation shiny
@@ -83,3 +116,27 @@ correction.
 For clear sprite purples, keep red and blue equal or nearly equal, and keep
 green low. Good starting points are `RGB 16, 03, 16`, `RGB 18, 04, 18`, and
 `RGB 20, 04, 20`.
+
+## Shiny Pink And Gold
+
+Weavile's shiny palette was tuned against the Gen 4 shiny sprite. The raw
+uncorrected palette already matched the target closely, but the two-pass GBC
+correction path washed the colors out: the pink became pale and the yellow read
+as cream.
+
+- Final gold source value: `RGB 27, 29, 00`
+- Final pink source value: `RGB 31, 06, 12`
+- Previous gold source value: `RGB 30, 26, 12`
+- Previous pink source value: `RGB 27, 11, 17`
+
+NumPy brute-force analysis through the active two-pass shader model predicted:
+
+```text
+RGB 27,29,00 -> corrected about #edce85
+RGB 31,06,12 -> corrected about #e67da6
+```
+
+The corrected in-game result was much closer to the Gen 4 shiny look, while the
+uncorrected view stayed acceptably close to the source sprite. For bright shiny
+pink, push the source red high and keep green low; for gold/yellow, a high green
+source with little or no blue avoids the pale cream shift.

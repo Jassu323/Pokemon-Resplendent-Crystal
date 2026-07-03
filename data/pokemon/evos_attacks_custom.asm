@@ -94,6 +94,7 @@ EvosAttacksPointers3::
 	dw ToxicroakEvosAttacks
 	dw SnoverEvosAttacks
 	dw AbomasnowEvosAttacks
+	dw WeavileEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -557,6 +558,11 @@ SnoverEvosAttacks:
 	db 0 ; no more level-up moves
 
 AbomasnowEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+WeavileEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

@@ -351,6 +351,7 @@ MonMenuIcons:
 	mon_menu_icon ToxicroakIcon,      BLUE,   TEAL   ; TOXICROAK
 	mon_menu_icon SnoverIcon,         GREEN,  BLUE   ; SNOVER
 	mon_menu_icon AbomasnowIcon,      GREEN,  BLUE   ; ABOMASNOW
+	mon_menu_icon WeavileIcon,        GRAY,   PINK   ; WEAVILE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

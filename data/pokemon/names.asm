@@ -350,4 +350,5 @@ PokemonNames::
 	dname "Toxicroak"
 	dname "Snover"
 	dname "Abomasnow"
+	dname "Weavile"
 	assert_table_length NUM_POKEMON

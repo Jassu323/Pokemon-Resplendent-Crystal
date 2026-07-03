@@ -42,7 +42,8 @@
     "CROAGUNK": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/croagunk.wav",
     "TOXICROAK": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/toxicroak.wav",
     "SNOVER": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/snover.wav",
-    "ABOMASNOW": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/abomasnow.wav"
+    "ABOMASNOW": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/abomasnow.wav",
+    "WEAVILE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/weavile.wav"
   },
   "profiles": {
     "mudkip_17_v4_clarity_auto": {
@@ -4131,6 +4132,49 @@
     },
     "abomasnow_17_v4_clarity_auto": {
       "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/abomasnow.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "weavile_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/weavile.wav",
       "target_rate": 10485.76,
       "prism_vol": 3.2,
       "allow_experimental_prism_vol": true,

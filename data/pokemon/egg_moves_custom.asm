@@ -94,6 +94,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; TOXICROAK
 	dw NoEggMoves3 ; SNOVER
 	dw NoEggMoves3 ; ABOMASNOW
+	dw NoEggMoves3 ; WEAVILE
 .IndirectEnd::
 
 NoEggMoves3:

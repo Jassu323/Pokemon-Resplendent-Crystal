@@ -344,4 +344,5 @@ AnimationPointers:
 	dw ToxicroakAnimation
 	dw SnoverAnimation
 	dw AbomasnowAnimation
+	dw WeavileAnimation
 	assert_table_length NUM_POKEMON

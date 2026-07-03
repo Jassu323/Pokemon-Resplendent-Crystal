@@ -346,4 +346,5 @@ NewPokedexOrder:
 	dw TOXICROAK
 	dw SNOVER
 	dw ABOMASNOW
+	dw WEAVILE
 	assert_table_length NUM_POKEMON

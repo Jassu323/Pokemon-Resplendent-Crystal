@@ -333,6 +333,7 @@ AlphabeticalPokedexOrder:
 	dw VULPIX
 	dw WALREIN
 	dw WARTORTLE
+	dw WEAVILE
 	dw WEEDLE
 	dw WEEPINBELL
 	dw WEEZING

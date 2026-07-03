@@ -94,6 +94,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_TOXICROAK
 	const SAMPLED_CRY_SNOVER
 	const SAMPLED_CRY_ABOMASNOW
+	const SAMPLED_CRY_WEAVILE
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -355,6 +356,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_SNOVER
 	elif sampled_cry_mon == ABOMASNOW
 		db SAMPLED_CRY_ABOMASNOW
+	elif sampled_cry_mon == WEAVILE
+		db SAMPLED_CRY_WEAVILE
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -457,6 +460,7 @@ SampledCryPointers:
 	dba ToxicroakSampledCry
 	dba SnoverSampledCry
 	dba AbomasnowSampledCry
+	dba WeavileSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1163,3 +1167,10 @@ AbomasnowSampledCryData:
 	INCBIN "audio/sampled_cries/abomasnow.mm2"
 AbomasnowSampledCryEnd:
 	assert (AbomasnowSampledCryEnd - AbomasnowSampledCryData) % 9 == 0
+
+WeavileSampledCry::
+	dw (WeavileSampledCryEnd - WeavileSampledCryData) / 9
+WeavileSampledCryData:
+	INCBIN "audio/sampled_cries/weavile.mm2"
+WeavileSampledCryEnd:
+	assert (WeavileSampledCryEnd - WeavileSampledCryData) % 9 == 0

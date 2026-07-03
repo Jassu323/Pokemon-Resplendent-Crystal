@@ -344,4 +344,5 @@ AnimationIdlePointers:
 	dw ToxicroakAnimationIdle
 	dw SnoverAnimationIdle
 	dw AbomasnowAnimationIdle
+	dw WeavileAnimationIdle
 	assert_table_length NUM_POKEMON
