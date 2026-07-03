@@ -343,4 +343,5 @@ NewPokedexOrder:
 	dw RIOLU
 	dw LUCARIO
 	dw CROAGUNK
+	dw TOXICROAK
 	assert_table_length NUM_POKEMON

@@ -361,6 +361,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const RIOLU      ; 165, NatDex 447
 	const LUCARIO    ; 166, NatDex 448
 	const CROAGUNK   ; 167, NatDex 453
+	const TOXICROAK  ; 168, NatDex 454
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

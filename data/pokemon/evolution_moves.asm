@@ -342,4 +342,5 @@ EvolutionMoves::
 	dw NO_MOVE ; RIOLU
 	dw NO_MOVE ; LUCARIO
 	dw NO_MOVE ; CROAGUNK
+	dw NO_MOVE ; TOXICROAK
 	assert_table_length NUM_POKEMON

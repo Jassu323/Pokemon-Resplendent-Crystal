@@ -91,6 +91,7 @@ EvosAttacksPointers3::
 	dw RioluEvosAttacks
 	dw LucarioEvosAttacks
 	dw CroagunkEvosAttacks
+	dw ToxicroakEvosAttacks
 .IndirectEnd
 
 TreeckoEvosAttacks:
@@ -539,6 +540,11 @@ LucarioEvosAttacks:
 	db 0 ; no more level-up moves
 
 CroagunkEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+ToxicroakEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

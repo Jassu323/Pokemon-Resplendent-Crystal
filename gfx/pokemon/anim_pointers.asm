@@ -341,4 +341,5 @@ AnimationPointers:
 	dw RioluAnimation
 	dw LucarioAnimation
 	dw CroagunkAnimation
+	dw ToxicroakAnimation
 	assert_table_length NUM_POKEMON

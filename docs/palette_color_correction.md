@@ -54,6 +54,23 @@ cyan/electric blue after correction. If a corrected blue looks too electric,
 try lowering blue and slightly raising red, even if the raw source starts
 looking more purple than desired.
 
+## Reds
+
+Toxicroak's normal red accents were tuned against its official-art coral red.
+The original sprite source color had too much blue, causing the corrected color
+to read pink/magenta instead of warm red.
+
+- Palette source value: `RGB 27, 09, 00`
+- RGB5-expanded source color: `#de4a00`
+- GBC-corrected screenshot sample: about `#d87068`
+- Previous source value `RGB 26, 04, 08` corrected too pink.
+
+In the same `gbc-color.slangp` matrix used above, source blue subtracts from the
+displayed red channel and strongly survives into the displayed blue channel.
+For warm reds and corals, keep source blue very low or at zero, then use green
+to control warmth and brightness. The raw source may need to look orange with
+color correction disabled to land as a natural red after correction.
+
 ## Purples
 
 Ambipom's normal purple was tuned against the shared party-menu icon purple.

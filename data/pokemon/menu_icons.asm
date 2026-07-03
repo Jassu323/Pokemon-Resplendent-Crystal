@@ -348,6 +348,7 @@ MonMenuIcons:
 	mon_menu_icon RioluIcon,          BLUE,   BROWN  ; RIOLU
 	mon_menu_icon LucarioIcon,        BLUE,   BROWN  ; LUCARIO
 	mon_menu_icon CroagunkIcon,       BLUE,   TEAL   ; CROAGUNK
+	mon_menu_icon ToxicroakIcon,      BLUE,   TEAL   ; TOXICROAK
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
