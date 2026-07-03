@@ -119,6 +119,7 @@ BronzorIcon::       INCBIN "gfx/icons/bronzor.2bpp"
 BronzongIcon::      INCBIN "gfx/icons/bronzong.2bpp"
 RioluIcon::         INCBIN "gfx/icons/riolu.2bpp"
 LucarioIcon::       INCBIN "gfx/icons/lucario.2bpp"
+CroagunkIcon::      INCBIN "gfx/icons/croagunk.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -618,6 +619,7 @@ BronzorFrames:    INCLUDE "gfx/pokemon/bronzor/frames.asm"
 BronzongFrames:   INCLUDE "gfx/pokemon/bronzong/frames.asm"
 RioluFrames:      INCLUDE "gfx/pokemon/riolu/frames.asm"
 LucarioFrames:    INCLUDE "gfx/pokemon/lucario/frames.asm"
+CroagunkFrames:   INCLUDE "gfx/pokemon/croagunk/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

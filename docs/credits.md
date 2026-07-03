@@ -87,6 +87,10 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Groudon sprite
 - Rayquaza sprite
 - Mismagius sprite and party menu icon
+- Bronzor sprite and party menu icon
+- Bronzong sprite and party menu icon
+- Riolu sprite and party menu icon
+- Lucario sprite and party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
@@ -94,6 +98,8 @@ JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Metang sprite (JohtoLegends credits Blue Emerald)
 - Metagross sprite (JohtoLegends credits Blue Emerald)
 - Honchkrow party menu icon (JohtoLegends credits Bronzeswagger)
+- Croagunk (JohtoLegends credits the Prism Team)
+- Toxicroak (JohtoLegends credits the Prism Team)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
 - Spheal sprite (original BW3G sources COMBOY collection)

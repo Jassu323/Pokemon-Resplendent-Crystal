@@ -367,4 +367,5 @@ INCLUDE "data/pokemon/base_stats/bronzor.asm"
 INCLUDE "data/pokemon/base_stats/bronzong.asm"
 INCLUDE "data/pokemon/base_stats/riolu.asm"
 INCLUDE "data/pokemon/base_stats/lucario.asm"
+INCLUDE "data/pokemon/base_stats/croagunk.asm"
 .IndirectEnd::

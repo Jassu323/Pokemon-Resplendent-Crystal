@@ -56,6 +56,7 @@ AlphabeticalPokedexOrder:
 	dw CRADILY
 	dw CRANIDOS
 	dw CRAWDAUNT
+	dw CROAGUNK
 	dw CROBAT
 	dw CROCONAW
 	dw CUBONE

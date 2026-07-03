@@ -980,3 +980,5 @@ SECTION "Pics 26", ROMX
 
 LucarioFrontpic:    INCBIN "gfx/pokemon/lucario/front.animated.2bpp.lz"
 LucarioBackpic:     INCBIN "gfx/pokemon/lucario/back.2bpp.lz"
+CroagunkFrontpic:   INCBIN "gfx/pokemon/croagunk/front.animated.2bpp.lz"
+CroagunkBackpic:    INCBIN "gfx/pokemon/croagunk/back.2bpp.lz"

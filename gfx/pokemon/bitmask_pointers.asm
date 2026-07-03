@@ -340,4 +340,5 @@ BitmasksPointers:
 	dba BronzongBitmasks
 	dba RioluBitmasks
 	dba LucarioBitmasks
+	dba CroagunkBitmasks
 	assert_table_length NUM_POKEMON

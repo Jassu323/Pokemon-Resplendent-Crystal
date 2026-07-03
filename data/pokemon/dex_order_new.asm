@@ -342,4 +342,5 @@ NewPokedexOrder:
 	dw BRONZONG
 	dw RIOLU
 	dw LUCARIO
+	dw CROAGUNK
 	assert_table_length NUM_POKEMON

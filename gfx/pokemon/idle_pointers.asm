@@ -340,4 +340,5 @@ AnimationIdlePointers:
 	dw BronzongAnimationIdle
 	dw RioluAnimationIdle
 	dw LucarioAnimationIdle
+	dw CroagunkAnimationIdle
 	assert_table_length NUM_POKEMON

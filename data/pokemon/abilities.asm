@@ -348,4 +348,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 164 BRONZONG
 	mon_ability NO_ABILITY ; 165 RIOLU
 	mon_ability NO_ABILITY ; 166 LUCARIO
+	mon_ability NO_ABILITY ; 167 CROAGUNK
 	assert_table_length NUM_POKEMON + 1

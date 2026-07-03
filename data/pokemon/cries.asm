@@ -346,4 +346,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; BRONZONG
 	mon_cry CRY_BULBASAUR,   128,  129 ; RIOLU
 	mon_cry CRY_BULBASAUR,   128,  129 ; LUCARIO
+	mon_cry CRY_BULBASAUR,   128,  129 ; CROAGUNK
 	assert_table_length NUM_POKEMON

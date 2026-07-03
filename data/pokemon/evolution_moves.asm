@@ -341,4 +341,5 @@ EvolutionMoves::
 	dw NO_MOVE ; BRONZONG
 	dw NO_MOVE ; RIOLU
 	dw NO_MOVE ; LUCARIO
+	dw NO_MOVE ; CROAGUNK
 	assert_table_length NUM_POKEMON

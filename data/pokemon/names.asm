@@ -346,4 +346,5 @@ PokemonNames::
 	dname "Bronzong"
 	dname "Riolu"
 	dname "Lucario"
+	dname "Croagunk"
 	assert_table_length NUM_POKEMON

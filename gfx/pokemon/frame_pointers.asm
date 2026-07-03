@@ -340,4 +340,5 @@ FramesPointers:
 	dba BronzongFrames
 	dba RioluFrames
 	dba LucarioFrames
+	dba CroagunkFrames
 	assert_table_length NUM_POKEMON

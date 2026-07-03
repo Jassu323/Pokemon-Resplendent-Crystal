@@ -341,4 +341,5 @@ FirstEvoStages::
 	dw BRONZOR
 	dw RIOLU
 	dw RIOLU
+	dw CROAGUNK
 	assert_table_length NUM_POKEMON
