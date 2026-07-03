@@ -208,8 +208,6 @@ TryWildEncounter::
 	jr nz, .no_battle
 	call CheckRepelEffect
 	jr nc, .no_battle
-	ld a, BATTLETYPE_FORCESHINY ; TEMP TEST: Abomasnow shiny encounters
-	ld [wBattleType], a
 	xor a
 	ret
 
