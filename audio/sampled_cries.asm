@@ -86,6 +86,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_AMBIPOM
 	const SAMPLED_CRY_MISMAGIUS
 	const SAMPLED_CRY_HONCHKROW
+	const SAMPLED_CRY_BRONZOR
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -331,6 +332,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MISMAGIUS
 	elif sampled_cry_mon == HONCHKROW
 		db SAMPLED_CRY_HONCHKROW
+	elif sampled_cry_mon == BRONZOR
+		db SAMPLED_CRY_BRONZOR
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -425,6 +428,7 @@ SampledCryPointers:
 	dba AmbipomSampledCry
 	dba MismagiusSampledCry
 	dba HonchkrowSampledCry
+	dba BronzorSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1072,3 +1076,10 @@ HonchkrowSampledCryData:
 	INCBIN "audio/sampled_cries/honchkrow.mm2"
 HonchkrowSampledCryEnd:
 	assert (HonchkrowSampledCryEnd - HonchkrowSampledCryData) % 9 == 0
+
+BronzorSampledCry::
+	dw (BronzorSampledCryEnd - BronzorSampledCryData) / 9
+BronzorSampledCryData:
+	INCBIN "audio/sampled_cries/bronzor.mm2"
+BronzorSampledCryEnd:
+	assert (BronzorSampledCryEnd - BronzorSampledCryData) % 9 == 0

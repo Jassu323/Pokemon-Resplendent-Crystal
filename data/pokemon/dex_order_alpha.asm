@@ -32,6 +32,7 @@ AlphabeticalPokedexOrder:
 	dw BLAZIKEN
 	dw BLISSEY
 	dw BRELOOM
+	dw BRONZOR
 	dw BULBASAUR
 	dw BUTTERFREE
 	dw CAMERUPT

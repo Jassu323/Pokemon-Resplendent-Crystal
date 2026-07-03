@@ -344,4 +344,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 160 AMBIPOM
 	mon_ability NO_ABILITY ; 161 MISMAGIUS
 	mon_ability NO_ABILITY ; 162 HONCHKROW
+	mon_ability NO_ABILITY ; 163 BRONZOR
 	assert_table_length NUM_POKEMON + 1

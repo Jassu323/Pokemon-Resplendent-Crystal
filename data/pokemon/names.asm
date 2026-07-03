@@ -342,4 +342,5 @@ PokemonNames::
 	dname "Ambipom"
 	dname "Mismagius"
 	dname "Honchkrow"
+	dname "Bronzor"
 	assert_table_length NUM_POKEMON

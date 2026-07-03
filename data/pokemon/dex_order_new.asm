@@ -338,4 +338,5 @@ NewPokedexOrder:
 	dw AMBIPOM
 	dw MISMAGIUS
 	dw HONCHKROW
+	dw BRONZOR
 	assert_table_length NUM_POKEMON

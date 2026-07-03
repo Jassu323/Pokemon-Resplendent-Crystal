@@ -337,4 +337,5 @@ FirstEvoStages::
 	dw AIPOM
 	dw MISDREAVUS
 	dw MURKROW
+	dw BRONZOR
 	assert_table_length NUM_POKEMON
