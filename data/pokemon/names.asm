@@ -279,6 +279,7 @@ PokemonNames::
 	dname "Makuhita"
 	dname "Hariyama"
 	dname "Skitty"
+	dname "Delcatty"
 	dname "Mawile"
 	dname "Aron"
 	dname "Lairon"

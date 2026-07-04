@@ -63,6 +63,7 @@ AlphabeticalPokedexOrder:
 	dw CUBONE
 	dw CYNDAQUIL
 	dw DELIBIRD
+	dw DELCATTY
 	dw DEWGONG
 	dw DIGLETT
 	dw DITTO

@@ -273,6 +273,7 @@ AnimationPointers:
 	dw MakuhitaAnimation
 	dw HariyamaAnimation
 	dw SkittyAnimation
+	dw DelcattyAnimation
 	dw MawileAnimation
 	dw AronAnimation
 	dw LaironAnimation

@@ -273,6 +273,7 @@ AnimationIdlePointers:
 	dw MakuhitaAnimationIdle
 	dw HariyamaAnimationIdle
 	dw SkittyAnimationIdle
+	dw DelcattyAnimationIdle
 	dw MawileAnimationIdle
 	dw AronAnimationIdle
 	dw LaironAnimationIdle

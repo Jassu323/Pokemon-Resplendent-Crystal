@@ -274,6 +274,7 @@ PokedexDataPointerTable:
 	dba MakuhitaPokedexEntry
 	dba HariyamaPokedexEntry
 	dba SkittyPokedexEntry
+	dba DelcattyPokedexEntry
 	dba MawilePokedexEntry
 	dba AronPokedexEntry
 	dba LaironPokedexEntry

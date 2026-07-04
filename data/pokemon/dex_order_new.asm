@@ -275,6 +275,7 @@ NewPokedexOrder:
 	dw MAKUHITA
 	dw HARIYAMA
 	dw SKITTY
+	dw DELCATTY
 	dw MAWILE
 	dw ARON
 	dw LAIRON

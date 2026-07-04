@@ -23,6 +23,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_MAKUHITA
 	const SAMPLED_CRY_HARIYAMA
 	const SAMPLED_CRY_SKITTY
+	const SAMPLED_CRY_DELCATTY
 	const SAMPLED_CRY_MAWILE
 	const SAMPLED_CRY_ARON
 	const SAMPLED_CRY_LAIRON
@@ -227,6 +228,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_HARIYAMA
 	elif sampled_cry_mon == SKITTY
 		db SAMPLED_CRY_SKITTY
+	elif sampled_cry_mon == DELCATTY
+		db SAMPLED_CRY_DELCATTY
 	elif sampled_cry_mon == MAWILE
 		db SAMPLED_CRY_MAWILE
 	elif sampled_cry_mon == ARON
@@ -428,6 +431,7 @@ SampledCryPointers:
 	dba MakuhitaSampledCry
 	dba HariyamaSampledCry
 	dba SkittySampledCry
+	dba DelcattySampledCry
 	dba MawileSampledCry
 	dba AronSampledCry
 	dba LaironSampledCry
@@ -1328,3 +1332,10 @@ SkittySampledCryData:
 	INCBIN "audio/sampled_cries/skitty.mm2"
 SkittySampledCryEnd:
 	assert (SkittySampledCryEnd - SkittySampledCryData) % 9 == 0
+
+DelcattySampledCry::
+	dw (DelcattySampledCryEnd - DelcattySampledCryData) / 9
+DelcattySampledCryData:
+	INCBIN "audio/sampled_cries/delcatty.mm2"
+DelcattySampledCryEnd:
+	assert (DelcattySampledCryEnd - DelcattySampledCryData) % 9 == 0

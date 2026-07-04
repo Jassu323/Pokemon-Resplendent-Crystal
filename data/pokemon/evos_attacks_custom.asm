@@ -23,6 +23,7 @@ EvosAttacksPointers3::
 	dw MakuhitaEvosAttacks
 	dw HariyamaEvosAttacks
 	dw SkittyEvosAttacks
+	dw DelcattyEvosAttacks
 	dw MawileEvosAttacks
 	dw AronEvosAttacks
 	dw LaironEvosAttacks
@@ -216,6 +217,11 @@ HariyamaEvosAttacks:
 	db 0 ; no more level-up moves
 
 SkittyEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+DelcattyEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

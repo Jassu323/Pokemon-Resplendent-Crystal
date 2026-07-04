@@ -562,6 +562,8 @@ PokemonPicPointers::
 	dba HariyamaBackpic
 	dba SkittyFrontpic
 	dba SkittyBackpic
+	dba DelcattyFrontpic
+	dba DelcattyBackpic
 	dba MawileFrontpic
 	dba MawileBackpic
 	dba AronFrontpic

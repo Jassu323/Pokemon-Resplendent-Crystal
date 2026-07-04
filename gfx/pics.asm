@@ -1024,3 +1024,5 @@ SECTION "Pics 28", ROMX
 
 SkittyFrontpic:     INCBIN "gfx/pokemon/skitty/front.animated.2bpp.lz"
 SkittyBackpic:      INCBIN "gfx/pokemon/skitty/back.2bpp.lz"
+DelcattyFrontpic:   INCBIN "gfx/pokemon/delcatty/front.animated.2bpp.lz"
+DelcattyBackpic:    INCBIN "gfx/pokemon/delcatty/back.2bpp.lz"
