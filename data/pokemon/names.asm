@@ -278,6 +278,7 @@ PokemonNames::
 	dname "Breloom"
 	dname "Makuhita"
 	dname "Hariyama"
+	dname "Skitty"
 	dname "Mawile"
 	dname "Aron"
 	dname "Lairon"

@@ -145,12 +145,18 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Breloom
 - Makuhita
 - Hariyama
+- Skitty
+- Delcatty
+- Sableye
 - Mawile
 - Aron
 - Lairon
 - Aggron
 - Meditite
 - Medicham
+- Electrike
+- Manectric
+- Roselia
 - Carvanha
 - Sharpedo
 - Numel
@@ -177,9 +183,11 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Leafeon
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
-- Anorith
+- Baltoy
+- Claydol
 - Lileep
 - Cradily
+- Anorith
 - Feebas
 - Absol
 - Glalie

@@ -577,6 +577,8 @@ INCBIN "gfx/pokemon/makuhita/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/makuhita/shiny.pal"
 INCBIN "gfx/pokemon/hariyama/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/hariyama/shiny.pal"
+INCBIN "gfx/pokemon/skitty/normal.gbcpal", middle_colors
+INCLUDE "gfx/pokemon/skitty/shiny.pal"
 INCBIN "gfx/pokemon/mawile/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/mawile/shiny.pal"
 INCBIN "gfx/pokemon/aron/normal.gbcpal", middle_colors

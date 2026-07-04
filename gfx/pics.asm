@@ -1018,3 +1018,9 @@ PorygonZFrontpic:   INCBIN "gfx/pokemon/porygonz/front.animated.2bpp.lz"
 PorygonZBackpic:    INCBIN "gfx/pokemon/porygonz/back.2bpp.lz"
 RegigigasFrontpic:  INCBIN "gfx/pokemon/regigigas/front.animated.2bpp.lz"
 RegigigasBackpic:   INCBIN "gfx/pokemon/regigigas/back.2bpp.lz"
+
+
+SECTION "Pics 28", ROMX
+
+SkittyFrontpic:     INCBIN "gfx/pokemon/skitty/front.animated.2bpp.lz"
+SkittyBackpic:      INCBIN "gfx/pokemon/skitty/back.2bpp.lz"

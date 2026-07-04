@@ -560,6 +560,8 @@ PokemonPicPointers::
 	dba MakuhitaBackpic
 	dba HariyamaFrontpic
 	dba HariyamaBackpic
+	dba SkittyFrontpic
+	dba SkittyBackpic
 	dba MawileFrontpic
 	dba MawileBackpic
 	dba AronFrontpic

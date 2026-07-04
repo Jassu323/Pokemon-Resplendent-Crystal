@@ -274,6 +274,7 @@ NewPokedexOrder:
 	dw BRELOOM
 	dw MAKUHITA
 	dw HARIYAMA
+	dw SKITTY
 	dw MAWILE
 	dw ARON
 	dw LAIRON

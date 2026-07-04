@@ -285,6 +285,7 @@ AlphabeticalPokedexOrder:
 	dw SHUCKLE
 	dw SKARMORY
 	dw SKIPLOOM
+	dw SKITTY
 	dw SLOWBRO
 	dw SLOWKING
 	dw SLOWPOKE

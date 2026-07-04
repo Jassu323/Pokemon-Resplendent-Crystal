@@ -272,6 +272,7 @@ BitmasksPointers:
 	dba BreloomBitmasks
 	dba MakuhitaBitmasks
 	dba HariyamaBitmasks
+	dba SkittyBitmasks
 	dba MawileBitmasks
 	dba AronBitmasks
 	dba LaironBitmasks

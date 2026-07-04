@@ -272,6 +272,7 @@ FramesPointers:
 	dba BreloomFrames
 	dba MakuhitaFrames
 	dba HariyamaFrames
+	dba SkittyFrames
 	dba MawileFrames
 	dba AronFrames
 	dba LaironFrames

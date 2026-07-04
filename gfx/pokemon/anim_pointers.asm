@@ -272,6 +272,7 @@ AnimationPointers:
 	dw BreloomAnimation
 	dw MakuhitaAnimation
 	dw HariyamaAnimation
+	dw SkittyAnimation
 	dw MawileAnimation
 	dw AronAnimation
 	dw LaironAnimation

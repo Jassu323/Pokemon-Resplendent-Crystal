@@ -23,7 +23,7 @@ ENDM
 
 BaseData::
 	indirect_table BASE_DATA_SIZE, 1
-	indirect_entries YANMEGA, BaseData1
+	indirect_entries HARIYAMA, BaseData1
 	indirect_entries NUM_POKEMON, BaseData2
 	indirect_table_end
 
@@ -300,6 +300,13 @@ INCLUDE "data/pokemon/base_stats/shroomish.asm"
 INCLUDE "data/pokemon/base_stats/breloom.asm"
 INCLUDE "data/pokemon/base_stats/makuhita.asm"
 INCLUDE "data/pokemon/base_stats/hariyama.asm"
+.IndirectEnd::
+
+
+SECTION "Pokemon Base Data Overflow", ROMX
+
+BaseData2:
+INCLUDE "data/pokemon/base_stats/skitty.asm"
 INCLUDE "data/pokemon/base_stats/mawile.asm"
 INCLUDE "data/pokemon/base_stats/aron.asm"
 INCLUDE "data/pokemon/base_stats/lairon.asm"
@@ -379,12 +386,6 @@ INCLUDE "data/pokemon/base_stats/rhyperior.asm"
 INCLUDE "data/pokemon/base_stats/tangrowth.asm"
 INCLUDE "data/pokemon/base_stats/togekiss.asm"
 INCLUDE "data/pokemon/base_stats/yanmega.asm"
-.IndirectEnd::
-
-
-SECTION "Pokemon Base Data Overflow", ROMX
-
-BaseData2:
 INCLUDE "data/pokemon/base_stats/leafeon.asm"
 INCLUDE "data/pokemon/base_stats/glaceon.asm"
 INCLUDE "data/pokemon/base_stats/gliscor.asm"

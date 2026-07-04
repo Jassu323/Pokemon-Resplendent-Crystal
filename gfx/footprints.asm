@@ -273,6 +273,7 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; shroomish placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; breloom placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; makuhita placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; hariyama placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; skitty placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; mawile placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; aron placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lairon placeholder

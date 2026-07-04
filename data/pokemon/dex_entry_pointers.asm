@@ -273,6 +273,7 @@ PokedexDataPointerTable:
 	dba BreloomPokedexEntry
 	dba MakuhitaPokedexEntry
 	dba HariyamaPokedexEntry
+	dba SkittyPokedexEntry
 	dba MawilePokedexEntry
 	dba AronPokedexEntry
 	dba LaironPokedexEntry

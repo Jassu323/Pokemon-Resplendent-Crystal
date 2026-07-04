@@ -273,6 +273,7 @@ FirstEvoStages::
 	dw SHROOMISH
 	dw MAKUHITA
 	dw MAKUHITA
+	dw SKITTY
 	dw MAWILE
 	dw ARON
 	dw ARON

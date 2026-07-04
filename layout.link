@@ -477,6 +477,9 @@ ROMX $9b
 	; Reserved for custom Pokemon party icon graphics overflow.
 	"Mon Icons 4"
 ROMX $9c
+	; MBC30 high ROM bank.
+	; Reserved for front/back pic overflow.
+	"Pics 28"
 ROMX $9d
 ROMX $9e
 ROMX $9f

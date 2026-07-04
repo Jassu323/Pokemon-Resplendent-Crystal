@@ -279,6 +279,7 @@ MonMenuIcons:
 	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
 	mon_menu_icon MakuhitaIcon,       GRAY,   RED    ; MAKUHITA
 	mon_menu_icon HariyamaIcon,       BROWN,  PURPLE ; HARIYAMA
+	mon_menu_icon SkittyIcon,         PINK,   RED    ; SKITTY
 	mon_menu_icon MawileIcon,         GRAY,   PURPLE ; MAWILE
 	mon_menu_icon AronIcon,           GRAY,   TEAL   ; ARON
 	mon_menu_icon LaironIcon,         GRAY,   TEAL   ; LAIRON
