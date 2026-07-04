@@ -303,6 +303,7 @@ AnimationIdlePointers:
 	dw WhiscashAnimationIdle
 	dw CorphishAnimationIdle
 	dw CrawdauntAnimationIdle
+	dw BaltoyAnimationIdle
 	dw LileepAnimationIdle
 	dw CradilyAnimationIdle
 	dw AnorithAnimationIdle

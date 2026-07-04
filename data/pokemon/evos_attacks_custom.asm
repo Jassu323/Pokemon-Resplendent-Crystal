@@ -53,6 +53,7 @@ EvosAttacksPointers3::
 	dw WhiscashEvosAttacks
 	dw CorphishEvosAttacks
 	dw CrawdauntEvosAttacks
+	dw BaltoyEvosAttacks
 	dw LileepEvosAttacks
 	dw CradilyEvosAttacks
 	dw AnorithEvosAttacks
@@ -372,6 +373,11 @@ CorphishEvosAttacks:
 	db 0 ; no more level-up moves
 
 CrawdauntEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+BaltoyEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

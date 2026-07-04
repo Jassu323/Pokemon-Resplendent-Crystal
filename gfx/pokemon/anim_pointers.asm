@@ -303,6 +303,7 @@ AnimationPointers:
 	dw WhiscashAnimation
 	dw CorphishAnimation
 	dw CrawdauntAnimation
+	dw BaltoyAnimation
 	dw LileepAnimation
 	dw CradilyAnimation
 	dw AnorithAnimation

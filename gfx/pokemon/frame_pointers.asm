@@ -303,6 +303,7 @@ FramesPointers:
 	dba WhiscashFrames
 	dba CorphishFrames
 	dba CrawdauntFrames
+	dba BaltoyFrames
 	dba LileepFrames
 	dba CradilyFrames
 	dba AnorithFrames

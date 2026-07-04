@@ -303,6 +303,7 @@ BitmasksPointers:
 	dba WhiscashBitmasks
 	dba CorphishBitmasks
 	dba CrawdauntBitmasks
+	dba BaltoyBitmasks
 	dba LileepBitmasks
 	dba CradilyBitmasks
 	dba AnorithBitmasks

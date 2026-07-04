@@ -53,6 +53,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; WHISCASH
 	dw NoEggMoves3 ; CORPHISH
 	dw NoEggMoves3 ; CRAWDAUNT
+	dw NoEggMoves3 ; BALTOY
 	dw NoEggMoves3 ; LILEEP
 	dw NoEggMoves3 ; CRADILY
 	dw NoEggMoves3 ; ANORITH

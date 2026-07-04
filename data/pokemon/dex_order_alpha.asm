@@ -21,6 +21,7 @@ AlphabeticalPokedexOrder:
 	dw ARTICUNO
 	dw AZUMARILL
 	dw BAGON
+	dw BALTOY
 	dw BANETTE
 	dw BARBOACH
 	dw BASTIODON

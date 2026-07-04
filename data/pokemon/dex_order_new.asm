@@ -305,6 +305,7 @@ NewPokedexOrder:
 	dw WHISCASH
 	dw CORPHISH
 	dw CRAWDAUNT
+	dw BALTOY
 	dw LILEEP
 	dw CRADILY
 	dw ANORITH
