@@ -306,6 +306,7 @@ NewPokedexOrder:
 	dw CORPHISH
 	dw CRAWDAUNT
 	dw BALTOY
+	dw CLAYDOL
 	dw LILEEP
 	dw CRADILY
 	dw ANORITH

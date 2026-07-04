@@ -305,6 +305,7 @@ FirstEvoStages::
 	dw CORPHISH
 	dw CORPHISH
 	dw BALTOY
+	dw BALTOY
 	dw LILEEP
 	dw LILEEP
 	dw ANORITH

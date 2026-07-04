@@ -624,6 +624,8 @@ PokemonPicPointers::
 	dba CrawdauntBackpic
 	dba BaltoyFrontpic
 	dba BaltoyBackpic
+	dba ClaydolFrontpic
+	dba ClaydolBackpic
 	dba LileepFrontpic
 	dba LileepBackpic
 	dba CradilyFrontpic

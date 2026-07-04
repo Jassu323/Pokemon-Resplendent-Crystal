@@ -310,6 +310,7 @@ PokemonNames::
 	dname "Corphish"
 	dname "Crawdaunt"
 	dname "Baltoy"
+	dname "Claydol"
 	dname "Lileep"
 	dname "Cradily"
 	dname "Anorith"

@@ -48,6 +48,7 @@ AlphabeticalPokedexOrder:
 	dw CHARMELEON
 	dw CHIKORITA
 	dw CHINCHOU
+	dw CLAYDOL
 	dw CLEFABLE
 	dw CLEFAIRY
 	dw CLEFFA

@@ -305,6 +305,7 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; whiscash placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; corphish placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; crawdaunt placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; baltoy placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; claydol placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; lileep placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; cradily placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; anorith placeholder

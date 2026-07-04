@@ -304,6 +304,7 @@ BitmasksPointers:
 	dba CorphishBitmasks
 	dba CrawdauntBitmasks
 	dba BaltoyBitmasks
+	dba ClaydolBitmasks
 	dba LileepBitmasks
 	dba CradilyBitmasks
 	dba AnorithBitmasks

@@ -54,6 +54,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_CORPHISH
 	const SAMPLED_CRY_CRAWDAUNT
 	const SAMPLED_CRY_BALTOY
+	const SAMPLED_CRY_CLAYDOL
 	const SAMPLED_CRY_LILEEP
 	const SAMPLED_CRY_CRADILY
 	const SAMPLED_CRY_ANORITH
@@ -296,6 +297,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_CRAWDAUNT
 	elif sampled_cry_mon == BALTOY
 		db SAMPLED_CRY_BALTOY
+	elif sampled_cry_mon == CLAYDOL
+		db SAMPLED_CRY_CLAYDOL
 	elif sampled_cry_mon == LILEEP
 		db SAMPLED_CRY_LILEEP
 	elif sampled_cry_mon == CRADILY
@@ -480,6 +483,7 @@ SampledCryPointers:
 	dba CorphishSampledCry
 	dba CrawdauntSampledCry
 	dba BaltoySampledCry
+	dba ClaydolSampledCry
 	dba LileepSampledCry
 	dba CradilySampledCry
 	dba AnorithSampledCry
@@ -1411,3 +1415,10 @@ BaltoySampledCryData:
 	INCBIN "audio/sampled_cries/baltoy.mm2"
 BaltoySampledCryEnd:
 	assert (BaltoySampledCryEnd - BaltoySampledCryData) % 9 == 0
+
+ClaydolSampledCry::
+	dw (ClaydolSampledCryEnd - ClaydolSampledCryData) / 9
+ClaydolSampledCryData:
+	INCBIN "audio/sampled_cries/claydol.mm2"
+ClaydolSampledCryEnd:
+	assert (ClaydolSampledCryEnd - ClaydolSampledCryData) % 9 == 0

@@ -305,6 +305,7 @@ PokedexDataPointerTable:
 	dba CorphishPokedexEntry
 	dba CrawdauntPokedexEntry
 	dba BaltoyPokedexEntry
+	dba ClaydolPokedexEntry
 	dba LileepPokedexEntry
 	dba CradilyPokedexEntry
 	dba AnorithPokedexEntry
