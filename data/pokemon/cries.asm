@@ -360,4 +360,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; LEAFEON
 	mon_cry CRY_BULBASAUR,   128,  129 ; GLACEON
 	mon_cry CRY_BULBASAUR,   128,  129 ; GLISCOR
+	mon_cry CRY_BULBASAUR,   128,  129 ; MAMOSWINE
 	assert_table_length NUM_POKEMON

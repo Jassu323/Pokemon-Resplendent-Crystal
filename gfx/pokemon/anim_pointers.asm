@@ -354,4 +354,5 @@ AnimationPointers:
 	dw LeafeonAnimation
 	dw GlaceonAnimation
 	dw GliscorAnimation
+	dw MamoswineAnimation
 	assert_table_length NUM_POKEMON

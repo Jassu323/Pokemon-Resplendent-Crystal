@@ -360,4 +360,5 @@ PokemonNames::
 	dname "Leafeon"
 	dname "Glaceon"
 	dname "Gliscor"
+	dname "Mamoswine"
 	assert_table_length NUM_POKEMON

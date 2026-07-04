@@ -361,6 +361,7 @@ MonMenuIcons:
 	mon_menu_icon LeafeonIcon,        GREEN,  BLUE   ; LEAFEON
 	mon_menu_icon GlaceonIcon,        BLUE,   TEAL   ; GLACEON
 	mon_menu_icon GliscorIcon,        PURPLE, BLUE   ; GLISCOR
+	mon_menu_icon MamoswineIcon,      BROWN,  GREEN  ; MAMOSWINE
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:
