@@ -106,6 +106,7 @@ AlphabeticalPokedexOrder:
 	dw GLACEON
 	dw GLALIE
 	dw GLIGAR
+	dw GLISCOR
 	dw GLOOM
 	dw GOLBAT
 	dw GOLDEEN

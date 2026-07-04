@@ -722,4 +722,6 @@ PokemonPicPointers::
 	dba LeafeonBackpic
 	dba GlaceonFrontpic
 	dba GlaceonBackpic
+	dba GliscorFrontpic
+	dba GliscorBackpic
 	assert_table_length NUM_POKEMON + 1

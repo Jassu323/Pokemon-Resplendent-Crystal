@@ -373,6 +373,7 @@ DEF JOHTO_POKEMON EQU const_value
 	const YANMEGA    ; 177, NatDex 469
 	const LEAFEON    ; 178, NatDex 470
 	const GLACEON    ; 179, NatDex 471
+	const GLISCOR    ; 180, NatDex 472
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

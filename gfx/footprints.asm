@@ -354,5 +354,6 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; togekiss placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; yanmega placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; leafeon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; glaceon placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; gliscor placeholder
 
 	assert_table_length NUM_POKEMON

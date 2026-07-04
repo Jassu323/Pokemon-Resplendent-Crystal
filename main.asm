@@ -132,6 +132,7 @@ TogekissIcon::      INCBIN "gfx/icons/togekiss.2bpp"
 YanmegaIcon::       INCBIN "gfx/icons/yanmega.2bpp"
 LeafeonIcon::       INCBIN "gfx/icons/leafeon.2bpp"
 GlaceonIcon::       INCBIN "gfx/icons/glaceon.2bpp"
+GliscorIcon::       INCBIN "gfx/icons/gliscor.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -644,6 +645,7 @@ TogekissFrames:   INCLUDE "gfx/pokemon/togekiss/frames.asm"
 YanmegaFrames:    INCLUDE "gfx/pokemon/yanmega/frames.asm"
 LeafeonFrames:    INCLUDE "gfx/pokemon/leafeon/frames.asm"
 GlaceonFrames:    INCLUDE "gfx/pokemon/glaceon/frames.asm"
+GliscorFrames:    INCLUDE "gfx/pokemon/gliscor/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

@@ -197,6 +197,7 @@ gfx/pokemon/scyther/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/jynx/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/porygon/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/porygon2/normal.gbcpal: tools/gbcpal += --reverse
+gfx/pokemon/gliscor/normal.gbcpal: tools/gbcpal += --reverse
 
 gfx/trainers/swimmer_m.gbcpal: tools/gbcpal += --reverse
 

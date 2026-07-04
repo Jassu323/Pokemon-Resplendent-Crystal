@@ -354,4 +354,5 @@ EvolutionMoves::
 	dw NO_MOVE ; YANMEGA
 	dw NO_MOVE ; LEAFEON
 	dw NO_MOVE ; GLACEON
+	dw NO_MOVE ; GLISCOR
 	assert_table_length NUM_POKEMON

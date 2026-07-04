@@ -359,4 +359,5 @@ PokemonNames::
 	dname "Yanmega"
 	dname "Leafeon"
 	dname "Glaceon"
+	dname "Gliscor"
 	assert_table_length NUM_POKEMON

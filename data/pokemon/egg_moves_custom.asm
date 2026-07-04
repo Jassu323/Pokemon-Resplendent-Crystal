@@ -103,6 +103,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; YANMEGA
 	dw NoEggMoves3 ; LEAFEON
 	dw NoEggMoves3 ; GLACEON
+	dw NoEggMoves3 ; GLISCOR
 .IndirectEnd::
 
 NoEggMoves3:
