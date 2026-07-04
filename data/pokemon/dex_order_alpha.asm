@@ -239,6 +239,7 @@ AlphabeticalPokedexOrder:
 	dw PONYTA
 	dw PORYGON
 	dw PORYGON2
+	dw PORYGON_Z
 	dw PRIMEAPE
 	dw PSYDUCK
 	dw PUPITAR

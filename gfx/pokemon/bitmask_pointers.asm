@@ -355,4 +355,5 @@ BitmasksPointers:
 	dba GlaceonBitmasks
 	dba GliscorBitmasks
 	dba MamoswineBitmasks
+	dba PorygonZBitmasks
 	assert_table_length NUM_POKEMON

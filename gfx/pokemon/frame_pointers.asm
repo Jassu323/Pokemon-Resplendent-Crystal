@@ -355,4 +355,5 @@ FramesPointers:
 	dba GlaceonFrames
 	dba GliscorFrames
 	dba MamoswineFrames
+	dba PorygonZFrames
 	assert_table_length NUM_POKEMON

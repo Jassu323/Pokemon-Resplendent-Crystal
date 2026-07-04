@@ -356,4 +356,5 @@ FirstEvoStages::
 	dw EEVEE
 	dw GLIGAR
 	dw SWINUB
+	dw PORYGON
 	assert_table_length NUM_POKEMON

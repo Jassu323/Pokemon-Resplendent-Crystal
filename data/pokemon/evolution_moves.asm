@@ -356,4 +356,5 @@ EvolutionMoves::
 	dw NO_MOVE ; GLACEON
 	dw NO_MOVE ; GLISCOR
 	dw NO_MOVE ; MAMOSWINE
+	dw NO_MOVE ; PORYGON_Z
 	assert_table_length NUM_POKEMON

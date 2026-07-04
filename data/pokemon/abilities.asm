@@ -363,4 +363,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 179 GLACEON
 	mon_ability NO_ABILITY ; 180 GLISCOR
 	mon_ability NO_ABILITY ; 181 MAMOSWINE
+	mon_ability NO_ABILITY ; 182 PORYGON_Z
 	assert_table_length NUM_POKEMON + 1
