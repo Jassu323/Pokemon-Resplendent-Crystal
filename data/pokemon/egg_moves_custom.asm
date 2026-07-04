@@ -33,6 +33,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; MEDICHAM
 	dw NoEggMoves3 ; ELECTRIKE
 	dw NoEggMoves3 ; MANECTRIC
+	dw NoEggMoves3 ; ROSELIA
 	dw NoEggMoves3 ; CARVANHA
 	dw NoEggMoves3 ; SHARPEDO
 	dw NoEggMoves3 ; NUMEL

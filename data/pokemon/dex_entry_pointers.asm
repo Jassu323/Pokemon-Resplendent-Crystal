@@ -284,6 +284,7 @@ PokedexDataPointerTable:
 	dba MedichamPokedexEntry
 	dba ElectrikePokedexEntry
 	dba ManectricPokedexEntry
+	dba RoseliaPokedexEntry
 	dba CarvanhaPokedexEntry
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry

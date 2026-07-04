@@ -284,6 +284,7 @@ FirstEvoStages::
 	dw MEDITITE
 	dw ELECTRIKE
 	dw ELECTRIKE
+	dw ROSELIA
 	dw CARVANHA
 	dw CARVANHA
 	dw NUMEL

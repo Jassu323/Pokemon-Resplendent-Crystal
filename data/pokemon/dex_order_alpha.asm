@@ -266,6 +266,7 @@ AlphabeticalPokedexOrder:
 	dw RHYHORN
 	dw RHYPERIOR
 	dw RIOLU
+	dw ROSELIA
 	dw SABLEYE
 	dw SALAMENCE
 	dw SANDSHREW

@@ -33,6 +33,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_MEDICHAM
 	const SAMPLED_CRY_ELECTRIKE
 	const SAMPLED_CRY_MANECTRIC
+	const SAMPLED_CRY_ROSELIA
 	const SAMPLED_CRY_CARVANHA
 	const SAMPLED_CRY_SHARPEDO
 	const SAMPLED_CRY_NUMEL
@@ -251,6 +252,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_ELECTRIKE
 	elif sampled_cry_mon == MANECTRIC
 		db SAMPLED_CRY_MANECTRIC
+	elif sampled_cry_mon == ROSELIA
+		db SAMPLED_CRY_ROSELIA
 	elif sampled_cry_mon == CARVANHA
 		db SAMPLED_CRY_CARVANHA
 	elif sampled_cry_mon == SHARPEDO
@@ -450,6 +453,7 @@ SampledCryPointers:
 	dba MedichamSampledCry
 	dba ElectrikeSampledCry
 	dba ManectricSampledCry
+	dba RoseliaSampledCry
 	dba CarvanhaSampledCry
 	dba SharpedoSampledCry
 	dba NumelSampledCry
@@ -1375,3 +1379,10 @@ ManectricSampledCryData:
 	INCBIN "audio/sampled_cries/manectric.mm2"
 ManectricSampledCryEnd:
 	assert (ManectricSampledCryEnd - ManectricSampledCryData) % 9 == 0
+
+RoseliaSampledCry::
+	dw (RoseliaSampledCryEnd - RoseliaSampledCryData) / 9
+RoseliaSampledCryData:
+	INCBIN "audio/sampled_cries/roselia.mm2"
+RoseliaSampledCryEnd:
+	assert (RoseliaSampledCryEnd - RoseliaSampledCryData) % 9 == 0

@@ -289,6 +289,7 @@ PokemonNames::
 	dname "Medicham"
 	dname "Electrike"
 	dname "Manectric"
+	dname "Roselia"
 	dname "Carvanha"
 	dname "Sharpedo"
 	dname "Numel"

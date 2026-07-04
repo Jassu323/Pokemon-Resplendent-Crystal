@@ -283,6 +283,7 @@ AnimationPointers:
 	dw MedichamAnimation
 	dw ElectrikeAnimation
 	dw ManectricAnimation
+	dw RoseliaAnimation
 	dw CarvanhaAnimation
 	dw SharpedoAnimation
 	dw NumelAnimation

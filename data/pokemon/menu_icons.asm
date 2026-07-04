@@ -290,6 +290,7 @@ MonMenuIcons:
 	mon_menu_icon MedichamIcon,       PINK,   BLUE   ; MEDICHAM
 	mon_menu_icon ElectrikeIcon,      GREEN,  TEAL   ; ELECTRIKE
 	mon_menu_icon ManectricIcon,      BLUE,   GRAY   ; MANECTRIC
+	mon_menu_icon RoseliaIcon,        GREEN,  PURPLE ; ROSELIA
 	mon_menu_icon CarvanhaIcon,       RED,    TEAL   ; CARVANHA
 	mon_menu_icon SharpedoIcon,       BLUE,   PURPLE ; SHARPEDO
 	mon_menu_icon NumelIcon,          GREEN,  BLUE   ; NUMEL

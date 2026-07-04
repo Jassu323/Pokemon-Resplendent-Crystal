@@ -285,6 +285,7 @@ NewPokedexOrder:
 	dw MEDICHAM
 	dw ELECTRIKE
 	dw MANECTRIC
+	dw ROSELIA
 	dw CARVANHA
 	dw SHARPEDO
 	dw NUMEL

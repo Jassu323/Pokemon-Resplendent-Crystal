@@ -283,6 +283,7 @@ AnimationIdlePointers:
 	dw MedichamAnimationIdle
 	dw ElectrikeAnimationIdle
 	dw ManectricAnimationIdle
+	dw RoseliaAnimationIdle
 	dw CarvanhaAnimationIdle
 	dw SharpedoAnimationIdle
 	dw NumelAnimationIdle
