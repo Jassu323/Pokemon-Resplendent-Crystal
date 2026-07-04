@@ -386,4 +386,5 @@ SECTION "Pokemon Base Data Overflow", ROMX
 
 BaseData2:
 INCLUDE "data/pokemon/base_stats/leafeon.asm"
+INCLUDE "data/pokemon/base_stats/glaceon.asm"
 .IndirectEnd::

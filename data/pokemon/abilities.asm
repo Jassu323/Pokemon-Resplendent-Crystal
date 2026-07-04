@@ -360,4 +360,5 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 176 TOGEKISS
 	mon_ability NO_ABILITY ; 177 YANMEGA
 	mon_ability NO_ABILITY ; 178 LEAFEON
+	mon_ability NO_ABILITY ; 179 GLACEON
 	assert_table_length NUM_POKEMON + 1

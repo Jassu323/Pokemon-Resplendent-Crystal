@@ -352,4 +352,5 @@ AnimationIdlePointers:
 	dw TogekissAnimationIdle
 	dw YanmegaAnimationIdle
 	dw LeafeonAnimationIdle
+	dw GlaceonAnimationIdle
 	assert_table_length NUM_POKEMON

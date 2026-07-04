@@ -359,6 +359,7 @@ MonMenuIcons:
 	mon_menu_icon TogekissIcon,       BLUE,   BROWN  ; TOGEKISS
 	mon_menu_icon YanmegaIcon,        GREEN,  BLUE   ; YANMEGA
 	mon_menu_icon LeafeonIcon,        GREEN,  BLUE   ; LEAFEON
+	mon_menu_icon GlaceonIcon,        BLUE,   TEAL   ; GLACEON
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -102,6 +102,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_TOGEKISS
 	const SAMPLED_CRY_YANMEGA
 	const SAMPLED_CRY_LEAFEON
+	const SAMPLED_CRY_GLACEON
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -379,6 +380,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_YANMEGA
 	elif sampled_cry_mon == LEAFEON
 		db SAMPLED_CRY_LEAFEON
+	elif sampled_cry_mon == GLACEON
+		db SAMPLED_CRY_GLACEON
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -489,6 +492,7 @@ SampledCryPointers:
 	dba TogekissSampledCry
 	dba YanmegaSampledCry
 	dba LeafeonSampledCry
+	dba GlaceonSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1257,3 +1261,12 @@ LeafeonSampledCryData:
 	INCBIN "audio/sampled_cries/leafeon.mm2"
 LeafeonSampledCryEnd:
 	assert (LeafeonSampledCryEnd - LeafeonSampledCryData) % 9 == 0
+
+SECTION "Sampled Cry Payloads 20", ROMX
+
+GlaceonSampledCry::
+	dw (GlaceonSampledCryEnd - GlaceonSampledCryData) / 9
+GlaceonSampledCryData:
+	INCBIN "audio/sampled_cries/glaceon.mm2"
+GlaceonSampledCryEnd:
+	assert (GlaceonSampledCryEnd - GlaceonSampledCryData) % 9 == 0

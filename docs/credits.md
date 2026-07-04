@@ -97,6 +97,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Tangrowth party menu icon
 - Togekiss sprite and party menu icon
 - Leafeon party menu icon
+- Glaceon sprite and party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)

@@ -353,4 +353,5 @@ EvolutionMoves::
 	dw NO_MOVE ; TOGEKISS
 	dw NO_MOVE ; YANMEGA
 	dw NO_MOVE ; LEAFEON
+	dw NO_MOVE ; GLACEON
 	assert_table_length NUM_POKEMON

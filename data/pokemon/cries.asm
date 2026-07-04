@@ -358,4 +358,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; TOGEKISS
 	mon_cry CRY_BULBASAUR,   128,  129 ; YANMEGA
 	mon_cry CRY_BULBASAUR,   128,  129 ; LEAFEON
+	mon_cry CRY_BULBASAUR,   128,  129 ; GLACEON
 	assert_table_length NUM_POKEMON

@@ -1008,3 +1008,5 @@ SECTION "Pics 27", ROMX
 
 LeafeonFrontpic:    INCBIN "gfx/pokemon/leafeon/front.animated.2bpp.lz"
 LeafeonBackpic:     INCBIN "gfx/pokemon/leafeon/back.2bpp.lz"
+GlaceonFrontpic:    INCBIN "gfx/pokemon/glaceon/front.animated.2bpp.lz"
+GlaceonBackpic:     INCBIN "gfx/pokemon/glaceon/back.2bpp.lz"
