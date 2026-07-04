@@ -274,6 +274,7 @@ AnimationIdlePointers:
 	dw HariyamaAnimationIdle
 	dw SkittyAnimationIdle
 	dw DelcattyAnimationIdle
+	dw SableyeAnimationIdle
 	dw MawileAnimationIdle
 	dw AronAnimationIdle
 	dw LaironAnimationIdle

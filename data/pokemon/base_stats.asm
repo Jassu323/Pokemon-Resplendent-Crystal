@@ -308,6 +308,7 @@ SECTION "Pokemon Base Data Overflow", ROMX
 BaseData2:
 INCLUDE "data/pokemon/base_stats/skitty.asm"
 INCLUDE "data/pokemon/base_stats/delcatty.asm"
+INCLUDE "data/pokemon/base_stats/sableye.asm"
 INCLUDE "data/pokemon/base_stats/mawile.asm"
 INCLUDE "data/pokemon/base_stats/aron.asm"
 INCLUDE "data/pokemon/base_stats/lairon.asm"

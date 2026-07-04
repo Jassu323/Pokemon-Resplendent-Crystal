@@ -276,6 +276,7 @@ NewPokedexOrder:
 	dw HARIYAMA
 	dw SKITTY
 	dw DELCATTY
+	dw SABLEYE
 	dw MAWILE
 	dw ARON
 	dw LAIRON

@@ -275,6 +275,7 @@ EvolutionMoves::
 	dw NO_MOVE ; HARIYAMA
 	dw NO_MOVE ; SKITTY
 	dw NO_MOVE ; DELCATTY
+	dw NO_MOVE ; SABLEYE
 	dw NO_MOVE ; MAWILE
 	dw NO_MOVE ; ARON
 	dw NO_MOVE ; LAIRON

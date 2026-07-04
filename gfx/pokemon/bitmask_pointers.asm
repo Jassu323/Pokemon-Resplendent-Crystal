@@ -274,6 +274,7 @@ BitmasksPointers:
 	dba HariyamaBitmasks
 	dba SkittyBitmasks
 	dba DelcattyBitmasks
+	dba SableyeBitmasks
 	dba MawileBitmasks
 	dba AronBitmasks
 	dba LaironBitmasks

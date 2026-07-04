@@ -280,6 +280,7 @@ PokemonNames::
 	dname "Hariyama"
 	dname "Skitty"
 	dname "Delcatty"
+	dname "Sableye"
 	dname "Mawile"
 	dname "Aron"
 	dname "Lairon"

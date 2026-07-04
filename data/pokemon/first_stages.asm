@@ -275,6 +275,7 @@ FirstEvoStages::
 	dw MAKUHITA
 	dw SKITTY
 	dw DELCATTY
+	dw SABLEYE
 	dw MAWILE
 	dw ARON
 	dw ARON

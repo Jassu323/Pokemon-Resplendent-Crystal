@@ -139,6 +139,7 @@ MamoswineIcon::     INCBIN "gfx/icons/mamoswine.2bpp"
 SECTION "Mon Icons 4", ROMX
 
 DelcattyIcon::      INCBIN "gfx/icons/delcatty.2bpp"
+SableyeIcon::       INCBIN "gfx/icons/sableye.2bpp"
 PorygonZIcon::      INCBIN "gfx/icons/porygonz.2bpp"
 RegigigasIcon::     INCBIN "gfx/icons/regigigas.2bpp"
 

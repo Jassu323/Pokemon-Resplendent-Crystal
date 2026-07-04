@@ -274,6 +274,7 @@ FramesPointers:
 	dba HariyamaFrames
 	dba SkittyFrames
 	dba DelcattyFrames
+	dba SableyeFrames
 	dba MawileFrames
 	dba AronFrames
 	dba LaironFrames

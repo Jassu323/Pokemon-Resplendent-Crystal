@@ -274,6 +274,7 @@ AnimationPointers:
 	dw HariyamaAnimation
 	dw SkittyAnimation
 	dw DelcattyAnimation
+	dw SableyeAnimation
 	dw MawileAnimation
 	dw AronAnimation
 	dw LaironAnimation
