@@ -284,6 +284,7 @@ AnimationPointers:
 	dw ElectrikeAnimation
 	dw ManectricAnimation
 	dw RoseliaAnimation
+	dw RoseradeAnimation
 	dw CarvanhaAnimation
 	dw SharpedoAnimation
 	dw NumelAnimation

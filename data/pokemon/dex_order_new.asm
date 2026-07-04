@@ -286,6 +286,7 @@ NewPokedexOrder:
 	dw ELECTRIKE
 	dw MANECTRIC
 	dw ROSELIA
+	dw ROSERADE
 	dw CARVANHA
 	dw SHARPEDO
 	dw NUMEL

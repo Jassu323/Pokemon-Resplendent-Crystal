@@ -285,6 +285,7 @@ PokedexDataPointerTable:
 	dba ElectrikePokedexEntry
 	dba ManectricPokedexEntry
 	dba RoseliaPokedexEntry
+	dba RoseradePokedexEntry
 	dba CarvanhaPokedexEntry
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry

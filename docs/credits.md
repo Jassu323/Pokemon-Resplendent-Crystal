@@ -105,23 +105,24 @@ JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Beldum sprite (JohtoLegends credits Blue Emerald)
 - Metang sprite (JohtoLegends credits Blue Emerald)
 - Metagross sprite (JohtoLegends credits Blue Emerald)
+- Roserade sprite and party menu icon (Johto Legends credits the Prism Team)
 - Honchkrow party menu icon (JohtoLegends credits Bronzeswagger)
 - Croagunk (JohtoLegends credits the Prism Team)
 - Toxicroak (JohtoLegends credits the Prism Team)
 - Regigigas party menu icon (JohtoLegends credits FrenchOrange)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
-- Spheal sprite (original BW3G credits COMBOY collection)
-- Sealeo sprite (original BW3G credits COMBOY collection)
-- Walrein sprite (original BW3G credits COMBOY collection)
-- Snover party menu icon (original BW3G credits COMBOY collection)
-- Abomasnow party menu icon (original BW3G credits COMBOY collection)
+- Spheal sprite (original BW3G credits the COMBOY collection)
+- Sealeo sprite (original BW3G credits the COMBOY collection)
+- Walrein sprite (original BW3G credits the COMBOY collection)
+- Snover party menu icon (original BW3G credits the COMBOY collection)
+- Abomasnow party menu icon (original BW3G credits the COMBOY collection)
 
 Pokeemerald Expansion Team - https://github.com/rh-hideout/pokeemerald-expansion
 - Raw .WAV files of cries for Gens 4+ Pokémon
 
 EeVeeeEe1999 - Gen 3 GBC Party Icons - https://www.deviantart.com/eeveeee1999/art/Gen-3-GBC-Party-Sprites-830673924
-- Nearly all of them, with a few exceptions credited above
+- Nearly all of them, with only one exception (Snorunt) credited above
 
 Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Pokemon-Crystal-Sprite-Sheet-by-Nuuk-938359828
 - Treecko

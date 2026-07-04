@@ -284,6 +284,7 @@ FramesPointers:
 	dba ElectrikeFrames
 	dba ManectricFrames
 	dba RoseliaFrames
+	dba RoseradeFrames
 	dba CarvanhaFrames
 	dba SharpedoFrames
 	dba NumelFrames

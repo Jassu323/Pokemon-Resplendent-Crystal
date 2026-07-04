@@ -290,6 +290,7 @@ PokemonNames::
 	dname "Electrike"
 	dname "Manectric"
 	dname "Roselia"
+	dname "Roserade"
 	dname "Carvanha"
 	dname "Sharpedo"
 	dname "Numel"

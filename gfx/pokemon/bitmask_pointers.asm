@@ -284,6 +284,7 @@ BitmasksPointers:
 	dba ElectrikeBitmasks
 	dba ManectricBitmasks
 	dba RoseliaBitmasks
+	dba RoseradeBitmasks
 	dba CarvanhaBitmasks
 	dba SharpedoBitmasks
 	dba NumelBitmasks

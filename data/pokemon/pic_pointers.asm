@@ -584,6 +584,8 @@ PokemonPicPointers::
 	dba ManectricBackpic
 	dba RoseliaFrontpic
 	dba RoseliaBackpic
+	dba RoseradeFrontpic
+	dba RoseradeBackpic
 	dba CarvanhaFrontpic
 	dba CarvanhaBackpic
 	dba SharpedoFrontpic

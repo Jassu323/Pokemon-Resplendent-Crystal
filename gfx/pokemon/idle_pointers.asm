@@ -284,6 +284,7 @@ AnimationIdlePointers:
 	dw ElectrikeAnimationIdle
 	dw ManectricAnimationIdle
 	dw RoseliaAnimationIdle
+	dw RoseradeAnimationIdle
 	dw CarvanhaAnimationIdle
 	dw SharpedoAnimationIdle
 	dw NumelAnimationIdle
