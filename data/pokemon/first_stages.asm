@@ -352,4 +352,5 @@ FirstEvoStages::
 	dw TANGELA
 	dw TOGEPI
 	dw YANMA
+	dw EEVEE
 	assert_table_length NUM_POKEMON

@@ -130,6 +130,7 @@ RhyperiorIcon::     INCBIN "gfx/icons/rhyperior.2bpp"
 TangrowthIcon::     INCBIN "gfx/icons/tangrowth.2bpp"
 TogekissIcon::      INCBIN "gfx/icons/togekiss.2bpp"
 YanmegaIcon::       INCBIN "gfx/icons/yanmega.2bpp"
+LeafeonIcon::       INCBIN "gfx/icons/leafeon.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -640,6 +641,7 @@ RhyperiorFrames:  INCLUDE "gfx/pokemon/rhyperior/frames.asm"
 TangrowthFrames:  INCLUDE "gfx/pokemon/tangrowth/frames.asm"
 TogekissFrames:   INCLUDE "gfx/pokemon/togekiss/frames.asm"
 YanmegaFrames:    INCLUDE "gfx/pokemon/yanmega/frames.asm"
+LeafeonFrames:    INCLUDE "gfx/pokemon/leafeon/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

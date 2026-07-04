@@ -353,4 +353,5 @@ NewPokedexOrder:
 	dw TANGROWTH
 	dw TOGEKISS
 	dw YANMEGA
+	dw LEAFEON
 	assert_table_length NUM_POKEMON

@@ -351,4 +351,5 @@ AnimationPointers:
 	dw TangrowthAnimation
 	dw TogekissAnimation
 	dw YanmegaAnimation
+	dw LeafeonAnimation
 	assert_table_length NUM_POKEMON

@@ -718,4 +718,6 @@ PokemonPicPointers::
 	dba TogekissBackpic
 	dba YanmegaFrontpic
 	dba YanmegaBackpic
+	dba LeafeonFrontpic
+	dba LeafeonBackpic
 	assert_table_length NUM_POKEMON + 1

@@ -121,6 +121,7 @@ ROMX $1f
 ROMX $20
 	; Reserved for species base data overflow and species metadata.
 	"bank20"
+	"Pokemon Base Data Overflow"
 	"Pokemon Names"
 ROMX $21
 	; Reserved for the full color/palette system, including Pokemon palettes.
@@ -460,6 +461,9 @@ ROMX $97
 	; Reserved for sampled cry payload overflow.
 	"Sampled Cry Payloads 19"
 ROMX $98
+	; MBC30 high ROM bank.
+	; Reserved for front/back pic overflow.
+	"Pics 27"
 ROMX $99
 ROMX $9a
 ROMX $9b

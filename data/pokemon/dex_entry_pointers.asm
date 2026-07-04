@@ -352,4 +352,5 @@ PokedexDataPointerTable:
 	dba TangrowthPokedexEntry
 	dba TogekissPokedexEntry
 	dba YanmegaPokedexEntry
+	dba LeafeonPokedexEntry
 	assert_table_length NUM_POKEMON

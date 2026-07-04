@@ -23,7 +23,8 @@ ENDM
 
 BaseData::
 	indirect_table BASE_DATA_SIZE, 1
-	indirect_entries NUM_POKEMON, BaseData1
+	indirect_entries YANMEGA, BaseData1
+	indirect_entries NUM_POKEMON, BaseData2
 	indirect_table_end
 
 BaseData1:
@@ -378,4 +379,11 @@ INCLUDE "data/pokemon/base_stats/rhyperior.asm"
 INCLUDE "data/pokemon/base_stats/tangrowth.asm"
 INCLUDE "data/pokemon/base_stats/togekiss.asm"
 INCLUDE "data/pokemon/base_stats/yanmega.asm"
+.IndirectEnd::
+
+
+SECTION "Pokemon Base Data Overflow", ROMX
+
+BaseData2:
+INCLUDE "data/pokemon/base_stats/leafeon.asm"
 .IndirectEnd::

@@ -96,6 +96,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Rhyperior sprite and party menu icon
 - Tangrowth party menu icon
 - Togekiss sprite and party menu icon
+- Leafeon party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
@@ -170,6 +171,7 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Snover
 - Abomasnow
 - Magnezone
+- Leafeon
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
 - Anorith

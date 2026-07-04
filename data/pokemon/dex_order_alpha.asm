@@ -152,6 +152,7 @@ AlphabeticalPokedexOrder:
 	dw LAIRON
 	dw LAPRAS
 	dw LARVITAR
+	dw LEAFEON
 	dw LEDIAN
 	dw LEDYBA
 	dw LICKILICKY
