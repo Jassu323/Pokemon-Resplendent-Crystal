@@ -281,6 +281,7 @@ BitmasksPointers:
 	dba AggronBitmasks
 	dba MedititeBitmasks
 	dba MedichamBitmasks
+	dba ElectrikeBitmasks
 	dba CarvanhaBitmasks
 	dba SharpedoBitmasks
 	dba NumelBitmasks

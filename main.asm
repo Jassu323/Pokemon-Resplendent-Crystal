@@ -140,6 +140,7 @@ SECTION "Mon Icons 4", ROMX
 
 DelcattyIcon::      INCBIN "gfx/icons/delcatty.2bpp"
 SableyeIcon::       INCBIN "gfx/icons/sableye.2bpp"
+ElectrikeIcon::     INCBIN "gfx/icons/electrike.2bpp"
 PorygonZIcon::      INCBIN "gfx/icons/porygonz.2bpp"
 RegigigasIcon::     INCBIN "gfx/icons/regigigas.2bpp"
 
@@ -579,6 +580,7 @@ SECTION "Pic Animations 4", ROMX
 INCLUDE "gfx/pokemon/unown_frames.asm"
 INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
 INCLUDE "gfx/pokemon/unown_bitmasks.asm"
+ElectrikeFrames: INCLUDE "gfx/pokemon/electrike/frames.asm"
 CarvanhaFrames:  INCLUDE "gfx/pokemon/carvanha/frames.asm"
 SharpedoFrames:   INCLUDE "gfx/pokemon/sharpedo/frames.asm"
 NumelFrames:      INCLUDE "gfx/pokemon/numel/frames.asm"

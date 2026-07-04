@@ -282,6 +282,7 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; lairon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; aggron placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; meditite placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; medicham placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; electrike placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; carvanha placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; sharpedo placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; numel placeholder

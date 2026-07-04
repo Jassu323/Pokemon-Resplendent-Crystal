@@ -281,6 +281,7 @@ AnimationIdlePointers:
 	dw AggronAnimationIdle
 	dw MedititeAnimationIdle
 	dw MedichamAnimationIdle
+	dw ElectrikeAnimationIdle
 	dw CarvanhaAnimationIdle
 	dw SharpedoAnimationIdle
 	dw NumelAnimationIdle

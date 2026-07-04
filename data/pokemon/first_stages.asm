@@ -282,6 +282,7 @@ FirstEvoStages::
 	dw ARON
 	dw MEDITITE
 	dw MEDITITE
+	dw ELECTRIKE
 	dw CARVANHA
 	dw CARVANHA
 	dw NUMEL

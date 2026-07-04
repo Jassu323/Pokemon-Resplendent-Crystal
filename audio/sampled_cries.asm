@@ -31,6 +31,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_AGGRON
 	const SAMPLED_CRY_MEDITITE
 	const SAMPLED_CRY_MEDICHAM
+	const SAMPLED_CRY_ELECTRIKE
 	const SAMPLED_CRY_CARVANHA
 	const SAMPLED_CRY_SHARPEDO
 	const SAMPLED_CRY_NUMEL
@@ -245,6 +246,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MEDITITE
 	elif sampled_cry_mon == MEDICHAM
 		db SAMPLED_CRY_MEDICHAM
+	elif sampled_cry_mon == ELECTRIKE
+		db SAMPLED_CRY_ELECTRIKE
 	elif sampled_cry_mon == CARVANHA
 		db SAMPLED_CRY_CARVANHA
 	elif sampled_cry_mon == SHARPEDO
@@ -442,6 +445,7 @@ SampledCryPointers:
 	dba AggronSampledCry
 	dba MedititeSampledCry
 	dba MedichamSampledCry
+	dba ElectrikeSampledCry
 	dba CarvanhaSampledCry
 	dba SharpedoSampledCry
 	dba NumelSampledCry
@@ -1350,3 +1354,13 @@ SableyeSampledCryData:
 	INCBIN "audio/sampled_cries/sableye.mm2"
 SableyeSampledCryEnd:
 	assert (SableyeSampledCryEnd - SableyeSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 22", ROMX
+
+ElectrikeSampledCry::
+	dw (ElectrikeSampledCryEnd - ElectrikeSampledCryData) / 9
+ElectrikeSampledCryData:
+	INCBIN "audio/sampled_cries/electrike.mm2"
+ElectrikeSampledCryEnd:
+	assert (ElectrikeSampledCryEnd - ElectrikeSampledCryData) % 9 == 0

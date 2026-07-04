@@ -283,6 +283,7 @@ NewPokedexOrder:
 	dw AGGRON
 	dw MEDITITE
 	dw MEDICHAM
+	dw ELECTRIKE
 	dw CARVANHA
 	dw SHARPEDO
 	dw NUMEL

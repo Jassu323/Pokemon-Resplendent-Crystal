@@ -287,6 +287,7 @@ PokemonNames::
 	dname "Aggron"
 	dname "Meditite"
 	dname "Medicham"
+	dname "Electrike"
 	dname "Carvanha"
 	dname "Sharpedo"
 	dname "Numel"

@@ -282,6 +282,7 @@ PokedexDataPointerTable:
 	dba AggronPokedexEntry
 	dba MedititePokedexEntry
 	dba MedichamPokedexEntry
+	dba ElectrikePokedexEntry
 	dba CarvanhaPokedexEntry
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry

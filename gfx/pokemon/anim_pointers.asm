@@ -281,6 +281,7 @@ AnimationPointers:
 	dw AggronAnimation
 	dw MedititeAnimation
 	dw MedichamAnimation
+	dw ElectrikeAnimation
 	dw CarvanhaAnimation
 	dw SharpedoAnimation
 	dw NumelAnimation
