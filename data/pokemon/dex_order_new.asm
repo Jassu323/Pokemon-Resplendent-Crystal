@@ -284,6 +284,7 @@ NewPokedexOrder:
 	dw MEDITITE
 	dw MEDICHAM
 	dw ELECTRIKE
+	dw MANECTRIC
 	dw CARVANHA
 	dw SHARPEDO
 	dw NUMEL

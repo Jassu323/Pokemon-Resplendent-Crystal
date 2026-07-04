@@ -580,6 +580,8 @@ PokemonPicPointers::
 	dba MedichamBackpic
 	dba ElectrikeFrontpic
 	dba ElectrikeBackpic
+	dba ManectricFrontpic
+	dba ManectricBackpic
 	dba CarvanhaFrontpic
 	dba CarvanhaBackpic
 	dba SharpedoFrontpic

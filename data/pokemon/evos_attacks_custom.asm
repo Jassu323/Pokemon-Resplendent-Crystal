@@ -32,6 +32,7 @@ EvosAttacksPointers3::
 	dw MedititeEvosAttacks
 	dw MedichamEvosAttacks
 	dw ElectrikeEvosAttacks
+	dw ManectricEvosAttacks
 	dw CarvanhaEvosAttacks
 	dw SharpedoEvosAttacks
 	dw NumelEvosAttacks
@@ -264,6 +265,11 @@ MedichamEvosAttacks:
 	db 0 ; no more level-up moves
 
 ElectrikeEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+ManectricEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

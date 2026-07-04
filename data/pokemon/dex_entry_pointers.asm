@@ -283,6 +283,7 @@ PokedexDataPointerTable:
 	dba MedititePokedexEntry
 	dba MedichamPokedexEntry
 	dba ElectrikePokedexEntry
+	dba ManectricPokedexEntry
 	dba CarvanhaPokedexEntry
 	dba SharpedoPokedexEntry
 	dba NumelPokedexEntry

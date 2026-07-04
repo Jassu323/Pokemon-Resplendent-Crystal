@@ -282,6 +282,7 @@ FramesPointers:
 	dba MedititeFrames
 	dba MedichamFrames
 	dba ElectrikeFrames
+	dba ManectricFrames
 	dba CarvanhaFrames
 	dba SharpedoFrames
 	dba NumelFrames

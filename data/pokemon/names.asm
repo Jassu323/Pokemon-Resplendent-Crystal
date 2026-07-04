@@ -288,6 +288,7 @@ PokemonNames::
 	dname "Meditite"
 	dname "Medicham"
 	dname "Electrike"
+	dname "Manectric"
 	dname "Carvanha"
 	dname "Sharpedo"
 	dname "Numel"
