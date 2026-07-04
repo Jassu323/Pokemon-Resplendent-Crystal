@@ -473,6 +473,9 @@ ROMX $9a
 	; Reserved for sampled cry payload overflow.
 	"Sampled Cry Payloads 21"
 ROMX $9b
+	; MBC30 high ROM bank.
+	; Reserved for custom Pokemon party icon graphics overflow.
+	"Mon Icons 4"
 ROMX $9c
 ROMX $9d
 ROMX $9e

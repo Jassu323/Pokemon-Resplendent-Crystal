@@ -356,4 +356,5 @@ AnimationPointers:
 	dw GliscorAnimation
 	dw MamoswineAnimation
 	dw PorygonZAnimation
+	dw RegigigasAnimation
 	assert_table_length NUM_POKEMON

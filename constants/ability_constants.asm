@@ -28,4 +28,5 @@
 	const DROUGHT
 	const AIR_LOCK
 	const SNOW_WARNING
+	const SLOW_START
 DEF NUM_ABILITIES EQU const_value - 1

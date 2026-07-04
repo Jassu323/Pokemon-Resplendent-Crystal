@@ -255,6 +255,7 @@ AlphabeticalPokedexOrder:
 	dw RATTATA
 	dw RAYQUAZA
 	dw REGICE
+	dw REGIGIGAS
 	dw REGIROCK
 	dw REGISTEEL
 	dw REMORAID

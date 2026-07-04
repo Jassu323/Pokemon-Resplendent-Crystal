@@ -362,4 +362,5 @@ PokemonCries::
 	mon_cry CRY_BULBASAUR,   128,  129 ; GLISCOR
 	mon_cry CRY_BULBASAUR,   128,  129 ; MAMOSWINE
 	mon_cry CRY_BULBASAUR,   128,  129 ; PORYGON_Z
+	mon_cry CRY_BULBASAUR,   128,  129 ; REGIGIGAS
 	assert_table_length NUM_POKEMON

@@ -98,6 +98,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Togekiss sprite and party menu icon
 - Leafeon party menu icon
 - Glaceon sprite and party menu icon
+- Porygon-Z sprite and party menu icon
 
 JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Milotic sprite (JohtoLegends credits Blue Emerald)
@@ -107,6 +108,7 @@ JohtoLegends Team - https://github.com/aforward9600/JohtoLegends
 - Honchkrow party menu icon (JohtoLegends credits Bronzeswagger)
 - Croagunk (JohtoLegends credits the Prism Team)
 - Toxicroak (JohtoLegends credits the Prism Team)
+- Regigigas party menu icon (JohtoLegends credits FrenchOrange)
 
 AzureKeys & Polished BW3G Team - https://github.com/AzureKeys/PolishedBW3G
 - Spheal sprite (original BW3G credits COMBOY collection)
@@ -189,3 +191,4 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Registeel
 - Lickilicky
 - Tangrowth
+- Regigigas

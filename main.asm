@@ -134,7 +134,11 @@ LeafeonIcon::       INCBIN "gfx/icons/leafeon.2bpp"
 GlaceonIcon::       INCBIN "gfx/icons/glaceon.2bpp"
 GliscorIcon::       INCBIN "gfx/icons/gliscor.2bpp"
 MamoswineIcon::     INCBIN "gfx/icons/mamoswine.2bpp"
+
+SECTION "Mon Icons 4", ROMX
+
 PorygonZIcon::      INCBIN "gfx/icons/porygonz.2bpp"
+RegigigasIcon::     INCBIN "gfx/icons/regigigas.2bpp"
 
 
 SECTION "bank3", ROMX
@@ -650,6 +654,7 @@ GlaceonFrames:    INCLUDE "gfx/pokemon/glaceon/frames.asm"
 GliscorFrames:    INCLUDE "gfx/pokemon/gliscor/frames.asm"
 MamoswineFrames:  INCLUDE "gfx/pokemon/mamoswine/frames.asm"
 PorygonZFrames:   INCLUDE "gfx/pokemon/porygonz/frames.asm"
+RegigigasFrames:  INCLUDE "gfx/pokemon/regigigas/frames.asm"
 
 INCLUDE "gfx/pokemon/custom_bitmasks.asm"
 

@@ -363,6 +363,7 @@ MonMenuIcons:
 	mon_menu_icon GliscorIcon,        PURPLE, BLUE   ; GLISCOR
 	mon_menu_icon MamoswineIcon,      BROWN,  GREEN  ; MAMOSWINE
 	mon_menu_icon PorygonZIcon,       BLUE,   GRAY   ; PORYGON_Z
+	mon_menu_icon RegigigasIcon,      BROWN,  GRAY   ; REGIGIGAS
 	assert_table_length NUM_POKEMON
 
 MonMenuIconEgg:

@@ -106,6 +106,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; GLISCOR
 	dw NoEggMoves3 ; MAMOSWINE
 	dw NoEggMoves3 ; PORYGON_Z
+	dw NoEggMoves3 ; REGIGIGAS
 .IndirectEnd::
 
 NoEggMoves3:

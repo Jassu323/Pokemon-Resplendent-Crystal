@@ -106,6 +106,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GLISCOR
 	const SAMPLED_CRY_MAMOSWINE
 	const SAMPLED_CRY_PORYGON_Z
+	const SAMPLED_CRY_REGIGIGAS
 DEF NUM_SAMPLED_CRY_SLOTS EQU const_value
 
 TryLoadSampledCryBySpeciesIndex::
@@ -391,6 +392,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_MAMOSWINE
 	elif sampled_cry_mon == PORYGON_Z
 		db SAMPLED_CRY_PORYGON_Z
+	elif sampled_cry_mon == REGIGIGAS
+		db SAMPLED_CRY_REGIGIGAS
 	else
 		db NO_SAMPLED_CRY
 	endc
@@ -505,6 +508,7 @@ SampledCryPointers:
 	dba GliscorSampledCry
 	dba MamoswineSampledCry
 	dba PorygonZSampledCry
+	dba RegigigasSampledCry
 	assert_table_length NUM_SAMPLED_CRY_SLOTS
 
 NullSampledCry::
@@ -1306,3 +1310,10 @@ PorygonZSampledCryData:
 	INCBIN "audio/sampled_cries/porygonz.mm2"
 PorygonZSampledCryEnd:
 	assert (PorygonZSampledCryEnd - PorygonZSampledCryData) % 9 == 0
+
+RegigigasSampledCry::
+	dw (RegigigasSampledCryEnd - RegigigasSampledCryData) / 9
+RegigigasSampledCryData:
+	INCBIN "audio/sampled_cries/regigigas.mm2"
+RegigigasSampledCryEnd:
+	assert (RegigigasSampledCryEnd - RegigigasSampledCryData) % 9 == 0

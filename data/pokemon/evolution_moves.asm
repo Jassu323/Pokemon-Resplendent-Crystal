@@ -357,4 +357,5 @@ EvolutionMoves::
 	dw NO_MOVE ; GLISCOR
 	dw NO_MOVE ; MAMOSWINE
 	dw NO_MOVE ; PORYGON_Z
+	dw NO_MOVE ; REGIGIGAS
 	assert_table_length NUM_POKEMON

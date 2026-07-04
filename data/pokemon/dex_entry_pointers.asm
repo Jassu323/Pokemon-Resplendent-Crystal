@@ -357,4 +357,5 @@ PokedexDataPointerTable:
 	dba GliscorPokedexEntry
 	dba MamoswinePokedexEntry
 	dba PorygonZPokedexEntry
+	dba RegigigasPokedexEntry
 	assert_table_length NUM_POKEMON
