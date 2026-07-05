@@ -93,6 +93,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; SHIELDON
 	dw NoEggMoves3 ; BASTIODON
 	dw NoEggMoves3 ; AMBIPOM
+	dw NoEggMoves3 ; BUNEARY
 	dw NoEggMoves3 ; MISMAGIUS
 	dw NoEggMoves3 ; HONCHKROW
 	dw NoEggMoves3 ; BRONZOR

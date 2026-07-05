@@ -350,6 +350,7 @@ MonMenuIcons:
 	mon_menu_icon ShieldonIcon,       GRAY,   BLUE   ; SHIELDON
 	mon_menu_icon BastiodonIcon,      GRAY,   BLUE   ; BASTIODON
 	mon_menu_icon AmbipomIcon,        PURPLE, PINK   ; AMBIPOM
+	mon_menu_icon BunearyIcon,        BROWN,  PINK   ; BUNEARY
 	mon_menu_icon MismagiusIcon,      PURPLE, BROWN  ; MISMAGIUS
 	mon_menu_icon HonchkrowIcon,      GRAY,   PURPLE ; HONCHKROW
 	mon_menu_icon BronzorIcon,        BLUE,   GREEN  ; BRONZOR

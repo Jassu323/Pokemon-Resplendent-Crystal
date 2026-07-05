@@ -349,6 +349,7 @@ PokemonNames::
 	dname "Shieldon"
 	dname "Bastiodon"
 	dname "Ambipom"
+	dname "Buneary"
 	dname "Mismagius"
 	dname "Honchkrow"
 	dname "Bronzor"

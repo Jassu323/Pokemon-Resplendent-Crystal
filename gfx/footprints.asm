@@ -344,6 +344,7 @@ INCBIN "gfx/footprints/bulbasaur.1bpp" ; rampardos placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; shieldon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; bastiodon placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; ambipom placeholder
+INCBIN "gfx/footprints/bulbasaur.1bpp" ; buneary placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; mismagius placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; honchkrow placeholder
 INCBIN "gfx/footprints/bulbasaur.1bpp" ; bronzor placeholder

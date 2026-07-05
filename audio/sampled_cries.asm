@@ -93,6 +93,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_SHIELDON
 	const SAMPLED_CRY_BASTIODON
 	const SAMPLED_CRY_AMBIPOM
+	const SAMPLED_CRY_BUNEARY
 	const SAMPLED_CRY_MISMAGIUS
 	const SAMPLED_CRY_HONCHKROW
 	const SAMPLED_CRY_BRONZOR
@@ -375,6 +376,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_BASTIODON
 	elif sampled_cry_mon == AMBIPOM
 		db SAMPLED_CRY_AMBIPOM
+	elif sampled_cry_mon == BUNEARY
+		db SAMPLED_CRY_BUNEARY
 	elif sampled_cry_mon == MISMAGIUS
 		db SAMPLED_CRY_MISMAGIUS
 	elif sampled_cry_mon == HONCHKROW
@@ -522,6 +525,7 @@ SampledCryPointers:
 	dba ShieldonSampledCry
 	dba BastiodonSampledCry
 	dba AmbipomSampledCry
+	dba BunearySampledCry
 	dba MismagiusSampledCry
 	dba HonchkrowSampledCry
 	dba BronzorSampledCry
@@ -1175,6 +1179,13 @@ AmbipomSampledCryData:
 	INCBIN "audio/sampled_cries/ambipom.mm2"
 AmbipomSampledCryEnd:
 	assert (AmbipomSampledCryEnd - AmbipomSampledCryData) % 9 == 0
+
+BunearySampledCry::
+	dw (BunearySampledCryEnd - BunearySampledCryData) / 9
+BunearySampledCryData:
+	INCBIN "audio/sampled_cries/buneary.mm2"
+BunearySampledCryEnd:
+	assert (BunearySampledCryEnd - BunearySampledCryData) % 9 == 0
 
 MismagiusSampledCry::
 	dw (MismagiusSampledCryEnd - MismagiusSampledCryData) / 9

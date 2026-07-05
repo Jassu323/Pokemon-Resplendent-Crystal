@@ -343,6 +343,7 @@ AnimationIdlePointers:
 	dw ShieldonAnimationIdle
 	dw BastiodonAnimationIdle
 	dw AmbipomAnimationIdle
+	dw BunearyAnimationIdle
 	dw MismagiusAnimationIdle
 	dw HonchkrowAnimationIdle
 	dw BronzorAnimationIdle

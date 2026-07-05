@@ -344,6 +344,7 @@ FirstEvoStages::
 	dw SHIELDON
 	dw SHIELDON
 	dw AIPOM
+	dw BUNEARY
 	dw MISDREAVUS
 	dw MURKROW
 	dw BRONZOR

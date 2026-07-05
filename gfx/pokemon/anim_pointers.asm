@@ -343,6 +343,7 @@ AnimationPointers:
 	dw ShieldonAnimation
 	dw BastiodonAnimation
 	dw AmbipomAnimation
+	dw BunearyAnimation
 	dw MismagiusAnimation
 	dw HonchkrowAnimation
 	dw BronzorAnimation

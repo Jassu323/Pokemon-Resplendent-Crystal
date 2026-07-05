@@ -259,10 +259,10 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 0f9 LUGIA
 	mon_ability NO_ABILITY ; 0fa HO_OH
 	mon_ability NO_ABILITY ; 0fb CELEBI
-	mon_ability OVERGROW ; fc TREECKO
-	mon_ability OVERGROW ; fd GROVYLE
-	mon_ability OVERGROW ; fe SCEPTILE
-	mon_ability BLAZE ; ff TORCHIC
+	mon_ability OVERGROW ; 0fc TREECKO
+	mon_ability OVERGROW ; 0fd GROVYLE
+	mon_ability OVERGROW ; 0fe SCEPTILE
+	mon_ability BLAZE ; 0ff TORCHIC
 	mon_ability BLAZE ; 100 COMBUSKEN
 	mon_ability BLAZE ; 101 BLAZIKEN
 	mon_ability TORRENT ; 102 MUDKIP
@@ -351,27 +351,28 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 155 SHIELDON
 	mon_ability NO_ABILITY ; 156 BASTIODON
 	mon_ability NO_ABILITY ; 157 AMBIPOM
-	mon_ability NO_ABILITY ; 158 MISMAGIUS
-	mon_ability NO_ABILITY ; 159 HONCHKROW
-	mon_ability NO_ABILITY ; 15a BRONZOR
-	mon_ability NO_ABILITY ; 15b BRONZONG
-	mon_ability NO_ABILITY ; 15c RIOLU
-	mon_ability NO_ABILITY ; 15d LUCARIO
-	mon_ability NO_ABILITY ; 15e CROAGUNK
-	mon_ability NO_ABILITY ; 15f TOXICROAK
-	mon_ability SNOW_WARNING ; 160 SNOVER
-	mon_ability SNOW_WARNING ; 161 ABOMASNOW
-	mon_ability NO_ABILITY ; 162 WEAVILE
-	mon_ability MAGNETISM ; 163 MAGNEZONE
-	mon_ability NO_ABILITY ; 164 LICKILICKY
-	mon_ability NO_ABILITY ; 165 RHYPERIOR
-	mon_ability NO_ABILITY ; 166 TANGROWTH
-	mon_ability NO_ABILITY ; 167 TOGEKISS
-	mon_ability NO_ABILITY ; 168 YANMEGA
-	mon_ability NO_ABILITY ; 169 LEAFEON
-	mon_ability NO_ABILITY ; 16a GLACEON
-	mon_ability NO_ABILITY ; 16b GLISCOR
-	mon_ability NO_ABILITY ; 16c MAMOSWINE
-	mon_ability NO_ABILITY ; 16d PORYGON_Z
-	mon_ability SLOW_START ; 16e REGIGIGAS
+	mon_ability NO_ABILITY ; 158 BUNEARY
+	mon_ability NO_ABILITY ; 159 MISMAGIUS
+	mon_ability NO_ABILITY ; 15a HONCHKROW
+	mon_ability NO_ABILITY ; 15b BRONZOR
+	mon_ability NO_ABILITY ; 15c BRONZONG
+	mon_ability NO_ABILITY ; 15d RIOLU
+	mon_ability NO_ABILITY ; 15e LUCARIO
+	mon_ability NO_ABILITY ; 15f CROAGUNK
+	mon_ability NO_ABILITY ; 160 TOXICROAK
+	mon_ability SNOW_WARNING ; 161 SNOVER
+	mon_ability SNOW_WARNING ; 162 ABOMASNOW
+	mon_ability NO_ABILITY ; 163 WEAVILE
+	mon_ability MAGNETISM ; 164 MAGNEZONE
+	mon_ability NO_ABILITY ; 165 LICKILICKY
+	mon_ability NO_ABILITY ; 166 RHYPERIOR
+	mon_ability NO_ABILITY ; 167 TANGROWTH
+	mon_ability NO_ABILITY ; 168 TOGEKISS
+	mon_ability NO_ABILITY ; 169 YANMEGA
+	mon_ability NO_ABILITY ; 16a LEAFEON
+	mon_ability NO_ABILITY ; 16b GLACEON
+	mon_ability NO_ABILITY ; 16c GLISCOR
+	mon_ability NO_ABILITY ; 16d MAMOSWINE
+	mon_ability NO_ABILITY ; 16e PORYGON_Z
+	mon_ability SLOW_START ; 16f REGIGIGAS
 	assert_table_length NUM_POKEMON + 1

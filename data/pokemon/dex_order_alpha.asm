@@ -22,6 +22,7 @@ AlphabeticalPokedexOrder:
 	dw AZUMARILL
 	dw BAGON
 	dw BALTOY
+	dw BUNEARY
 	dw BANETTE
 	dw BARBOACH
 	dw BASTIODON

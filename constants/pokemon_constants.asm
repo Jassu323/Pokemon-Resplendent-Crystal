@@ -363,29 +363,30 @@ DEF JOHTO_POKEMON EQU const_value
 	const SHIELDON   ; 155, NatDex 410
 	const BASTIODON  ; 156, NatDex 411
 	const AMBIPOM    ; 157, NatDex 424
-	const MISMAGIUS  ; 158, NatDex 429
-	const HONCHKROW  ; 159, NatDex 430
-	const BRONZOR    ; 15a, NatDex 436
-	const BRONZONG   ; 15b, NatDex 437
-	const RIOLU      ; 15c, NatDex 447
-	const LUCARIO    ; 15d, NatDex 448
-	const CROAGUNK   ; 15e, NatDex 453
-	const TOXICROAK  ; 15f, NatDex 454
-	const SNOVER     ; 160, NatDex 459
-	const ABOMASNOW  ; 161, NatDex 460
-	const WEAVILE    ; 162, NatDex 461
-	const MAGNEZONE  ; 163, NatDex 462
-	const LICKILICKY ; 164, NatDex 463
-	const RHYPERIOR  ; 165, NatDex 464
-	const TANGROWTH  ; 166, NatDex 465
-	const TOGEKISS   ; 167, NatDex 468
-	const YANMEGA    ; 168, NatDex 469
-	const LEAFEON    ; 169, NatDex 470
-	const GLACEON    ; 16a, NatDex 471
-	const GLISCOR    ; 16b, NatDex 472
-	const MAMOSWINE  ; 16c, NatDex 473
-	const PORYGON_Z  ; 16d, NatDex 474
-	const REGIGIGAS  ; 16e, NatDex 486
+	const BUNEARY    ; 158, NatDex 427
+	const MISMAGIUS  ; 159, NatDex 429
+	const HONCHKROW  ; 15a, NatDex 430
+	const BRONZOR    ; 15b, NatDex 436
+	const BRONZONG   ; 15c, NatDex 437
+	const RIOLU      ; 15d, NatDex 447
+	const LUCARIO    ; 15e, NatDex 448
+	const CROAGUNK   ; 15f, NatDex 453
+	const TOXICROAK  ; 160, NatDex 454
+	const SNOVER     ; 161, NatDex 459
+	const ABOMASNOW  ; 162, NatDex 460
+	const WEAVILE    ; 163, NatDex 461
+	const MAGNEZONE  ; 164, NatDex 462
+	const LICKILICKY ; 165, NatDex 463
+	const RHYPERIOR  ; 166, NatDex 464
+	const TANGROWTH  ; 167, NatDex 465
+	const TOGEKISS   ; 168, NatDex 468
+	const YANMEGA    ; 169, NatDex 469
+	const LEAFEON    ; 16a, NatDex 470
+	const GLACEON    ; 16b, NatDex 471
+	const GLISCOR    ; 16c, NatDex 472
+	const MAMOSWINE  ; 16d, NatDex 473
+	const PORYGON_Z  ; 16e, NatDex 474
+	const REGIGIGAS  ; 16f, NatDex 486
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3
@@ -407,30 +408,30 @@ endc
 ; - UnownBitmasksPointers (see gfx/pokemon/unown_bitmask_pointers.asm)
 ; - UnownFramesPointers (see gfx/pokemon/unown_frame_pointers.asm)
 	const_def 1
-	const UNOWN_A ;  1
-	const UNOWN_B ;  2
-	const UNOWN_C ;  3
-	const UNOWN_D ;  4
-	const UNOWN_E ;  5
-	const UNOWN_F ;  6
-	const UNOWN_G ;  7
-	const UNOWN_H ;  8
-	const UNOWN_I ;  9
-	const UNOWN_J ; 10
-	const UNOWN_K ; 11
-	const UNOWN_L ; 12
-	const UNOWN_M ; 13
-	const UNOWN_N ; 14
-	const UNOWN_O ; 15
-	const UNOWN_P ; 16
-	const UNOWN_Q ; 17
-	const UNOWN_R ; 18
-	const UNOWN_S ; 19
-	const UNOWN_T ; 20
-	const UNOWN_U ; 21
-	const UNOWN_V ; 22
-	const UNOWN_W ; 23
-	const UNOWN_X ; 24
-	const UNOWN_Y ; 25
-	const UNOWN_Z ; 26
+	const UNOWN_A ;  01
+	const UNOWN_B ;  02
+	const UNOWN_C ;  03
+	const UNOWN_D ;  04
+	const UNOWN_E ;  05
+	const UNOWN_F ;  06
+	const UNOWN_G ;  07
+	const UNOWN_H ;  08
+	const UNOWN_I ;  09
+	const UNOWN_J ; 0a
+	const UNOWN_K ; 0b
+	const UNOWN_L ; 0c
+	const UNOWN_M ; 0d
+	const UNOWN_N ; 0e
+	const UNOWN_O ; 0f
+	const UNOWN_P ; 10
+	const UNOWN_Q ; 11
+	const UNOWN_R ; 12
+	const UNOWN_S ; 13
+	const UNOWN_T ; 14
+	const UNOWN_U ; 15
+	const UNOWN_V ; 16
+	const UNOWN_W ; 17
+	const UNOWN_X ; 18
+	const UNOWN_Y ; 19
+	const UNOWN_Z ; 1a
 DEF NUM_UNOWN EQU const_value - 1 ; 26

@@ -86,6 +86,7 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Kyogre sprite
 - Groudon sprite
 - Rayquaza sprite
+- Buneary party menu icon
 - Mismagius sprite and party menu icon
 - Bronzor sprite and party menu icon
 - Bronzong sprite and party menu icon
@@ -177,6 +178,7 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Corphish
 - Crawdaunt
 - Snorunt
+- Buneary
 - Honchkrow
 - Snover
 - Abomasnow

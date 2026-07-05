@@ -345,6 +345,7 @@ NewPokedexOrder:
 	dw SHIELDON
 	dw BASTIODON
 	dw AMBIPOM
+	dw BUNEARY
 	dw MISMAGIUS
 	dw HONCHKROW
 	dw BRONZOR

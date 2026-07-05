@@ -93,6 +93,7 @@ EvosAttacksPointers3::
 	dw ShieldonEvosAttacks
 	dw BastiodonEvosAttacks
 	dw AmbipomEvosAttacks
+	dw BunearyEvosAttacks
 	dw MismagiusEvosAttacks
 	dw HonchkrowEvosAttacks
 	dw BronzorEvosAttacks
@@ -574,6 +575,11 @@ BastiodonEvosAttacks:
 	db 0 ; no more level-up moves
 
 AmbipomEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+BunearyEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

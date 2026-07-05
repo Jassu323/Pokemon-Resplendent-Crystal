@@ -343,6 +343,7 @@ FramesPointers:
 	dba ShieldonFrames
 	dba BastiodonFrames
 	dba AmbipomFrames
+	dba BunearyFrames
 	dba MismagiusFrames
 	dba HonchkrowFrames
 	dba BronzorFrames
