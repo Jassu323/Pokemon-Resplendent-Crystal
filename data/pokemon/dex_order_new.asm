@@ -353,6 +353,7 @@ NewPokedexOrder:
 	dw BRONZONG
 	dw GIBLE
 	dw GABITE
+	dw GARCHOMP
 	dw RIOLU
 	dw LUCARIO
 	dw CROAGUNK

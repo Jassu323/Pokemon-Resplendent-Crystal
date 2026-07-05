@@ -351,6 +351,7 @@ AnimationPointers:
 	dw BronzongAnimation
 	dw GibleAnimation
 	dw GabiteAnimation
+	dw GarchompAnimation
 	dw RioluAnimation
 	dw LucarioAnimation
 	dw CroagunkAnimation

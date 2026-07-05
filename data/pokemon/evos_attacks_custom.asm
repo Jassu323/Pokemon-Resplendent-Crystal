@@ -101,6 +101,7 @@ EvosAttacksPointers3::
 	dw BronzongEvosAttacks
 	dw GibleEvosAttacks
 	dw GabiteEvosAttacks
+	dw GarchompEvosAttacks
 	dw RioluEvosAttacks
 	dw LucarioEvosAttacks
 	dw CroagunkEvosAttacks
@@ -618,6 +619,11 @@ GibleEvosAttacks:
 	db 0 ; no more level-up moves
 
 GabiteEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+GarchompEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

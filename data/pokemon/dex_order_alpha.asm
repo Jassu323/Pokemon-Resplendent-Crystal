@@ -103,6 +103,7 @@ AlphabeticalPokedexOrder:
 	dw FROSLASS
 	dw FURRET
 	dw GABITE
+	dw GARCHOMP
 	dw GARDEVOIR
 	dw GALLADE
 	dw GASTLY

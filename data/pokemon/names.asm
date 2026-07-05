@@ -357,6 +357,7 @@ PokemonNames::
 	dname "Bronzong"
 	dname "Gible"
 	dname "Gabite"
+	dname "Garchomp"
 	dname "Riolu"
 	dname "Lucario"
 	dname "Croagunk"

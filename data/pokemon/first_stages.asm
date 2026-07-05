@@ -352,6 +352,7 @@ FirstEvoStages::
 	dw BRONZOR
 	dw GIBLE
 	dw GIBLE
+	dw GIBLE
 	dw RIOLU
 	dw RIOLU
 	dw CROAGUNK

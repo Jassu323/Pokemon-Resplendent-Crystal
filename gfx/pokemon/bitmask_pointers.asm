@@ -351,6 +351,7 @@ BitmasksPointers:
 	dba BronzongBitmasks
 	dba GibleBitmasks
 	dba GabiteBitmasks
+	dba GarchompBitmasks
 	dba RioluBitmasks
 	dba LucarioBitmasks
 	dba CroagunkBitmasks

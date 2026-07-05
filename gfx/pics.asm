@@ -1052,3 +1052,5 @@ SECTION "Pics 29", ROMX
 
 GabiteFrontpic:     INCBIN "gfx/pokemon/gabite/front.animated.2bpp.lz"
 GabiteBackpic:      INCBIN "gfx/pokemon/gabite/back.2bpp.lz"
+GarchompFrontpic:   INCBIN "gfx/pokemon/garchomp/front.animated.2bpp.lz"
+GarchompBackpic:    INCBIN "gfx/pokemon/garchomp/back.2bpp.lz"

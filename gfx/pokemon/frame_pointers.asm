@@ -351,6 +351,7 @@ FramesPointers:
 	dba BronzongFrames
 	dba GibleFrames
 	dba GabiteFrames
+	dba GarchompFrames
 	dba RioluFrames
 	dba LucarioFrames
 	dba CroagunkFrames
