@@ -1282,29 +1282,29 @@ JohtoGrassWildMons:
 	db 10 percent, 10 percent, 10 percent ; encounter rates: morn/day/nite
 	; morn
 	; encounterPercent, SPECIES, minLevel, maxLevel
-	dbwbb 30, PIDGEY,        2,  2
-	dbwbb 30, SENTRET,       2,  2
-	dbwbb 20, PIDGEY,        3,  3
-	dbwbb 10, SENTRET,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOPPIP,        3,  3
-	dbwbb  1, HOPPIP,        3,  3
+	dbwbb 30, BEEDRILL,        2,  2
+	dbwbb 30, BEEDRILL,       2,  2
+	dbwbb 20, BEEDRILL,        3,  3
+	dbwbb 10, BEEDRILL,       3,  3
+	dbwbb  5, BEEDRILL,       2,  2
+	dbwbb  4, BEEDRILL,        3,  3
+	dbwbb  1, BEEDRILL,        3,  3
 	; day
-	dbwbb 30, PIDGEY,        2,  2
-	dbwbb 30, SENTRET,       2,  2
-	dbwbb 20, PIDGEY,        3,  3
-	dbwbb 10, SENTRET,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOPPIP,        3,  3
-	dbwbb  1, HOPPIP,        3,  3
+	dbwbb 30, BEEDRILL,        2,  2
+	dbwbb 30, BEEDRILL,       2,  2
+	dbwbb 20, BEEDRILL,        3,  3
+	dbwbb 10, BEEDRILL,       3,  3
+	dbwbb  5, BEEDRILL,       2,  2
+	dbwbb  4, BEEDRILL,        3,  3
+	dbwbb  1, BEEDRILL,        3,  3
 	; nite
-	dbwbb 30, HOOTHOOT,      2,  2
-	dbwbb 30, RATTATA,       2,  2
-	dbwbb 20, HOOTHOOT,      3,  3
-	dbwbb 10, RATTATA,       3,  3
-	dbwbb  5, RATTATA,       2,  2
-	dbwbb  4, HOOTHOOT,      3,  3
-	dbwbb  1, HOOTHOOT,      3,  3
+	dbwbb 30, BEEDRILL,      2,  2
+	dbwbb 30, BEEDRILL,       2,  2
+	dbwbb 20, BEEDRILL,      3,  3
+	dbwbb 10, BEEDRILL,       3,  3
+	dbwbb  5, BEEDRILL,       2,  2
+	dbwbb  4, BEEDRILL,      3,  3
+	dbwbb  1, BEEDRILL,      3,  3
 	end_grass_wildmons
 
 	def_grass_wildmons ROUTE_30
