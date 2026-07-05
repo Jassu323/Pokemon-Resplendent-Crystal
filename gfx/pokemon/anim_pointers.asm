@@ -350,6 +350,7 @@ AnimationPointers:
 	dw BronzorAnimation
 	dw BronzongAnimation
 	dw GibleAnimation
+	dw GabiteAnimation
 	dw RioluAnimation
 	dw LucarioAnimation
 	dw CroagunkAnimation

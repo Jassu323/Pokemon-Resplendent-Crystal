@@ -350,6 +350,7 @@ AnimationIdlePointers:
 	dw BronzorAnimationIdle
 	dw BronzongAnimationIdle
 	dw GibleAnimationIdle
+	dw GabiteAnimationIdle
 	dw RioluAnimationIdle
 	dw LucarioAnimationIdle
 	dw CroagunkAnimationIdle

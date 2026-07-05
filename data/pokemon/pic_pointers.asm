@@ -716,6 +716,8 @@ PokemonPicPointers::
 	dba BronzongBackpic
 	dba GibleFrontpic
 	dba GibleBackpic
+	dba GabiteFrontpic
+	dba GabiteBackpic
 	dba RioluFrontpic
 	dba RioluBackpic
 	dba LucarioFrontpic

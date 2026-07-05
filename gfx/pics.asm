@@ -1046,3 +1046,9 @@ BunearyFrontpic:    INCBIN "gfx/pokemon/buneary/front.animated.2bpp.lz"
 BunearyBackpic:     INCBIN "gfx/pokemon/buneary/back.2bpp.lz"
 LopunnyFrontpic:    INCBIN "gfx/pokemon/lopunny/front.animated.2bpp.lz"
 LopunnyBackpic:     INCBIN "gfx/pokemon/lopunny/back.2bpp.lz"
+
+
+SECTION "Pics 29", ROMX
+
+GabiteFrontpic:     INCBIN "gfx/pokemon/gabite/front.animated.2bpp.lz"
+GabiteBackpic:      INCBIN "gfx/pokemon/gabite/back.2bpp.lz"

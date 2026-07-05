@@ -351,6 +351,7 @@ PokedexDataPointerTable:
 	dba BronzorPokedexEntry
 	dba BronzongPokedexEntry
 	dba GiblePokedexEntry
+	dba GabitePokedexEntry
 	dba RioluPokedexEntry
 	dba LucarioPokedexEntry
 	dba CroagunkPokedexEntry

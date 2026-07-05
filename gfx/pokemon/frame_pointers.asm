@@ -350,6 +350,7 @@ FramesPointers:
 	dba BronzorFrames
 	dba BronzongFrames
 	dba GibleFrames
+	dba GabiteFrames
 	dba RioluFrames
 	dba LucarioFrames
 	dba CroagunkFrames

@@ -100,6 +100,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; BRONZOR
 	dw NoEggMoves3 ; BRONZONG
 	dw NoEggMoves3 ; GIBLE
+	dw NoEggMoves3 ; GABITE
 	dw NoEggMoves3 ; RIOLU
 	dw NoEggMoves3 ; LUCARIO
 	dw NoEggMoves3 ; CROAGUNK

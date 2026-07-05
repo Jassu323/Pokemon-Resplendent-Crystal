@@ -489,7 +489,13 @@ ROMX $9e
 	; Reserved for sampled cry payload overflow.
 	"Sampled Cry Payloads 23"
 ROMX $9f
+	; MBC30 high ROM bank.
+	; Reserved for sampled cry payload overflow.
+	"Sampled Cry Payloads 24"
 ROMX $a0
+	; MBC30 high ROM bank.
+	; Reserved for front/back pic overflow.
+	"Pics 29"
 ROMX $a1
 ROMX $a2
 ROMX $a3

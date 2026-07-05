@@ -357,6 +357,7 @@ MonMenuIcons:
 	mon_menu_icon BronzorIcon,        BLUE,   GREEN  ; BRONZOR
 	mon_menu_icon BronzongIcon,       BLUE,   GREEN  ; BRONZONG
 	mon_menu_icon GibleIcon,          TEAL,   BLUE   ; GIBLE
+	mon_menu_icon GabiteIcon,         BLUE,   GRAY   ; GABITE
 	mon_menu_icon RioluIcon,          BLUE,   BROWN  ; RIOLU
 	mon_menu_icon LucarioIcon,        BLUE,   BROWN  ; LUCARIO
 	mon_menu_icon CroagunkIcon,       BLUE,   TEAL   ; CROAGUNK

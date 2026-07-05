@@ -100,6 +100,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BRONZOR
 	const SAMPLED_CRY_BRONZONG
 	const SAMPLED_CRY_GIBLE
+	const SAMPLED_CRY_GABITE
 	const SAMPLED_CRY_RIOLU
 	const SAMPLED_CRY_LUCARIO
 	const SAMPLED_CRY_CROAGUNK
@@ -392,6 +393,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_BRONZONG
 	elif sampled_cry_mon == GIBLE
 		db SAMPLED_CRY_GIBLE
+	elif sampled_cry_mon == GABITE
+		db SAMPLED_CRY_GABITE
 	elif sampled_cry_mon == RIOLU
 		db SAMPLED_CRY_RIOLU
 	elif sampled_cry_mon == LUCARIO
@@ -538,6 +541,7 @@ SampledCryPointers:
 	dba BronzorSampledCry
 	dba BronzongSampledCry
 	dba GibleSampledCry
+	dba GabiteSampledCry
 	dba RioluSampledCry
 	dba LucarioSampledCry
 	dba CroagunkSampledCry
@@ -1455,3 +1459,13 @@ ClaydolSampledCryData:
 	INCBIN "audio/sampled_cries/claydol.mm2"
 ClaydolSampledCryEnd:
 	assert (ClaydolSampledCryEnd - ClaydolSampledCryData) % 9 == 0
+
+
+SECTION "Sampled Cry Payloads 24", ROMX
+
+GabiteSampledCry::
+	dw (GabiteSampledCryEnd - GabiteSampledCryData) / 9
+GabiteSampledCryData:
+	INCBIN "audio/sampled_cries/gabite.mm2"
+GabiteSampledCryEnd:
+	assert (GabiteSampledCryEnd - GabiteSampledCryData) % 9 == 0

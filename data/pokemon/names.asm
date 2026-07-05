@@ -356,6 +356,7 @@ PokemonNames::
 	dname "Bronzor"
 	dname "Bronzong"
 	dname "Gible"
+	dname "Gabite"
 	dname "Riolu"
 	dname "Lucario"
 	dname "Croagunk"
