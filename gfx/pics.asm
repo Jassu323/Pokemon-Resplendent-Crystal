@@ -695,7 +695,6 @@ UnownYFrontpic:      INCBIN "gfx/pokemon/unown_y/front.animated.2bpp.lz"
 UnownGBackpic:       INCBIN "gfx/pokemon/unown_g/back.2bpp.lz"
 UnownIFrontpic:      INCBIN "gfx/pokemon/unown_i/front.animated.2bpp.lz"
 UnownVBackpic:       INCBIN "gfx/pokemon/unown_v/back.2bpp.lz"
-ForretressBackpic:   INCBIN "gfx/pokemon/forretress/back.2bpp.lz"
 UnownSBackpic:       INCBIN "gfx/pokemon/unown_s/back.2bpp.lz"
 UnownRFrontpic:      INCBIN "gfx/pokemon/unown_r/front.animated.2bpp.lz"
 UnownEBackpic:       INCBIN "gfx/pokemon/unown_e/back.2bpp.lz"
@@ -723,6 +722,7 @@ SECTION "Pics 19", ROMX
 
 ; Seems to be an accidental copy of the previous bank
 
+ForretressBackpic:   INCBIN "gfx/pokemon/forretress/back.2bpp.lz"
 BlazikenFrontpic:   INCBIN "gfx/pokemon/blaziken/front.animated.2bpp.lz"
 BlazikenBackpic:    INCBIN "gfx/pokemon/blaziken/back.2bpp.lz"
 MudkipFrontpic:     INCBIN "gfx/pokemon/mudkip/front.animated.2bpp.lz"

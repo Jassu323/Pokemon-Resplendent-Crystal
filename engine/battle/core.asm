@@ -1,14 +1,21 @@
 ; Core components of the battle engine.
 
-DEF BATTLE_MOVE_INFO_TYPE_ICON_ATTR     EQU $0e ; VRAM bank 1, BG palette 6
-DEF BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR EQU $0f ; VRAM bank 1, BG palette 7
+DEF BATTLE_MOVE_INFO_TYPE_ICON_ATTR     EQU PAL_BATTLE_BG_6 ; VRAM bank 0, BG palette 6
+DEF BATTLE_MOVE_INFO_STAT_ICON_ATTR     EQU PAL_BATTLE_BG_TEXT ; VRAM bank 0, BG palette 7
 
-DEF BATTLE_MOVE_INFO_TYPE_ICON_X        EQU 1
-DEF BATTLE_MOVE_INFO_CATEGORY_ICON_X    EQU 5
-DEF BATTLE_MOVE_INFO_ICON_Y             EQU 9
+DEF BATTLE_MOVE_INFO_STAT_ICON_X        EQU 1
+DEF BATTLE_MOVE_INFO_VALUE_X            EQU 4
+DEF BATTLE_MOVE_INFO_TYPE_ICON_X        EQU 7
+DEF BATTLE_MOVE_INFO_POWER_ICON_Y       EQU 9
+DEF BATTLE_MOVE_INFO_ACCURACY_ICON_Y    EQU 10
+DEF BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y EQU 11
+DEF BATTLE_MOVE_INFO_TYPE_ICON_Y        EQU 9
+DEF BATTLE_MOVE_INFO_CATEGORY_ICON_X    EQU 8
+DEF BATTLE_MOVE_INFO_CATEGORY_ICON_Y    EQU 10
 
 DoBattle:
 	xor a
+	ld [wBattleMenuGFXFlags], a
 	ld [wBattleParticipantsNotFainted], a
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
@@ -5202,15 +5209,15 @@ BattleMenu:
 	xor a
 	ldh [hBGMapMode], a
 	call LoadTempTilemapToTilemap
+	call BattleMenuGraphic_ClearForText_Home
 
 	ld a, [wBattleType]
 	cp BATTLETYPE_DEBUG
 	jr z, .ok
 	cp BATTLETYPE_TUTORIAL
 	jr z, .ok
-	call EmptyBattleTextbox
 	call UpdateBattleHuds
-	call EmptyBattleTextbox
+	call BattleMenuGraphic_BlankLowerArea_Home
 	call LoadTilemapToTempTilemap
 .ok
 
@@ -5248,7 +5255,8 @@ BattleMenu:
 BattleMenu_Fight:
 	xor a
 	ld [wNumFleeAttempts], a
-	call SafeLoadTempTilemapToTilemap
+	call BattleMenuGraphic_BlankLowerArea_Home
+	call BattleMenuGraphic_ClearForText_Home
 	and a
 	ret
 
@@ -5319,16 +5327,18 @@ BattleMenu_Pack:
 .didnt_use_item
 	call ClearPalettes
 	call DelayFrame
+	call ExitMenu
+	call BattleMenuGraphic_ClearForText_Home
 	call _LoadBattleFontsHPBar
 	call GetBattleMonBackpic
 	call GetEnemyMonFrontpic
-	call ExitMenu
 	call WaitBGMap
 	call FinishBattleAnim
 	call LoadTilemapToTempTilemap
 	jp BattleMenu
 
 .ItemsCantBeUsed:
+	call BattleMenuGraphic_ClearForText_Home
 	ld hl, BattleText_ItemsCantBeUsedHere
 	call StdBattleTextbox
 	jp BattleMenu
@@ -5359,6 +5369,7 @@ BattleMenu_Pack:
 	ld [wMenuCursorY], a
 	call ExitMenu
 	call UpdateBattleHUDs
+	call BattleMenuGraphic_ClearForText_Home
 	call WaitBGMap
 	call LoadTilemapToTempTilemap
 	call ClearWindowData
@@ -5420,7 +5431,9 @@ BattleMenuPKMN_Loop:
 	call ClearPalettes
 	call DelayFrame
 	call _LoadHPBar
-	call CloseWindow
+	call ExitMenu
+	call BattleMenuGraphic_ClearForText_Home
+	call WaitBGMap
 	call LoadTilemapToTempTilemap
 	call FinishBattleAnim
 	jp BattleMenu
@@ -5628,6 +5641,7 @@ PassedBattleMonEntrance:
 	jp SpikesDamage
 
 BattleMenu_Run:
+	call BattleMenuGraphic_ClearForText_Home
 	call SafeLoadTempTilemapToTilemap
 	ld a, $3
 	ld [wMenuCursorY], a
@@ -5682,9 +5696,9 @@ MoveSelectionScreen:
 	xor a
 	ldh [hBGMapMode], a
 
-	hlcoord 4, 17 - NUM_MOVES - 1
+	hlcoord 0, 17 - NUM_MOVES - 1
 	ld b, 4
-	ld c, 14
+	ld c, 18
 	ld a, [wMoveSelectionMenuType]
 	cp $2
 	jr nz, .got_dims
@@ -5694,7 +5708,7 @@ MoveSelectionScreen:
 .got_dims
 	call Textbox
 
-	hlcoord 6, 17 - NUM_MOVES
+	hlcoord 2, 17 - NUM_MOVES
 	ld a, [wMoveSelectionMenuType]
 	cp $2
 	jr nz, .got_start_coord
@@ -5703,8 +5717,11 @@ MoveSelectionScreen:
 	ld a, SCREEN_WIDTH
 	ld [wListMovesLineSpacing], a
 	predef ListMoves
+	ld a, [wMoveSelectionMenuType]
+	and a
+	call z, MoveSelectionScreen_PrintBattleMovePP
 
-	ld b, 5
+	ld b, 1
 	ld a, [wMoveSelectionMenuType]
 	cp $2
 	ld a, 17 - NUM_MOVES
@@ -5769,7 +5786,7 @@ MoveSelectionScreen:
 	ld a, [wSwappingMove]
 	and a
 	jr z, .interpret_joypad
-	hlcoord 5, 13
+	hlcoord 1, 13
 	ld bc, SCREEN_WIDTH
 	dec a
 	call AddNTimes
@@ -5970,6 +5987,76 @@ MoveSelectionScreen:
 	ld [wSwappingMove], a
 	jp MoveSelectionScreen
 
+MoveSelectionScreen_PrintBattleMovePP:
+	ld a, [wMenuCursorY]
+	push af
+	ld a, [wMonType]
+	push af
+	ld a, WILDMON
+	ld [wMonType], a
+
+	hlcoord 14, 17 - NUM_MOVES
+	ld b, 0
+.loop
+	push hl
+	ld a, b
+	cp NUM_MOVES
+	jr z, .done
+	ld c, a
+	ld hl, wBattleMonMoves
+	ld d, 0
+	ld e, c
+	add hl, de
+	ld a, [hl]
+	and a
+	jr z, .next
+
+	ld a, c
+	ld [wMenuCursorY], a
+	push bc
+	callfar GetMaxPPOfMove
+	pop bc
+
+	ld hl, wBattleMonPP
+	ld d, 0
+	ld e, b
+	add hl, de
+	ld a, [hl]
+	and PP_MASK
+	ld [wStringBuffer1], a
+
+	pop hl
+	push hl
+	push bc
+	ld de, wStringBuffer1
+	lb bc, PRINTNUM_LEFTALIGN | 1, 2
+	call PrintNum
+	ld a, '/'
+	ld [hli], a
+	ld de, wTempPP
+	lb bc, PRINTNUM_LEFTALIGN | 1, 2
+	call PrintNum
+	pop bc
+	pop hl
+	jr .advance
+
+.next
+	pop hl
+
+.advance
+	ld de, SCREEN_WIDTH
+	add hl, de
+	inc b
+	jr .loop
+
+.done
+	pop hl
+	pop af
+	ld [wMonType], a
+	pop af
+	ld [wMenuCursorY], a
+	ret
+
 MoveInfoBox:
 	xor a
 	ldh [hBGMapMode], a
@@ -5978,7 +6065,7 @@ MoveInfoBox:
 
 	hlcoord 0, 8
 	ld b, 3
-	ld c, 9
+	ld c, 10
 	call Textbox
 	call MobileTextBorder
 
@@ -6011,7 +6098,8 @@ MoveInfoBox:
 	call PlaceString
 	pop af
 	and a
-	call nz, BattleMoveInfo_UpdateTilemapAndAttrmap
+	jp z, .done
+	call BattleMoveInfo_UpdateTilemapAndAttrmap
 	jp .done
 
 .not_disabled
@@ -6026,29 +6114,16 @@ MoveInfoBox:
 	ld a, [hl]
 	ld [wCurPlayerMove], a
 
-	ld a, [wCurBattleMon]
-	ld [wCurPartyMon], a
-	ld a, WILDMON
-	ld [wMonType], a
-	callfar GetMaxPPOfMove
-
 	ld hl, wMenuCursorY
-	ld c, [hl]
 	inc [hl]
-	ld b, 0
-	ld hl, wBattleMonPP
-	add hl, bc
-	ld a, [hl]
-	and PP_MASK
-	ld [wStringBuffer1], a
-	call .PrintPP
 
 	callfar UpdateMoveData
 
 	ldh a, [hCGB]
 	and a
-	jr z, .print_type_text
+	jr z, .print_dmg_info
 
+	call .PrintMoveStats
 	farcall BattleMoveInfo_LoadAndDrawIcons
 
 	pop af
@@ -6056,20 +6131,73 @@ MoveInfoBox:
 	call z, BattleMoveInfo_UpdateTilemapAndAttrmap
 	jr .done
 
-.print_type_text
-	hlcoord 1, 9
-	ld de, .Type
+.print_dmg_info
+	call .PrintDMGLabels
+	call .PrintMoveStats
+	pop af
+	jr .done
+
+.PrintDMGLabels:
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_POWER_ICON_Y
+	ld de, .Power
 	call PlaceString
 
-	hlcoord 7, 11
-	ld [hl], '/'
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_ACCURACY_ICON_Y
+	ld de, .Accuracy
+	call PlaceString
 
-	ld a, [wPlayerMoveStruct + MOVE_ANIM]
-	ld b, a
-	hlcoord 2, 10
-	predef PrintMoveType
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y
+	ld de, .EffectChance
+	jp PlaceString
 
-	pop af
+.PrintMoveStats:
+	call .PrintMovePower
+	call .PrintMoveAccuracy
+	jp .PrintMoveEffectChance
+
+.PrintMovePower:
+	ld a, [wPlayerMoveStruct + MOVE_POWER]
+	hlcoord BATTLE_MOVE_INFO_VALUE_X, BATTLE_MOVE_INFO_POWER_ICON_Y
+	cp 2
+	jr c, .PrintNoMoveStat
+	jr .PrintMoveStat
+
+.PrintMoveAccuracy:
+	ld a, [wPlayerMoveStruct + MOVE_ACC]
+	call .ConvertPercentages
+	hlcoord BATTLE_MOVE_INFO_VALUE_X, BATTLE_MOVE_INFO_ACCURACY_ICON_Y
+	jr .PrintMoveStat
+
+.PrintMoveEffectChance:
+	ld a, [wPlayerMoveStruct + MOVE_CHANCE]
+	hlcoord BATTLE_MOVE_INFO_VALUE_X, BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y
+	cp 1
+	jr c, .PrintNoMoveStat
+	call .ConvertPercentages
+
+.PrintMoveStat:
+	ld [wTextDecimalByte], a
+	ld de, wTextDecimalByte
+	lb bc, PRINTNUM_LEFTALIGN | 1, 3
+	jp PrintNum
+
+.PrintNoMoveStat:
+	ld de, .NoMoveStat
+	jp PlaceString
+
+.ConvertPercentages:
+	ldh [hMultiplicand + 2], a
+	xor a
+	ldh [hMultiplicand + 1], a
+	ldh [hMultiplicand], a
+	ld a, 100
+	ldh [hMultiplier], a
+	call Multiply
+	ldh a, [hProduct + 2]
+	and a
+	ret z
+	inc a
+	ret
 
 .done
 	ret
@@ -6078,43 +6206,28 @@ MoveInfoBox:
 	db "Disabled!@"
 .Taunted:
 	db "Taunted!@"
-.Type:
-	db "Type/@"
-.PP:
-	db "PP @"
-
-.PrintPP:
-	hlcoord 1, 11
-	ld de, .PP
-	call PlaceString
-	hlcoord 4, 11
-	push hl
-	ld de, wStringBuffer1
-	lb bc, 1, 2
-	call PrintNum
-	pop hl
-	inc hl
-	inc hl
-	ld [hl], '/'
-	inc hl
-	ld de, wNamedObjectIndex
-	lb bc, 1, 2
-	call PrintNum
-	ret
+.Power:
+	db "Pow@"
+.Accuracy:
+	db "Acc@"
+.EffectChance:
+	db "Eff@"
+.NoMoveStat:
+	db "-@"
 
 BattleMoveInfo_HadIconAttrs:
 	ldh a, [hCGB]
 	and a
 	ret z
 
-	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_TYPE_ICON_Y, wAttrmap
 	ld a, [hl]
 	cp BATTLE_MOVE_INFO_TYPE_ICON_ATTR
 	jr nz, .no
 
-	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_ICON_Y, wAttrmap
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_POWER_ICON_Y, wAttrmap
 	ld a, [hl]
-	cp BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR
+	cp BATTLE_MOVE_INFO_STAT_ICON_ATTR
 	jr nz, .no
 
 	ld a, TRUE
@@ -6149,7 +6262,7 @@ BattleMoveInfo_RestoreBattleAttrs:
 	call FillBoxWithByte
 
 	hlcoord 10, 8, wAttrmap
-	lb bc, 4, 1
+	lb bc, 4, 2
 	ld a, PAL_BATTLE_BG_PLAYER_HP
 	call FillBoxWithByte
 	ret

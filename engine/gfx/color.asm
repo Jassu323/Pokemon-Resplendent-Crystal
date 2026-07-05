@@ -411,9 +411,26 @@ LoadBattleMoveInfoIconPalettes::
 ;
 ; Uses:
 ;   BG palette 6 = type icon
-;   BG palette 7 = category icon
+;   BG palette 7 = category icon and stat glyphs
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
 	ld a, [wPlayerMoveStruct + MOVE_TYPE]
-	ld b, a
+	ld de, wBGPals1 palette 6
+	call LoadTypeIconPalette
+
+	; Replace palette 6 color 1 with palette 6 color 0.
+	; color 0 is white in every type icon palette.
+	ld a, [wBGPals1 palette 6]
+	ld [wBGPals1 palette 6 + 2], a
+	ld a, [wBGPals1 palette 6 + 1]
+	ld [wBGPals1 palette 6 + 3], a
 
 	ld a, [wPlayerMoveStruct + MOVE_POWER]
 	cp 2
@@ -435,8 +452,31 @@ LoadBattleMoveInfoIconPalettes::
 	ld c, MOVE_CATEGORY_STATUS
 
 .got_category
-	ld de, wBGPals1 palette 7
-	jp LoadMoveIconPalettes
+	ld e, c
+	ld d, 0
+	ld hl, MoveCategoryIconPalettePointers
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+
+	ld de, wBGPals1 palette PAL_BATTLE_BG_TEXT
+	ld bc, 1 palettes
+	call CopyBytes
+
+	ld hl, wBGPals1 palette 6
+	ld de, wBGPals2 palette 6
+	ld bc, 2 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rWBK], a
+
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
 
 LoadMoveIconPalettes:
 ; input:

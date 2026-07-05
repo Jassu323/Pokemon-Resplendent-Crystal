@@ -8,6 +8,10 @@
 	shift_const MENU_BACKUP_TILES   ; 6
 	shift_const MENU_BACKUP_TILES_2 ; 7
 
+; Battle-menu graphics state
+DEF BATTLE_MENU_GFX_CLEAN_F EQU 0
+DEF BATTLE_MENU_GFX_VISIBLE_F EQU 1
+
 ; VerticalMenu/DoNthMenu/SetUpMenu/_2DMenu MenuData flags
 ; Per flag the comment specifies which menus actually implement it
 	const_def

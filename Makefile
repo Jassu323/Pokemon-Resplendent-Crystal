@@ -159,10 +159,15 @@ gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fro
 
 ### Pokemon and trainer sprite rules
 
-gfx/pokemon/%/back.2bpp: RGBGFXFLAGS += --columns
-gfx/pokemon/%/back.2bpp: gfx/pokemon/%/back.png gfx/pokemon/%/normal.gbcpal
+pokemon_front_pngs := $(filter-out gfx/pokemon/egg/front.png gfx/pokemon/unown_%/front.png,$(wildcard gfx/pokemon/*/front.png))
+pokemon_back_pngs  := $(filter-out gfx/pokemon/unown_%/back.png,$(wildcard gfx/pokemon/*/back.png))
+pokemon_front_2bpp := $(pokemon_front_pngs:.png=.2bpp)
+pokemon_back_2bpp  := $(pokemon_back_pngs:.png=.2bpp)
+
+$(pokemon_back_2bpp): RGBGFXFLAGS += --columns
+$(pokemon_back_2bpp): gfx/pokemon/%/back.2bpp: gfx/pokemon/%/back.png gfx/pokemon/%/normal.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$(word 2,$^) -o $@ $<
-gfx/pokemon/%/front.2bpp: gfx/pokemon/%/front.png gfx/pokemon/%/normal.gbcpal
+$(pokemon_front_2bpp): gfx/pokemon/%/front.2bpp: gfx/pokemon/%/front.png gfx/pokemon/%/normal.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$(word 2,$^) -o $@ $<
 gfx/pokemon/%/normal.gbcpal: gfx/pokemon/%/front.gbcpal gfx/pokemon/%/back.gbcpal
 	tools/gbcpal $(tools/gbcpal) $@ $^
@@ -450,6 +455,9 @@ $(move_category_icon_2bpp): %.2bpp: %.png %.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:$*.gbcpal -o $@ $<
 
 gfx/move_categories/compact/%_compact.2bpp: gfx/move_categories/compact/%_compact.png gfx/move_categories/%.gbcpal
+	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/move_categories/$*.gbcpal -o $@ $<
+
+gfx/move_categories/compact/%_compact_padded.2bpp: gfx/move_categories/compact/%_compact_padded.png gfx/move_categories/%.gbcpal
 	$(RGBGFX) $(RGBGFXFLAGS) --colors gbc:gfx/move_categories/$*.gbcpal -o $@ $<
 
 ### Status condition icon graphics

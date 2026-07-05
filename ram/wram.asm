@@ -920,6 +920,14 @@ wPreparedSampledCryFrameCounter:: db
 
 SECTION UNION "Overworld Map", WRAM0
 
+; Battle-only VRAM state. This overlays the overworld map buffer, so do not use
+; it from overworld/menu paths.
+wBattleMenuGFXFlags:: db
+wBattleMenuSavedBGPals:: ds 2 palettes
+
+
+SECTION UNION "Overworld Map", WRAM0
+
 ; bill's pc data
 wBillsPCData::
 wBillsPCPokemonList:: ds BOXLIST_SIZE * MONS_PER_BOX_JP

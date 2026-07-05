@@ -162,6 +162,14 @@ GetFrontpicPointer:
 	ret
 
 GetAnimatedEnemyFrontpic:
+	ld a, [wBattleMode]
+	and a
+	jr z, .skip_battle_menu_dirty
+	ld a, [wBattleMenuGFXFlags]
+	res BATTLE_MENU_GFX_CLEAN_F, a
+	ld [wBattleMenuGFXFlags], a
+
+.skip_battle_menu_dirty
 	push hl
 	ld de, sPaddedEnemyFrontPic
 	ld c, 7 * 7

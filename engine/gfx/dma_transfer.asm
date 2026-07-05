@@ -493,6 +493,85 @@ HDMATransfer2bpp::
 	ldh [rWBK], a
 	ret
 
+HDMATransfer2bppToVRAMBank1::
+; Copy c 2bpp tiles from b:de to hl in VRAM bank 1.
+; Keep rVBK at bank 0 during the preparatory DelayFrame, and only switch to
+; bank 1 for the actual VRAM write.
+	ldh a, [rVBK]
+	push af
+
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr nz, .lcd_on
+
+	ld a, $1
+	ldh [rVBK], a
+
+	push hl
+	push de
+	ld a, b
+	ld l, c
+	ld h, $0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld b, h
+	ld c, l
+	pop hl
+	pop de
+	call FarCopyBytes
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+.lcd_on
+	xor a
+	ldh [rVBK], a
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wScratchTilemap)
+	ldh [rWBK], a
+
+	push bc
+	push hl
+
+	ld a, b
+	ld l, c
+	ld h, $0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld b, h
+	ld c, l
+	ld h, d
+	ld l, e
+	ld de, wScratchTilemap
+	call FarCopyBytes
+
+	pop hl
+	pop bc
+
+	push bc
+	call DelayFrame
+	pop bc
+
+	ld a, $1
+	ldh [rVBK], a
+	ld d, h
+	ld e, l
+	ld hl, wScratchTilemap
+	call HDMATransfer_WaitForScanline128
+
+	pop af
+	ldh [rWBK], a
+	pop af
+	ldh [rVBK], a
+	ret
+
 HDMATransfer1bpp::
 	; 1bpp when [rLCDC] & $80
 .loop

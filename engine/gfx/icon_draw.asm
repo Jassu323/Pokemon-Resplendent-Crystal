@@ -1,7 +1,21 @@
 DEF ICON_4X2_TILES EQU 8
+DEF ICON_COMPACT_TYPE_TILES EQU 4
+DEF ICON_COMPACT_CATEGORY_TILES EQU 2
+DEF ICON_PADDED_COMPACT_CATEGORY_TILES EQU 4
 
 DEF ICON_MOVE_TYPE_TILE     EQU $68 ; uses $68-$6f
 DEF ICON_MOVE_CATEGORY_TILE EQU $70 ; uses $70-$77
+
+DEF ICON_BATTLE_MOVE_INFO_POWER_TILE         EQU $c0 ; uses $c0-$c1 in VRAM bank 0
+DEF ICON_BATTLE_MOVE_INFO_ACCURACY_TILE      EQU ICON_BATTLE_MOVE_INFO_POWER_TILE + 2 ; uses $c2-$c3 in VRAM bank 0
+DEF ICON_BATTLE_MOVE_INFO_EFFECT_CHANCE_TILE EQU ICON_BATTLE_MOVE_INFO_ACCURACY_TILE + 2 ; uses $c4-$c5 in VRAM bank 0
+DEF ICON_BATTLE_MOVE_INFO_POWER_DEST_TILE    EQU ICON_BATTLE_MOVE_INFO_POWER_TILE - $80
+DEF ICON_BATTLE_MOVE_INFO_ACCURACY_DEST_TILE EQU ICON_BATTLE_MOVE_INFO_ACCURACY_TILE - $80
+DEF ICON_BATTLE_MOVE_INFO_EFFECT_CHANCE_DEST_TILE EQU ICON_BATTLE_MOVE_INFO_EFFECT_CHANCE_TILE - $80
+DEF ICON_BATTLE_MOVE_INFO_TYPE_TILE          EQU $c6 ; uses $c6-$c9 in VRAM bank 0
+DEF ICON_BATTLE_MOVE_INFO_TYPE_DEST_TILE     EQU ICON_BATTLE_MOVE_INFO_TYPE_TILE - $80
+DEF ICON_BATTLE_MOVE_INFO_CATEGORY_TILE      EQU $ca ; uses $ca-$cd in VRAM bank 0
+DEF ICON_BATTLE_MOVE_INFO_CATEGORY_DEST_TILE EQU ICON_BATTLE_MOVE_INFO_CATEGORY_TILE - $80
 
 DEF ICON_MOVE_MENU_TYPE_X     EQU 11
 DEF ICON_MOVE_MENU_CATEGORY_X EQU 15
@@ -12,6 +26,20 @@ MoveCategoryIconGFXPointers::
 	dba PhysicalMoveCategoryIconGFX
 	dba SpecialMoveCategoryIconGFX
 	dba StatusMoveCategoryIconGFX
+	assert_table_length NUM_MOVE_CATEGORIES
+
+CompactMoveCategoryIconGFXPointers:
+	table_width 3
+	dba CompactPhysicalMoveCategoryIconGFX
+	dba CompactSpecialMoveCategoryIconGFX
+	dba CompactStatusMoveCategoryIconGFX
+	assert_table_length NUM_MOVE_CATEGORIES
+
+PaddedCompactMoveCategoryIconGFXPointers:
+	table_width 3
+	dba PaddedCompactPhysicalMoveCategoryIconGFX
+	dba PaddedCompactSpecialMoveCategoryIconGFX
+	dba PaddedCompactStatusMoveCategoryIconGFX
 	assert_table_length NUM_MOVE_CATEGORIES
 
 StatsStatusIconGFXPointers::
@@ -85,6 +113,45 @@ TypeIconGFXPointers:
 	dba FairyTypeIconGFX       ; FAIRY        = 28
 .end
 	ASSERT .end - TypeIconGFXPointers == TYPES_END * 3
+
+CompactTypeIconGFXPointers:
+	; Physical block
+	dba CompactNormalTypeIconGFX      ; NORMAL       = 0
+	dba CompactFightingTypeIconGFX    ; FIGHTING     = 1
+	dba CompactFlyingTypeIconGFX      ; FLYING       = 2
+	dba CompactPoisonTypeIconGFX      ; POISON       = 3
+	dba CompactGroundTypeIconGFX      ; GROUND       = 4
+	dba CompactRockTypeIconGFX        ; ROCK         = 5
+	dba CompactNormalTypeIconGFX      ; BIRD         = 6 ; unused/fallback
+	dba CompactBugTypeIconGFX         ; BUG          = 7
+	dba CompactDarkTypeIconGFX        ; DARK         = 8
+	dba CompactSteelTypeIconGFX       ; STEEL        = 9
+
+	; Unused type slots 10-18
+	dba CompactNormalTypeIconGFX      ; unused 10
+	dba CompactNormalTypeIconGFX      ; unused 11
+	dba CompactNormalTypeIconGFX      ; unused 12
+	dba CompactNormalTypeIconGFX      ; unused 13
+	dba CompactNormalTypeIconGFX      ; unused 14
+	dba CompactNormalTypeIconGFX      ; unused 15
+	dba CompactNormalTypeIconGFX      ; unused 16
+	dba CompactNormalTypeIconGFX      ; unused 17
+	dba CompactNormalTypeIconGFX      ; unused 18
+
+	dba CompactGhostTypeIconGFX       ; CURSE_TYPE   = 19 ; fallback
+
+	; Special block
+	dba CompactFireTypeIconGFX        ; FIRE         = 20
+	dba CompactWaterTypeIconGFX       ; WATER        = 21
+	dba CompactGrassTypeIconGFX       ; GRASS        = 22
+	dba CompactElectricTypeIconGFX    ; ELECTRIC     = 23
+	dba CompactPsychicTypeIconGFX     ; PSYCHIC_TYPE = 24
+	dba CompactIceTypeIconGFX         ; ICE          = 25
+	dba CompactDragonTypeIconGFX      ; DRAGON       = 26
+	dba CompactGhostTypeIconGFX       ; GHOST        = 27
+	dba CompactFairyTypeIconGFX       ; FAIRY        = 28
+.end
+	ASSERT .end - CompactTypeIconGFXPointers == TYPES_END * 3
 
 Icon_LoadTypeIconGFX::
 ; Load one type icon into VRAM bank 1.
@@ -216,6 +283,146 @@ Icon_LoadMoveCategoryIconGFX::
 	ldh [rVBK], a
 	ret
 
+Icon_LoadCompactTypeIconGFX_Bank1:
+; Load one compact type icon into VRAM bank 1.
+; input:
+;   a  = type constant
+;   hl = destination tile address
+	push hl
+
+	ld e, a
+	ld d, 0
+	ld hl, CompactTypeIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
+
+	ld c, ICON_COMPACT_TYPE_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+Icon_LoadCompactTypeIconGFX_Bank0:
+; Load one compact type icon into VRAM bank 0.
+; input:
+;   a  = type constant
+;   hl = destination tile address
+	push hl
+
+	ld e, a
+	ld d, 0
+	ld hl, CompactTypeIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld c, ICON_COMPACT_TYPE_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+Icon_LoadCompactMoveCategoryIconGFX_Bank0:
+; Load one compact category icon into VRAM bank 0 for OAM.
+; input:
+;   a  = MOVE_CATEGORY_* constant
+;   hl = destination tile address
+	push hl
+
+	ld e, a
+	ld d, 0
+	ld hl, CompactMoveCategoryIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld c, ICON_COMPACT_CATEGORY_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+Icon_LoadPaddedCompactMoveCategoryIconGFX_Bank0:
+; Load one padded compact category icon into VRAM bank 0 for BG use.
+; input:
+;   a  = MOVE_CATEGORY_* constant
+;   hl = destination tile address
+	push hl
+
+	ld e, a
+	ld d, 0
+	ld hl, PaddedCompactMoveCategoryIconGFXPointers
+	add hl, de
+	add hl, de
+	add hl, de
+
+	ld a, [hli]
+	ld b, a
+	ld a, [hli]
+	ld e, a
+	ld a, [hl]
+	ld d, a
+
+	pop hl
+
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld c, ICON_PADDED_COMPACT_CATEGORY_TILES
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
 Icon_LoadStatsStatusIconGFX::
 ; Load one stats-page status icon into VRAM bank 0.
 ; input:
@@ -259,7 +466,7 @@ Icon_LoadBattleEnemyStatusIconGFX:
 	ld de, BattleEnemyStatusIconGFXPointers
 
 Icon_LoadBattleStatusIconGFX:
-; Load one battle status icon into VRAM bank 1.
+; Load one battle status icon into VRAM bank 0.
 ; input:
 ;   a  = STATUS_ICON_* constant
 ;   hl = destination tile address
@@ -285,7 +492,7 @@ Icon_LoadBattleStatusIconGFX:
 
 	ldh a, [rVBK]
 	push af
-	ld a, $1
+	xor a
 	ldh [rVBK], a
 
 	ld c, STATUS_ICON_TILES
@@ -386,7 +593,7 @@ BattleStatus_LoadHUDIconGFX::
 	call BattleStatus_GetPlayerIcon
 	jr nc, .enemy
 	push af
-	ld hl, vTiles2 tile BATTLE_STATUS_ICON_PLAYER_TILE
+	ld hl, vTiles1 tile BATTLE_STATUS_ICON_PLAYER_DEST_TILE
 	pop af
 	call Icon_LoadBattlePlayerStatusIconGFX
 
@@ -394,7 +601,7 @@ BattleStatus_LoadHUDIconGFX::
 	call BattleStatus_GetEnemyIcon
 	ret nc
 	push af
-	ld hl, vTiles2 tile BATTLE_STATUS_ICON_ENEMY_TILE
+	ld hl, vTiles1 tile BATTLE_STATUS_ICON_ENEMY_DEST_TILE
 	pop af
 	jp Icon_LoadBattleEnemyStatusIconGFX
 
@@ -410,7 +617,7 @@ BattleStatus_DrawPlayerHUDIcon::
 	jr nc, .no_icon
 
 	push af
-	ld hl, vTiles2 tile BATTLE_STATUS_ICON_PLAYER_TILE
+	ld hl, vTiles1 tile BATTLE_STATUS_ICON_PLAYER_DEST_TILE
 	pop af
 	call Icon_LoadBattlePlayerStatusIconGFX
 
@@ -443,7 +650,7 @@ BattleStatus_DrawEnemyHUDIcon::
 	jr nc, .no_icon
 
 	push af
-	ld hl, vTiles2 tile BATTLE_STATUS_ICON_ENEMY_TILE
+	ld hl, vTiles1 tile BATTLE_STATUS_ICON_ENEMY_DEST_TILE
 	pop af
 	call Icon_LoadBattleEnemyStatusIconGFX
 
@@ -470,24 +677,49 @@ Icon_LoadCurrentMoveIconsGFX_Bank1::
 	call Icon_LoadCurrentMoveTypeIconGFX_Bank1
 	jp Icon_LoadCurrentMoveCategoryIconGFX_Bank1
 
-Icon_LoadBattleMoveInfoTypeIconGFX_Bank1::
-; Load the battle move-info type icon graphics into VRAM bank 1.
+Icon_LoadBattleMoveInfoTypeIconGFX_Bank0::
+; Load the battle move-info type icon graphics into VRAM bank 0.
 ; Uses wPlayerMoveStruct, which UpdateMoveData fills immediately before the
 ; battle move-info panel is drawn.
 	ld a, [wPlayerMoveStruct + MOVE_TYPE]
-	ld hl, vTiles2 tile ICON_MOVE_TYPE_TILE
-	jp Icon_LoadTypeIconGFX
+	ld hl, vTiles1 tile ICON_BATTLE_MOVE_INFO_TYPE_DEST_TILE
+	jp Icon_LoadCompactTypeIconGFX_Bank0
 
-Icon_LoadBattleMoveInfoCategoryIconGFX_Bank1::
+Icon_LoadBattleMoveInfoCategoryIconGFX_Bank0:
 	call Icon_GetBattleMoveInfoCategory
-	ld hl, vTiles2 tile ICON_MOVE_CATEGORY_TILE
-	jp Icon_LoadMoveCategoryIconGFX
+	ld hl, vTiles1 tile ICON_BATTLE_MOVE_INFO_CATEGORY_DEST_TILE
+	jp Icon_LoadPaddedCompactMoveCategoryIconGFX_Bank0
 
-Icon_LoadBattleMoveInfoIconsGFX_Bank1::
-; Farcall-safe. Loads battle move-info type and category graphics to the shared
-; move icon slots in VRAM bank 1.
-	call Icon_LoadBattleMoveInfoTypeIconGFX_Bank1
-	jp Icon_LoadBattleMoveInfoCategoryIconGFX_Bank1
+Icon_LoadBattleMoveInfoStatIconGFX_Bank0:
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld de, MoveInfoPowerIconGFX
+	ld hl, vTiles1 tile ICON_BATTLE_MOVE_INFO_POWER_DEST_TILE
+	lb bc, BANK(MoveInfoPowerIconGFX), 2
+	call Get2bpp
+
+	ld de, MoveInfoAccuracyIconGFX
+	ld hl, vTiles1 tile ICON_BATTLE_MOVE_INFO_ACCURACY_DEST_TILE
+	lb bc, BANK(MoveInfoAccuracyIconGFX), 2
+	call Get2bpp
+
+	ld de, MoveInfoEffectChanceIconGFX
+	ld hl, vTiles1 tile ICON_BATTLE_MOVE_INFO_EFFECT_CHANCE_DEST_TILE
+	lb bc, BANK(MoveInfoEffectChanceIconGFX), 2
+	call Get2bpp
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+Icon_LoadBattleMoveInfoIconsGFX::
+; Farcall-safe. Loads battle move-info graphics to their shared VRAM slots.
+	call Icon_LoadBattleMoveInfoStatIconGFX_Bank0
+	call Icon_LoadBattleMoveInfoTypeIconGFX_Bank0
+	jp Icon_LoadBattleMoveInfoCategoryIconGFX_Bank0
 
 Icon_GetCurrentMoveCategory::
 ; Return selected move's category in a.
@@ -613,26 +845,118 @@ Icon_Set3x1Attrs::
 	jr nz, .loop
 	ret
 
+Icon_Draw2x1:
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+	ld [hli], a
+	inc a
+	ld [hl], a
+	ret
+
+Icon_Set2x1Attrs:
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+	ld [hli], a
+	ld [hl], a
+	ret
+
+Icon_Draw2x2:
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+	ld [hli], a
+	inc a
+	ld [hl], a
+	inc a
+	ld de, SCREEN_WIDTH - 1
+	add hl, de
+	ld [hli], a
+	inc a
+	ld [hl], a
+	ret
+
+Icon_Set2x2Attrs:
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+	ld [hli], a
+	ld [hl], a
+	ld de, SCREEN_WIDTH - 1
+	add hl, de
+	ld [hli], a
+	ld [hl], a
+	ret
+
+Icon_Draw4x1:
+; input:
+;   hl = tilemap destination
+;   a  = starting tile ID
+	ld c, 4
+.loop
+	ld [hli], a
+	inc a
+	dec c
+	jr nz, .loop
+	ret
+
+Icon_Set4x1Attrs:
+; input:
+;   hl = attrmap destination
+;   a  = attr byte
+	ld c, 4
+.loop
+	ld [hli], a
+	dec c
+	jr nz, .loop
+	ret
+
 BattleMoveInfo_LoadAndDrawIcons::
 ; Farcall-safe. Loads and draws the battle move-info type/category icons.
-	call Icon_LoadBattleMoveInfoIconsGFX_Bank1
+	call Icon_LoadBattleMoveInfoIconsGFX
 	farcall LoadBattleMoveInfoIconPalettes
 
-	hlcoord 1, 9
-	ld a, ICON_MOVE_TYPE_TILE
-	call Icon_Draw4x2
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_POWER_ICON_Y
+	ld a, ICON_BATTLE_MOVE_INFO_POWER_TILE
+	call Icon_Draw2x1
 
-	hlcoord 5, 9
-	ld a, ICON_MOVE_CATEGORY_TILE
-	call Icon_Draw4x2
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_ACCURACY_ICON_Y
+	ld a, ICON_BATTLE_MOVE_INFO_ACCURACY_TILE
+	call Icon_Draw2x1
 
-	hlcoord 1, 9, wAttrmap
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y
+	ld a, ICON_BATTLE_MOVE_INFO_EFFECT_CHANCE_TILE
+	call Icon_Draw2x1
+
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_TYPE_ICON_Y
+	ld a, ICON_BATTLE_MOVE_INFO_TYPE_TILE
+	call Icon_Draw4x1
+
+	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_CATEGORY_ICON_Y
+	ld a, ICON_BATTLE_MOVE_INFO_CATEGORY_TILE
+	call Icon_Draw2x2
+
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_POWER_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_STAT_ICON_ATTR
+	call Icon_Set2x1Attrs
+
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_ACCURACY_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_STAT_ICON_ATTR
+	call Icon_Set2x1Attrs
+
+	hlcoord BATTLE_MOVE_INFO_STAT_ICON_X, BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_STAT_ICON_ATTR
+	call Icon_Set2x1Attrs
+
+	hlcoord BATTLE_MOVE_INFO_TYPE_ICON_X, BATTLE_MOVE_INFO_TYPE_ICON_Y, wAttrmap
 	ld a, BATTLE_MOVE_INFO_TYPE_ICON_ATTR
-	call Icon_Set4x2Attrs
+	call Icon_Set4x1Attrs
 
-	hlcoord 5, 9, wAttrmap
-	ld a, BATTLE_MOVE_INFO_CATEGORY_ICON_ATTR
-	jp Icon_Set4x2Attrs
+	hlcoord BATTLE_MOVE_INFO_CATEGORY_ICON_X, BATTLE_MOVE_INFO_CATEGORY_ICON_Y, wAttrmap
+	ld a, BATTLE_MOVE_INFO_STAT_ICON_ATTR
+	call Icon_Set2x2Attrs
+	ret
 
 MoveMenu_LoadAndDrawMoveIcons::
 ; Farcall-safe. Loads and draws the party move-detail type/category icons.
