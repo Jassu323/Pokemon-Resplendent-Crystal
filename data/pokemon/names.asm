@@ -361,6 +361,7 @@ PokemonNames::
 	dname "Riolu"
 	dname "Lucario"
 	dname "Skorupi"
+	dname "Drapion"
 	dname "Croagunk"
 	dname "Toxicroak"
 	dname "Snover"

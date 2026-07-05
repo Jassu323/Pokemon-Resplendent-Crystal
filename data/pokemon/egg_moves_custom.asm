@@ -105,6 +105,7 @@ EggMovePointers3::
 	dw NoEggMoves3 ; RIOLU
 	dw NoEggMoves3 ; LUCARIO
 	dw NoEggMoves3 ; SKORUPI
+	dw NoEggMoves3 ; DRAPION
 	dw NoEggMoves3 ; CROAGUNK
 	dw NoEggMoves3 ; TOXICROAK
 	dw NoEggMoves3 ; SNOVER

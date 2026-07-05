@@ -105,6 +105,7 @@ EvosAttacksPointers3::
 	dw RioluEvosAttacks
 	dw LucarioEvosAttacks
 	dw SkorupiEvosAttacks
+	dw DrapionEvosAttacks
 	dw CroagunkEvosAttacks
 	dw ToxicroakEvosAttacks
 	dw SnoverEvosAttacks
@@ -640,6 +641,11 @@ LucarioEvosAttacks:
 	db 0 ; no more level-up moves
 
 SkorupiEvosAttacks:
+	db 0 ; no more evolutions
+	dbw 1, TACKLE
+	db 0 ; no more level-up moves
+
+DrapionEvosAttacks:
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

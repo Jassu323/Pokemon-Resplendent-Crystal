@@ -363,21 +363,22 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 161 RIOLU
 	mon_ability NO_ABILITY ; 162 LUCARIO
 	mon_ability NO_ABILITY ; 163 SKORUPI
-	mon_ability NO_ABILITY ; 164 CROAGUNK
-	mon_ability NO_ABILITY ; 165 TOXICROAK
-	mon_ability SNOW_WARNING ; 166 SNOVER
-	mon_ability SNOW_WARNING ; 167 ABOMASNOW
-	mon_ability NO_ABILITY ; 168 WEAVILE
-	mon_ability MAGNETISM ; 169 MAGNEZONE
-	mon_ability NO_ABILITY ; 16a LICKILICKY
-	mon_ability NO_ABILITY ; 16b RHYPERIOR
-	mon_ability NO_ABILITY ; 16c TANGROWTH
-	mon_ability NO_ABILITY ; 16d TOGEKISS
-	mon_ability NO_ABILITY ; 16e YANMEGA
-	mon_ability NO_ABILITY ; 16f LEAFEON
-	mon_ability NO_ABILITY ; 170 GLACEON
-	mon_ability NO_ABILITY ; 171 GLISCOR
-	mon_ability NO_ABILITY ; 172 MAMOSWINE
-	mon_ability NO_ABILITY ; 173 PORYGON_Z
-	mon_ability SLOW_START ; 174 REGIGIGAS
+	mon_ability NO_ABILITY ; 164 DRAPION
+	mon_ability NO_ABILITY ; 165 CROAGUNK
+	mon_ability NO_ABILITY ; 166 TOXICROAK
+	mon_ability SNOW_WARNING ; 167 SNOVER
+	mon_ability SNOW_WARNING ; 168 ABOMASNOW
+	mon_ability NO_ABILITY ; 169 WEAVILE
+	mon_ability MAGNETISM ; 16a MAGNEZONE
+	mon_ability NO_ABILITY ; 16b LICKILICKY
+	mon_ability NO_ABILITY ; 16c RHYPERIOR
+	mon_ability NO_ABILITY ; 16d TANGROWTH
+	mon_ability NO_ABILITY ; 16e TOGEKISS
+	mon_ability NO_ABILITY ; 16f YANMEGA
+	mon_ability NO_ABILITY ; 170 LEAFEON
+	mon_ability NO_ABILITY ; 171 GLACEON
+	mon_ability NO_ABILITY ; 172 GLISCOR
+	mon_ability NO_ABILITY ; 173 MAMOSWINE
+	mon_ability NO_ABILITY ; 174 PORYGON_Z
+	mon_ability SLOW_START ; 175 REGIGIGAS
 	assert_table_length NUM_POKEMON + 1

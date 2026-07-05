@@ -355,6 +355,7 @@ AnimationPointers:
 	dw RioluAnimation
 	dw LucarioAnimation
 	dw SkorupiAnimation
+	dw DrapionAnimation
 	dw CroagunkAnimation
 	dw ToxicroakAnimation
 	dw SnoverAnimation

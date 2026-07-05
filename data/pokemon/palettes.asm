@@ -743,6 +743,8 @@ INCBIN "gfx/pokemon/lucario/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/lucario/shiny.pal"
 INCBIN "gfx/pokemon/skorupi/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/skorupi/shiny.pal"
+INCBIN "gfx/pokemon/drapion/normal.gbcpal", middle_colors
+INCLUDE "gfx/pokemon/drapion/shiny.pal"
 INCBIN "gfx/pokemon/croagunk/normal.gbcpal", middle_colors
 INCLUDE "gfx/pokemon/croagunk/shiny.pal"
 INCBIN "gfx/pokemon/toxicroak/normal.gbcpal", middle_colors

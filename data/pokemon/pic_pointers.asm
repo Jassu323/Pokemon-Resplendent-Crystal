@@ -726,6 +726,8 @@ PokemonPicPointers::
 	dba LucarioBackpic
 	dba SkorupiFrontpic
 	dba SkorupiBackpic
+	dba DrapionFrontpic
+	dba DrapionBackpic
 	dba CroagunkFrontpic
 	dba CroagunkBackpic
 	dba ToxicroakFrontpic

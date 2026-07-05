@@ -356,6 +356,7 @@ PokedexDataPointerTable:
 	dba RioluPokedexEntry
 	dba LucarioPokedexEntry
 	dba SkorupiPokedexEntry
+	dba DrapionPokedexEntry
 	dba CroagunkPokedexEntry
 	dba ToxicroakPokedexEntry
 	dba SnoverPokedexEntry

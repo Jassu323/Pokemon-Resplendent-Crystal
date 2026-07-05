@@ -355,6 +355,7 @@ BitmasksPointers:
 	dba RioluBitmasks
 	dba LucarioBitmasks
 	dba SkorupiBitmasks
+	dba DrapionBitmasks
 	dba CroagunkBitmasks
 	dba ToxicroakBitmasks
 	dba SnoverBitmasks

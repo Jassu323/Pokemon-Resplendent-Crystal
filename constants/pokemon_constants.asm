@@ -375,23 +375,24 @@ DEF JOHTO_POKEMON EQU const_value
 	const RIOLU      ; 161, NatDex 447
 	const LUCARIO    ; 162, NatDex 448
 	const SKORUPI    ; 163, NatDex 451
-	const CROAGUNK   ; 164, NatDex 453
-	const TOXICROAK  ; 165, NatDex 454
-	const SNOVER     ; 166, NatDex 459
-	const ABOMASNOW  ; 167, NatDex 460
-	const WEAVILE    ; 168, NatDex 461
-	const MAGNEZONE  ; 169, NatDex 462
-	const LICKILICKY ; 16a, NatDex 463
-	const RHYPERIOR  ; 16b, NatDex 464
-	const TANGROWTH  ; 16c, NatDex 465
-	const TOGEKISS   ; 16d, NatDex 468
-	const YANMEGA    ; 16e, NatDex 469
-	const LEAFEON    ; 16f, NatDex 470
-	const GLACEON    ; 170, NatDex 471
-	const GLISCOR    ; 171, NatDex 472
-	const MAMOSWINE  ; 172, NatDex 473
-	const PORYGON_Z  ; 173, NatDex 474
-	const REGIGIGAS  ; 174, NatDex 486
+	const DRAPION    ; 164, NatDex 452
+	const CROAGUNK   ; 165, NatDex 453
+	const TOXICROAK  ; 166, NatDex 454
+	const SNOVER     ; 167, NatDex 459
+	const ABOMASNOW  ; 168, NatDex 460
+	const WEAVILE    ; 169, NatDex 461
+	const MAGNEZONE  ; 16a, NatDex 462
+	const LICKILICKY ; 16b, NatDex 463
+	const RHYPERIOR  ; 16c, NatDex 464
+	const TANGROWTH  ; 16d, NatDex 465
+	const TOGEKISS   ; 16e, NatDex 468
+	const YANMEGA    ; 16f, NatDex 469
+	const LEAFEON    ; 170, NatDex 470
+	const GLACEON    ; 171, NatDex 471
+	const GLISCOR    ; 172, NatDex 472
+	const MAMOSWINE  ; 173, NatDex 473
+	const PORYGON_Z  ; 174, NatDex 474
+	const REGIGIGAS  ; 175, NatDex 486
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3

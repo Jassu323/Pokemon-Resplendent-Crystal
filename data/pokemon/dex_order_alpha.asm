@@ -75,6 +75,7 @@ AlphabeticalPokedexOrder:
 	dw DONPHAN
 	dw DRAGONAIR
 	dw DRAGONITE
+	dw DRAPION
 	dw DRATINI
 	dw DROWZEE
 	dw DUGTRIO

@@ -105,6 +105,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_RIOLU
 	const SAMPLED_CRY_LUCARIO
 	const SAMPLED_CRY_SKORUPI
+	const SAMPLED_CRY_DRAPION
 	const SAMPLED_CRY_CROAGUNK
 	const SAMPLED_CRY_TOXICROAK
 	const SAMPLED_CRY_SNOVER
@@ -405,6 +406,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_LUCARIO
 	elif sampled_cry_mon == SKORUPI
 		db SAMPLED_CRY_SKORUPI
+	elif sampled_cry_mon == DRAPION
+		db SAMPLED_CRY_DRAPION
 	elif sampled_cry_mon == CROAGUNK
 		db SAMPLED_CRY_CROAGUNK
 	elif sampled_cry_mon == TOXICROAK
@@ -552,6 +555,7 @@ SampledCryPointers:
 	dba RioluSampledCry
 	dba LucarioSampledCry
 	dba SkorupiSampledCry
+	dba DrapionSampledCry
 	dba CroagunkSampledCry
 	dba ToxicroakSampledCry
 	dba SnoverSampledCry
@@ -1491,3 +1495,10 @@ SkorupiSampledCryData:
 	INCBIN "audio/sampled_cries/skorupi.mm2"
 SkorupiSampledCryEnd:
 	assert (SkorupiSampledCryEnd - SkorupiSampledCryData) % 9 == 0
+
+DrapionSampledCry::
+	dw (DrapionSampledCryEnd - DrapionSampledCryData) / 9
+DrapionSampledCryData:
+	INCBIN "audio/sampled_cries/drapion.mm2"
+DrapionSampledCryEnd:
+	assert (DrapionSampledCryEnd - DrapionSampledCryData) % 9 == 0

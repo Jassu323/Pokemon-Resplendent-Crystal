@@ -357,6 +357,7 @@ NewPokedexOrder:
 	dw RIOLU
 	dw LUCARIO
 	dw SKORUPI
+	dw DRAPION
 	dw CROAGUNK
 	dw TOXICROAK
 	dw SNOVER

@@ -356,6 +356,7 @@ FirstEvoStages::
 	dw RIOLU
 	dw RIOLU
 	dw SKORUPI
+	dw SKORUPI
 	dw CROAGUNK
 	dw CROAGUNK
 	dw SNOVER

@@ -355,6 +355,7 @@ AnimationIdlePointers:
 	dw RioluAnimationIdle
 	dw LucarioAnimationIdle
 	dw SkorupiAnimationIdle
+	dw DrapionAnimationIdle
 	dw CroagunkAnimationIdle
 	dw ToxicroakAnimationIdle
 	dw SnoverAnimationIdle

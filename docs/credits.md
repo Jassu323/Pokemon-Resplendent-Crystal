@@ -90,8 +90,13 @@ RainbowDevs & Pokémon Prism Team - https://rainbowdevs.com/title/prism/
 - Mismagius sprite and party menu icon
 - Bronzor sprite and party menu icon
 - Bronzong sprite and party menu icon
+- Gible sprite and party menu icon
+- Gabite sprite and party menu icon
+- Garchomp sprite and party menu icon
 - Riolu sprite and party menu icon
 - Lucario sprite and party menu icon
+- Skorupi sprite and party menu icon
+- Drapion sprite and party menu icon
 - Weavile sprite and party menu icon
 - Magnezone party menu icon
 - Rhyperior sprite and party menu icon
