@@ -94,6 +94,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_BASTIODON
 	const SAMPLED_CRY_AMBIPOM
 	const SAMPLED_CRY_BUNEARY
+	const SAMPLED_CRY_LOPUNNY
 	const SAMPLED_CRY_MISMAGIUS
 	const SAMPLED_CRY_HONCHKROW
 	const SAMPLED_CRY_BRONZOR
@@ -378,6 +379,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_AMBIPOM
 	elif sampled_cry_mon == BUNEARY
 		db SAMPLED_CRY_BUNEARY
+	elif sampled_cry_mon == LOPUNNY
+		db SAMPLED_CRY_LOPUNNY
 	elif sampled_cry_mon == MISMAGIUS
 		db SAMPLED_CRY_MISMAGIUS
 	elif sampled_cry_mon == HONCHKROW
@@ -526,6 +529,7 @@ SampledCryPointers:
 	dba BastiodonSampledCry
 	dba AmbipomSampledCry
 	dba BunearySampledCry
+	dba LopunnySampledCry
 	dba MismagiusSampledCry
 	dba HonchkrowSampledCry
 	dba BronzorSampledCry
@@ -1419,6 +1423,13 @@ RoseradeSampledCryEnd:
 
 
 SECTION "Sampled Cry Payloads 23", ROMX
+
+LopunnySampledCry::
+	dw (LopunnySampledCryEnd - LopunnySampledCryData) / 9
+LopunnySampledCryData:
+	INCBIN "audio/sampled_cries/lopunny.mm2"
+LopunnySampledCryEnd:
+	assert (LopunnySampledCryEnd - LopunnySampledCryData) % 9 == 0
 
 BaltoySampledCry::
 	dw (BaltoySampledCryEnd - BaltoySampledCryData) / 9

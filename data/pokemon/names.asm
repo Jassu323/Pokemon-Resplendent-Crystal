@@ -350,6 +350,7 @@ PokemonNames::
 	dname "Bastiodon"
 	dname "Ambipom"
 	dname "Buneary"
+	dname "Lopunny"
 	dname "Mismagius"
 	dname "Honchkrow"
 	dname "Bronzor"

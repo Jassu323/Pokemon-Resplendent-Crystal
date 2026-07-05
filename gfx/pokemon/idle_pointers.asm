@@ -344,6 +344,7 @@ AnimationIdlePointers:
 	dw BastiodonAnimationIdle
 	dw AmbipomAnimationIdle
 	dw BunearyAnimationIdle
+	dw LopunnyAnimationIdle
 	dw MismagiusAnimationIdle
 	dw HonchkrowAnimationIdle
 	dw BronzorAnimationIdle

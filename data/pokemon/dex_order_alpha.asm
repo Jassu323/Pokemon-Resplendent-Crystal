@@ -165,6 +165,7 @@ AlphabeticalPokedexOrder:
 	dw LICKILICKY
 	dw LICKITUNG
 	dw LILEEP
+	dw LOPUNNY
 	dw LUCARIO
 	dw LUGIA
 	dw LUNATONE

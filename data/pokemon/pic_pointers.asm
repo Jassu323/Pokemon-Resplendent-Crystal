@@ -704,6 +704,8 @@ PokemonPicPointers::
 	dba AmbipomBackpic
 	dba BunearyFrontpic
 	dba BunearyBackpic
+	dba LopunnyFrontpic
+	dba LopunnyBackpic
 	dba MismagiusFrontpic
 	dba MismagiusBackpic
 	dba HonchkrowFrontpic

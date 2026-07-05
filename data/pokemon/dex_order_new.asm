@@ -346,6 +346,7 @@ NewPokedexOrder:
 	dw BASTIODON
 	dw AMBIPOM
 	dw BUNEARY
+	dw LOPUNNY
 	dw MISMAGIUS
 	dw HONCHKROW
 	dw BRONZOR

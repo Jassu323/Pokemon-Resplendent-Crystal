@@ -344,6 +344,7 @@ FramesPointers:
 	dba BastiodonFrames
 	dba AmbipomFrames
 	dba BunearyFrames
+	dba LopunnyFrames
 	dba MismagiusFrames
 	dba HonchkrowFrames
 	dba BronzorFrames

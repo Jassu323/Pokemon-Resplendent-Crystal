@@ -345,6 +345,7 @@ PokedexDataPointerTable:
 	dba BastiodonPokedexEntry
 	dba AmbipomPokedexEntry
 	dba BunearyPokedexEntry
+	dba LopunnyPokedexEntry
 	dba MismagiusPokedexEntry
 	dba HonchkrowPokedexEntry
 	dba BronzorPokedexEntry

@@ -344,6 +344,7 @@ BitmasksPointers:
 	dba BastiodonBitmasks
 	dba AmbipomBitmasks
 	dba BunearyBitmasks
+	dba LopunnyBitmasks
 	dba MismagiusBitmasks
 	dba HonchkrowBitmasks
 	dba BronzorBitmasks

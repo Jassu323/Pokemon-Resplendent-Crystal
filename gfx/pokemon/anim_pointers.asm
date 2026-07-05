@@ -344,6 +344,7 @@ AnimationPointers:
 	dw BastiodonAnimation
 	dw AmbipomAnimation
 	dw BunearyAnimation
+	dw LopunnyAnimation
 	dw MismagiusAnimation
 	dw HonchkrowAnimation
 	dw BronzorAnimation

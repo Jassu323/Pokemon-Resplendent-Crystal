@@ -352,27 +352,28 @@ SpeciesAbilities::
 	mon_ability NO_ABILITY ; 156 BASTIODON
 	mon_ability NO_ABILITY ; 157 AMBIPOM
 	mon_ability NO_ABILITY ; 158 BUNEARY
-	mon_ability NO_ABILITY ; 159 MISMAGIUS
-	mon_ability NO_ABILITY ; 15a HONCHKROW
-	mon_ability NO_ABILITY ; 15b BRONZOR
-	mon_ability NO_ABILITY ; 15c BRONZONG
-	mon_ability NO_ABILITY ; 15d RIOLU
-	mon_ability NO_ABILITY ; 15e LUCARIO
-	mon_ability NO_ABILITY ; 15f CROAGUNK
-	mon_ability NO_ABILITY ; 160 TOXICROAK
-	mon_ability SNOW_WARNING ; 161 SNOVER
-	mon_ability SNOW_WARNING ; 162 ABOMASNOW
-	mon_ability NO_ABILITY ; 163 WEAVILE
-	mon_ability MAGNETISM ; 164 MAGNEZONE
-	mon_ability NO_ABILITY ; 165 LICKILICKY
-	mon_ability NO_ABILITY ; 166 RHYPERIOR
-	mon_ability NO_ABILITY ; 167 TANGROWTH
-	mon_ability NO_ABILITY ; 168 TOGEKISS
-	mon_ability NO_ABILITY ; 169 YANMEGA
-	mon_ability NO_ABILITY ; 16a LEAFEON
-	mon_ability NO_ABILITY ; 16b GLACEON
-	mon_ability NO_ABILITY ; 16c GLISCOR
-	mon_ability NO_ABILITY ; 16d MAMOSWINE
-	mon_ability NO_ABILITY ; 16e PORYGON_Z
-	mon_ability SLOW_START ; 16f REGIGIGAS
+	mon_ability NO_ABILITY ; 159 LOPUNNY
+	mon_ability NO_ABILITY ; 15a MISMAGIUS
+	mon_ability NO_ABILITY ; 15b HONCHKROW
+	mon_ability NO_ABILITY ; 15c BRONZOR
+	mon_ability NO_ABILITY ; 15d BRONZONG
+	mon_ability NO_ABILITY ; 15e RIOLU
+	mon_ability NO_ABILITY ; 15f LUCARIO
+	mon_ability NO_ABILITY ; 160 CROAGUNK
+	mon_ability NO_ABILITY ; 161 TOXICROAK
+	mon_ability SNOW_WARNING ; 162 SNOVER
+	mon_ability SNOW_WARNING ; 163 ABOMASNOW
+	mon_ability NO_ABILITY ; 164 WEAVILE
+	mon_ability MAGNETISM ; 165 MAGNEZONE
+	mon_ability NO_ABILITY ; 166 LICKILICKY
+	mon_ability NO_ABILITY ; 167 RHYPERIOR
+	mon_ability NO_ABILITY ; 168 TANGROWTH
+	mon_ability NO_ABILITY ; 169 TOGEKISS
+	mon_ability NO_ABILITY ; 16a YANMEGA
+	mon_ability NO_ABILITY ; 16b LEAFEON
+	mon_ability NO_ABILITY ; 16c GLACEON
+	mon_ability NO_ABILITY ; 16d GLISCOR
+	mon_ability NO_ABILITY ; 16e MAMOSWINE
+	mon_ability NO_ABILITY ; 16f PORYGON_Z
+	mon_ability SLOW_START ; 170 REGIGIGAS
 	assert_table_length NUM_POKEMON + 1
