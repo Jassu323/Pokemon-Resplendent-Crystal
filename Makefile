@@ -103,8 +103,7 @@ $(pokecrystal_obj):         RGBASMFLAGS +=
 $(pokecrystal_vc_obj):      RGBASMFLAGS += -D _CRYSTAL_VC
 
 %.patch: %_vc.gbc %.gbc vc/%.patch.template
-# Keep ignoring the former Stadium checksum range in legacy VC patches.
-	tools/make_patch --ignore 0x1ffde0:0x220 $*_vc.sym $^ $@
+	tools/make_patch $*_vc.sym $^ $@
 
 rgbdscheck.o: rgbdscheck.asm
 	$(RGBASM) -o $@ $<
@@ -198,6 +197,7 @@ gfx/pokemon/scyther/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/jynx/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/porygon/normal.gbcpal: tools/gbcpal += --reverse
 gfx/pokemon/porygon2/normal.gbcpal: tools/gbcpal += --reverse
+gfx/pokemon/gliscor/normal.gbcpal: tools/gbcpal += --reverse
 
 gfx/trainers/swimmer_m.gbcpal: tools/gbcpal += --reverse
 

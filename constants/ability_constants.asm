@@ -18,4 +18,15 @@
 	const INSOMNIA
 	const STATIC
 	const DRAGON_SKIN
+	const OVERGROW
+	const BLAZE
+	const TORRENT
+	const IRONCLAD
+	const LEVITATE
+	const MARVEL_SCALE
+	const DRIZZLE
+	const DROUGHT
+	const AIR_LOCK
+	const SNOW_WARNING
+	const SLOW_START
 DEF NUM_ABILITIES EQU const_value - 1

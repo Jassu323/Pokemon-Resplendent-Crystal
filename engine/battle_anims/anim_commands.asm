@@ -341,6 +341,7 @@ BattleAnimDelayFrame:
 	jr .wait
 
 .done_wait
+	call ServicePreparedBattleSampledCryAsync
 	call ServiceSampledCryAsync
 	ret
 

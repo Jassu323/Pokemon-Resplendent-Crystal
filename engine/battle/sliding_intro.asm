@@ -51,6 +51,7 @@ BattleIntroSlidingPics:
 
 .skip1
 	call DelayFrame
+	call ServicePreparedBattleSampledCryAsync
 	pop af
 	dec a
 	jr nz, .loop1

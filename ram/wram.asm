@@ -909,6 +909,17 @@ wReclaimedPrinterWRAM0End::
 
 SECTION UNION "Overworld Map", WRAM0
 
+; Battle-only scratch for prepared sampled cries. This overlays the overworld
+; map buffer, so do not use it from menus/stats screens.
+wPreparedSampledCryState:: db
+wPreparedSampledCryBank:: db
+wPreparedSampledCryHeader:: dw
+wPreparedSampledCryPeriod:: db
+wPreparedSampledCryFrameCounter:: db
+
+
+SECTION UNION "Overworld Map", WRAM0
+
 ; bill's pc data
 wBillsPCData::
 wBillsPCPokemonList:: ds BOXLIST_SIZE * MONS_PER_BOX_JP
@@ -3292,13 +3303,17 @@ wPartyMon{d:n}Nickname:: ds MON_NAME_LENGTH
 endr
 wPartyMonNicknamesEnd::
 
-	ds 22
+DEF POKEDEX_FLAG_BYTES EQU (NUM_POKEMON + 7) / 8
+DEF POKEDEX_FLAG_CAPACITY_BYTES EQU 64 ; 512 species
+	assert POKEDEX_FLAG_BYTES <= POKEDEX_FLAG_CAPACITY_BYTES
 
-wPokedexCaught:: flag_array NUM_POKEMON
+wPokedexCaught:: ds POKEDEX_FLAG_BYTES
 wEndPokedexCaught::
+	ds POKEDEX_FLAG_CAPACITY_BYTES - POKEDEX_FLAG_BYTES
 
-wPokedexSeen:: flag_array NUM_POKEMON
+wPokedexSeen:: ds POKEDEX_FLAG_BYTES
 wEndPokedexSeen::
+	ds POKEDEX_FLAG_CAPACITY_BYTES - POKEDEX_FLAG_BYTES
 
 wUnownDex:: ds NUM_UNOWN
 wUnlockedUnowns:: db
@@ -3336,7 +3351,6 @@ wEggMonOT:: ds NAME_LENGTH
 wEggMon:: box_struct wEggMon
 
 wBugContestSecondPartySpecies:: db
-wContestMon:: party_struct wContestMon
 
 wDunsparceMapGroup:: db
 wDunsparceMapNumber:: db
@@ -3403,6 +3417,11 @@ SECTION "16-bit WRAM tables", WRAMX
 ; align this section to $100
 	wram_conversion_table wPokemonIndexTable, MON_TABLE
 	wram_conversion_table wMoveIndexTable, MOVE_TABLE
+
+
+SECTION "Bug Contest WRAM", WRAMX, BANK[2]
+
+wContestMon:: party_struct wContestMon
 
 
 SECTION "Battle Tower RAM", WRAMX
@@ -3482,6 +3501,8 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
 	ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
+wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
+wSampledCryMinMax2BitLevelsEnd::
 wSampledCryLevel0:: db
 wSampledCryLevel1:: db
 wSampledCryLevel2:: db

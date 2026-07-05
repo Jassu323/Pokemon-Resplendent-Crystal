@@ -146,41 +146,7 @@ UpdateBattleHuds::
 
 INCLUDE "home/battle_vars.asm"
 
-FarCopyRadioText::
-	inc hl
-	ldh a, [hROMBank]
-	push af
-	ld a, [hli]
-	ld e, a
-	ld a, [hli]
-	ld d, a
-	ld a, [hli]
-	ldh [hROMBank], a
-	ld [rROMB], a
-	ld a, e
-	ld l, a
-	ld a, d
-	ld h, a
-	ld de, wRadioText
-	ld bc, 2 * SCREEN_WIDTH
-	call CopyBytes
-	pop af
-	ldh [hROMBank], a
-	ld [rROMB], a
-	ret
-
 MobileTextBorder::
-	; For mobile link battles only.
-	ld a, [wLinkMode]
-	cp LINK_MOBILE
-	ret c
-
-	; Draw a cell phone icon at the
-	; top right corner of the border.
-	hlcoord 19, 12
-	ld [hl], $5e ; top
-	hlcoord 19, 13
-	ld [hl], $5f ; bottom
 	ret
 
 BattleTextbox::

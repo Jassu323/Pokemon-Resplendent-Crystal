@@ -19,8 +19,10 @@ INCLUDE "data/pokemon/evolution_moves.asm"
 EvosAttacksPointers::
 	indirect_table 2, 1
 	indirect_entries JOHTO_POKEMON - 1, EvosAttacksPointers1
-	indirect_entries NUM_POKEMON, EvosAttacksPointers2
+	indirect_entries CELEBI, EvosAttacksPointers2
+	indirect_entries NUM_POKEMON, EvosAttacksPointers3
 	indirect_table_end
 
 INCLUDE "data/pokemon/evos_attacks_kanto.asm"
 INCLUDE "data/pokemon/evos_attacks_johto.asm"
+INCLUDE "data/pokemon/evos_attacks_custom.asm"

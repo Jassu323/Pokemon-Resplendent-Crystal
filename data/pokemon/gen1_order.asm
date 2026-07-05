@@ -253,4 +253,4 @@ Pokered_MonIndices:
 	db QWILFISH
 	db WOBBUFFET
 	db WOBBUFFET
-	assert_table_length NUM_POKEMON + 1
+	assert_table_length TREECKO ; custom species start here and are intentionally omitted

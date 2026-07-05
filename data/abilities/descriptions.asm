@@ -19,6 +19,17 @@ AbilityDescriptions:
 	dw AbilityPlaceholderDescription ; INSOMNIA
 	dw AbilityPlaceholderDescription ; STATIC
 	dw AbilityPlaceholderDescription ; DRAGON_SKIN
+	dw AbilityPlaceholderDescription ; OVERGROW
+	dw AbilityPlaceholderDescription ; BLAZE
+	dw AbilityPlaceholderDescription ; TORRENT
+	dw AbilityPlaceholderDescription ; IRONCLAD
+	dw AbilityPlaceholderDescription ; LEVITATE
+	dw AbilityPlaceholderDescription ; MARVEL_SCALE
+	dw AbilityPlaceholderDescription ; DRIZZLE
+	dw AbilityPlaceholderDescription ; DROUGHT
+	dw AbilityPlaceholderDescription ; AIR_LOCK
+	dw AbilityPlaceholderDescription ; SNOW_WARNING
+	dw AbilityPlaceholderDescription ; SLOW_START
 	assert_table_length NUM_ABILITIES + 1
 
 AbilityPlaceholderDescription:

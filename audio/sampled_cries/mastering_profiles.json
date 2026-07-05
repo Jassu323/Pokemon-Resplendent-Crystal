@@ -2,10 +2,76 @@
   "default_profile": "17_v4_clarity_auto",
   "alternate_profile": "14_v3_softlimit_4p0",
   "sources": {
+    "GROVYLE": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/grovyle.wav",
+    "SCEPTILE": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/sceptile.wav",
     "MUDKIP": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mudkip.wav",
+    "MARSHTOMP": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/marshtomp.wav",
+    "SWAMPERT": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/swampert.wav",
+    "POOCHYENA": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/poochyena.wav",
     "TREECKO": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
     "TORCHIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torchic.wav",
-    "SHINX": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav"
+    "COMBUSKEN": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/combusken.wav",
+    "BLAZIKEN": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/blaziken.wav",
+    "SHINX": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/shinx.wav",
+    "LUXIO": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/luxio.wav",
+    "LUXRAY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/luxray.wav",
+    "CRANIDOS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/cranidos.wav",
+    "FEEBAS": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/feebas.wav",
+    "MILOTIC": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/milotic.wav",
+    "SHUPPET": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/shuppet.wav",
+    "BANETTE": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/banette.wav",
+    "DUSKULL": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/duskull.wav",
+    "DUSCLOPS": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/dusclops.wav",
+    "DUSKNOIR": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/dusknoir.wav",
+    "ABSOL": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/absol.wav",
+    "SNORUNT": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/snorunt.wav",
+    "GLALIE": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/glalie.wav",
+    "FROSLASS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/froslass.wav",
+    "SPHEAL": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/spheal.wav",
+    "SEALEO": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/sealeo.wav",
+    "RAMPARDOS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/rampardos.wav",
+    "SHIELDON": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/shieldon.wav",
+    "BASTIODON": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bastiodon.wav",
+    "AMBIPOM": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/ambipom.wav",
+    "BUNEARY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/buneary.wav",
+    "LOPUNNY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lopunny.wav",
+    "MISMAGIUS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/mismagius.wav",
+    "HONCHKROW": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/honchkrow.wav",
+    "BRONZOR": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bronzor.wav",
+    "BRONZONG": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bronzong.wav",
+    "GIBLE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gible.wav",
+    "GABITE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gabite.wav",
+    "GARCHOMP": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/garchomp.wav",
+    "SKORUPI": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/skorupi.wav",
+    "DRAPION": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/drapion.wav",
+    "RIOLU": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/riolu.wav",
+    "LUCARIO": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lucario.wav",
+    "CROAGUNK": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/croagunk.wav",
+    "TOXICROAK": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/toxicroak.wav",
+    "SNOVER": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/snover.wav",
+    "ABOMASNOW": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/abomasnow.wav",
+    "WEAVILE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/weavile.wav",
+    "MAGNEZONE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/magnezone.wav",
+    "LICKILICKY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lickilicky.wav",
+    "RHYPERIOR": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/rhyperior.wav",
+    "TANGROWTH": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/tangrowth.wav",
+    "TOGEKISS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/togekiss.wav",
+    "YANMEGA": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/yanmega.wav",
+    "LEAFEON": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/leafeon.wav",
+    "GLACEON": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/glaceon.wav",
+    "GLISCOR": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gliscor.wav",
+    "MAMOSWINE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/mamoswine.wav",
+    "PORYGON_Z": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/porygon_z.wav",
+    "REGIGIGAS": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/regigigas.wav",
+    "SKITTY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/skitty.wav",
+    "DELCATTY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/delcatty.wav",
+    "SABLEYE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/sableye.wav",
+    "ELECTRIKE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/electrike.wav",
+    "MANECTRIC": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/manectric.wav",
+    "ROSELIA": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/roselia.wav",
+    "ROSERADE": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/roserade.wav",
+    "BALTOY": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/baltoy.wav",
+    "CLAYDOL": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/claydol.wav"
   },
   "profiles": {
     "mudkip_17_v4_clarity_auto": {
@@ -51,8 +117,3405 @@
         "enabled": false
       }
     },
+    "marshtomp_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/marshtomp.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "swampert_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/swampert.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "poochyena_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/poochyena.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "mightyena_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mightyena.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.65,
+        "target_limited_rms_db": -14.6,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 70,
+      "body_boost": {
+        "cutoff_hz": 650,
+        "gain_db": 1.75
+      },
+      "preemphasis": {
+        "coeff": 0.08,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "wingull_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/wingull.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "pelipper_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/pelipper.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "ralts_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/ralts.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "kirlia_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/kirlia.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "gardevoir_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/gardevoir.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "gallade_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gallade.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shroomish_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/shroomish.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "breloom_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/breloom.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "makuhita_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/makuhita.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "hariyama_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/hariyama.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "skitty_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/skitty.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "delcatty_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/delcatty.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "sableye_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/sableye.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "mawile_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/mawile.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "aron_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/aron.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lairon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/lairon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "aggron_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/aggron.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "meditite_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/meditite.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "medicham_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/medicham.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "electrike_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/electrike.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "manectric_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/manectric.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "roselia_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/roselia.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "roserade_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/roserade.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "carvanha_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/carvanha.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "sharpedo_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/sharpedo.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "numel_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/numel.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "camerupt_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/camerupt.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "torkoal_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/torkoal.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "trapinch_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/trapinch.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "vibrava_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/vibrava.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "flygon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/flygon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "swablu_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/swablu.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "altaria_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/altaria.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "zangoose_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/zangoose.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "seviper_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/seviper.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lunatone_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/lunatone.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "solrock_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/solrock.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "barboach_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/barboach.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "whiscash_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/whiscash.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "corphish_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/corphish.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "crawdaunt_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/crawdaunt.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "baltoy_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/baltoy.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "claydol_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/claydol.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lileep_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/lileep.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "cradily_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/cradily.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "anorith_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/anorith.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "armaldo_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/armaldo.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "feebas_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/feebas.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "milotic_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/milotic.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shuppet_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/shuppet.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "banette_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/banette.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "duskull_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/duskull.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "dusclops_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/dusclops.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "dusknoir_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/dusknoir.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "absol_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/absol.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "snorunt_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/snorunt.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "glalie_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/glalie.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "froslass_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/froslass.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "spheal_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/spheal.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "sealeo_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/sealeo.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "walrein_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/walrein.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "bagon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/bagon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shelgon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/shelgon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "metagross_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/metagross.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "regirock_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/regirock.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "regice_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/regice.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "registeel_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/registeel.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "kyogre_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/kyogre.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "groudon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/groudon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "rayquaza_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/rayquaza.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "metang_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/metang.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "beldum_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/beldum.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "salamence_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/salamence.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.18
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
     "treecko_17_v4_clarity_auto": {
       "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/treecko.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "grovyle_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/grovyle.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "sceptile_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/sceptile.wav",
       "target_rate": 10485.76,
       "prism_vol": 3.2,
       "allow_experimental_prism_vol": true,
@@ -137,8 +3600,223 @@
         "enabled": false
       }
     },
+    "combusken_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/combusken.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "blaziken_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald/sound/direct_sound_samples/cries/blaziken.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 3.8,
+        "target_limited_rms_db": -14.8,
+        "max_saturation_rate": 0.025,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 100,
+      "body_boost": {
+        "cutoff_hz": 700,
+        "gain_db": 1.0
+      },
+      "preemphasis": {
+        "coeff": 0.14,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.25
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
     "shinx_17_v4_clarity_auto": {
-      "source": "/private/tmp/pokeprism_ricccec_review/audio/ded/shinx.wav",
+      "source": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/shinx.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "luxio_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeprism/audio/ded/luxio.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "luxray_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/luxray.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "cranidos_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/cranidos.wav",
       "target_rate": 10485.76,
       "prism_vol": 3.2,
       "allow_experimental_prism_vol": true,
@@ -303,6 +3981,1468 @@
       "quantizer": {
         "dither": "tpdf",
         "noise_shape": 0.35
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "rampardos_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/rampardos.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "shieldon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/shieldon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "bastiodon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bastiodon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "ambipom_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/ambipom.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "mismagius_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/mismagius.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "honchkrow_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/honchkrow.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "bronzor_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bronzor.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "bronzong_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/bronzong.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "gible_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gible.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "gabite_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gabite.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "garchomp_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/garchomp.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "skorupi_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/skorupi.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "drapion_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/drapion.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "riolu_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/riolu.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lucario_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lucario.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "croagunk_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/croagunk.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "toxicroak_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/toxicroak.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "snover_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/snover.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "abomasnow_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/abomasnow.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "weavile_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/weavile.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "magnezone_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/magnezone.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lickilicky_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lickilicky.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "rhyperior_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/rhyperior.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "tangrowth_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/tangrowth.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "togekiss_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/togekiss.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "yanmega_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/yanmega.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "leafeon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/leafeon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "glaceon_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/glaceon.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "gliscor_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/gliscor.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "mamoswine_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/mamoswine.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "porygonz_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/porygon_z.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "regigigas_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/regigigas.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "buneary_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/buneary.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
+      },
+      "trim": {
+        "enabled": false
+      }
+    },
+    "lopunny_17_v4_clarity_auto": {
+      "source": "/Users/jakeadams/Documents/GitHub/pokeemerald-expansion/sound/direct_sound_samples/cries/lopunny.wav",
+      "target_rate": 10485.76,
+      "prism_vol": 3.2,
+      "allow_experimental_prism_vol": true,
+      "max_prism_vol": 4.5,
+      "auto_gain": {
+        "min_prism_vol": 3.2,
+        "max_prism_vol": 4.0,
+        "target_limited_rms_db": -14.7,
+        "max_saturation_rate": 0.03,
+        "search_steps": 32
+      },
+      "remove_dc": true,
+      "highpass_hz": 90,
+      "body_boost": {
+        "cutoff_hz": 750,
+        "gain_db": 1.5
+      },
+      "preemphasis": {
+        "coeff": 0.1,
+        "gain": 0.98
+      },
+      "compressor": {
+        "threshold_db": -25,
+        "ratio": 2.6,
+        "knee_db": 8,
+        "attack_ms": 2,
+        "release_ms": 70,
+        "makeup_db": 2.25
+      },
+      "limiter": {
+        "mode": "tanh",
+        "drive_db": -0.5
+      },
+      "quantizer": {
+        "dither": "tpdf",
+        "noise_shape": 0.2
       },
       "trim": {
         "enabled": false

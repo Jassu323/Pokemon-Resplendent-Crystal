@@ -1,256 +1,386 @@
-; party menu icons
+; party menu icons and palettes
+
+MACRO mon_menu_icon
+	dba \1
+	dn PAL_ICON_\2, PAL_ICON_\3
+ENDM
 
 MonMenuIcons:
-	table_width 1
-	db ICON_BULBASAUR   ; BULBASAUR
-	db ICON_IVYSAUR     ; IVYSAUR
-	db ICON_VENUSAUR    ; VENUSAUR
-	db ICON_CHARMANDER  ; CHARMANDER
-	db ICON_CHARMELEON  ; CHARMELEON
-	db ICON_CHARIZARD   ; CHARIZARD
-	db ICON_SQUIRTLE    ; SQUIRTLE
-	db ICON_WARTORTLE   ; WARTORTLE
-	db ICON_BLASTOISE   ; BLASTOISE
-	db ICON_CATERPIE    ; CATERPIE
-	db ICON_METAPOD     ; METAPOD
-	db ICON_BUTTERFREE  ; BUTTERFREE
-	db ICON_WEEDLE      ; WEEDLE
-	db ICON_KAKUNA      ; KAKUNA
-	db ICON_BEEDRILL    ; BEEDRILL
-	db ICON_PIDGEY      ; PIDGEY
-	db ICON_PIDGEOTTO   ; PIDGEOTTO
-	db ICON_PIDGEOT     ; PIDGEOT
-	db ICON_RATTATA     ; RATTATA
-	db ICON_RATICATE    ; RATICATE
-	db ICON_SPEAROW     ; SPEAROW
-	db ICON_FEAROW      ; FEAROW
-	db ICON_EKANS       ; EKANS
-	db ICON_ARBOK       ; ARBOK
-	db ICON_PIKACHU     ; PIKACHU
-	db ICON_RAICHU      ; RAICHU
-	db ICON_SANDSHREW   ; SANDSHREW
-	db ICON_SANDSLASH   ; SANDSLASH
-	db ICON_NIDORAN_F   ; NIDORAN_F
-	db ICON_NIDORINA    ; NIDORINA
-	db ICON_NIDOQUEEN   ; NIDOQUEEN
-	db ICON_NIDORAN_M   ; NIDORAN_M
-	db ICON_NIDORINO    ; NIDORINO
-	db ICON_NIDOKING    ; NIDOKING
-	db ICON_CLEFAIRY    ; CLEFAIRY
-	db ICON_CLEFABLE    ; CLEFABLE
-	db ICON_VULPIX      ; VULPIX
-	db ICON_NINETALES   ; NINETALES
-	db ICON_JIGGLYPUFF  ; JIGGLYPUFF
-	db ICON_WIGGLYTUFF  ; WIGGLYTUFF
-	db ICON_ZUBAT       ; ZUBAT
-	db ICON_GOLBAT      ; GOLBAT
-	db ICON_ODDISH      ; ODDISH
-	db ICON_GLOOM       ; GLOOM
-	db ICON_VILEPLUME   ; VILEPLUME
-	db ICON_PARAS       ; PARAS
-	db ICON_PARASECT    ; PARASECT
-	db ICON_VENONAT     ; VENONAT
-	db ICON_VENOMOTH    ; VENOMOTH
-	db ICON_DIGLETT     ; DIGLETT
-	db ICON_DUGTRIO     ; DUGTRIO
-	db ICON_MEOWTH      ; MEOWTH
-	db ICON_PERSIAN     ; PERSIAN
-	db ICON_PSYDUCK     ; PSYDUCK
-	db ICON_GOLDUCK     ; GOLDUCK
-	db ICON_MANKEY      ; MANKEY
-	db ICON_PRIMEAPE    ; PRIMEAPE
-	db ICON_GROWLITHE   ; GROWLITHE
-	db ICON_ARCANINE    ; ARCANINE
-	db ICON_POLIWAG     ; POLIWAG
-	db ICON_POLIWHIRL   ; POLIWHIRL
-	db ICON_POLIWRATH   ; POLIWRATH
-	db ICON_ABRA        ; ABRA
-	db ICON_KADABRA     ; KADABRA
-	db ICON_ALAKAZAM    ; ALAKAZAM
-	db ICON_MACHOP      ; MACHOP
-	db ICON_MACHOKE     ; MACHOKE
-	db ICON_MACHAMP     ; MACHAMP
-	db ICON_BELLSPROUT  ; BELLSPROUT
-	db ICON_WEEPINBELL  ; WEEPINBELL
-	db ICON_VICTREEBEL  ; VICTREEBEL
-	db ICON_TENTACOOL   ; TENTACOOL
-	db ICON_TENTACRUEL  ; TENTACRUEL
-	db ICON_GEODUDE     ; GEODUDE
-	db ICON_GRAVELER    ; GRAVELER
-	db ICON_GOLEM       ; GOLEM
-	db ICON_PONYTA      ; PONYTA
-	db ICON_RAPIDASH    ; RAPIDASH
-	db ICON_SLOWPOKE    ; SLOWPOKE
-	db ICON_SLOWBRO     ; SLOWBRO
-	db ICON_MAGNEMITE   ; MAGNEMITE
-	db ICON_MAGNETON    ; MAGNETON
-	db ICON_FARFETCH_D  ; FARFETCH_D
-	db ICON_DODUO       ; DODUO
-	db ICON_DODRIO      ; DODRIO
-	db ICON_SEEL        ; SEEL
-	db ICON_DEWGONG     ; DEWGONG
-	db ICON_GRIMER      ; GRIMER
-	db ICON_MUK         ; MUK
-	db ICON_SHELLDER    ; SHELLDER
-	db ICON_CLOYSTER    ; CLOYSTER
-	db ICON_GASTLY      ; GASTLY
-	db ICON_HAUNTER     ; HAUNTER
-	db ICON_GENGAR      ; GENGAR
-	db ICON_ONIX        ; ONIX
-	db ICON_DROWZEE     ; DROWZEE
-	db ICON_HYPNO       ; HYPNO
-	db ICON_KRABBY      ; KRABBY
-	db ICON_KINGLER     ; KINGLER
-	db ICON_VOLTORB     ; VOLTORB
-	db ICON_ELECTRODE   ; ELECTRODE
-	db ICON_EXEGGCUTE   ; EXEGGCUTE
-	db ICON_EXEGGUTOR   ; EXEGGUTOR
-	db ICON_CUBONE      ; CUBONE
-	db ICON_MAROWAK     ; MAROWAK
-	db ICON_HITMONLEE   ; HITMONLEE
-	db ICON_HITMONCHAN  ; HITMONCHAN
-	db ICON_LICKITUNG   ; LICKITUNG
-	db ICON_KOFFING     ; KOFFING
-	db ICON_WEEZING     ; WEEZING
-	db ICON_RHYHORN     ; RHYHORN
-	db ICON_RHYDON      ; RHYDON
-	db ICON_CHANSEY     ; CHANSEY
-	db ICON_TANGELA     ; TANGELA
-	db ICON_KANGASKHAN  ; KANGASKHAN
-	db ICON_HORSEA      ; HORSEA
-	db ICON_SEADRA      ; SEADRA
-	db ICON_GOLDEEN     ; GOLDEEN
-	db ICON_SEAKING     ; SEAKING
-	db ICON_STARYU      ; STARYU
-	db ICON_STARMIE     ; STARMIE
-	db ICON_MR__MIME    ; MR__MIME
-	db ICON_SCYTHER     ; SCYTHER
-	db ICON_JYNX        ; JYNX
-	db ICON_ELECTABUZZ  ; ELECTABUZZ
-	db ICON_MAGMAR      ; MAGMAR
-	db ICON_PINSIR      ; PINSIR
-	db ICON_TAUROS      ; TAUROS
-	db ICON_MAGIKARP    ; MAGIKARP
-	db ICON_GYARADOS    ; GYARADOS
-	db ICON_LAPRAS      ; LAPRAS
-	db ICON_DITTO       ; DITTO
-	db ICON_EEVEE       ; EEVEE
-	db ICON_VAPOREON    ; VAPOREON
-	db ICON_JOLTEON     ; JOLTEON
-	db ICON_FLAREON     ; FLAREON
-	db ICON_PORYGON     ; PORYGON
-	db ICON_OMANYTE     ; OMANYTE
-	db ICON_OMASTAR     ; OMASTAR
-	db ICON_KABUTO      ; KABUTO
-	db ICON_KABUTOPS    ; KABUTOPS
-	db ICON_AERODACTYL  ; AERODACTYL
-	db ICON_SNORLAX     ; SNORLAX
-	db ICON_ARTICUNO    ; ARTICUNO
-	db ICON_ZAPDOS      ; ZAPDOS
-	db ICON_MOLTRES     ; MOLTRES
-	db ICON_DRATINI     ; DRATINI
-	db ICON_DRAGONAIR   ; DRAGONAIR
-	db ICON_DRAGONITE   ; DRAGONITE
-	db ICON_MEWTWO      ; MEWTWO
-	db ICON_MEW         ; MEW
-	db ICON_CHIKORITA   ; CHIKORITA
-	db ICON_BAYLEEF     ; BAYLEEF
-	db ICON_MEGANIUM    ; MEGANIUM
-	db ICON_CYNDAQUIL   ; CYNDAQUIL
-	db ICON_QUILAVA     ; QUILAVA
-	db ICON_TYPHLOSION  ; TYPHLOSION
-	db ICON_TOTODILE    ; TOTODILE
-	db ICON_CROCONAW    ; CROCONAW
-	db ICON_FERALIGATR  ; FERALIGATR
-	db ICON_SENTRET     ; SENTRET
-	db ICON_FURRET      ; FURRET
-	db ICON_HOOTHOOT    ; HOOTHOOT
-	db ICON_NOCTOWL     ; NOCTOWL
-	db ICON_LEDYBA      ; LEDYBA
-	db ICON_LEDIAN      ; LEDIAN
-	db ICON_SPINARAK    ; SPINARAK
-	db ICON_ARIADOS     ; ARIADOS
-	db ICON_CROBAT      ; CROBAT
-	db ICON_CHINCHOU    ; CHINCHOU
-	db ICON_LANTURN     ; LANTURN
-	db ICON_PICHU       ; PICHU
-	db ICON_CLEFFA      ; CLEFFA
-	db ICON_IGGLYBUFF   ; IGGLYBUFF
-	db ICON_TOGEPI      ; TOGEPI
-	db ICON_TOGETIC     ; TOGETIC
-	db ICON_NATU        ; NATU
-	db ICON_XATU        ; XATU
-	db ICON_MAREEP      ; MAREEP
-	db ICON_FLAAFFY     ; FLAAFFY
-	db ICON_AMPHAROS    ; AMPHAROS
-	db ICON_BELLOSSOM   ; BELLOSSOM
-	db ICON_MARILL      ; MARILL
-	db ICON_AZUMARILL   ; AZUMARILL
-	db ICON_SUDOWOODO   ; SUDOWOODO
-	db ICON_POLITOED    ; POLITOED
-	db ICON_HOPPIP      ; HOPPIP
-	db ICON_SKIPLOOM    ; SKIPLOOM
-	db ICON_JUMPLUFF    ; JUMPLUFF
-	db ICON_AIPOM       ; AIPOM
-	db ICON_SUNKERN     ; SUNKERN
-	db ICON_SUNFLORA    ; SUNFLORA
-	db ICON_YANMA       ; YANMA
-	db ICON_WOOPER      ; WOOPER
-	db ICON_QUAGSIRE    ; QUAGSIRE
-	db ICON_ESPEON      ; ESPEON
-	db ICON_UMBREON     ; UMBREON
-	db ICON_MURKROW     ; MURKROW
-	db ICON_SLOWKING    ; SLOWKING
-	db ICON_MISDREAVUS  ; MISDREAVUS
-	db ICON_UNOWN       ; UNOWN
-	db ICON_WOBBUFFET   ; WOBBUFFET
-	db ICON_GIRAFARIG   ; GIRAFARIG
-	db ICON_PINECO      ; PINECO
-	db ICON_FORRETRESS  ; FORRETRESS
-	db ICON_DUNSPARCE   ; DUNSPARCE
-	db ICON_GLIGAR      ; GLIGAR
-	db ICON_STEELIX     ; STEELIX
-	db ICON_SNUBBULL    ; SNUBBULL
-	db ICON_GRANBULL    ; GRANBULL
-	db ICON_QWILFISH    ; QWILFISH
-	db ICON_SCIZOR      ; SCIZOR
-	db ICON_SHUCKLE     ; SHUCKLE
-	db ICON_HERACROSS   ; HERACROSS
-	db ICON_SNEASEL     ; SNEASEL
-	db ICON_TEDDIURSA   ; TEDDIURSA
-	db ICON_URSARING    ; URSARING
-	db ICON_SLUGMA      ; SLUGMA
-	db ICON_MAGCARGO    ; MAGCARGO
-	db ICON_SWINUB      ; SWINUB
-	db ICON_PILOSWINE   ; PILOSWINE
-	db ICON_CORSOLA     ; CORSOLA
-	db ICON_REMORAID    ; REMORAID
-	db ICON_OCTILLERY   ; OCTILLERY
-	db ICON_DELIBIRD    ; DELIBIRD
-	db ICON_MANTINE     ; MANTINE
-	db ICON_SKARMORY    ; SKARMORY
-	db ICON_HOUNDOUR    ; HOUNDOUR
-	db ICON_HOUNDOOM    ; HOUNDOOM
-	db ICON_KINGDRA     ; KINGDRA
-	db ICON_PHANPY      ; PHANPY
-	db ICON_DONPHAN     ; DONPHAN
-	db ICON_PORYGON2    ; PORYGON2
-	db ICON_STANTLER    ; STANTLER
-	db ICON_SMEARGLE    ; SMEARGLE
-	db ICON_TYROGUE     ; TYROGUE
-	db ICON_HITMONTOP   ; HITMONTOP
-	db ICON_SMOOCHUM    ; SMOOCHUM
-	db ICON_ELEKID      ; ELEKID
-	db ICON_MAGBY       ; MAGBY
-	db ICON_MILTANK     ; MILTANK
-	db ICON_BLISSEY     ; BLISSEY
-	db ICON_RAIKOU      ; RAIKOU
-	db ICON_ENTEI       ; ENTEI
-	db ICON_SUICUNE     ; SUICUNE
-	db ICON_LARVITAR    ; LARVITAR
-	db ICON_PUPITAR     ; PUPITAR
-	db ICON_TYRANITAR   ; TYRANITAR
-	db ICON_LUGIA       ; LUGIA
-	db ICON_HO_OH       ; HO_OH
-	db ICON_CELEBI      ; CELEBI
+	table_width 4, MonMenuIcons
+	mon_menu_icon BulbasaurIcon,      TEAL,   GREEN  ; BULBASAUR
+	mon_menu_icon IvysaurIcon,        TEAL,   GREEN  ; IVYSAUR
+	mon_menu_icon VenusaurIcon,       TEAL,   GREEN  ; VENUSAUR
+	mon_menu_icon CharmanderIcon,     RED,    BROWN  ; CHARMANDER
+	mon_menu_icon CharmeleonIcon,     RED,    PINK   ; CHARMELEON
+	mon_menu_icon CharizardIcon,      RED,    PURPLE ; CHARIZARD
+	mon_menu_icon SquirtleIcon,       BLUE,   GREEN  ; SQUIRTLE
+	mon_menu_icon WartortleIcon,      BLUE,   GREEN  ; WARTORTLE
+	mon_menu_icon BlastoiseIcon,      BLUE,   TEAL   ; BLASTOISE
+	mon_menu_icon CaterpieIcon,       GREEN,  BROWN  ; CATERPIE
+	mon_menu_icon MetapodIcon,        GREEN,  BROWN  ; METAPOD
+	mon_menu_icon ButterfreeIcon,     BLUE,   PINK   ; BUTTERFREE
+	mon_menu_icon WeedleIcon,         RED,    PINK   ; WEEDLE
+	mon_menu_icon KakunaIcon,         BROWN,  GREEN  ; KAKUNA
+	mon_menu_icon BeedrillIcon,       RED,    TEAL   ; BEEDRILL
+	mon_menu_icon PidgeyIcon,         BROWN,  GREEN  ; PIDGEY
+	mon_menu_icon PidgeottoIcon,      BROWN,  GREEN  ; PIDGEOTTO
+	mon_menu_icon PidgeotIcon,        BROWN,  GREEN  ; PIDGEOT
+	mon_menu_icon RattataIcon,        PURPLE, GREEN  ; RATTATA
+	mon_menu_icon RaticateIcon,       BROWN,  RED    ; RATICATE
+	mon_menu_icon SpearowIcon,        BROWN,  BROWN  ; SPEAROW
+	mon_menu_icon FearowIcon,         BROWN,  GREEN  ; FEAROW
+	mon_menu_icon EkansIcon,          PURPLE, GREEN  ; EKANS
+	mon_menu_icon ArbokIcon,          PURPLE, GREEN  ; ARBOK
+	mon_menu_icon PikachuIcon,        RED,    PINK   ; PIKACHU
+	mon_menu_icon RaichuIcon,         RED,    BROWN  ; RAICHU
+	mon_menu_icon SandshrewIcon,      BROWN,  TEAL   ; SANDSHREW
+	mon_menu_icon SandslashIcon,      BROWN,  RED    ; SANDSLASH
+	mon_menu_icon NidoranFIcon,       BLUE,   PINK   ; NIDORAN_F
+	mon_menu_icon NidorinaIcon,       BLUE,   PINK   ; NIDORINA
+	mon_menu_icon NidoqueenIcon,      BLUE,   GREEN  ; NIDOQUEEN
+	mon_menu_icon NidoranMIcon,       PURPLE, BLUE   ; NIDORAN_M
+	mon_menu_icon NidorinoIcon,       PURPLE, BLUE   ; NIDORINO
+	mon_menu_icon NidokingIcon,       PURPLE, BLUE   ; NIDOKING
+	mon_menu_icon ClefairyIcon,       PINK,   GREEN  ; CLEFAIRY
+	mon_menu_icon ClefableIcon,       PINK,   GREEN  ; CLEFABLE
+	mon_menu_icon VulpixIcon,         RED,    BROWN  ; VULPIX
+	mon_menu_icon NinetalesIcon,      BROWN,  GRAY   ; NINETALES
+	mon_menu_icon JigglypuffIcon,     PINK,   GREEN  ; JIGGLYPUFF
+	mon_menu_icon WigglytuffIcon,     PINK,   GREEN  ; WIGGLYTUFF
+	mon_menu_icon ZubatIcon,          BLUE,   GREEN  ; ZUBAT
+	mon_menu_icon GolbatIcon,         BLUE,   GREEN  ; GOLBAT
+	mon_menu_icon OddishIcon,         GREEN,  BROWN  ; ODDISH
+	mon_menu_icon GloomIcon,          RED,    BROWN  ; GLOOM
+	mon_menu_icon VileplumeIcon,      RED,    BROWN  ; VILEPLUME
+	mon_menu_icon ParasIcon,          RED,    GREEN  ; PARAS
+	mon_menu_icon ParasectIcon,       RED,    GREEN  ; PARASECT
+	mon_menu_icon VenonatIcon,        PURPLE, BLUE   ; VENONAT
+	mon_menu_icon VenomothIcon,       PURPLE, BLUE   ; VENOMOTH
+	mon_menu_icon DiglettIcon,        BROWN,  BLUE   ; DIGLETT
+	mon_menu_icon DugtrioIcon,        BROWN,  BLUE   ; DUGTRIO
+	mon_menu_icon MeowthIcon,         BROWN,  PINK   ; MEOWTH
+	mon_menu_icon PersianIcon,        BROWN,  PINK   ; PERSIAN
+	mon_menu_icon PsyduckIcon,        BROWN,  BLUE   ; PSYDUCK
+	mon_menu_icon GolduckIcon,        BLUE,   TEAL   ; GOLDUCK
+	mon_menu_icon MankeyIcon,         BROWN,  GREEN  ; MANKEY
+	mon_menu_icon PrimeapeIcon,       BROWN,  GREEN  ; PRIMEAPE
+	mon_menu_icon GrowlitheIcon,      RED,    GREEN  ; GROWLITHE
+	mon_menu_icon ArcanineIcon,       RED,    GREEN  ; ARCANINE
+	mon_menu_icon PoliwagIcon,        BLUE,   BLUE   ; POLIWAG
+	mon_menu_icon PoliwhirlIcon,      BLUE,   BLUE   ; POLIWHIRL
+	mon_menu_icon PoliwrathIcon,      BLUE,   TEAL   ; POLIWRATH
+	mon_menu_icon AbraIcon,           BROWN,  PINK   ; ABRA
+	mon_menu_icon KadabraIcon,        BROWN,  PINK   ; KADABRA
+	mon_menu_icon AlakazamIcon,       BROWN,  PINK   ; ALAKAZAM
+	mon_menu_icon MachopIcon,         GRAY,   GREEN  ; MACHOP
+	mon_menu_icon MachokeIcon,        GRAY,   GREEN  ; MACHOKE
+	mon_menu_icon MachampIcon,        GRAY,   GREEN  ; MACHAMP
+	mon_menu_icon BellsproutIcon,     GREEN,  BROWN  ; BELLSPROUT
+	mon_menu_icon WeepinbellIcon,     GREEN,  BROWN  ; WEEPINBELL
+	mon_menu_icon VictreebelIcon,     GREEN,  BROWN  ; VICTREEBEL
+	mon_menu_icon TentacoolIcon,      BLUE,   TEAL   ; TENTACOOL
+	mon_menu_icon TentacruelIcon,     BLUE,   GREEN  ; TENTACRUEL
+	mon_menu_icon GeodudeIcon,        BROWN,  RED    ; GEODUDE
+	mon_menu_icon GravelerIcon,       BROWN,  RED    ; GRAVELER
+	mon_menu_icon GolemIcon,          BROWN,  RED    ; GOLEM
+	mon_menu_icon PonytaIcon,         RED,    BROWN  ; PONYTA
+	mon_menu_icon RapidashIcon,       RED,    PURPLE ; RAPIDASH
+	mon_menu_icon SlowpokeIcon,       PINK,   PURPLE ; SLOWPOKE
+	mon_menu_icon SlowbroIcon,        PINK,   PURPLE ; SLOWBRO
+	mon_menu_icon MagnemiteIcon,      BLUE,   BROWN  ; MAGNEMITE
+	mon_menu_icon MagnetonIcon,       BLUE,   BROWN  ; MAGNETON
+	mon_menu_icon FarfetchdIcon,      BROWN,  GRAY   ; FARFETCH_D
+	mon_menu_icon DoduoIcon,          BROWN,  GREEN  ; DODUO
+	mon_menu_icon DodrioIcon,         BROWN,  GREEN  ; DODRIO
+	mon_menu_icon SeelIcon,           BLUE,   GRAY   ; SEEL
+	mon_menu_icon DewgongIcon,        BLUE,   GRAY   ; DEWGONG
+	mon_menu_icon GrimerIcon,         PURPLE, GREEN  ; GRIMER
+	mon_menu_icon MukIcon,            PURPLE, GREEN  ; MUK
+	mon_menu_icon ShellderIcon,       PURPLE, BROWN  ; SHELLDER
+	mon_menu_icon CloysterIcon,       PURPLE, BLUE   ; CLOYSTER
+	mon_menu_icon GastlyIcon,         PURPLE, BLUE   ; GASTLY
+	mon_menu_icon HaunterIcon,        PURPLE, BLUE   ; HAUNTER
+	mon_menu_icon GengarIcon,         PURPLE, PINK   ; GENGAR
+	mon_menu_icon OnixIcon,           GRAY,   GREEN  ; ONIX
+	mon_menu_icon DrowzeeIcon,        BROWN,  PINK   ; DROWZEE
+	mon_menu_icon HypnoIcon,          BROWN,  PINK   ; HYPNO
+	mon_menu_icon KrabbyIcon,         RED,    GREEN  ; KRABBY
+	mon_menu_icon KinglerIcon,        RED,    GREEN  ; KINGLER
+	mon_menu_icon VoltorbIcon,        RED,    BLUE   ; VOLTORB
+	mon_menu_icon ElectrodeIcon,      RED,    BLUE   ; ELECTRODE
+	mon_menu_icon ExeggcuteIcon,      PINK,   GREEN  ; EXEGGCUTE
+	mon_menu_icon ExeggutorIcon,      GREEN,  BROWN  ; EXEGGUTOR
+	mon_menu_icon CuboneIcon,         BROWN,  TEAL   ; CUBONE
+	mon_menu_icon MarowakIcon,        BROWN,  GREEN  ; MAROWAK
+	mon_menu_icon HitmonleeIcon,      BROWN,  GREEN  ; HITMONLEE
+	mon_menu_icon HitmonchanIcon,     BROWN,  GREEN  ; HITMONCHAN
+	mon_menu_icon LickitungIcon,      PINK,   GREEN  ; LICKITUNG
+	mon_menu_icon KoffingIcon,        PURPLE, BLUE   ; KOFFING
+	mon_menu_icon WeezingIcon,        PURPLE, BLUE   ; WEEZING
+	mon_menu_icon RhyhornIcon,        GRAY,   BROWN  ; RHYHORN
+	mon_menu_icon RhydonIcon,         GRAY,   GRAY   ; RHYDON
+	mon_menu_icon ChanseyIcon,        PINK,   GREEN  ; CHANSEY
+	mon_menu_icon TangelaIcon,        BLUE,   GREEN  ; TANGELA
+	mon_menu_icon KangaskhanIcon,     BROWN,  GRAY   ; KANGASKHAN
+	mon_menu_icon HorseaIcon,         BLUE,   PINK   ; HORSEA
+	mon_menu_icon SeadraIcon,         BLUE,   PINK   ; SEADRA
+	mon_menu_icon GoldeenIcon,        RED,    BROWN  ; GOLDEEN
+	mon_menu_icon SeakingIcon,        RED,    BROWN  ; SEAKING
+	mon_menu_icon StaryuIcon,         BROWN,  BLUE   ; STARYU
+	mon_menu_icon StarmieIcon,        PURPLE, BLUE   ; STARMIE
+	mon_menu_icon MrMimeIcon,         PINK,   GREEN  ; MR__MIME
+	mon_menu_icon ScytherIcon,        GREEN,  GREEN  ; SCYTHER
+	mon_menu_icon JynxIcon,           PURPLE, PINK   ; JYNX
+	mon_menu_icon ElectabuzzIcon,     BROWN,  GREEN  ; ELECTABUZZ
+	mon_menu_icon MagmarIcon,         RED,    PINK   ; MAGMAR
+	mon_menu_icon PinsirIcon,         BROWN,  BLUE   ; PINSIR
+	mon_menu_icon TaurosIcon,         BROWN,  GREEN  ; TAUROS
+	mon_menu_icon MagikarpIcon,       RED,    GREEN  ; MAGIKARP
+	mon_menu_icon GyaradosIcon,       BLUE,   RED    ; GYARADOS
+	mon_menu_icon LaprasIcon,         BLUE,   PINK   ; LAPRAS
+	mon_menu_icon DittoIcon,          PINK,   BLUE   ; DITTO
+	mon_menu_icon EeveeIcon,          BROWN,  GRAY   ; EEVEE
+	mon_menu_icon VaporeonIcon,       BLUE,   PURPLE ; VAPOREON
+	mon_menu_icon JolteonIcon,        BROWN,  GREEN  ; JOLTEON
+	mon_menu_icon FlareonIcon,        RED,    BROWN  ; FLAREON
+	mon_menu_icon PorygonIcon,        PINK,   PURPLE ; PORYGON
+	mon_menu_icon OmanyteIcon,        BLUE,   GRAY   ; OMANYTE
+	mon_menu_icon OmastarIcon,        BLUE,   GRAY   ; OMASTAR
+	mon_menu_icon KabutoIcon,         BROWN,  GREEN  ; KABUTO
+	mon_menu_icon KabutopsIcon,       BROWN,  GREEN  ; KABUTOPS
+	mon_menu_icon AerodactylIcon,     GRAY,   PURPLE ; AERODACTYL
+	mon_menu_icon SnorlaxIcon,        BROWN,  BLUE   ; SNORLAX
+	mon_menu_icon ArticunoIcon,       BLUE,   BLUE   ; ARTICUNO
+	mon_menu_icon ZapdosIcon,         BROWN,  RED    ; ZAPDOS
+	mon_menu_icon MoltresIcon,        RED,    PINK   ; MOLTRES
+	mon_menu_icon DratiniIcon,        BLUE,   PURPLE ; DRATINI
+	mon_menu_icon DragonairIcon,      BLUE,   PURPLE ; DRAGONAIR
+	mon_menu_icon DragoniteIcon,      RED,    GREEN  ; DRAGONITE
+	mon_menu_icon MewtwoIcon,         PURPLE, GREEN  ; MEWTWO
+	mon_menu_icon MewIcon,            PINK,   BLUE   ; MEW
+	mon_menu_icon ChikoritaIcon,      GREEN,  BROWN  ; CHIKORITA
+	mon_menu_icon BayleefIcon,        GREEN,  BROWN  ; BAYLEEF
+	mon_menu_icon MeganiumIcon,       GREEN,  BROWN  ; MEGANIUM
+	mon_menu_icon CyndaquilIcon,      RED,    PURPLE ; CYNDAQUIL
+	mon_menu_icon QuilavaIcon,        RED,    PURPLE ; QUILAVA
+	mon_menu_icon TyphlosionIcon,     RED,    PURPLE ; TYPHLOSION
+	mon_menu_icon TotodileIcon,       BLUE,   GREEN  ; TOTODILE
+	mon_menu_icon CroconawIcon,       BLUE,   GREEN  ; CROCONAW
+	mon_menu_icon FeraligatrIcon,     BLUE,   TEAL   ; FERALIGATR
+	mon_menu_icon SentretIcon,        BROWN,  PINK   ; SENTRET
+	mon_menu_icon FurretIcon,         BROWN,  PINK   ; FURRET
+	mon_menu_icon HoothootIcon,       BROWN,  GREEN  ; HOOTHOOT
+	mon_menu_icon NoctowlIcon,        BROWN,  GREEN  ; NOCTOWL
+	mon_menu_icon LedybaIcon,         RED,    BROWN  ; LEDYBA
+	mon_menu_icon LedianIcon,         RED,    BROWN  ; LEDIAN
+	mon_menu_icon SpinarakIcon,       GREEN,  PURPLE ; SPINARAK
+	mon_menu_icon AriadosIcon,        PINK,   PURPLE ; ARIADOS
+	mon_menu_icon CrobatIcon,         PURPLE, PINK   ; CROBAT
+	mon_menu_icon ChinchouIcon,       BLUE,   TEAL   ; CHINCHOU
+	mon_menu_icon LanturnIcon,        BLUE,   TEAL   ; LANTURN
+	mon_menu_icon PichuIcon,          RED,    BROWN  ; PICHU
+	mon_menu_icon CleffaIcon,         PINK,   GREEN  ; CLEFFA
+	mon_menu_icon IgglybuffIcon,      PINK,   GREEN  ; IGGLYBUFF
+	mon_menu_icon TogepiIcon,         RED,    BLUE   ; TOGEPI
+	mon_menu_icon TogeticIcon,        RED,    BLUE   ; TOGETIC
+	mon_menu_icon NatuIcon,           GREEN,  GREEN  ; NATU
+	mon_menu_icon XatuIcon,           GREEN,  GREEN  ; XATU
+	mon_menu_icon MareepIcon,         BLUE,   BLUE   ; MAREEP
+	mon_menu_icon FlaaffyIcon,        PINK,   PINK   ; FLAAFFY
+	mon_menu_icon AmpharosIcon,       BROWN,  GRAY   ; AMPHAROS
+	mon_menu_icon BellossomIcon,      GREEN,  BLUE   ; BELLOSSOM
+	mon_menu_icon MarillIcon,         BLUE,   GREEN  ; MARILL
+	mon_menu_icon AzumarillIcon,      BLUE,   BROWN  ; AZUMARILL
+	mon_menu_icon SudowoodoIcon,      GREEN,  PINK   ; SUDOWOODO
+	mon_menu_icon PolitoedIcon,       GREEN,  GRAY   ; POLITOED
+	mon_menu_icon HoppipIcon,         PINK,   GREEN  ; HOPPIP
+	mon_menu_icon SkiploomIcon,       GREEN,  PURPLE ; SKIPLOOM
+	mon_menu_icon JumpluffIcon,       BLUE,   PINK   ; JUMPLUFF
+	mon_menu_icon AipomIcon,          PURPLE, PINK   ; AIPOM
+	mon_menu_icon SunkernIcon,        GREEN,  BROWN  ; SUNKERN
+	mon_menu_icon SunfloraIcon,       GREEN,  BROWN  ; SUNFLORA
+	mon_menu_icon YanmaIcon,          RED,    BLUE   ; YANMA
+	mon_menu_icon WooperIcon,         BLUE,   PINK   ; WOOPER
+	mon_menu_icon QuagsireIcon,       BLUE,   PURPLE ; QUAGSIRE
+	mon_menu_icon EspeonIcon,         PINK,   GREEN  ; ESPEON
+	mon_menu_icon UmbreonIcon,        BROWN,  BLUE   ; UMBREON
+	mon_menu_icon MurkrowIcon,        BLUE,   PURPLE ; MURKROW
+	mon_menu_icon SlowkingIcon,       PINK,   BLUE   ; SLOWKING
+	mon_menu_icon MisdreavusIcon,     PURPLE, GREEN  ; MISDREAVUS
+	mon_menu_icon UnownIcon,          GRAY,   BLUE   ; UNOWN
+	mon_menu_icon WobbuffetIcon,      BLUE,   PURPLE ; WOBBUFFET
+	mon_menu_icon GirafarigIcon,      PINK,   BLUE   ; GIRAFARIG
+	mon_menu_icon PinecoIcon,         GREEN,  RED    ; PINECO
+	mon_menu_icon ForretressIcon,     RED,    GREEN  ; FORRETRESS
+	mon_menu_icon DunsparceIcon,      BLUE,   PINK   ; DUNSPARCE
+	mon_menu_icon GligarIcon,         PINK,   BLUE   ; GLIGAR
+	mon_menu_icon SteelixIcon,        GRAY,   BROWN  ; STEELIX
+	mon_menu_icon SnubbullIcon,       PINK,   BLUE   ; SNUBBULL
+	mon_menu_icon GranbullIcon,       PURPLE, GRAY   ; GRANBULL
+	mon_menu_icon QwilfishIcon,       BLUE,   PINK   ; QWILFISH
+	mon_menu_icon ScizorIcon,         RED,    GREEN  ; SCIZOR
+	mon_menu_icon ShuckleIcon,        RED,    BLUE   ; SHUCKLE
+	mon_menu_icon HeracrossIcon,      BLUE,   PURPLE ; HERACROSS
+	mon_menu_icon SneaselIcon,        BLUE,   PINK   ; SNEASEL
+	mon_menu_icon TeddiursaIcon,      BROWN,  GREEN  ; TEDDIURSA
+	mon_menu_icon UrsaringIcon,       BROWN,  GREEN  ; URSARING
+	mon_menu_icon SlugmaIcon,         RED,    GRAY   ; SLUGMA
+	mon_menu_icon MagcargoIcon,       RED,    BLUE   ; MAGCARGO
+	mon_menu_icon SwinubIcon,         BROWN,  BLUE   ; SWINUB
+	mon_menu_icon PiloswineIcon,      BROWN,  GREEN  ; PILOSWINE
+	mon_menu_icon CorsolaIcon,        PINK,   BLUE   ; CORSOLA
+	mon_menu_icon RemoraidIcon,       BLUE,   GRAY   ; REMORAID
+	mon_menu_icon OctilleryIcon,      RED,    GREEN  ; OCTILLERY
+	mon_menu_icon DelibirdIcon,       RED,    PINK   ; DELIBIRD
+	mon_menu_icon MantineIcon,        BLUE,   TEAL   ; MANTINE
+	mon_menu_icon SkarmoryIcon,       RED,    GREEN  ; SKARMORY
+	mon_menu_icon HoundourIcon,       RED,    BLUE   ; HOUNDOUR
+	mon_menu_icon HoundoomIcon,       RED,    BLUE   ; HOUNDOOM
+	mon_menu_icon KingdraIcon,        BLUE,   PURPLE ; KINGDRA
+	mon_menu_icon PhanpyIcon,         BLUE,   TEAL   ; PHANPY
+	mon_menu_icon DonphanIcon,        BLUE,   BROWN  ; DONPHAN
+	mon_menu_icon Porygon2Icon,       PINK,   BLUE   ; PORYGON2
+	mon_menu_icon StantlerIcon,       BROWN,  GREEN  ; STANTLER
+	mon_menu_icon SmeargleIcon,       BROWN,  GREEN  ; SMEARGLE
+	mon_menu_icon TyrogueIcon,        PINK,   BLUE   ; TYROGUE
+	mon_menu_icon HitmontopIcon,      BROWN,  PURPLE ; HITMONTOP
+	mon_menu_icon SmoochumIcon,       PURPLE, PINK   ; SMOOCHUM
+	mon_menu_icon ElekidIcon,         BROWN,  BROWN  ; ELEKID
+	mon_menu_icon MagbyIcon,          RED,    BROWN  ; MAGBY
+	mon_menu_icon MiltankIcon,        PINK,   BLUE   ; MILTANK
+	mon_menu_icon BlisseyIcon,        PINK,   PINK   ; BLISSEY
+	mon_menu_icon RaikouIcon,         BROWN,  BROWN  ; RAIKOU
+	mon_menu_icon EnteiIcon,          RED,    RED    ; ENTEI
+	mon_menu_icon SuicuneIcon,        BLUE,   BLUE   ; SUICUNE
+	mon_menu_icon LarvitarIcon,       GREEN,  GREEN  ; LARVITAR
+	mon_menu_icon PupitarIcon,        BLUE,   PURPLE ; PUPITAR
+	mon_menu_icon TyranitarIcon,      GREEN,  PURPLE ; TYRANITAR
+	mon_menu_icon LugiaIcon,          BLUE,   PINK   ; LUGIA
+	mon_menu_icon HoOhIcon,           RED,    BROWN  ; HO_OH
+	mon_menu_icon CelebiIcon,         GREEN,  PINK   ; CELEBI
+	mon_menu_icon TreeckoIcon,        GREEN,  BLUE   ; TREECKO
+	mon_menu_icon GrovyleIcon,        GREEN,  BLUE   ; GROVYLE
+	mon_menu_icon SceptileIcon,       GREEN,  BLUE   ; SCEPTILE
+	mon_menu_icon TorchicIcon,        RED,    BROWN  ; TORCHIC
+	mon_menu_icon CombuskenIcon,      RED,    BROWN  ; COMBUSKEN
+	mon_menu_icon BlazikenIcon,       RED,    BROWN  ; BLAZIKEN
+	mon_menu_icon MudkipIcon,         BLUE,   PURPLE ; MUDKIP
+	mon_menu_icon MarshtompIcon,      BLUE,   PURPLE ; MARSHTOMP
+	mon_menu_icon SwampertIcon,       BLUE,   PURPLE ; SWAMPERT
+	mon_menu_icon PoochyenaIcon,      GRAY,   BROWN  ; POOCHYENA
+	mon_menu_icon MightyenaIcon,      GRAY,   BROWN  ; MIGHTYENA
+	mon_menu_icon WingullIcon,        BLUE,   GREEN  ; WINGULL
+	mon_menu_icon PelipperIcon,       BLUE,   GREEN  ; PELIPPER
+	mon_menu_icon RaltsIcon,          GREEN,  BLUE   ; RALTS
+	mon_menu_icon KirliaIcon,         GREEN,  BLUE   ; KIRLIA
+	mon_menu_icon GardevoirIcon,      GREEN,  BLUE   ; GARDEVOIR
+	mon_menu_icon GalladeIcon,        GREEN,  BLUE   ; GALLADE
+	mon_menu_icon ShroomishIcon,      GREEN,  RED    ; SHROOMISH
+	mon_menu_icon BreloomIcon,        GREEN,  RED    ; BRELOOM
+	mon_menu_icon MakuhitaIcon,       GRAY,   RED    ; MAKUHITA
+	mon_menu_icon HariyamaIcon,       BROWN,  PURPLE ; HARIYAMA
+	mon_menu_icon SkittyIcon,         PINK,   RED    ; SKITTY
+	mon_menu_icon DelcattyIcon,       PURPLE, RED    ; DELCATTY
+	mon_menu_icon SableyeIcon,        PURPLE, GREEN  ; SABLEYE
+	mon_menu_icon MawileIcon,         GRAY,   PURPLE ; MAWILE
+	mon_menu_icon AronIcon,           GRAY,   TEAL   ; ARON
+	mon_menu_icon LaironIcon,         GRAY,   TEAL   ; LAIRON
+	mon_menu_icon AggronIcon,         GRAY,   TEAL   ; AGGRON
+	mon_menu_icon MedititeIcon,       BLUE,   RED    ; MEDITITE
+	mon_menu_icon MedichamIcon,       PINK,   BLUE   ; MEDICHAM
+	mon_menu_icon ElectrikeIcon,      GREEN,  TEAL   ; ELECTRIKE
+	mon_menu_icon ManectricIcon,      BLUE,   GRAY   ; MANECTRIC
+	mon_menu_icon RoseliaIcon,        GREEN,  PURPLE ; ROSELIA
+	mon_menu_icon RoseradeIcon,       GREEN,  PURPLE ; ROSERADE
+	mon_menu_icon CarvanhaIcon,       RED,    TEAL   ; CARVANHA
+	mon_menu_icon SharpedoIcon,       BLUE,   PURPLE ; SHARPEDO
+	mon_menu_icon NumelIcon,          GREEN,  BLUE   ; NUMEL
+	mon_menu_icon CameruptIcon,       RED,    GRAY   ; CAMERUPT
+	mon_menu_icon TorkoalIcon,        RED,    BROWN  ; TORKOAL
+	mon_menu_icon TrapinchIcon,       RED,    GREEN  ; TRAPINCH
+	mon_menu_icon VibravaIcon,        GREEN,  RED    ; VIBRAVA
+	mon_menu_icon FlygonIcon,         GREEN,  TEAL   ; FLYGON
+	mon_menu_icon SwabluIcon,         BLUE,   BROWN  ; SWABLU
+	mon_menu_icon AltariaIcon,        BLUE,   BROWN  ; ALTARIA
+	mon_menu_icon ZangooseIcon,       RED,    BLUE   ; ZANGOOSE
+	mon_menu_icon SeviperIcon,        PURPLE, GREEN  ; SEVIPER
+	mon_menu_icon LunatoneIcon,       RED,    BLUE   ; LUNATONE
+	mon_menu_icon SolrockIcon,        BROWN,  RED    ; SOLROCK
+	mon_menu_icon BarboachIcon,       GRAY,   BROWN  ; BARBOACH
+	mon_menu_icon WhiscashIcon,       BLUE,   GRAY   ; WHISCASH
+	mon_menu_icon CorphishIcon,       RED,    PINK   ; CORPHISH
+	mon_menu_icon CrawdauntIcon,      RED,    PINK   ; CRAWDAUNT
+	mon_menu_icon BaltoyIcon,         RED,    GREEN  ; BALTOY
+	mon_menu_icon ClaydolIcon,        RED,    BROWN  ; CLAYDOL
+	mon_menu_icon LileepIcon,         PURPLE, GREEN  ; LILEEP
+	mon_menu_icon CradilyIcon,        GREEN,  PINK   ; CRADILY
+	mon_menu_icon AnorithIcon,        GREEN,  BROWN  ; ANORITH
+	mon_menu_icon ArmaldoIcon,        BLUE,   BROWN  ; ARMALDO
+	mon_menu_icon FeebasIcon,         BLUE,   PURPLE ; FEEBAS
+	mon_menu_icon MiloticIcon,        RED,    PURPLE ; MILOTIC
+	mon_menu_icon ShuppetIcon,        PURPLE, TEAL   ; SHUPPET
+	mon_menu_icon BanetteIcon,        GRAY,   TEAL   ; BANETTE
+	mon_menu_icon DuskullIcon,        GRAY,   RED    ; DUSKULL
+	mon_menu_icon DusclopsIcon,       GRAY,   RED    ; DUSCLOPS
+	mon_menu_icon DusknoirIcon,       GRAY,   BLUE   ; DUSKNOIR
+	mon_menu_icon AbsolIcon,          GRAY,   RED    ; ABSOL
+	mon_menu_icon SnoruntIcon,        RED,    TEAL   ; SNORUNT
+	mon_menu_icon GlalieIcon,         BLUE,   RED    ; GLALIE
+	mon_menu_icon FroslassIcon,       BLUE,   PINK   ; FROSLASS
+	mon_menu_icon SphealIcon,         PURPLE, PINK   ; SPHEAL
+	mon_menu_icon SealeoIcon,         PURPLE, PINK   ; SEALEO
+	mon_menu_icon WalreinIcon,        TEAL,   PINK   ; WALREIN
+	mon_menu_icon BagonIcon,          BLUE,   GREEN  ; BAGON
+	mon_menu_icon ShelgonIcon,        GRAY,   GREEN  ; SHELGON
+	mon_menu_icon SalamenceIcon,      BLUE,   GREEN  ; SALAMENCE
+	mon_menu_icon BeldumIcon,         BLUE,   GRAY   ; BELDUM
+	mon_menu_icon MetangIcon,         BLUE,   GRAY   ; METANG
+	mon_menu_icon MetagrossIcon,      BLUE,   GRAY   ; METAGROSS
+	mon_menu_icon RegirockIcon,       RED,    BROWN  ; REGIROCK
+	mon_menu_icon RegiceIcon,         GRAY,   PINK   ; REGICE
+	mon_menu_icon RegisteelIcon,      GRAY,   GREEN  ; REGISTEEL
+	mon_menu_icon KyogreIcon,         BLUE,   PURPLE ; KYOGRE
+	mon_menu_icon GroudonIcon,        RED,    BROWN  ; GROUDON
+	mon_menu_icon RayquazaIcon,       GREEN,  GRAY   ; RAYQUAZA
+	mon_menu_icon ShinxIcon,          BLUE,   BROWN  ; SHINX
+	mon_menu_icon LuxioIcon,          BLUE,   BROWN  ; LUXIO
+	mon_menu_icon LuxrayIcon,         BLUE,   BROWN  ; LUXRAY
+	mon_menu_icon CranidosIcon,       BLUE,   RED    ; CRANIDOS
+	mon_menu_icon RampardosIcon,      BLUE,   RED    ; RAMPARDOS
+	mon_menu_icon ShieldonIcon,       GRAY,   BLUE   ; SHIELDON
+	mon_menu_icon BastiodonIcon,      GRAY,   BLUE   ; BASTIODON
+	mon_menu_icon AmbipomIcon,        PURPLE, PINK   ; AMBIPOM
+	mon_menu_icon BunearyIcon,        BROWN,  PINK   ; BUNEARY
+	mon_menu_icon LopunnyIcon,        BROWN,  PINK   ; LOPUNNY
+	mon_menu_icon MismagiusIcon,      PURPLE, BROWN  ; MISMAGIUS
+	mon_menu_icon HonchkrowIcon,      GRAY,   PURPLE ; HONCHKROW
+	mon_menu_icon BronzorIcon,        BLUE,   GREEN  ; BRONZOR
+	mon_menu_icon BronzongIcon,       BLUE,   GREEN  ; BRONZONG
+	mon_menu_icon GibleIcon,          TEAL,   BLUE   ; GIBLE
+	mon_menu_icon GabiteIcon,         BLUE,   GRAY   ; GABITE
+	mon_menu_icon GarchompIcon,       BLUE,   GRAY   ; GARCHOMP
+	mon_menu_icon RioluIcon,          BLUE,   BROWN  ; RIOLU
+	mon_menu_icon LucarioIcon,        BLUE,   BROWN  ; LUCARIO
+	mon_menu_icon SkorupiIcon,        PURPLE, RED    ; SKORUPI
+	mon_menu_icon DrapionIcon,        PURPLE, RED    ; DRAPION
+	mon_menu_icon CroagunkIcon,       BLUE,   TEAL   ; CROAGUNK
+	mon_menu_icon ToxicroakIcon,      BLUE,   TEAL   ; TOXICROAK
+	mon_menu_icon SnoverIcon,         GREEN,  BLUE   ; SNOVER
+	mon_menu_icon AbomasnowIcon,      GREEN,  BLUE   ; ABOMASNOW
+	mon_menu_icon WeavileIcon,        GRAY,   PINK   ; WEAVILE
+	mon_menu_icon MagnezoneIcon,      BLUE,   BROWN  ; MAGNEZONE
+	mon_menu_icon LickilickyIcon,     PINK,   BROWN  ; LICKILICKY
+	mon_menu_icon RhyperiorIcon,      RED,    BROWN  ; RHYPERIOR
+	mon_menu_icon TangrowthIcon,      BLUE,   GREEN  ; TANGROWTH
+	mon_menu_icon TogekissIcon,       BLUE,   BROWN  ; TOGEKISS
+	mon_menu_icon YanmegaIcon,        GREEN,  BLUE   ; YANMEGA
+	mon_menu_icon LeafeonIcon,        GREEN,  BLUE   ; LEAFEON
+	mon_menu_icon GlaceonIcon,        BLUE,   TEAL   ; GLACEON
+	mon_menu_icon GliscorIcon,        PURPLE, BLUE   ; GLISCOR
+	mon_menu_icon MamoswineIcon,      BROWN,  GREEN  ; MAMOSWINE
+	mon_menu_icon PorygonZIcon,       BLUE,   GRAY   ; PORYGON_Z
+	mon_menu_icon RegigigasIcon,      BROWN,  GRAY   ; REGIGIGAS
 	assert_table_length NUM_POKEMON
+
+MonMenuIconEgg:
+	mon_menu_icon EggIcon,            GREEN,  BLUE   ; EGG

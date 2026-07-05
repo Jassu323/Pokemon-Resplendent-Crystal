@@ -35,7 +35,8 @@ DisplayCaughtContestMonStats:
 	ld de, .Health
 	call PlaceString
 
-	ld a, [wContestMon]
+	call BugContest_CopyContestMonToTempMon
+	ld a, [wTempMonSpecies]
 	ld [wNamedObjectIndex], a
 	call GetPokemonName
 	ld de, wStringBuffer1
@@ -44,8 +45,6 @@ DisplayCaughtContestMonStats:
 
 	ld h, b
 	ld l, c
-	ld a, [wContestMonLevel]
-	ld [wTempMonLevel], a
 	call PrintLevel
 
 	ld de, wEnemyMonNickname
@@ -59,7 +58,7 @@ DisplayCaughtContestMonStats:
 	call PrintLevel
 
 	hlcoord 11, 4
-	ld de, wContestMonMaxHP
+	ld de, wTempMonMaxHP
 	lb bc, 2, 3
 	call PrintNum
 

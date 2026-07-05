@@ -98,7 +98,7 @@ InitPokedex:
 	ld a, [wLastDexMode]
 	ld [wCurDexMode], a
 
-	call Pokedex_OrderMonsByMode
+	farcall Pokedex_OrderMonsByMode
 	call Pokedex_InitCursorPosition
 	call Pokedex_GetLandmark
 	farcall DrawDexEntryScreenRightEdge
@@ -412,8 +412,9 @@ Pokedex_InitDexEntryScreen:
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call DelayFrame
 	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call PlayMonCry2
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -488,8 +489,9 @@ Pokedex_ReinitDexEntryScreen:
 	ld [wCurPartySpecies], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call DelayFrame
 	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call PlayMonCry2
 	ld hl, wJumptableIndex
 	dec [hl]
 	ret
@@ -638,7 +640,7 @@ Pokedex_UpdateOptionScreen:
 
 	ld a, b
 	ld [wCurDexMode], a
-	call Pokedex_OrderMonsByMode
+	farcall Pokedex_OrderMonsByMode
 	call Pokedex_DisplayChangingModesMessage
 	call Pokedex_InitCursorPosition
 
@@ -727,7 +729,7 @@ Pokedex_UpdateSearchScreen:
 	jr nz, .show_search_results
 
 ; No mon with matching types was found.
-	call Pokedex_OrderMonsByMode
+	farcall Pokedex_OrderMonsByMode
 	call Pokedex_DisplayTypeNotFoundMessage
 	xor a
 	ldh [hBGMapMode], a
@@ -843,7 +845,7 @@ Pokedex_UpdateSearchResultsScreen:
 	ld [wPrevDexEntry + 1], a
 	call Pokedex_BlackOutBG
 	call ClearSprites
-	call Pokedex_OrderMonsByMode
+	farcall Pokedex_OrderMonsByMode
 	ld a, DEXSTATE_SEARCH_SCR
 	ld [wJumptableIndex], a
 	xor a
@@ -1748,177 +1750,6 @@ Pokedex_CheckSeen:
 	pop de
 	ret
 
-Pokedex_OrderMonsByMode:
-	ld hl, wEndPokedexSeen - 1
-	ld c, wEndPokedexSeen - wPokedexSeen
-.last_seen_loop
-	ld a, [hld]
-	and a
-	jr nz, .found_last_seen
-	dec c
-	jr nz, .last_seen_loop
-.found_last_seen
-	ld [wDexLastSeenValue], a
-	dec c
-	and a ;flags will be preserved until the jump, since all following operations are loads (and a push)
-	ld a, c
-	ld [wDexLastSeenIndex], a
-
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
-	ld hl, wPokedexOrder
-	ld a, -1
-	jr z, .nothing_seen
-	ld bc, (NUM_POKEMON + 1) * 2
-	call ByteFill
-	ld a, [wCurDexMode]
-	ld hl, .Jumptable
-	call Pokedex_LoadPointer
-	call _hl_
-.restore_bank_and_exit
-	pop af
-	ldh [rSVBK], a
-	ret
-
-.nothing_seen
-	ld [hli], a
-	ld [hl], a
-	xor a
-	ld hl, wDexListingEnd
-	ld [hli], a
-	ld [hl], a
-	jr .restore_bank_and_exit
-
-.Jumptable:
-	dw .NewMode
-	dw .OldMode
-	dw Pokedex_ABCMode
-
-.OldMode:
-	ld a, [wDexLastSeenValue] ;known to be non-zero
-	ld c, 9 ;bits are numbered 1-8 (instead of 0-7) because the first dex entry is #001, not #000
-.highest_bit_index_loop
-	dec c
-	add a, a
-	jr nc, .highest_bit_index_loop
-	ld a, [wDexLastSeenIndex]
-	ld l, a
-	ld h, 0
-	ld b, h
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	add hl, bc
-	ld d, h
-	ld e, l
-	ld hl, wPokedexOrder
-	ld c, b ;b = 0
-.old_mode_loop
-	inc bc
-	ld a, c
-	ld [hli], a
-	ld a, b
-	ld [hli], a
-	cp d
-	jr c, .old_mode_loop
-	ld a, c
-	cp e
-	jr c, .old_mode_loop
-	ld hl, wDexListingEnd
-	ld a, e
-	ld [hli], a
-	ld [hl], d
-	ret
-
-.NewMode:
-	ld hl, NewPokedexOrder
-	ld de, wPokedexOrder
-	ld bc, NUM_POKEMON * 2
-	call CopyBytes
-	ld a, BANK(wPokedexSeen)
-	ldh [rSVBK], a
-	ld bc, NUM_POKEMON
-	ld hl, NewPokedexOrder + (2 * NUM_POKEMON) - 1
-.new_mode_last_seen_loop
-	ld a, [hld]
-	ld d, a
-	ld a, [hld]
-	ld e, a
-	push hl
-	push bc
-	call CheckSeenMonIndex
-	pop bc
-	pop hl
-	jr nz, .found_last_seen_index
-	dec bc
-	ld a, b
-	or c
-	jr nz, .new_mode_last_seen_loop
-.found_last_seen_index
-	ld hl, wDexListingEnd
-	ld a, c
-	ld [hli], a
-	ld [hl], b
-	ret
-
-Pokedex_ABCMode:
-	; called in the WRAM bank of wPokedexOrder; the function doesn't preserve it
-	ld hl, wDexTempCounter
-	ld a, LOW(-NUM_POKEMON)
-	ld [hli], a
-	ld [hl], HIGH(-NUM_POKEMON)
-	ld bc, AlphabeticalPokedexOrder
-	ld de, wPokedexOrder
-	ld a, BANK(wPokedexSeen)
-	ldh [rSVBK], a
-.loop
-	push de
-	ld a, [bc]
-	ld e, a
-	inc bc
-	ld a, [bc]
-	ld d, a
-	push bc
-	call CheckSeenMonIndex
-	pop bc
-	pop de
-	jr z, .skip
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
-	dec bc
-	ld a, [bc]
-	ld [de], a
-	inc de
-	inc bc
-	ld a, [bc]
-	ld [de], a
-	inc de
-	ld a, BANK(wPokedexSeen)
-	ldh [rSVBK], a
-.skip
-	inc bc
-	ld hl, wDexTempCounter
-	inc [hl]
-	jr nz, .loop
-	inc hl
-	inc [hl]
-	jr nz, .loop
-	ld hl, $10000 - wPokedexOrder ;ld hl, -wPokedexOrder -- see https://github.com/rednex/rgbds/issues/279
-	add hl, de
-	srl h
-	rr l
-	ld a, l
-	ld [wDexListingEnd], a
-	ld a, h
-	ld [wDexListingEnd + 1], a
-	ret
-
-INCLUDE "data/pokemon/dex_order_alpha.asm"
-
-INCLUDE "data/pokemon/dex_order_new.asm"
-
 Pokedex_DisplayModeDescription:
 	xor a
 	ldh [hBGMapMode], a
@@ -2816,11 +2647,16 @@ _NewPokedexEntry:
 	call WaitBGMap
 	call GetBaseData
 	ld de, vTiles2
-	predef GetMonFrontpic
+	predef GetAnimatedFrontpic
+	hlcoord 1, 1
+	ld d, $0
+	ld e, ANIM_MON_MENU
+	predef LoadMonAnimation
+	ld a, 1
+	ld [wFrameCounter], a
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
-	ld a, [wCurPartySpecies]
-	call PlayMonCry
+	call DelayFrame
 	ret
 
 Pokedex_SetBGMapMode3:

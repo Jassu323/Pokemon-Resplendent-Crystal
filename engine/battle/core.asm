@@ -2487,7 +2487,7 @@ PlayFaintingCry:
 	farcall _PlayCry
 
 .wait
-	call WaitSFX
+	call WaitCrySFX
 
 .done
 	pop bc
@@ -3831,6 +3831,8 @@ ShowSetEnemyMonAndSendOutAnimation:
 	ld [wMonType], a
 	predef CopyMonToTempMon
 	call GetEnemyMonFrontpic
+	ld a, [wTempEnemyMonSpecies]
+	call PrepareBattleSampledCry
 
 	xor a
 	ld [wBattleAfterAnim], a
@@ -4331,6 +4333,8 @@ SendOutPlayerMon:
 	xor a
 	ld [wEnemyWrapCount], a
 	call SetPlayerTurn
+	ld a, [wCurPartySpecies]
+	call PrepareBattleSampledCry
 	xor a
 	ld [wBattleAfterAnim], a
 	ld [wBattleAnimParam], a
@@ -9237,6 +9241,8 @@ InitBattleDisplay:
 	call WaitBGMap
 	xor a
 	ldh [hBGMapMode], a
+	ld a, [wTempEnemyMonSpecies]
+	call PrepareBattleSampledCry
 	farcall BattleIntroSlidingPics
 	ld a, $1
 	ldh [hBGMapMode], a
@@ -9254,6 +9260,7 @@ InitBattleDisplay:
 	ld b, SCGB_BATTLE_COLORS
 	call GetSGBLayout
 	call SetDefaultBGPAndOBP
+	call DelayFrame
 	ld a, $90
 	ldh [hWY], a
 	xor a

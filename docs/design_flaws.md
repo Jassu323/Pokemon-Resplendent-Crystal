@@ -821,29 +821,28 @@ Edit `GetForestTreeFrame`:
 ```
 
 
-## The overworld scripting engine assumes no more than 127 banks
+## Fixed: the overworld scripting engine assumes no more than 127 banks
 
 The `CallCallback` and `ExitScriptSubroutine` functions in [engine/overworld/scripting.asm](https://github.com/pret/pokecrystal/blob/master/engine/overworld/scripting.asm) use the highest bit of the bank value, to store whether a certain script stack position should be treated as a return from a callback. However, it seems it was opted to explicitly use the `endcallback` command for this purpose, instead.
 
 As such, this bit serves no purpose but to make map scripts living in the higher banks of mappers such as Japanese Crystal's MBC30 crash for weird reasons.
 
-**Fix:**
+This project frees the high bit so `wScriptBank` can address MBC30 ROM banks `$80` through `$ff`.
 
-Remove the bit mask for the bank value in `ExitScriptSubroutine`:
+The bit mask for the bank value is removed from `ExitScriptSubroutine`:
 
 ```diff
  ExitScriptSubroutine:
  	...
  	add hl, de
  	ld a, [hli]
- 	ld b, a
 -	and $7f
  	ld [wScriptBank], a
  	ld a, [hli]
  	ld e, a
 ```
 
-And in `CallCallback`:
+And `CallCallback` no longer marks `wScriptBank` with bit 7:
 
 ```diff
  CallCallback::

@@ -37,8 +37,12 @@ PokemonTableGarbageCollection:
 	___conversion_bitmap_check_structs wOTPartyMons, PARTYMON_STRUCT_LENGTH, PARTY_LENGTH, .set_bit
 	___conversion_bitmap_check_structs wRoamMon1, wRoamMon2 - wRoamMon1, 3, .set_bit
 	___conversion_bitmap_check_structs wBugContestFirstPlaceMon, wBugContestSecondPlaceMon - wBugContestFirstPlaceMon, 3, .set_bit
-	___conversion_bitmap_check_values .set_bit, wBufferMonSpecies, wTempMonSpecies, wContestMonSpecies, \
+	___conversion_bitmap_check_values .set_bit, wBufferMonSpecies, wTempMonSpecies, \
 	                                            wBattleMonSpecies, wEnemyMonSpecies, wOddEggSpecies, wBaseSpecies
+	ld a, BANK(wContestMon)
+	ldh [rSVBK], a
+	ld a, [wContestMonSpecies]
+	call .set_bit
 	pop af
 	ldh [rSVBK], a
 	ldh a, [hSRAMBank]
@@ -78,10 +82,18 @@ MoveTableGarbageCollection:
 		call .set_bit
 		; may or may not be valid
 		___conversion_bitmap_check_structs wOTPartyMon1Moves + ___move, PARTYMON_STRUCT_LENGTH, PARTY_LENGTH, .set_bit
-		___conversion_bitmap_check_values .set_bit, wBufferMonMoves + ___move, wTempMonMoves + ___move, wContestMonMoves + ___move, \
+		___conversion_bitmap_check_values .set_bit, wBufferMonMoves + ___move, wTempMonMoves + ___move, \
 		                                            wBattleMonMoves + ___move, wEnemyMonMoves + ___move, wWildMonMoves + ___move, \
 		                                            wPlayerUsedMoves + ___move
 	endr
+	ld a, BANK(wContestMon)
+	ldh [rSVBK], a
+	FOR ___move, NUM_MOVES
+		ld a, [wContestMonMoves + ___move]
+		call .set_bit
+	endr
+	ld a, 1
+	ldh [rSVBK], a
 	ld a, [wNamedObjectIndex] ;or any of its aliases...
 	call .set_bit
 	; only valid sometimes

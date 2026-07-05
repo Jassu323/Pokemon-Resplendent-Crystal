@@ -102,6 +102,7 @@ Init::
 	ld a, BANK(WriteOAMDMACodeToHRAM) ; aka BANK(GameInit)
 	rst Bankswitch
 
+	call InitSampledCryMinMax2BitLevels
 	call WriteOAMDMACodeToHRAM
 
 	xor a

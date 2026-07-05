@@ -1,5 +1,5 @@
 CheckPartyFullAfterContest:
-	ld a, [wContestMonSpecies]
+	farcall BugContest_GetContestMonSpecies
 	and a
 	jp z, .DidntCatchAnything
 	ld [wCurPartySpecies], a
@@ -14,7 +14,7 @@ CheckPartyFullAfterContest:
 	ld c, a
 	ld b, 0
 	add hl, bc
-	ld a, [wContestMonSpecies]
+	ld a, [wCurPartySpecies]
 	ld [hli], a
 	ld [wCurSpecies], a
 	ld a, -1
@@ -26,9 +26,8 @@ CheckPartyFullAfterContest:
 	call AddNTimes
 	ld d, h
 	ld e, l
-	ld hl, wContestMon
-	ld bc, PARTYMON_STRUCT_LENGTH
-	call CopyBytes
+	ld c, PARTYMON_STRUCT_LENGTH
+	farcall BugContest_CopyContestMonToDE
 	ld a, [wPartyCount]
 	dec a
 	ld hl, wPartyMonOTs
@@ -79,9 +78,8 @@ CheckPartyFullAfterContest:
 	ld b, LANDMARK_NATIONAL_PARK
 	or b
 	ld [hl], a
-	xor a
-	ld [wContestMonSpecies], a
-	and a ; BUGCONTEST_CAUGHT_MON
+	farcall BugContest_ClearContestMon
+	xor a ; BUGCONTEST_CAUGHT_MON
 	ld [wScriptVar], a
 	ret
 
@@ -95,10 +93,9 @@ CheckPartyFullAfterContest:
 	jr nc, .BoxFull
 	xor a
 	ld [wCurPartyMon], a
-	ld hl, wContestMon
 	ld de, wBufferMon
-	ld bc, BOXMON_STRUCT_LENGTH
-	call CopyBytes
+	ld c, BOXMON_STRUCT_LENGTH
+	farcall BugContest_CopyContestMonToDE
 	ld hl, wPlayerName
 	ld de, wBufferMonOT
 	ld bc, NAME_LENGTH
@@ -140,8 +137,7 @@ CheckPartyFullAfterContest:
 	or b
 	ld [hl], a
 	call CloseSRAM
-	xor a
-	ld [wContestMon], a
+	farcall BugContest_ClearContestMon
 	ld a, BUGCONTEST_BOXED_MON
 	ld [wScriptVar], a
 	ret

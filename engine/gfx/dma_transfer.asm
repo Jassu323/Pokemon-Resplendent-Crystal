@@ -557,6 +557,11 @@ HDMATransfer1bpp::
 	ldh [rWBK], a
 	ret
 
+FarCopyBytesDouble_DoubleBankSwitch::
+; Keep the bank-switching copy in ROM0 so this ROMX bank is mapped on return.
+	call FarCopyBytesDouble
+	ret
+
 HDMATransfer_OnlyTopFourRows:
 	ld hl, .Function
 	jp CallInSafeGFXMode

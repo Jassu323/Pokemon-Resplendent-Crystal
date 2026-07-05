@@ -271,6 +271,128 @@ DEF JOHTO_POKEMON EQU const_value
 	const LUGIA      ; f9
 	const HO_OH      ; fa
 	const CELEBI     ; fb
+	const TREECKO    ; fc, NatDex 252
+	const GROVYLE    ; fd, NatDex 253
+	const SCEPTILE   ; fe, NatDex 254
+	const TORCHIC    ; ff, NatDex 255
+	const COMBUSKEN  ; 100, NatDex 256
+	const BLAZIKEN   ; 101, NatDex 257
+	const MUDKIP     ; 102, NatDex 258
+	const MARSHTOMP  ; 103, NatDex 259
+	const SWAMPERT   ; 104, NatDex 260
+	const POOCHYENA  ; 105, NatDex 261
+	const MIGHTYENA  ; 106, NatDex 262
+	const WINGULL    ; 107, NatDex 278
+	const PELIPPER   ; 108, NatDex 279
+	const RALTS      ; 109, NatDex 280
+	const KIRLIA     ; 10a, NatDex 281
+	const GARDEVOIR  ; 10b, NatDex 282
+	const GALLADE    ; 10c, NatDex 475
+	const SHROOMISH  ; 10d, NatDex 285
+	const BRELOOM    ; 10e, NatDex 286
+	const MAKUHITA   ; 10f, NatDex 296
+	const HARIYAMA   ; 110, NatDex 297
+	const SKITTY     ; 111, NatDex 300
+	const DELCATTY   ; 112, NatDex 301
+	const SABLEYE    ; 113, NatDex 302
+	const MAWILE     ; 114, NatDex 303
+	const ARON       ; 115, NatDex 304
+	const LAIRON     ; 116, NatDex 305
+	const AGGRON     ; 117, NatDex 306
+	const MEDITITE   ; 118, NatDex 307
+	const MEDICHAM   ; 119, NatDex 308
+	const ELECTRIKE  ; 11a, NatDex 309
+	const MANECTRIC  ; 11b, NatDex 310
+	const ROSELIA    ; 11c, NatDex 315
+	const ROSERADE   ; 11d, NatDex 407
+	const CARVANHA   ; 11e, NatDex 318
+	const SHARPEDO   ; 11f, NatDex 319
+	const NUMEL      ; 120, NatDex 322
+	const CAMERUPT   ; 121, NatDex 323
+	const TORKOAL    ; 122, NatDex 324
+	const TRAPINCH   ; 123, NatDex 328
+	const VIBRAVA    ; 124, NatDex 329
+	const FLYGON     ; 125, NatDex 330
+	const SWABLU     ; 126, NatDex 333
+	const ALTARIA    ; 127, NatDex 334
+	const ZANGOOSE   ; 128, NatDex 335
+	const SEVIPER    ; 129, NatDex 336
+	const LUNATONE   ; 12a, NatDex 337
+	const SOLROCK    ; 12b, NatDex 338
+	const BARBOACH   ; 12c, NatDex 339
+	const WHISCASH   ; 12d, NatDex 340
+	const CORPHISH   ; 12e, NatDex 341
+	const CRAWDAUNT  ; 12f, NatDex 342
+	const BALTOY     ; 130, NatDex 343
+	const CLAYDOL    ; 131, NatDex 344
+	const LILEEP     ; 132, NatDex 345
+	const CRADILY    ; 133, NatDex 346
+	const ANORITH    ; 134, NatDex 347
+	const ARMALDO    ; 135, NatDex 348
+	const FEEBAS     ; 136, NatDex 349
+	const MILOTIC    ; 137, NatDex 350
+	const SHUPPET    ; 138, NatDex 353
+	const BANETTE    ; 139, NatDex 354
+	const DUSKULL    ; 13a, NatDex 355
+	const DUSCLOPS   ; 13b, NatDex 356
+	const DUSKNOIR   ; 13c, NatDex 477
+	const ABSOL      ; 13d, NatDex 359
+	const SNORUNT    ; 13e, NatDex 361
+	const GLALIE     ; 13f, NatDex 362
+	const FROSLASS   ; 140, NatDex 478
+	const SPHEAL     ; 141, NatDex 363
+	const SEALEO     ; 142, NatDex 364
+	const WALREIN    ; 143, NatDex 365
+	const BAGON      ; 144, NatDex 371
+	const SHELGON    ; 145, NatDex 372
+	const SALAMENCE  ; 146, NatDex 373
+	const BELDUM     ; 147, NatDex 374
+	const METANG     ; 148, NatDex 375
+	const METAGROSS  ; 149, NatDex 376
+	const REGIROCK   ; 14a, NatDex 377
+	const REGICE     ; 14b, NatDex 378
+	const REGISTEEL  ; 14c, NatDex 379
+	const KYOGRE     ; 14d, NatDex 382
+	const GROUDON    ; 14e, NatDex 383
+	const RAYQUAZA   ; 14f, NatDex 384
+	const SHINX      ; 150, NatDex 403
+	const LUXIO      ; 151, NatDex 404
+	const LUXRAY     ; 152, NatDex 405
+	const CRANIDOS   ; 153, NatDex 408
+	const RAMPARDOS  ; 154, NatDex 409
+	const SHIELDON   ; 155, NatDex 410
+	const BASTIODON  ; 156, NatDex 411
+	const AMBIPOM    ; 157, NatDex 424
+	const BUNEARY    ; 158, NatDex 427
+	const LOPUNNY    ; 159, NatDex 428
+	const MISMAGIUS  ; 15a, NatDex 429
+	const HONCHKROW  ; 15b, NatDex 430
+	const BRONZOR    ; 15c, NatDex 436
+	const BRONZONG   ; 15d, NatDex 437
+	const GIBLE      ; 15e, NatDex 443
+	const GABITE     ; 15f, NatDex 444
+	const GARCHOMP   ; 160, NatDex 445
+	const RIOLU      ; 161, NatDex 447
+	const LUCARIO    ; 162, NatDex 448
+	const SKORUPI    ; 163, NatDex 451
+	const DRAPION    ; 164, NatDex 452
+	const CROAGUNK   ; 165, NatDex 453
+	const TOXICROAK  ; 166, NatDex 454
+	const SNOVER     ; 167, NatDex 459
+	const ABOMASNOW  ; 168, NatDex 460
+	const WEAVILE    ; 169, NatDex 461
+	const MAGNEZONE  ; 16a, NatDex 462
+	const LICKILICKY ; 16b, NatDex 463
+	const RHYPERIOR  ; 16c, NatDex 464
+	const TANGROWTH  ; 16d, NatDex 465
+	const TOGEKISS   ; 16e, NatDex 468
+	const YANMEGA    ; 16f, NatDex 469
+	const LEAFEON    ; 170, NatDex 470
+	const GLACEON    ; 171, NatDex 471
+	const GLISCOR    ; 172, NatDex 472
+	const MAMOSWINE  ; 173, NatDex 473
+	const PORYGON_Z  ; 174, NatDex 474
+	const REGIGIGAS  ; 175, NatDex 486
 DEF NUM_POKEMON EQU const_value - 1
 
 DEF EGG EQU -3
@@ -292,30 +414,30 @@ endc
 ; - UnownBitmasksPointers (see gfx/pokemon/unown_bitmask_pointers.asm)
 ; - UnownFramesPointers (see gfx/pokemon/unown_frame_pointers.asm)
 	const_def 1
-	const UNOWN_A ;  1
-	const UNOWN_B ;  2
-	const UNOWN_C ;  3
-	const UNOWN_D ;  4
-	const UNOWN_E ;  5
-	const UNOWN_F ;  6
-	const UNOWN_G ;  7
-	const UNOWN_H ;  8
-	const UNOWN_I ;  9
-	const UNOWN_J ; 10
-	const UNOWN_K ; 11
-	const UNOWN_L ; 12
-	const UNOWN_M ; 13
-	const UNOWN_N ; 14
-	const UNOWN_O ; 15
-	const UNOWN_P ; 16
-	const UNOWN_Q ; 17
-	const UNOWN_R ; 18
-	const UNOWN_S ; 19
-	const UNOWN_T ; 20
-	const UNOWN_U ; 21
-	const UNOWN_V ; 22
-	const UNOWN_W ; 23
-	const UNOWN_X ; 24
-	const UNOWN_Y ; 25
-	const UNOWN_Z ; 26
+	const UNOWN_A ;  01
+	const UNOWN_B ;  02
+	const UNOWN_C ;  03
+	const UNOWN_D ;  04
+	const UNOWN_E ;  05
+	const UNOWN_F ;  06
+	const UNOWN_G ;  07
+	const UNOWN_H ;  08
+	const UNOWN_I ;  09
+	const UNOWN_J ; 0a
+	const UNOWN_K ; 0b
+	const UNOWN_L ; 0c
+	const UNOWN_M ; 0d
+	const UNOWN_N ; 0e
+	const UNOWN_O ; 0f
+	const UNOWN_P ; 10
+	const UNOWN_Q ; 11
+	const UNOWN_R ; 12
+	const UNOWN_S ; 13
+	const UNOWN_T ; 14
+	const UNOWN_U ; 15
+	const UNOWN_V ; 16
+	const UNOWN_W ; 17
+	const UNOWN_X ; 18
+	const UNOWN_Y ; 19
+	const UNOWN_Z ; 1a
 DEF NUM_UNOWN EQU const_value - 1 ; 26

@@ -1025,21 +1025,36 @@ GetMonBitmaskPointer:
 	jr z, .egg
 
 	call PokeAnim_IsUnown
-	ld a, BANK(UnownBitmasksPointers)
-	ld de, UnownBitmasksPointers - 2
-	jr z, .unown
+	ld hl, BitmasksPointers - 3
 	ld a, BANK(BitmasksPointers)
-	ld de, BitmasksPointers - 2
-.unown
+	ld c, 3
+	jr nz, .got_bitmasks
+	ld a, BANK(UnownBitmasksPointers)
 	ld [wPokeAnimBitmaskBank], a
+	ld hl, UnownBitmasksPointers - 2
+	ld a, BANK(UnownBitmasksPointers)
+	ld c, 2
+.got_bitmasks
 
+	push af
+	push hl
 	ld a, [wPokeAnimSpeciesOrUnown]
 	ld l, a
 	ld h, 0
 	call nz, GetPokemonIndexFromID
-	add hl, hl
-	add hl, de
-	ld a, [wPokeAnimBitmaskBank]
+	ld a, c
+	ld c, l
+	ld b, h
+	pop hl
+	call AddNTimes
+	pop af
+	jr z, .no_bank
+	ld c, a
+	call GetFarByte
+	ld [wPokeAnimBitmaskBank], a
+	inc hl
+	ld a, c
+.no_bank
 	call GetFarWord
 	ld a, l
 	ld [wPokeAnimBitmaskAddr], a
