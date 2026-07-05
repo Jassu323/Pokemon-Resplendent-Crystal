@@ -360,6 +360,7 @@ PokemonNames::
 	dname "Garchomp"
 	dname "Riolu"
 	dname "Lucario"
+	dname "Skorupi"
 	dname "Croagunk"
 	dname "Toxicroak"
 	dname "Snover"

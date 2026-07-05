@@ -361,6 +361,7 @@ MonMenuIcons:
 	mon_menu_icon GarchompIcon,       BLUE,   GRAY   ; GARCHOMP
 	mon_menu_icon RioluIcon,          BLUE,   BROWN  ; RIOLU
 	mon_menu_icon LucarioIcon,        BLUE,   BROWN  ; LUCARIO
+	mon_menu_icon SkorupiIcon,        PURPLE, RED    ; SKORUPI
 	mon_menu_icon CroagunkIcon,       BLUE,   TEAL   ; CROAGUNK
 	mon_menu_icon ToxicroakIcon,      BLUE,   TEAL   ; TOXICROAK
 	mon_menu_icon SnoverIcon,         GREEN,  BLUE   ; SNOVER

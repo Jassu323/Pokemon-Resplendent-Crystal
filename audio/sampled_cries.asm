@@ -104,6 +104,7 @@ DEF NO_SAMPLED_CRY EQU $ff
 	const SAMPLED_CRY_GARCHOMP
 	const SAMPLED_CRY_RIOLU
 	const SAMPLED_CRY_LUCARIO
+	const SAMPLED_CRY_SKORUPI
 	const SAMPLED_CRY_CROAGUNK
 	const SAMPLED_CRY_TOXICROAK
 	const SAMPLED_CRY_SNOVER
@@ -402,6 +403,8 @@ rept NUM_POKEMON
 		db SAMPLED_CRY_RIOLU
 	elif sampled_cry_mon == LUCARIO
 		db SAMPLED_CRY_LUCARIO
+	elif sampled_cry_mon == SKORUPI
+		db SAMPLED_CRY_SKORUPI
 	elif sampled_cry_mon == CROAGUNK
 		db SAMPLED_CRY_CROAGUNK
 	elif sampled_cry_mon == TOXICROAK
@@ -548,6 +551,7 @@ SampledCryPointers:
 	dba GarchompSampledCry
 	dba RioluSampledCry
 	dba LucarioSampledCry
+	dba SkorupiSampledCry
 	dba CroagunkSampledCry
 	dba ToxicroakSampledCry
 	dba SnoverSampledCry
@@ -1480,3 +1484,10 @@ GarchompSampledCryData:
 	INCBIN "audio/sampled_cries/garchomp.mm2"
 GarchompSampledCryEnd:
 	assert (GarchompSampledCryEnd - GarchompSampledCryData) % 9 == 0
+
+SkorupiSampledCry::
+	dw (SkorupiSampledCryEnd - SkorupiSampledCryData) / 9
+SkorupiSampledCryData:
+	INCBIN "audio/sampled_cries/skorupi.mm2"
+SkorupiSampledCryEnd:
+	assert (SkorupiSampledCryEnd - SkorupiSampledCryData) % 9 == 0

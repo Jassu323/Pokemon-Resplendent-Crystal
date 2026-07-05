@@ -354,6 +354,7 @@ FramesPointers:
 	dba GarchompFrames
 	dba RioluFrames
 	dba LucarioFrames
+	dba SkorupiFrames
 	dba CroagunkFrames
 	dba ToxicroakFrames
 	dba SnoverFrames

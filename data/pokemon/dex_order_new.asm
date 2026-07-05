@@ -356,6 +356,7 @@ NewPokedexOrder:
 	dw GARCHOMP
 	dw RIOLU
 	dw LUCARIO
+	dw SKORUPI
 	dw CROAGUNK
 	dw TOXICROAK
 	dw SNOVER

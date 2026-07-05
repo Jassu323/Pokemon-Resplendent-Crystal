@@ -355,6 +355,7 @@ FirstEvoStages::
 	dw GIBLE
 	dw RIOLU
 	dw RIOLU
+	dw SKORUPI
 	dw CROAGUNK
 	dw CROAGUNK
 	dw SNOVER

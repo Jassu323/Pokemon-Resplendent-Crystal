@@ -299,6 +299,7 @@ AlphabeticalPokedexOrder:
 	dw SKARMORY
 	dw SKIPLOOM
 	dw SKITTY
+	dw SKORUPI
 	dw SLOWBRO
 	dw SLOWKING
 	dw SLOWPOKE
