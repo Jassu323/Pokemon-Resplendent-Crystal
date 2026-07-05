@@ -349,6 +349,7 @@ BitmasksPointers:
 	dba HonchkrowBitmasks
 	dba BronzorBitmasks
 	dba BronzongBitmasks
+	dba GibleBitmasks
 	dba RioluBitmasks
 	dba LucarioBitmasks
 	dba CroagunkBitmasks

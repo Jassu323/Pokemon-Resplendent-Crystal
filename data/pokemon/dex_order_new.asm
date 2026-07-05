@@ -351,6 +351,7 @@ NewPokedexOrder:
 	dw HONCHKROW
 	dw BRONZOR
 	dw BRONZONG
+	dw GIBLE
 	dw RIOLU
 	dw LUCARIO
 	dw CROAGUNK

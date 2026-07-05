@@ -355,6 +355,7 @@ PokemonNames::
 	dname "Honchkrow"
 	dname "Bronzor"
 	dname "Bronzong"
+	dname "Gible"
 	dname "Riolu"
 	dname "Lucario"
 	dname "Croagunk"

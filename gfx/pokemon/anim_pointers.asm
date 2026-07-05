@@ -349,6 +349,7 @@ AnimationPointers:
 	dw HonchkrowAnimation
 	dw BronzorAnimation
 	dw BronzongAnimation
+	dw GibleAnimation
 	dw RioluAnimation
 	dw LucarioAnimation
 	dw CroagunkAnimation

@@ -138,6 +138,7 @@ MamoswineIcon::     INCBIN "gfx/icons/mamoswine.2bpp"
 
 SECTION "Mon Icons 4", ROMX
 
+GibleIcon::         INCBIN "gfx/icons/gible.2bpp"
 DelcattyIcon::      INCBIN "gfx/icons/delcatty.2bpp"
 SableyeIcon::       INCBIN "gfx/icons/sableye.2bpp"
 ElectrikeIcon::     INCBIN "gfx/icons/electrike.2bpp"
@@ -655,6 +656,7 @@ MismagiusFrames:  INCLUDE "gfx/pokemon/mismagius/frames.asm"
 HonchkrowFrames:  INCLUDE "gfx/pokemon/honchkrow/frames.asm"
 BronzorFrames:    INCLUDE "gfx/pokemon/bronzor/frames.asm"
 BronzongFrames:   INCLUDE "gfx/pokemon/bronzong/frames.asm"
+GibleFrames:      INCLUDE "gfx/pokemon/gible/frames.asm"
 RioluFrames:      INCLUDE "gfx/pokemon/riolu/frames.asm"
 LucarioFrames:    INCLUDE "gfx/pokemon/lucario/frames.asm"
 CroagunkFrames:   INCLUDE "gfx/pokemon/croagunk/frames.asm"

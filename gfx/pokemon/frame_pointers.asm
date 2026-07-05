@@ -349,6 +349,7 @@ FramesPointers:
 	dba HonchkrowFrames
 	dba BronzorFrames
 	dba BronzongFrames
+	dba GibleFrames
 	dba RioluFrames
 	dba LucarioFrames
 	dba CroagunkFrames

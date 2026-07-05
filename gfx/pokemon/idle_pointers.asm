@@ -349,6 +349,7 @@ AnimationIdlePointers:
 	dw HonchkrowAnimationIdle
 	dw BronzorAnimationIdle
 	dw BronzongAnimationIdle
+	dw GibleAnimationIdle
 	dw RioluAnimationIdle
 	dw LucarioAnimationIdle
 	dw CroagunkAnimationIdle

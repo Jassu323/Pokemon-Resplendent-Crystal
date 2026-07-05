@@ -107,6 +107,7 @@ AlphabeticalPokedexOrder:
 	dw GASTLY
 	dw GENGAR
 	dw GEODUDE
+	dw GIBLE
 	dw GIRAFARIG
 	dw GLACEON
 	dw GLALIE

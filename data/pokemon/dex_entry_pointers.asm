@@ -350,6 +350,7 @@ PokedexDataPointerTable:
 	dba HonchkrowPokedexEntry
 	dba BronzorPokedexEntry
 	dba BronzongPokedexEntry
+	dba GiblePokedexEntry
 	dba RioluPokedexEntry
 	dba LucarioPokedexEntry
 	dba CroagunkPokedexEntry

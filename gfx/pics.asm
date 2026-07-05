@@ -974,8 +974,8 @@ BronzorFrontpic:    INCBIN "gfx/pokemon/bronzor/front.animated.2bpp.lz"
 BronzorBackpic:     INCBIN "gfx/pokemon/bronzor/back.2bpp.lz"
 BronzongFrontpic:   INCBIN "gfx/pokemon/bronzong/front.animated.2bpp.lz"
 BronzongBackpic:    INCBIN "gfx/pokemon/bronzong/back.2bpp.lz"
-RioluFrontpic:      INCBIN "gfx/pokemon/riolu/front.animated.2bpp.lz"
-RioluBackpic:       INCBIN "gfx/pokemon/riolu/back.2bpp.lz"
+GibleFrontpic:      INCBIN "gfx/pokemon/gible/front.animated.2bpp.lz"
+GibleBackpic:       INCBIN "gfx/pokemon/gible/back.2bpp.lz"
 
 
 SECTION "Pics 26", ROMX
@@ -1024,6 +1024,8 @@ RegigigasBackpic:   INCBIN "gfx/pokemon/regigigas/back.2bpp.lz"
 
 SECTION "Pics 28", ROMX
 
+RioluFrontpic:      INCBIN "gfx/pokemon/riolu/front.animated.2bpp.lz"
+RioluBackpic:       INCBIN "gfx/pokemon/riolu/back.2bpp.lz"
 SkittyFrontpic:     INCBIN "gfx/pokemon/skitty/front.animated.2bpp.lz"
 SkittyBackpic:      INCBIN "gfx/pokemon/skitty/back.2bpp.lz"
 DelcattyFrontpic:   INCBIN "gfx/pokemon/delcatty/front.animated.2bpp.lz"

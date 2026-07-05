@@ -350,6 +350,7 @@ FirstEvoStages::
 	dw MURKROW
 	dw BRONZOR
 	dw BRONZOR
+	dw GIBLE
 	dw RIOLU
 	dw RIOLU
 	dw CROAGUNK
