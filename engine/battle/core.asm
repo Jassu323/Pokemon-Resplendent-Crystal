@@ -4921,7 +4921,6 @@ DrawPlayerHUD:
 	ld d, h
 	ld e, l
 
-	hlcoord 10, 11
 	ld a, [wTempMonLevel]
 	ld b, a
 	call FillInBattleExpBar
@@ -5453,11 +5452,11 @@ Battle_StatsScreen:
 
 	ld hl, vTiles2 tile $31
 	ld de, vTiles0
-	ld bc, $19 tiles
+	ld bc, $1a tiles
 	call CopyBytes
 
 	ld hl, vTiles2
-	ld de, vTiles0 tile $19
+	ld de, vTiles0 tile $1a
 	ld bc, $31 tiles
 	call CopyBytes
 
@@ -5474,10 +5473,10 @@ Battle_StatsScreen:
 
 	ld hl, vTiles0
 	ld de, vTiles2 tile $31
-	ld bc, $19 tiles
+	ld bc, $1a tiles
 	call CopyBytes
 
-	ld hl, vTiles0 tile $19
+	ld hl, vTiles0 tile $1a
 	ld de, vTiles2
 	ld bc, $31 tiles
 	call CopyBytes
@@ -8268,12 +8267,15 @@ ComeBackText:
 	text_end
 
 FillInBattleExpBar:
-	call FillInExpBar
-	jr PlaceBattleExpTail
+	call CalcExpBar
+	jr PlaceBattleExpBar
 
 PlaceBattleExpBar:
-	hlcoord 17, 11
+	hlcoord 11, 11
 	call PlaceExpBar
+	dec hl
+	ld [hl], BATTLE_HUD_PLAYER_BOTTOM_RIGHT_TILE
+	hlcoord 9, 11
 
 PlaceBattleExpTail:
 	ld [hl], BATTLE_HUD_EXP_TAIL_LEFT_TILE
@@ -8285,8 +8287,6 @@ FillInExpBar:
 	push hl
 	call CalcExpBar
 	pop hl
-	ld de, 7
-	add hl, de
 	jp PlaceExpBar
 
 CalcExpBar:
@@ -8396,7 +8396,7 @@ PlaceExpBar:
 	jr c, .next
 	ld b, a
 	ld a, BATTLE_HUD_BAR_FULL_TILE
-	ld [hld], a
+	ld [hli], a
 	dec c
 	jr z, .finish
 	jr .loop1
@@ -8411,7 +8411,7 @@ PlaceExpBar:
 	ld a, BATTLE_HUD_BAR_EMPTY_TILE
 
 .skip
-	ld [hld], a
+	ld [hli], a
 	ld a, BATTLE_HUD_BAR_EMPTY_TILE
 	dec c
 	jr nz, .loop2
@@ -8508,7 +8508,6 @@ StartBattle:
 	ret
 
 BattleIntro:
-	farcall StubbedTrainerRankings_Battles ; mobile
 	call LoadTrainerOrWildMonPic
 	xor a
 	ld [wTempBattleMonSpecies], a
@@ -8589,7 +8588,6 @@ BackUpBGMap2:
 
 InitEnemyTrainer:
 	ld [wTrainerClass], a
-	farcall StubbedTrainerRankings_TrainerBattles
 	xor a
 	ld [wTempEnemyMonSpecies], a
 	callfar GetTrainerAttributes
@@ -8645,7 +8643,6 @@ InitEnemyTrainer:
 InitEnemyWildmon:
 	ld a, WILD_BATTLE
 	ld [wBattleMode], a
-	farcall StubbedTrainerRankings_WildBattles
 	call LoadEnemyMon
 	ld hl, wEnemyMonMoves
 	ld de, wWildMonMoves
