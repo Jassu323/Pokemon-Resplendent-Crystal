@@ -9,11 +9,12 @@ DEF BATTLE_MENU_ATTR_GREEN_BLUE EQU $08 | PAL_BATTLE_BG_TEXT
 
 LoadBattleMenuGraphic::
 	call BattleMenuGraphic_InitCursorPosition
+	call BattleMenuGraphic_StageBlankRevealIfNeeded
 	call BattleMenuGraphic_LoadGraphics
 	call BattleMenuGraphic_LoadPalettes
 	call BattleMenuGraphic_DrawButtons
-	call BattleMenuGraphic_PlaceCursorOAM
 	call BattleMenuGraphic_TransferTilemapAndAttrmap
+	call BattleMenuGraphic_PlaceCursorOAM
 	call BattleMenuGraphic_SetVisible
 
 .loop
@@ -30,6 +31,15 @@ BattleMenuGraphic_TransferTilemapAndAttrmap:
 	xor a
 	ldh [hBGMapMode], a
 	ret
+
+BattleMenuGraphic_StageBlankRevealIfNeeded:
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
+	ret z
+	res BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
+	call BattleMenuGraphic_TransferTilemapAndAttrmap
+	ld b, SCGB_BATTLE_COLORS
+	jp GetSGBLayout
 
 BattleMenuGraphic_InitCursorPosition:
 	ld a, [wBattleMenuCursorPosition]

@@ -11,6 +11,7 @@
 ; Battle-menu graphics state
 DEF BATTLE_MENU_GFX_CLEAN_F EQU 0
 DEF BATTLE_MENU_GFX_VISIBLE_F EQU 1
+DEF BATTLE_MENU_GFX_STAGED_REVEAL_F EQU 2
 
 ; VerticalMenu/DoNthMenu/SetUpMenu/_2DMenu MenuData flags
 ; Per flag the comment specifies which menus actually implement it

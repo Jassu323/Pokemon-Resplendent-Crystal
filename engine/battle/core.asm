@@ -625,10 +625,10 @@ ParsePlayerAction:
 	cp BATTLEPLAYERACTION_SWITCH
 	jp z, .reset_rage
 	and a
-	jr nz, .reset_bide
+	jp nz, .reset_bide
 	ld a, [wPlayerSubStatus3]
 	and 1 << SUBSTATUS_BIDE
-	jr nz, .locked_in
+	jp nz, .locked_in
 	xor a
 	ld [wMoveSelectionMenuType], a
 	if HIGH(POUND)
@@ -642,7 +642,7 @@ ParsePlayerAction:
 	endc
 	ld [wFXAnimID], a
 	call MoveSelectionScreen
-	push af
+	jr nz, .fight_cancel
 	xor a
 	ldh [hBGMapMode], a
 	call LoadTempTilemapToTilemap
@@ -666,8 +666,18 @@ ParsePlayerAction:
 	call nz, PlayClickSFX
 	ld a, $1
 	ldh [hBGMapMode], a
-	pop af
-	ret nz
+	jr .encored
+
+.fight_cancel
+	xor a
+	ldh [hBGMapMode], a
+	call BattleMoveInfo_RestoreBattleAttrs
+	ld hl, wBattleMenuGFXFlags
+	set BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
+	xor a
+	ldh [hCGBPalUpdate], a
+	inc a
+	ret
 
 .encored
 	call SetPlayerTurn
