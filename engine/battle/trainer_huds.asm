@@ -109,10 +109,10 @@ DrawPlayerHUDBorder:
 	jr PlaceHUDBorderTiles
 
 .tiles
-	db $73 ; right side
-	db $77 ; bottom right
-	db $6f ; bottom left
-	db $76 ; bottom side
+	db BATTLE_HUD_PLAYER_RIGHT_TILE
+	db BATTLE_HUD_PLAYER_BOTTOM_RIGHT_TILE
+	db BATTLE_HUD_PLAYER_BOTTOM_LEFT_TILE
+	db BATTLE_HUD_BOTTOM_TILE
 .tiles_end
 
 DrawPlayerPartyIconHUDBorder:
@@ -125,10 +125,10 @@ DrawPlayerPartyIconHUDBorder:
 	jr PlaceHUDBorderTiles
 
 .tiles
-	db $73 ; right side
-	db $5c ; bottom right
-	db $6f ; bottom left
-	db $76 ; bottom side
+	db BATTLE_HUD_PLAYER_RIGHT_TILE
+	db BATTLE_HUD_PARTY_ICON_TILE
+	db BATTLE_HUD_PLAYER_BOTTOM_LEFT_TILE
+	db BATTLE_HUD_BOTTOM_TILE
 .tiles_end
 
 DrawEnemyHUDBorder:
@@ -146,14 +146,14 @@ DrawEnemyHUDBorder:
 	call CheckCaughtMon
 	ret z
 	hlcoord 1, 1
-	ld [hl], $5d
+	ld [hl], BATTLE_HUD_CAUGHT_ICON_TILE
 	ret
 
 .tiles
-	db $6d ; left side
-	db $74 ; bottom left
-	db $78 ; bottom right
-	db $76 ; bottom side
+	db BATTLE_HUD_ENEMY_LEFT_TILE
+	db BATTLE_HUD_ENEMY_BOTTOM_LEFT_TILE
+	db BATTLE_HUD_ENEMY_BOTTOM_RIGHT_TILE
+	db BATTLE_HUD_BOTTOM_TILE
 .tiles_end
 
 PlaceHUDBorderTiles:

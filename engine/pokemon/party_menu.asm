@@ -57,7 +57,7 @@ InitPartyMenuLayout:
 	ret
 
 LoadPartyMenuGFX:
-	call LoadFontsBattleExtra
+	farcall LoadBattleFontsHPBar
 	callfar InitPartyMenuPalettes
 	callfar ClearSpriteAnims2
 	ret

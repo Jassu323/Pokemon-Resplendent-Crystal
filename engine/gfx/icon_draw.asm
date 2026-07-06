@@ -958,6 +958,24 @@ BattleMoveInfo_LoadAndDrawIcons::
 	call Icon_Set2x2Attrs
 	ret
 
+BattleMoveInfo_ConvertPercentages::
+	ld a, e
+	ldh [hMultiplicand + 2], a
+	xor a
+	ldh [hMultiplicand + 1], a
+	ldh [hMultiplicand], a
+	ld a, 100
+	ldh [hMultiplier], a
+	call Multiply
+	ldh a, [hProduct + 2]
+	and a
+	jr z, .done
+	inc a
+
+.done
+	ld e, a
+	ret
+
 MoveMenu_LoadAndDrawMoveIcons::
 ; Farcall-safe. Loads and draws the party move-detail type/category icons.
 	call Icon_LoadCurrentMoveIconsGFX_Bank1

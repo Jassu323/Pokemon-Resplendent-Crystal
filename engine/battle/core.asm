@@ -4903,7 +4903,7 @@ DrawPlayerHUD:
 	farcall DrawPlayerHUDBorder
 
 	hlcoord 18, 9
-	ld [hl], $73 ; vertical bar
+	ld [hl], BATTLE_HUD_PLAYER_RIGHT_TILE
 	call PrintPlayerHUD
 
 	; HP bar
@@ -4924,7 +4924,7 @@ DrawPlayerHUD:
 	hlcoord 10, 11
 	ld a, [wTempMonLevel]
 	ld b, a
-	call FillInExpBar
+	call FillInBattleExpBar
 	pop de
 	push de
 	call BattleMoveInfo_UpdateTilemapAndAttrmap
@@ -6163,17 +6163,25 @@ MoveInfoBox:
 	jr .PrintMoveStat
 
 .PrintMoveAccuracy:
-	ld a, [wPlayerMoveStruct + MOVE_ACC]
-	call .ConvertPercentages
 	hlcoord BATTLE_MOVE_INFO_VALUE_X, BATTLE_MOVE_INFO_ACCURACY_ICON_Y
-	jr .PrintMoveStat
+	ld a, [wPlayerMoveStruct + MOVE_EFFECT]
+	cp EFFECT_ALWAYS_HIT
+	jr z, .PrintNoMoveStat
+	ld a, [wPlayerMoveStruct + MOVE_ACC]
+	jr .ConvertAndPrintMoveStat
 
 .PrintMoveEffectChance:
 	ld a, [wPlayerMoveStruct + MOVE_CHANCE]
 	hlcoord BATTLE_MOVE_INFO_VALUE_X, BATTLE_MOVE_INFO_EFFECT_CHANCE_ICON_Y
 	cp 1
 	jr c, .PrintNoMoveStat
-	call .ConvertPercentages
+
+.ConvertAndPrintMoveStat:
+	ld e, a
+	push hl
+	farcall BattleMoveInfo_ConvertPercentages
+	pop hl
+	ld a, e
 
 .PrintMoveStat:
 	ld [wTextDecimalByte], a
@@ -6182,21 +6190,10 @@ MoveInfoBox:
 	jp PrintNum
 
 .PrintNoMoveStat:
-	ld de, .NoMoveStat
-	jp PlaceString
-
-.ConvertPercentages:
-	ldh [hMultiplicand + 2], a
-	xor a
-	ldh [hMultiplicand + 1], a
-	ldh [hMultiplicand], a
-	ld a, 100
-	ldh [hMultiplier], a
-	call Multiply
-	ldh a, [hProduct + 2]
-	and a
-	ret z
-	inc a
+	ld a, CHARVAL("-")
+	ld [hli], a
+	ld [hli], a
+	ld [hl], a
 	ret
 
 .done
@@ -6212,8 +6209,6 @@ MoveInfoBox:
 	db "Acc@"
 .EffectChance:
 	db "Eff@"
-.NoMoveStat:
-	db "-@"
 
 BattleMoveInfo_HadIconAttrs:
 	ldh a, [hCGB]
@@ -8076,8 +8071,7 @@ AnimateExpBar:
 	inc b
 	push bc
 	push de
-	hlcoord 17, 11
-	call PlaceExpBar
+	call PlaceBattleExpBar
 	pop de
 	ld a, $1
 	ldh [hBGMapMode], a
@@ -8092,8 +8086,7 @@ AnimateExpBar:
 	inc b
 	push bc
 	push de
-	hlcoord 17, 11
-	call PlaceExpBar
+	call PlaceBattleExpBar
 	pop de
 	ld a, $1
 	ldh [hBGMapMode], a
@@ -8274,6 +8267,20 @@ ComeBackText:
 	text_far _ComeBackText
 	text_end
 
+FillInBattleExpBar:
+	call FillInExpBar
+	jr PlaceBattleExpTail
+
+PlaceBattleExpBar:
+	hlcoord 17, 11
+	call PlaceExpBar
+
+PlaceBattleExpTail:
+	ld [hl], BATTLE_HUD_EXP_TAIL_LEFT_TILE
+	inc hl
+	ld [hl], BATTLE_HUD_EXP_TAIL_RIGHT_TILE
+	ret
+
 FillInExpBar:
 	push hl
 	call CalcExpBar
@@ -8382,13 +8389,13 @@ CalcExpBar:
 	ret
 
 PlaceExpBar:
-	ld c, $8 ; number of tiles
+	ld c, EXP_BAR_LENGTH ; number of tiles
 .loop1
 	ld a, b
 	sub $8
 	jr c, .next
 	ld b, a
-	ld a, $6a ; full bar
+	ld a, BATTLE_HUD_BAR_FULL_TILE
 	ld [hld], a
 	dec c
 	jr z, .finish
@@ -8397,15 +8404,15 @@ PlaceExpBar:
 .next
 	add $8
 	jr z, .loop2
-	add $54 ; tile to the left of small exp bar tile
+	add BATTLE_HUD_EXP_PARTIAL_TILE - 1
 	jr .skip
 
 .loop2
-	ld a, $62 ; empty bar
+	ld a, BATTLE_HUD_BAR_EMPTY_TILE
 
 .skip
 	ld [hld], a
-	ld a, $62 ; empty bar
+	ld a, BATTLE_HUD_BAR_EMPTY_TILE
 	dec c
 	jr nz, .loop2
 
