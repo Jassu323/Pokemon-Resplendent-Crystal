@@ -194,6 +194,10 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Charizard
 - Beedrill
 - Zubat
+- Crobat
+- Dratini
+- Dragonair
+- Dragonite
 - Bellossom
 - Baltoy
 - Claydol
