@@ -216,6 +216,10 @@ LoadBattleStatusIconPalette::
 	pop af
 	ldh [rWBK], a
 
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	ret nz
+
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret

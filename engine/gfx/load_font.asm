@@ -116,7 +116,11 @@ LoadHPBar_NoFont:
 	call Get1bppViaHDMA
 	ld de, HPExpBarBorderGFX
 	ld hl, vTiles2 tile BATTLE_HUD_PLAYER_RIGHT_TILE
-	lb bc, BANK(HPExpBarBorderGFX), 2
+	lb bc, BANK(HPExpBarBorderGFX), 1
+	call Get1bppViaHDMA
+	ld de, HPExpBarBorderGFX + 1 * TILE_1BPP_SIZE
+	ld hl, vTiles2 tile BATTLE_HUD_ENEMY_BOTTOM_LEFT_TILE
+	lb bc, BANK(HPExpBarBorderGFX), 1
 	call Get1bppViaHDMA
 	ld de, HPExpBarBorderGFX + 3 * TILE_1BPP_SIZE
 	ld hl, vTiles2 tile BATTLE_HUD_BOTTOM_TILE

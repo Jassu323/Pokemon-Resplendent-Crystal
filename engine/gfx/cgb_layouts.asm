@@ -81,6 +81,18 @@ _CGB_BattleGrayscale:
 	jr _CGB_FinishBattleScreenLayout
 
 _CGB_BattleColors:
+	call CGB_LoadBattleColorPalettes
+	call ApplyPals
+	jr _CGB_FinishBattleScreenLayout
+
+CGB_PrepareBattleScreenLayoutNoApply::
+	ldh a, [hCGB]
+	and a
+	ret z
+	call CGB_LoadBattleColorPalettes
+	jr CGB_FillBattleScreenAttrmap
+
+CGB_LoadBattleColorPalettes:
 	ld de, wBGPals1
 	call GetBattlemonBackpicPalettePointer
 	push hl
@@ -114,8 +126,13 @@ _CGB_BattleColors:
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_OB_PLAYER
 	ld a, SCGB_BATTLE_COLORS
 	ld [wDefaultSGBLayout], a
-	call ApplyPals
+	ret
+
 _CGB_FinishBattleScreenLayout:
+	call CGB_FillBattleScreenAttrmap
+	jp ApplyAttrmap
+
+CGB_FillBattleScreenAttrmap:
 	call InitPartyMenuBGPal7
 	hlcoord 0, 0, wAttrmap
 	ld bc, SCREEN_AREA
@@ -151,7 +168,6 @@ _CGB_FinishBattleScreenLayout:
 	ld bc, 6 palettes
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
-	call ApplyAttrmap
 	ret
 
 CGB_BattleStatusIconAttrs:

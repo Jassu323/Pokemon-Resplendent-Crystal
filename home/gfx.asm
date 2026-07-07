@@ -25,6 +25,14 @@ BattleMenuGraphic_RestoreState_Home::
 	farcall BattleMenuGraphic_RestoreState
 	ret
 
+BattleMenuGraphic_PrepareHiddenReturn_Home::
+	farcall BattleMenuGraphic_PrepareHiddenReturn
+	ret
+
+BattleMenuGraphic_FinishHiddenBattleScene_Home::
+	farcall BattleMenuGraphic_FinishHiddenBattleScene
+	ret
+
 Get1bppViaHDMA::
 	ldh a, [rLCDC]
 	bit B_LCDC_ENABLE, a

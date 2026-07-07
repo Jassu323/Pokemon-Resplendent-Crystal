@@ -12,6 +12,8 @@
 DEF BATTLE_MENU_GFX_CLEAN_F EQU 0
 DEF BATTLE_MENU_GFX_VISIBLE_F EQU 1
 DEF BATTLE_MENU_GFX_STAGED_REVEAL_F EQU 2
+DEF BATTLE_MENU_GFX_HIDDEN_REVEAL_F EQU 3
+DEF BATTLE_MENU_GFX_BALL_RETURN_F EQU 4
 
 ; VerticalMenu/DoNthMenu/SetUpMenu/_2DMenu MenuData flags
 ; Per flag the comment specifies which menus actually implement it

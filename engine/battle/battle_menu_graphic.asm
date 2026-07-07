@@ -13,7 +13,7 @@ LoadBattleMenuGraphic::
 	call BattleMenuGraphic_LoadGraphics
 	call BattleMenuGraphic_LoadPalettes
 	call BattleMenuGraphic_DrawButtons
-	call BattleMenuGraphic_TransferTilemapAndAttrmap
+	call BattleMenuGraphic_TransferFinalTilemapAndAttrmap
 	call BattleMenuGraphic_PlaceCursorOAM
 	call BattleMenuGraphic_SetVisible
 
@@ -37,9 +37,64 @@ BattleMenuGraphic_StageBlankRevealIfNeeded:
 	bit BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
 	ret z
 	res BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	jr nz, .hidden
 	call BattleMenuGraphic_TransferTilemapAndAttrmap
 	ld b, SCGB_BATTLE_COLORS
 	jp GetSGBLayout
+
+.hidden
+	xor a
+	ldh [hCGBPalUpdate], a
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	jp BattleMenuGraphic_CopyTilemapAndAttrmapAtOnce
+
+.dmg
+	jp BattleMenuGraphic_TransferTilemapAndAttrmap
+
+BattleMenuGraphic_TransferFinalTilemapAndAttrmap:
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	jr nz, .hidden
+	jp BattleMenuGraphic_TransferTilemapAndAttrmap
+
+.hidden
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	xor a
+	ldh [hCGBPalUpdate], a
+	farcall ApplyPals
+	call BattleMenuGraphic_CopyTilemapAndAttrmapAtOnce
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	call BattleMenuGraphic_UpdatePalsAtVBlank
+	ld hl, wBattleMenuGFXFlags
+	res BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	ret
+
+.dmg
+	call BattleMenuGraphic_TransferTilemapAndAttrmap
+	ld hl, wBattleMenuGFXFlags
+	res BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	jp SetDefaultBGPAndOBP
+
+BattleMenuGraphic_CopyTilemapAndAttrmapAtOnce:
+	call CGBOnly_CopyTilemapAtOnce
+	xor a
+	ldh [hBGMapMode], a
+	ret
+
+BattleMenuGraphic_UpdatePalsAtVBlank:
+.wait
+	ldh a, [rLY]
+	cp LY_VBLANK
+	jr c, .wait
+	cp LY_VBLANK + 2
+	jr nc, .wait
+	jp UpdateCGBPals
 
 BattleMenuGraphic_InitCursorPosition:
 	ld a, [wBattleMenuCursorPosition]
@@ -64,6 +119,31 @@ BattleMenuGraphic_RestoreState::
 	ret z
 	res BATTLE_MENU_GFX_VISIBLE_F, [hl]
 	jp BattleMenuGraphic_RestorePalettes
+
+BattleMenuGraphic_PrepareHiddenReturn::
+	call BattleMenuGraphic_BlankLowerArea
+	ld hl, wBattleMenuGFXFlags
+	res BATTLE_MENU_GFX_VISIBLE_F, [hl]
+	set BATTLE_MENU_GFX_STAGED_REVEAL_F, [hl]
+	set BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	xor a
+	ldh [hCGBPalUpdate], a
+	ret
+
+BattleMenuGraphic_FinishHiddenBattleScene::
+	push af
+	push bc
+	push de
+	push hl
+	farcall BattleStatus_LoadHUDIconGFX
+	farcall CGB_PrepareBattleScreenLayoutNoApply
+	xor a
+	ldh [hCGBPalUpdate], a
+	pop hl
+	pop de
+	pop bc
+	pop af
+	ret
 
 BattleMenuGraphic_ClearForText::
 	ld hl, wBattleMenuGFXFlags
@@ -122,6 +202,10 @@ BattleMenuGraphic_LoadPalettes:
 	and a
 	ret z
 
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	jr nz, .hidden
+
 	ldh a, [rWBK]
 	push af
 	ld a, BANK(wGBCPalettes)
@@ -146,6 +230,29 @@ BattleMenuGraphic_LoadPalettes:
 	ldh [rWBK], a
 
 	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.hidden
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wGBCPalettes)
+	ldh [rWBK], a
+
+	ld hl, wBGPals1 palette PAL_BATTLE_BG_6
+	ld de, wBattleMenuSavedBGPals
+	ld bc, 2 palettes
+	call CopyBytes
+
+	ld hl, BattleMenuGraphicPalettes
+	ld de, wBGPals1 palette PAL_BATTLE_BG_6
+	ld bc, 2 palettes
+	call CopyBytes
+
+	pop af
+	ldh [rWBK], a
+
+	xor a
 	ldh [hCGBPalUpdate], a
 	ret
 

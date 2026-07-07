@@ -5337,12 +5337,8 @@ BattleMenu_Pack:
 	call ClearPalettes
 	call DelayFrame
 	call ExitMenu
-	call BattleMenuGraphic_ClearForText_Home
-	call _LoadBattleFontsHPBar
-	call GetBattleMonBackpic
-	call GetEnemyMonFrontpic
-	call WaitBGMap
-	call FinishBattleAnim
+	call BattleMenuGraphic_PrepareHiddenReturn_Home
+	call BattleMenuGraphic_FinishHiddenBattleScene_Home
 	call LoadTilemapToTempTilemap
 	jp BattleMenu
 
@@ -5359,10 +5355,10 @@ BattleMenu_Pack:
 	callfar CheckItemPocket
 	ld a, [wItemAttributeValue]
 	cp BALL
-	jr z, .ball
+	jr z, .check_ball_return
 	call ClearBGPalettes
 
-.ball
+.generic_item_cleanup
 	xor a
 	ldh [hBGMapMode], a
 	call _LoadBattleFontsHPBar
@@ -5384,6 +5380,14 @@ BattleMenu_Pack:
 	call ClearWindowData
 	call FinishBattleAnim
 	and a
+	ret
+
+.check_ball_return
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_BALL_RETURN_F, [hl]
+	jr z, .generic_item_cleanup
+	res BATTLE_MENU_GFX_BALL_RETURN_F, [hl]
+	farcall BattleCore_BallReturnCleanup
 	ret
 
 .run
@@ -5439,12 +5443,11 @@ BattleMenuPKMN_Loop:
 	call ClearSprites
 	call ClearPalettes
 	call DelayFrame
-	call _LoadHPBar
 	call ExitMenu
-	call BattleMenuGraphic_ClearForText_Home
-	call WaitBGMap
+	call BattleMenuGraphic_PrepareHiddenReturn_Home
+	call _LoadHPBar
+	call BattleMenuGraphic_FinishHiddenBattleScene_Home
 	call LoadTilemapToTempTilemap
-	call FinishBattleAnim
 	jp BattleMenu
 
 .GetMenu:
