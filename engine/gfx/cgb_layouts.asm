@@ -78,9 +78,21 @@ _CGB_BattleGrayscale:
 	ld de, wOBPals1
 	ld c, 2
 	call CopyPalettes
-	jr _CGB_FinishBattleScreenLayout
+	jp _CGB_FinishBattleScreenLayout
 
 _CGB_BattleColors:
+	call CGB_LoadBattleColorPalettes
+	call ApplyPals
+	jp _CGB_FinishBattleScreenLayout
+
+CGB_PrepareBattleScreenLayoutNoApply::
+	ldh a, [hCGB]
+	and a
+	ret z
+	call CGB_LoadBattleColorPalettes
+	jp CGB_FillBattleScreenAttrmap
+
+CGB_LoadBattleColorPalettes:
 	ld de, wBGPals1
 	call GetBattlemonBackpicPalettePointer
 	push hl
@@ -107,6 +119,7 @@ _CGB_BattleColors:
 	ld hl, ExpBarPalette
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_BG_EXP
 	call LoadBattleStatusIconPaletteForBattleLayout
+	call CGB_LoadBattleHUDGenderPalettes
 	ld de, wOBPals1
 	pop hl
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_OB_ENEMY
@@ -114,8 +127,132 @@ _CGB_BattleColors:
 	call LoadPalette_White_Col1_Col2_Black ; PAL_BATTLE_OB_PLAYER
 	ld a, SCGB_BATTLE_COLORS
 	ld [wDefaultSGBLayout], a
-	call ApplyPals
+	ret
+
+CGB_LoadBattleHUDGenderPalettes:
+	ld a, [wCurPartySpecies]
+	push af
+	ld a, [wCurSpecies]
+	push af
+	ld a, [wMonType]
+	push af
+	ld a, [wTempMonDVs]
+	push af
+	ld a, [wTempMonDVs + 1]
+	push af
+	call .Enemy
+	call .Player
+	pop af
+	ld [wTempMonDVs + 1], a
+	pop af
+	ld [wTempMonDVs], a
+	pop af
+	ld [wMonType], a
+	pop af
+	ld [wCurSpecies], a
+	pop af
+	ld [wCurPartySpecies], a
+	ret
+
+.Enemy
+	ld a, [wTempEnemyMonSpecies]
+	and a
+	jr z, .enemy_genderless
+	ld [wCurPartySpecies], a
+	ld [wCurSpecies], a
+	ld hl, wEnemyMonDVs
+	ld a, [wEnemySubStatus5]
+	bit SUBSTATUS_TRANSFORMED, a
+	jr z, .got_enemy_dvs
+	ld hl, wEnemyBackupDVs
+
+.got_enemy_dvs
+	call .CopyDVs
+	call .GetGenderColor
+	jr .copy_enemy
+
+.enemy_genderless
+	ld hl, .genderless
+
+.copy_enemy
+	ld de, wBGPals1 palette PAL_BATTLE_BG_ENEMY_HP color 1
+	ld bc, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP color 1
+	jr .copy_to_both
+
+.Player
+	ld a, [wBattleMonSpecies]
+	and a
+	jr z, .player_genderless
+	ld [wCurPartySpecies], a
+	ld [wCurSpecies], a
+	ld hl, wBattleMonDVs
+	call .CopyDVs
+	call .GetGenderColor
+	jr .copy_player
+
+.player_genderless
+	ld hl, .genderless
+
+.copy_player
+	ld de, wBGPals1 palette PAL_BATTLE_BG_PLAYER_HP color 1
+	ld bc, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP color 1
+	jr .copy_to_both
+
+.GetGenderColor
+	ld a, TEMPMON
+	ld [wMonType], a
+	callfar GetGender
+	ld hl, .genderless
+	ret c
+	ld hl, .male_color
+	ret nz
+
+.female
+	ld hl, .female_color
+	ret
+
+.copy
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	ld [de], a
+	ret
+
+.copy_to_both
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+	push hl
+	call .copy
+	pop hl
+	ld d, b
+	ld e, c
+	call .copy
+	pop af
+	ldh [rWBK], a
+	ret
+
+.CopyDVs
+	ld a, [hli]
+	ld [wTempMonDVs], a
+	ld a, [hl]
+	ld [wTempMonDVs + 1], a
+	ret
+
+.genderless
+	RGB 31, 25, 00
+.male_color
+	RGB 04, 13, 31
+.female_color
+	RGB 31, 07, 12
+
 _CGB_FinishBattleScreenLayout:
+	call CGB_FillBattleScreenAttrmap
+	jp ApplyAttrmap
+
+CGB_FillBattleScreenAttrmap:
 	call InitPartyMenuBGPal7
 	hlcoord 0, 0, wAttrmap
 	ld bc, SCREEN_AREA
@@ -137,10 +274,11 @@ _CGB_FinishBattleScreenLayout:
 	lb bc, 5, 10
 	ld a, PAL_BATTLE_BG_PLAYER_HP
 	call FillBoxCGB
-	hlcoord 10, 11, wAttrmap
-	lb bc, 1, 9
+	hlcoord 9, 11, wAttrmap
+	lb bc, 1, 10
 	ld a, PAL_BATTLE_BG_EXP
 	call FillBoxCGB
+	call CGB_BattleHPLabelAttrs
 	hlcoord 0, 12, wAttrmap
 	ld bc, 6 * SCREEN_WIDTH
 	ld a, PAL_BATTLE_BG_TEXT
@@ -151,7 +289,16 @@ _CGB_FinishBattleScreenLayout:
 	ld bc, 6 palettes
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
-	call ApplyAttrmap
+	ret
+
+CGB_BattleHPLabelAttrs:
+	hlcoord 2, 2, wAttrmap
+	ld a, PAL_BATTLE_BG_EXP
+	ld [hli], a
+	ld [hl], a
+	hlcoord 10, 9, wAttrmap
+	ld [hli], a
+	ld [hl], a
 	ret
 
 CGB_BattleStatusIconAttrs:

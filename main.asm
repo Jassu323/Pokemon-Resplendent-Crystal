@@ -255,6 +255,16 @@ INCLUDE "data/moves/effects.asm"
 INCLUDE "engine/events/kurt_selectquantity_interpretjoypad.asm"
 
 
+SECTION "Battle Menu Graphics", ROMX
+
+INCLUDE "engine/battle/battle_menu_graphic.asm"
+
+
+SECTION "Battle Menu GFX", ROMX
+
+INCLUDE "gfx/battle_menu.asm"
+
+
 SECTION "bankA", ROMX
 
 INCLUDE "engine/overworld/wildmons.asm"
@@ -715,6 +725,11 @@ INCLUDE "engine/pokedex/unown_dex.asm"
 INCLUDE "engine/events/magikarp.asm"
 INCLUDE "engine/battle/hidden_power.asm"
 INCLUDE "engine/battle/misc.asm"
+
+
+SECTION "Battle Move Info GFX", ROMX
+
+INCLUDE "gfx/battle_move_info_gfx.asm"
 
 
 SECTION "Footprints", ROMX

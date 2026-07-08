@@ -192,7 +192,7 @@ Moves1:
 	move EFFECT_NIGHTMARE,           0, GHOST,         100, 15,   0      ;NIGHTMARE
 	move EFFECT_FLAME_WHEEL,        60, FIRE,          100, 25,  10      ;FLAME_WHEEL
 	move EFFECT_SNORE,              40, NORMAL,        100, 15,  30      ;SNORE
-	move EFFECT_CURSE,               0, CURSE_TYPE,    100, 10,   0      ;CURSE
+	move EFFECT_CURSE,               0, GHOST,         100, 10,   0      ;CURSE
 	move EFFECT_REVERSAL,            1, NORMAL,        100, 15,   0      ;FLAIL
 	move EFFECT_CONVERSION2,         0, NORMAL,        100, 30,   0      ;CONVERSION2
 	move EFFECT_NORMAL_HIT,        100, FLYING,         95,  5,   0      ;AEROBLAST

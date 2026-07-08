@@ -53,3 +53,57 @@ INCBIN "gfx/types/dark.2bpp"
 
 FairyTypeIconGFX::
 INCBIN "gfx/types/fairy.2bpp"
+
+CompactNormalTypeIconGFX::
+INCBIN "gfx/types/compact/normal_compact.2bpp"
+
+CompactFightingTypeIconGFX::
+INCBIN "gfx/types/compact/fighting_compact.2bpp"
+
+CompactFlyingTypeIconGFX::
+INCBIN "gfx/types/compact/flying_compact.2bpp"
+
+CompactPoisonTypeIconGFX::
+INCBIN "gfx/types/compact/poison_compact.2bpp"
+
+CompactGroundTypeIconGFX::
+INCBIN "gfx/types/compact/ground_compact.2bpp"
+
+CompactRockTypeIconGFX::
+INCBIN "gfx/types/compact/rock_compact.2bpp"
+
+CompactBugTypeIconGFX::
+INCBIN "gfx/types/compact/bug_compact.2bpp"
+
+CompactGhostTypeIconGFX::
+INCBIN "gfx/types/compact/ghost_compact.2bpp"
+
+CompactSteelTypeIconGFX::
+INCBIN "gfx/types/compact/steel_compact.2bpp"
+
+CompactFireTypeIconGFX::
+INCBIN "gfx/types/compact/fire_compact.2bpp"
+
+CompactWaterTypeIconGFX::
+INCBIN "gfx/types/compact/water_compact.2bpp"
+
+CompactGrassTypeIconGFX::
+INCBIN "gfx/types/compact/grass_compact.2bpp"
+
+CompactElectricTypeIconGFX::
+INCBIN "gfx/types/compact/electric_compact.2bpp"
+
+CompactPsychicTypeIconGFX::
+INCBIN "gfx/types/compact/psychic_compact.2bpp"
+
+CompactIceTypeIconGFX::
+INCBIN "gfx/types/compact/ice_compact.2bpp"
+
+CompactDragonTypeIconGFX::
+INCBIN "gfx/types/compact/dragon_compact.2bpp"
+
+CompactDarkTypeIconGFX::
+INCBIN "gfx/types/compact/dark_compact.2bpp"
+
+CompactFairyTypeIconGFX::
+INCBIN "gfx/types/compact/fairy_compact.2bpp"

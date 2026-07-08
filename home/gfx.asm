@@ -9,6 +9,30 @@ Get2bppViaHDMA::
 
 	ret
 
+Get2bppViaHDMAToVRAMBank1::
+	homecall HDMATransfer2bppToVRAMBank1
+	ret
+
+BattleMenuGraphic_ClearForText_Home::
+	farcall BattleMenuGraphic_ClearForText
+	ret
+
+BattleMenuGraphic_BlankLowerArea_Home::
+	farcall BattleMenuGraphic_BlankLowerArea
+	ret
+
+BattleMenuGraphic_RestoreState_Home::
+	farcall BattleMenuGraphic_RestoreState
+	ret
+
+BattleMenuGraphic_PrepareHiddenReturn_Home::
+	farcall BattleMenuGraphic_PrepareHiddenReturn
+	ret
+
+BattleMenuGraphic_FinishHiddenBattleScene_Home::
+	farcall BattleMenuGraphic_FinishHiddenBattleScene
+	ret
+
 Get1bppViaHDMA::
 	ldh a, [rLCDC]
 	bit B_LCDC_ENABLE, a

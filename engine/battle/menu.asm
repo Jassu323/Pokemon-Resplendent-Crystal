@@ -1,12 +1,5 @@
 LoadBattleMenu:
-	ld hl, BattleMenuHeader
-	call LoadMenuHeader
-	ld a, [wBattleMenuCursorPosition]
-	ld [wMenuCursorPosition], a
-	call InterpretBattleMenu
-	ld a, [wMenuCursorPosition]
-	ld [wBattleMenuCursorPosition], a
-	call ExitMenu
+	farcall LoadBattleMenuGraphic
 	ret
 
 SafariBattleMenu: ; unreferenced
@@ -27,25 +20,6 @@ CommonBattleMenu:
 	ld [wBattleMenuCursorPosition], a
 	call ExitMenu
 	ret
-
-BattleMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 8, 12, SCREEN_WIDTH - 1, SCREEN_HEIGHT - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_CURSOR | STATICMENU_DISABLE_B ; flags
-	dn 2, 2 ; rows, columns
-	db 6 ; spacing
-	dba .Text
-	dbw BANK(@), NULL
-
-.Text:
-	db "Fight@"
-	db "<PKMN>@"
-	db "Pack@"
-	db "Run@"
 
 SafariBattleMenuHeader:
 	db MENU_BACKUP_TILES ; flags

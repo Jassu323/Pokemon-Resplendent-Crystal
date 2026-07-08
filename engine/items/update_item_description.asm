@@ -1,8 +1,3 @@
-UpdatePackItemDescription:
-	call UpdateItemDescription
-	farcall UpdatePackItemIcon
-	ret
-
 UpdateItemDescription:
 	ld a, [wMenuSelection]
 	ld [wCurSpecies], a

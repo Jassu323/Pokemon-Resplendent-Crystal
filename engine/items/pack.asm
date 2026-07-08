@@ -14,29 +14,29 @@
 	const PACKSTATE_QUITNOSCRIPT       ; 11
 	const PACKSTATE_QUITRUNSCRIPT      ; 12
 
-DEF PACK_POCKET_NAME_UPPER_LEFT_TILE EQU $00
+DEF PACK_POCKET_NAME_UPPER_LEFT_TILE EQU $c6
 DEF PACK_POCKET_NAME_UPPER_MIDDLE_TILE EQU PACK_POCKET_NAME_UPPER_LEFT_TILE + 1
 DEF PACK_POCKET_NAME_UPPER_RIGHT_TILE EQU PACK_POCKET_NAME_UPPER_MIDDLE_TILE + 1
-DEF PACK_POCKET_NAME_TILE EQU PACK_POCKET_NAME_UPPER_RIGHT_TILE + 1
-DEF PACK_POCKET_NAME_BOTTOM_LEFT_TILE EQU PACK_POCKET_NAME_TILE + 5
+DEF PACK_POCKET_NAME_TILE EQU $57
+DEF PACK_POCKET_NAME_BOTTOM_LEFT_TILE EQU PACK_POCKET_NAME_UPPER_RIGHT_TILE + 1
 DEF PACK_POCKET_NAME_BOTTOM_MIDDLE_TILE EQU PACK_POCKET_NAME_BOTTOM_LEFT_TILE + 1
 DEF PACK_POCKET_NAME_BOTTOM_RIGHT_TILE EQU PACK_POCKET_NAME_BOTTOM_MIDDLE_TILE + 1
 DEF PACK_BORDER_TILE EQU PACK_POCKET_NAME_BOTTOM_RIGHT_TILE + 1
-DEF PACK_POCKET_SWITCH_TILE EQU PACK_BORDER_TILE + 1
-DEF PACK_POCKET_SORT_TILE EQU PACK_POCKET_SWITCH_TILE + 6
-DEF PACK_GFX_TILE EQU PACK_POCKET_SORT_TILE + 6
+DEF PACK_GFX_TILE EQU $b3
 DEF PACK_GFX_TILES EQU 15
-DEF PACK_TITLE_TILE EQU PACK_GFX_TILE + PACK_GFX_TILES
+DEF PACK_POCKET_SWITCH_TILE EQU PACK_GFX_TILE + PACK_GFX_TILES
+DEF PACK_POCKET_SORT_TILE EQU PACK_POCKET_SWITCH_TILE + 6
+DEF PACK_TITLE_TILE EQU $d7
 DEF PACK_TITLE_TILES EQU 6
-DEF PACK_HEADER_TILE EQU PACK_TITLE_TILE + PACK_TITLE_TILES
+DEF PACK_HEADER_TILE EQU PACK_BORDER_TILE + 1
 DEF PACK_BLANK_TILE EQU $7f
 DEF PACK_VISIBLE_ITEMS EQU 8
 DEF PACK_ROW_LENGTH EQU 4
 DEF PACK_ICON_ROW_BUFFERS EQU 4
 DEF PACK_ITEM_ICON_TILES EQU 9
-DEF PACK_ITEM_ICON_SIGNED_FIRST_TILE EQU $80
+DEF PACK_ITEM_ICON_SIGNED_FIRST_TILE EQU $e9
 DEF PACK_ITEM_ICON_SIGNED_DEST_TILE EQU PACK_ITEM_ICON_SIGNED_FIRST_TILE - $80
-DEF PACK_ITEM_ICON_OAM_FIRST_TILE EQU PACK_ITEM_ICON_SIGNED_FIRST_TILE + PACK_ROW_LENGTH * PACK_ITEM_ICON_TILES
+DEF PACK_ITEM_ICON_OAM_FIRST_TILE EQU $ce
 DEF PACK_ITEM_ICON_OAM_DEST_TILE EQU PACK_ITEM_ICON_OAM_FIRST_TILE - $80
 DEF PACK_ITEM_ICON_OAM_SECOND_FIRST_TILE EQU PACK_ITEM_ICON_OAM_FIRST_TILE + PACK_ITEM_ICON_TILES
 DEF PACK_ITEM_ICON_OAM_SECOND_DEST_TILE EQU PACK_ITEM_ICON_OAM_DEST_TILE + PACK_ITEM_ICON_TILES
@@ -164,6 +164,8 @@ Pack_InitPocketShell:
 	jp Pack_JumptableNext
 
 Pack_RedrawCurrentPocketShell:
+	xor a
+	ldh [hBGMapMode], a
 	call Pack_LoadCurrentPocketNameGFX
 	call Pack_DrawShellNoCursor_BlankIcons
 	call DrawPackGFX
@@ -1694,107 +1696,6 @@ DepositSellPack:
 	call DelayFrame
 	jp .loop
 
-	.RunJumptable:
-	ld a, [wJumptableIndex]
-	ld hl, .Jumptable
-	call Pack_GetJumptablePointer
-	jp hl
-
-.Jumptable:
-; entries correspond to *_POCKET constants
-	dw .ItemsPocket
-	dw .BallsPocket
-	dw .KeyItemsPocket
-	dw .BerriesPocket
-	dw .MedicinePocket
-
-.ItemsPocket:
-	xor a ; ITEM_POCKET
-	call InitPocket
-	ld hl, PC_Mart_ItemsPocketMenuHeader
-	call CopyMenuHeader
-	ld a, [wItemsPocketCursor]
-	ld [wMenuCursorPosition], a
-	ld a, [wItemsPocketScrollPosition]
-	ld [wMenuScrollPosition], a
-	call ScrollingMenu
-	ld a, [wMenuScrollPosition]
-	ld [wItemsPocketScrollPosition], a
-	ld a, [wMenuCursorY]
-	ld [wItemsPocketCursor], a
-	ret
-
-.KeyItemsPocket:
-	ld a, KEY_ITEM_POCKET
-	call InitPocket
-	ld hl, PC_Mart_KeyItemsPocketMenuHeader
-	call CopyMenuHeader
-	ld a, [wKeyItemsPocketCursor]
-	ld [wMenuCursorPosition], a
-	ld a, [wKeyItemsPocketScrollPosition]
-	ld [wMenuScrollPosition], a
-	call ScrollingMenu
-	ld a, [wMenuScrollPosition]
-	ld [wKeyItemsPocketScrollPosition], a
-	ld a, [wMenuCursorY]
-	ld [wKeyItemsPocketCursor], a
-	ret
-
-.BerriesPocket:
-	ld a, BERRY_POCKET
-	call InitPocket
-	ld hl, PC_Mart_BerriesPocketMenuHeader
-	call CopyMenuHeader
-	ld a, [wBerriesPocketCursor]
-	ld [wMenuCursorPosition], a
-	ld a, [wBerriesPocketScrollPosition]
-	ld [wMenuScrollPosition], a
-	call ScrollingMenu
-	ld a, [wMenuScrollPosition]
-	ld [wBerriesPocketScrollPosition], a
-	ld a, [wMenuCursorY]
-	ld [wBerriesPocketCursor], a
-	ret
-
-.BallsPocket:
-	ld a, BALL_POCKET
-	call InitPocket
-	ld hl, PC_Mart_BallsPocketMenuHeader
-	call CopyMenuHeader
-	ld a, [wBallsPocketCursor]
-	ld [wMenuCursorPosition], a
-	ld a, [wBallsPocketScrollPosition]
-	ld [wMenuScrollPosition], a
-	call ScrollingMenu
-	ld a, [wMenuScrollPosition]
-	ld [wBallsPocketScrollPosition], a
-	ld a, [wMenuCursorY]
-	ld [wBallsPocketCursor], a
-	ret
-
-.MedicinePocket:
-	ld a, MEDICINE_POCKET
-	call InitPocket
-	ld hl, PC_Mart_MedicinePocketMenuHeader
-	call CopyMenuHeader
-	ld a, [wMedicinePocketCursor]
-	ld [wMenuCursorPosition], a
-	ld a, [wMedicinePocketScrollPosition]
-	ld [wMenuScrollPosition], a
-	call ScrollingMenu
-	ld a, [wMenuScrollPosition]
-	ld [wMedicinePocketScrollPosition], a
-	ld a, [wMenuCursorY]
-	ld [wMedicinePocketCursor], a
-	ret
-
-InitPocket:
-	ld [wCurPocket], a
-	call ClearPocketList
-	call DrawPocketName
-	call WaitBGMap_DrawPackGFX
-	ret
-
 TutorialPack:
 	call DepositSellInitPackBuffers
 	ld a, [wInputType]
@@ -1824,6 +1725,8 @@ Pack_GetJumptablePointer:
 	ret
 
 Pack_QuitNoScript:
+	call Pack_HideCursor
+	call Pack_HideOverflowItemIconOAM
 	ld hl, wJumptableIndex
 	set JUMPTABLE_EXIT_F, [hl]
 	xor a ; FALSE
@@ -1831,6 +1734,8 @@ Pack_QuitNoScript:
 	ret
 
 Pack_QuitRunScript:
+	call Pack_HideCursor
+	call Pack_HideOverflowItemIconOAM
 	ld hl, wJumptableIndex
 	set JUMPTABLE_EXIT_F, [hl]
 	ld a, TRUE
@@ -2167,10 +2072,6 @@ Pack_CommitPopupTilemapAndAttrmap:
 	ldh [hBGMapMode], a
 	ret
 
-WaitBGMap_DrawPackGFX:
-	call DrawPackGFX
-	jr Pack_TransferTilemapAndAttrmap
-
 Pack_TransferTilemapAndAttrmap:
 	call HDMATransferTilemapAndAttrmap_Menu
 	xor a
@@ -2198,9 +2099,15 @@ DrawPackGFX:
 	ld a, [hli]
 	ld e, a
 	ld d, [hl]
-	ld hl, vTiles2 tile PACK_GFX_TILE
+	ld hl, vTiles1 tile (PACK_GFX_TILE - $80)
 	lb bc, BANK(PackGFX), 15
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
 	call Get2bppViaHDMA
+	pop af
+	ldh [rVBK], a
 	ret
 
 .female
@@ -2379,12 +2286,12 @@ Pack_InitGFXLayout:
 	call Pack_LoadSplitMenuGFX
 	call Pack_LoadCurrentPocketNameGFX
 	ld hl, PackTitleGFX
-	ld de, vTiles2 tile PACK_TITLE_TILE
+	ld de, vTiles1 tile (PACK_TITLE_TILE - $80)
 	ld bc, PACK_TITLE_TILES tiles
 	ld a, BANK(PackTitleGFX)
 	call FarCopyBytes
 	ld hl, PackHeaderGFX
-	ld de, vTiles2 tile PACK_HEADER_TILE
+	ld de, vTiles1 tile (PACK_HEADER_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackHeaderGFX)
 	call FarCopyBytes
@@ -2402,51 +2309,60 @@ Pack_InitGFXLayout:
 	ret
 
 Pack_LoadSplitMenuGFX:
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
 	ld hl, PackPocketNameUpperLeftGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_UPPER_LEFT_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_UPPER_LEFT_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameUpperLeftGFX)
 	call FarCopyBytes
 	ld hl, PackPocketNameUpperRightGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_UPPER_RIGHT_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_UPPER_RIGHT_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameUpperRightGFX)
 	call FarCopyBytes
 	ld hl, PackPocketNameBottomLeftGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_BOTTOM_LEFT_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_BOTTOM_LEFT_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameBottomLeftGFX)
 	call FarCopyBytes
 	ld hl, PackPocketNameBottomRightGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_BOTTOM_RIGHT_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_BOTTOM_RIGHT_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameBottomRightGFX)
 	call FarCopyBytes
 	ld hl, PackPocketNameUpperMiddleGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_UPPER_MIDDLE_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_UPPER_MIDDLE_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameUpperMiddleGFX)
 	call FarCopyBytes
 	ld hl, PackPocketNameBottomMiddleGFX
-	ld de, vTiles2 tile PACK_POCKET_NAME_BOTTOM_MIDDLE_TILE
+	ld de, vTiles1 tile (PACK_POCKET_NAME_BOTTOM_MIDDLE_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackPocketNameBottomMiddleGFX)
 	call FarCopyBytes
 	ld hl, PackBorderGFX
-	ld de, vTiles2 tile PACK_BORDER_TILE
+	ld de, vTiles1 tile (PACK_BORDER_TILE - $80)
 	ld bc, 1 tiles
 	ld a, BANK(PackBorderGFX)
 	call FarCopyBytes
+	ld a, $1
+	ldh [rVBK], a
 	ld hl, PackPocketSwitchGFX
-	ld de, vTiles2 tile PACK_POCKET_SWITCH_TILE
+	ld de, vTiles1 tile (PACK_POCKET_SWITCH_TILE - $80)
 	ld bc, 6 tiles
 	ld a, BANK(PackPocketSwitchGFX)
 	call FarCopyBytes
 	ld hl, PackPocketSortGFX
-	ld de, vTiles2 tile PACK_POCKET_SORT_TILE
+	ld de, vTiles1 tile (PACK_POCKET_SORT_TILE - $80)
 	ld bc, 6 tiles
 	ld a, BANK(PackPocketSortGFX)
-	jp FarCopyBytes
+	call FarCopyBytes
+	pop af
+	ldh [rVBK], a
+	ret
 
 Pack_LoadCurrentPocketNameGFX:
 	ld a, [wCurPocket]
@@ -2575,6 +2491,7 @@ Pack_DrawShellBase:
 	call Pack_PlaceTileBlock
 
 	call PlacePackGFX
+	call Pack_DrawShellBaseAttrs
 	ret
 
 PlacePackGFX:
@@ -2593,6 +2510,22 @@ PlacePackGFX:
 	dec b
 	jr nz, .row
 	ret
+
+Pack_DrawShellBaseAttrs:
+	hlcoord 7, 1, wAttrmap
+	lb bc, 1, 6
+	ld a, BG_BANK1
+	call FillBoxWithByte
+
+	hlcoord 7, 2, wAttrmap
+	lb bc, 1, 6
+	ld a, BG_BANK1
+	call FillBoxWithByte
+
+	hlcoord 15, 0, wAttrmap
+	lb bc, 3, 5
+	ld a, BG_BANK1
+	jp FillBoxWithByte
 
 DrawPocketName:
 	ld hl, .tilemap
@@ -2748,10 +2681,10 @@ PackItemIconVRAMDestinations:
 	dw vTiles2 tile $51
 	dw vTiles2 tile $5a
 	dw vTiles2 tile $63
+	dw vTiles2 tile $6c
+	dw vTiles2 tile $75
 	dw vTiles1 tile (PACK_ITEM_ICON_SIGNED_DEST_TILE + 0 * PACK_ITEM_ICON_TILES)
 	dw vTiles1 tile (PACK_ITEM_ICON_SIGNED_DEST_TILE + 1 * PACK_ITEM_ICON_TILES)
-	dw vTiles1 tile (PACK_ITEM_ICON_SIGNED_DEST_TILE + 2 * PACK_ITEM_ICON_TILES)
-	dw vTiles1 tile (PACK_ITEM_ICON_SIGNED_DEST_TILE + 3 * PACK_ITEM_ICON_TILES)
 
 PackItemIconFirstTiles:
 	db $00
@@ -2766,10 +2699,10 @@ PackItemIconFirstTiles:
 	db $51
 	db $5a
 	db $63
+	db $6c
+	db $75
 	db PACK_ITEM_ICON_SIGNED_FIRST_TILE + 0 * PACK_ITEM_ICON_TILES
 	db PACK_ITEM_ICON_SIGNED_FIRST_TILE + 1 * PACK_ITEM_ICON_TILES
-	db PACK_ITEM_ICON_SIGNED_FIRST_TILE + 2 * PACK_ITEM_ICON_TILES
-	db PACK_ITEM_ICON_SIGNED_FIRST_TILE + 3 * PACK_ITEM_ICON_TILES
 
 Pack_DrawVisibleItemIcons:
 	call Pack_NormalizeCursorPosition
@@ -3636,15 +3569,6 @@ Pack_GetItemIconAttr:
 	ld a, [hl]
 	ret
 
-UpdatePackItemIcon:
-	ld a, [wMenuSelection]
-	cp -1
-	jr z, ShowPackItemEmptyIcon
-	call PlacePackItemIcon
-	ld a, [wMenuSelection]
-	call GetPackItemIcon
-	jr LoadPackItemIcon
-
 GetPackItemIcon:
 	ld c, a
 	cp TM01
@@ -3696,19 +3620,7 @@ SearchPackItemIconTable:
 	and a
 	ret
 
-ShowPackItemEmptyIcon:
-	call PlacePackItemIcon
-	ld b, BANK(PackItemEmptyIconGFX)
-	ld de, PackItemEmptyIconGFX
-	ld hl, PackItemEmptyIconPalette
-	jr LoadPackItemIcon
-
-LoadPackItemIcon:
-	call LoadPackItemIconGFX
-	call LoadPackItemIconPalette
-	ret
-
-LoadPackItemIconGFX:
+LoadItemNotifyIconGFX:
 	push bc
 	push hl
 	ld hl, vTiles2 tile PACK_ITEM_ICON_FIRST_TILE
@@ -3725,27 +3637,6 @@ LoadPackItemIconGFX:
 .loaded
 	pop hl
 	pop bc
-	ret
-
-LoadPackItemIconPalette:
-	ldh a, [hCGB]
-	and a
-	ret z
-	ld a, b
-	ldh [hTempBank], a
-	ldh a, [rWBK]
-	push af
-	ld a, BANK(wBGPals1)
-	ldh [rWBK], a
-	ld de, wBGPals1 palette 6
-	ld bc, 1 palettes
-	ldh a, [hTempBank]
-	call FarCopyBytes
-	pop af
-	ldh [rWBK], a
-	farcall ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
 	ret
 
 LoadItemNotifyIconPalette:
@@ -3769,14 +3660,6 @@ LoadItemNotifyIconPalette:
 	call UpdateTimePals
 	ret
 
-HidePackItemIcon:
-	jr ShowPackItemEmptyIcon
-
-PlacePackItemIcon:
-	hlcoord 1, 9
-	ld a, PACK_ITEM_ICON_FIRST_TILE
-	jr PlacePackItemIconTiles
-
 PlacePackItemIconTiles:
 	ld de, SCREEN_WIDTH - 3
 	ld b, 3
@@ -3798,7 +3681,7 @@ ItemNotifyPic::
 	call MenuBox
 	ld a, [wCurItem]
 	call GetPackItemIcon
-	call LoadPackItemIconGFX
+	call LoadItemNotifyIconGFX
 	call LoadItemNotifyIconPalette
 	call ItemNotifyPicCoord2Tile
 	ld a, PACK_ITEM_ICON_FIRST_TILE
@@ -3871,12 +3754,6 @@ Pack_ClearTilemap: ; unreferenced
 	call ByteFill
 	ret
 
-ClearPocketList:
-	hlcoord 5, 2
-	lb bc, 10, SCREEN_WIDTH - 5
-	call ClearBox
-	ret
-
 Pack_InitColors:
 	call Pack_LoadColors
 	call Pack_DrawShellNoCursor
@@ -3926,156 +3803,6 @@ PackGrayItemPalette:
 	RGB 20, 20, 20
 	RGB 10, 10, 10
 	RGB 00, 00, 00
-
-ItemsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumItems
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-PC_Mart_ItemsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumItems
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-KeyItemsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_NORMAL ; item format
-	dbw 0, wNumKeyItems
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-PC_Mart_KeyItemsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_NORMAL ; item format
-	dbw 0, wNumKeyItems
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-BallsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumBalls
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-PC_Mart_BallsPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumBalls
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-BerriesPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumBerries
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-PC_Mart_BerriesPocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumBerries
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-MedicinePocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP | STATICMENU_CURSOR | SCROLLINGMENU_ENABLE_START ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumMedicine
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
-
-PC_Mart_MedicinePocketMenuHeader:
-	db MENU_BACKUP_TILES ; flags
-	menu_coords 7, 1, SCREEN_WIDTH - 1, TEXTBOX_Y - 1
-	dw .MenuData
-	db 1 ; default option
-
-.MenuData:
-	db STATICMENU_ENABLE_SELECT | STATICMENU_ENABLE_LEFT_RIGHT | STATICMENU_ENABLE_START | STATICMENU_WRAP ; flags
-	db 5, 8 ; rows, columns
-	db SCROLLINGMENU_ITEMS_QUANTITY ; item format
-	dbw 0, wNumMedicine
-	dba PlaceMenuItemName
-	dba PlaceMenuItemQuantity
-	dba UpdatePackItemDescription
 
 PackNoItemText: ; unreferenced
 	text_far _PackNoItemText

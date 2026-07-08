@@ -334,9 +334,6 @@ ROMX $77
 	"Tileset Data 7"
 	"bank77"
 	"Pokégear GFX"
-	"Type Icons"
-	"Move Category Icons"
-	"Status Condition Icons"
 	"European Mail"
 ROMX $78
 	"Battle Animation Function Bank"
@@ -490,8 +487,13 @@ ROMX $9e
 	"Sampled Cry Payloads 23"
 ROMX $9f
 	; MBC30 high ROM bank.
-	; Reserved for sampled cry payload overflow.
+	; Reserved for sampled cry payload overflow and cold battle UI graphics.
 	"Sampled Cry Payloads 24"
+	"Type Icons"
+	"Move Category Icons"
+	"Status Condition Icons"
+	"Battle Menu GFX"
+	"Battle Move Info GFX"
 ROMX $a0
 	; MBC30 high ROM bank.
 	; Reserved for front/back pic overflow.

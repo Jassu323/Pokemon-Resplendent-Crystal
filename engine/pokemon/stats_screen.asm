@@ -23,6 +23,7 @@ DEF TYPE_ICON_SLOT_1_ATTR EQU $06 ; VRAM bank 0, BG palette 6
 DEF TYPE_ICON_SLOT_2_ATTR EQU $07 ; VRAM bank 0, BG palette 7
 DEF STATUS_ICON_STATS_ATTR EQU $05 ; VRAM bank 0, BG palette 5
 DEF STATS_SCREEN_PINK_BG_COLOR EQU palred 31 + palgreen 19 + palblue 31
+DEF STATS_SCREEN_HORIZONTAL_DIVIDER_TILE EQU $4a
 
 BattleStatsScreenInit:
 	ld a, [wLinkMode]
@@ -526,7 +527,7 @@ StatsScreen_PlaceVerticalDivider: ; unreferenced
 StatsScreen_PlaceHorizontalDivider:
 	hlcoord 0, 7
 	ld b, SCREEN_WIDTH
-	ld a, $62 ; horizontal divider (empty HP/exp bar)
+	ld a, STATS_SCREEN_HORIZONTAL_DIVIDER_TILE
 .loop
 	ld [hli], a
 	dec b

@@ -5,9 +5,15 @@ DrawKrisPackGFX:
 	ld a, [hli]
 	ld e, a
 	ld d, [hl]
-	ld hl, vTiles2 tile PACK_GFX_TILE
+	ld hl, vTiles1 tile (PACK_GFX_TILE - $80)
 	lb bc, BANK(PackFGFX), 15
+	ldh a, [rVBK]
+	push af
+	ld a, $1
+	ldh [rVBK], a
 	call Request2bpp
+	pop af
+	ldh [rVBK], a
 	ret
 
 PackFGFXPointers:
