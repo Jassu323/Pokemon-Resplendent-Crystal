@@ -693,6 +693,39 @@ _ExitMenu::
 	dec [hl]
 	ret
 
+_ExitMenuNoRestore::
+	xor a
+	ldh [hBGMapMode], a
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wWindowStack)
+	ldh [rWBK], a
+
+	call GetWindowStackTop
+	ld a, l
+	or h
+	jp z, Error_Cant_ExitMenu
+	ld a, l
+	ld [wWindowStackPointer], a
+	ld a, h
+	ld [wWindowStackPointer + 1], a
+	call PopWindow
+
+.loop
+	call GetWindowStackTop
+	ld a, h
+	or l
+	jr z, .done
+	call PopWindow
+
+.done
+	pop af
+	ldh [rWBK], a
+	ld hl, wWindowStackSize
+	dec [hl]
+	ret
+
 RestoreOverworldMapTiles: ; unreferenced
 	ld a, [wStateFlags]
 	bit SPRITE_UPDATES_DISABLED_F, a

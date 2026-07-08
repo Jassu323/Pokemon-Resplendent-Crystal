@@ -612,6 +612,12 @@ BattleStatus_DrawPlayerHUDIcon::
 	and a
 	ret z
 
+	ld a, b
+	call BattleHUD_LoadPlayerGenderPalette
+	ld a, b
+	call BattleHUD_GetGenderTile
+	hlcoord 17, 8
+	ld [hl], a
 	call BattleStatus_LoadIconPalette
 	call BattleStatus_GetPlayerIcon
 	jr nc, .no_icon
@@ -645,6 +651,12 @@ BattleStatus_DrawEnemyHUDIcon::
 	and a
 	ret z
 
+	ld a, b
+	call BattleHUD_LoadEnemyGenderPalette
+	ld a, b
+	call BattleHUD_GetGenderTile
+	hlcoord 9, 1
+	ld [hl], a
 	call BattleStatus_LoadIconPalette
 	call BattleStatus_GetEnemyIcon
 	jr nc, .no_icon
@@ -669,6 +681,96 @@ BattleStatus_DrawEnemyHUDIcon::
 	ld a, PAL_BATTLE_BG_ENEMY_HP
 	call Icon_Set3x1Attrs
 	and a
+	ret
+
+BattleHUD_GetGenderTile:
+	cp '♂'
+	jr z, .male
+	cp '♀'
+	jr z, .female
+	ret
+
+.male
+	ld a, BATTLE_HUD_MALE_GENDER_TILE
+	ret
+
+.female
+	ld a, BATTLE_HUD_FEMALE_GENDER_TILE
+	ret
+
+BattleHUD_LoadPlayerGenderPalette:
+; input:
+;   a = '♂', '♀', or ' '
+	ld de, wBGPals1 palette PAL_BATTLE_BG_PLAYER_HP color 1
+	ld hl, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP color 1
+	jr BattleHUD_LoadGenderPalette
+
+BattleHUD_LoadEnemyGenderPalette:
+; input:
+;   a = '♂', '♀', or ' '
+	ld de, wBGPals1 palette PAL_BATTLE_BG_ENEMY_HP color 1
+	ld hl, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP color 1
+
+BattleHUD_LoadGenderPalette:
+	ld c, a
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rWBK], a
+
+	push hl
+	ld a, c
+	call BattleHUD_GetGenderColor
+	call BattleHUD_CopyGenderColor
+	pop de
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	jr nz, .restore
+	ld a, c
+	call BattleHUD_GetGenderColor
+	call BattleHUD_CopyGenderColor
+
+	pop af
+	ldh [rWBK], a
+
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.restore
+	pop af
+	ldh [rWBK], a
+	ret
+
+BattleHUD_GetGenderColor:
+	cp '♂'
+	jr z, .male
+	cp '♀'
+	jr z, .female
+	ld hl, .genderless
+	ret
+
+.male
+	ld hl, .male_color
+	ret
+
+.female
+	ld hl, .female_color
+	ret
+
+.genderless
+	RGB 31, 25, 00
+.male_color
+	RGB 04, 13, 31
+.female_color
+	RGB 31, 07, 12
+
+BattleHUD_CopyGenderColor:
+	ld a, [hli]
+	ld [de], a
+	inc de
+	ld a, [hl]
+	ld [de], a
 	ret
 
 Icon_LoadCurrentMoveIconsGFX_Bank1::

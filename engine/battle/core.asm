@@ -5373,9 +5373,13 @@ BattleMenu_Pack:
 	ld a, $1
 	ld [wMenuCursorY], a
 	call ExitMenu
+	ld hl, wBattleMenuGFXFlags
+	set BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
 	call UpdateBattleHUDs
 	call BattleMenuGraphic_ClearForText_Home
 	call WaitBGMap
+	ld hl, wBattleMenuGFXFlags
+	res BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
 	call LoadTilemapToTempTilemap
 	call ClearWindowData
 	call FinishBattleAnim
@@ -6245,6 +6249,9 @@ BattleMoveInfo_HadIconAttrs:
 	ret
 
 BattleMoveInfo_UpdateTilemapAndAttrmap:
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	ret nz
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -6259,19 +6266,7 @@ BattleMoveInfo_UpdateTilemapAndAttrmap:
 	ret
 
 BattleMoveInfo_RestoreBattleAttrs:
-	ldh a, [hCGB]
-	and a
-	ret z
-
-	hlcoord 0, 8, wAttrmap
-	lb bc, 4, 10
-	ld a, PAL_BATTLE_BG_PLAYER
-	call FillBoxWithByte
-
-	hlcoord 10, 8, wAttrmap
-	lb bc, 4, 2
-	ld a, PAL_BATTLE_BG_PLAYER_HP
-	call FillBoxWithByte
+	farcall BattleMoveInfo_RestoreBattleAttrsGFX
 	ret
 
 CheckPlayerHasUsableMoves:

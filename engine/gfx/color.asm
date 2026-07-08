@@ -263,6 +263,9 @@ LoadBattleStatusIconPaletteInWRAM:
 ;   c = enemy STATUS_ICON_* constant, or $ff for no icon
 	ld de, wBGPals1 palette PAL_BATTLE_BG_5
 	call LoadBattleStatusIconPaletteToDE
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	ret nz
 	ld de, wBGPals2 palette PAL_BATTLE_BG_5
 
 LoadBattleStatusIconPaletteToDE:
@@ -858,20 +861,20 @@ ApplyHPBarPals:
 	ret
 
 .Enemy:
-	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP color 1
+	ld de, wBGPals2 palette PAL_BATTLE_BG_ENEMY_HP color 2
 	jr .okay
 
 .Player:
-	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP color 1
+	ld de, wBGPals2 palette PAL_BATTLE_BG_PLAYER_HP color 2
 
 .okay
 	ld l, c
 	ld h, $0
 	add hl, hl
 	add hl, hl
-	ld bc, HPBarPals
+	ld bc, HPBarPals + COLOR_SIZE
 	add hl, bc
-	ld bc, 4
+	ld bc, COLOR_SIZE
 	ld a, BANK(wBGPals2)
 	call FarCopyWRAM
 	ld a, TRUE

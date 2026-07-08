@@ -921,7 +921,9 @@ wPreparedSampledCryFrameCounter:: db
 SECTION UNION "Overworld Map", WRAM0
 
 ; Battle-only VRAM state. This overlays the overworld map buffer, so do not use
-; it from overworld/menu paths.
+; it from overworld/menu paths. Keep it after the prepared sampled-cry state,
+; since failed-catch cleanup can clear those bytes during battle.
+	ds 6
 wBattleMenuGFXFlags:: db
 wBattleMenuSavedBGPals:: ds 2 palettes
 

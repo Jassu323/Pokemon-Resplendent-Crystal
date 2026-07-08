@@ -10,7 +10,6 @@ _ReturnToBattle_UseBall:
 	ldh [hBGMapMode], a
 	ldh [hCGBPalUpdate], a
 	call LoadTempTilemapToTilemap
-	call ClearWindowData
 	farcall CGB_PrepareBattleScreenLayoutNoApply
 	call GetMemSGBLayout
 	call WaitBGMap
@@ -23,27 +22,12 @@ _ReturnToBattle_UseBall:
 BattleCore_BallReturnCleanup:
 	xor a
 	ldh [hBGMapMode], a
+	; Close the Pack window without restoring its pre-Pack tile backup.
+	call ExitMenuNoRestore
 	call ClearSprites
 	farcall UpdateBattleHUDs
-	farcall BattleMenuGraphic_BlankLowerArea
-	call .UpdateTilemapAndAttrmap
-	call WaitBGMap
 	call LoadTilemapToTempTilemap
 	call ClearWindowData
 	farcall FinishBattleAnim
 	and a
-	ret
-
-.UpdateTilemapAndAttrmap:
-	ldh a, [hCGB]
-	and a
-	ret z
-.wait
-	ldh a, [rLY]
-	cp LY_VBLANK
-	jr c, .wait
-	cp LY_VBLANK + 2
-	jr nc, .wait
-	call UpdateCGBPals
-	call CGBOnly_CopyTilemapAtOnce
 	ret

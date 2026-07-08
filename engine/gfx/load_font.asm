@@ -153,6 +153,10 @@ LoadBattleHUDBarFontTiles:
 	ld hl, vTiles2 tile BATTLE_HUD_EXP_TAIL_LEFT_TILE
 	lb bc, BANK(FontBattleExtra), 1
 	call Get2bppViaHDMA
+	ld de, BattleHUDGenderSymbolGFX
+	ld hl, vTiles1 tile (BATTLE_HUD_MALE_GENDER_TILE - $80)
+	lb bc, BANK(BattleHUDGenderSymbolGFX), 2
+	call Get2bppViaHDMA
 	ret
 
 StatsScreen_LoadFont:

@@ -7,6 +7,10 @@ INCBIN "gfx/font/font.1bpp"
 FontBattleExtra:
 INCBIN "gfx/font/font_battle_extra.2bpp"
 
+BattleHUDGenderSymbolGFX:
+INCBIN "gfx/font/male_symbol.2bpp"
+INCBIN "gfx/font/female_symbol.2bpp"
+
 Frames:
 	table_width TEXTBOX_FRAME_TILES * TILE_1BPP_SIZE
 INCBIN "gfx/frames/1.1bpp"

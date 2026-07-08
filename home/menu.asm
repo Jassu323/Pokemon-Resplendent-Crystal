@@ -71,6 +71,12 @@ ExitMenu::
 	pop af
 	ret
 
+ExitMenuNoRestore::
+	push af
+	callfar _ExitMenuNoRestore
+	pop af
+	ret
+
 InitVerticalMenuCursor::
 	callfar _InitVerticalMenuCursor
 	ret

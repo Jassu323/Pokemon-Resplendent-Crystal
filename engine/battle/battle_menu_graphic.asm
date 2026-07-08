@@ -166,6 +166,26 @@ BattleMenuGraphic_BlankLowerArea::
 	ld a, PAL_BATTLE_BG_TEXT
 	jp FillBoxWithByte
 
+BattleMoveInfo_RestoreBattleAttrsGFX::
+	ldh a, [hCGB]
+	and a
+	ret z
+
+	hlcoord 0, 8, wAttrmap
+	lb bc, 4, 10
+	ld a, PAL_BATTLE_BG_PLAYER
+	call FillBoxWithByte
+
+	hlcoord 10, 8, wAttrmap
+	lb bc, 4, 2
+	ld a, PAL_BATTLE_BG_PLAYER_HP
+	call FillBoxWithByte
+	hlcoord 10, 9, wAttrmap
+	ld a, PAL_BATTLE_BG_EXP
+	ld [hli], a
+	ld [hl], a
+	ret
+
 BattleMenuGraphic_LoadGraphics:
 	call BattleMenuGraphic_LoadCursorGFX
 
@@ -228,6 +248,10 @@ BattleMenuGraphic_LoadPalettes:
 
 	pop af
 	ldh [rWBK], a
+
+	ld hl, wBattleMenuGFXFlags
+	bit BATTLE_MENU_GFX_HIDDEN_REVEAL_F, [hl]
+	ret nz
 
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
