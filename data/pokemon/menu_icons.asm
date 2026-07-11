@@ -153,8 +153,8 @@ MonMenuIcons:
 	mon_menu_icon ArticunoIcon,       BLUE,   BLUE   ; ARTICUNO
 	mon_menu_icon ZapdosIcon,         BROWN,  RED    ; ZAPDOS
 	mon_menu_icon MoltresIcon,        RED,    PINK   ; MOLTRES
-	mon_menu_icon DratiniIcon,        BLUE,   PURPLE ; DRATINI
-	mon_menu_icon DragonairIcon,      BLUE,   PURPLE ; DRAGONAIR
+	mon_menu_icon DratiniIcon,        BLUE,   PINK   ; DRATINI
+	mon_menu_icon DragonairIcon,      BLUE,   PINK   ; DRAGONAIR
 	mon_menu_icon DragoniteIcon,      RED,    GREEN  ; DRAGONITE
 	mon_menu_icon MewtwoIcon,         PURPLE, GREEN  ; MEWTWO
 	mon_menu_icon MewIcon,            PINK,   BLUE   ; MEW

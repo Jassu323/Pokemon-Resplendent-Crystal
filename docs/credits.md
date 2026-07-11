@@ -191,6 +191,31 @@ Nuuk/Nuukiie - Gens 3+ Sprites - https://www.deviantart.com/nuukiie/art/Gen-2-Po
 - Leafeon
 
 SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbox.com/scl/fo/0kwypbhzrf0w9zdokqsg6/ALoTSoqBe9UHJfgXKAue9Ag?rlkey=d65p3m2acjizk9wuv3n8iz1o4&st=f19o2q0z&e=1&dl=0
+- Charizard
+- Beedrill
+- Clefable
+- Igglybuff
+- Wigglytuff
+- Zubat
+- Crobat
+- Gyarados
+- Omanyte
+- Dratini
+- Dragonair
+- Dragonite
+- Meganium
+- Pichu
+- Natu
+- Xatu
+- Bellossom
+- Jumpluff
+- Wooper
+- Qwilfish
+- Slugma
+- Larvitar
+- Pupitar
+- Tyranitar
+- Celebi
 - Baltoy
 - Claydol
 - Lileep
@@ -208,3 +233,4 @@ SageDeoxys - Gens 1-2 Replacement Sprites & Gens 3+ Sprites - https://www.dropbo
 - Lickilicky
 - Tangrowth
 - Regigigas
+- Egg

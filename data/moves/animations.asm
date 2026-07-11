@@ -1450,7 +1450,7 @@ BattleAnim_Recover:
 	anim_ret
 
 BattleAnim_Absorb:
-	anim_1gfx BATTLE_ANIM_GFX_CHARGE
+	anim_2gfx BATTLE_ANIM_GFX_CHARGE, BATTLE_ANIM_GFX_SHINE
 	anim_obj BATTLE_ANIM_OBJ_ABSORB_CENTER, 44, 88, $0
 .loop
 	anim_sound 6, 3, SFX_WATER_GUN
@@ -1464,6 +1464,7 @@ BattleAnim_Absorb:
 	anim_wait 6
 	anim_loop 5, .loop
 	anim_wait 48
+	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_MID_OBPALS_GRAY_AND_YELLOW, $0, $0, $0
 	anim_call BattleAnimSub_Glimmer2
 	anim_ret
 
@@ -1493,6 +1494,8 @@ BattleAnim_MegaDrain:
 
 .done
 	anim_wait 48
+	anim_1gfx BATTLE_ANIM_GFX_SHINE
+	anim_bgeffect BATTLE_BG_EFFECT_CYCLE_MID_OBPALS_GRAY_AND_YELLOW, $0, $0, $0
 	anim_call BattleAnimSub_Glimmer2
 	anim_ret
 
