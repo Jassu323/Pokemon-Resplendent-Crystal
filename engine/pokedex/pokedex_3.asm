@@ -23,6 +23,260 @@ LoadQuestionMarkPic:
 .QuestionMarkLZ:
 INCBIN "gfx/pokedex/question_mark.2bpp.lz"
 
+Pokedex_CommitStagedSelection:
+; Keep the old name and frontpic intact through their visible scanlines, then
+; replace both later in the same frame. Palette and cursor OAM are queued by
+; the caller for the following VBlank, revealing one complete new selection.
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .lcd_off
+
+	ldh a, [rLY]
+	cp 16
+	jr c, .wait_name_row
+
+.wait_next_frame
+	ldh a, [rLY]
+	cp 16
+	jr nc, .wait_next_frame
+
+.wait_name_row
+	ldh a, [rLY]
+	cp 16
+	jr c, .wait_name_row
+
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	hlcoord 0, 1
+	ld de, vBGMap1 + TILEMAP_WIDTH
+	ld c, 11
+.copy_name
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .copy_name
+	pop af
+	ldh [rVBK], a
+
+	ldh a, [rLY]
+	cp 64
+	jr c, .wait_frontpic_row
+
+.wait_next_frontpic_frame
+	ldh a, [rLY]
+	cp 64
+	jr nc, .wait_next_frontpic_frame
+
+.wait_frontpic_row
+	ldh a, [rLY]
+	cp 64
+	jr c, .wait_frontpic_row
+
+	ld hl, wPokedexWRAM0Scratch
+	ld de, vTiles2
+	ld c, 7 * 7
+	call Pokedex_HDMATransferFrontpic
+	ret
+
+.lcd_off
+	hlcoord 0, 1
+	ld de, vBGMap1 + TILEMAP_WIDTH
+	ld bc, 11
+	call CopyBytes
+	ld hl, wPokedexWRAM0Scratch
+	ld de, vTiles2
+	ld bc, 7 * 7 tiles
+	call CopyBytes
+	ret
+
+Pokedex_UpdateGridOAM:
+	call ClearSprites
+	ld de, wShadowOAMSprite00
+	ld a, 1
+	lb bc, 40, POKEDEX_CENTER_ICON_TILE + 0 * 4
+	ld l, OAM_BANK1 | 2
+	call .PlaceCenterIcon
+	ld de, wShadowOAMSprite04
+	ld a, 4
+	lb bc, 72, POKEDEX_CENTER_ICON_TILE + 1 * 4
+	ld l, OAM_BANK1 | 3
+	call .PlaceCenterIcon
+	ld de, wShadowOAMSprite08
+	ld a, 7
+	lb bc, 104, POKEDEX_CENTER_ICON_TILE + 2 * 4
+	ld l, OAM_BANK1 | 4
+	call .PlaceCenterIcon
+
+	ld de, wShadowOAMSprite12
+	ld a, 0
+	lb bc, 44, 64
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite13
+	ld a, 1
+	lb bc, 44, 96
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite14
+	ld a, 2
+	lb bc, 44, 128
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite15
+	ld a, 3
+	lb bc, 76, 64
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite16
+	ld a, 4
+	lb bc, 76, 96
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite17
+	ld a, 5
+	lb bc, 76, 128
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite18
+	ld a, 6
+	lb bc, 108, 64
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite19
+	ld a, 7
+	lb bc, 108, 96
+	call .PlaceCaughtBall
+	ld de, wShadowOAMSprite20
+	ld a, 8
+	lb bc, 108, 128
+	call .PlaceCaughtBall
+
+	ld de, wShadowOAMSprite21
+	call .PlaceCursor
+	ld de, wShadowOAMSprite25
+	ld a, 68
+	ld h, 54
+	ld c, POKEDEX_SCROLL_THUMB_TILE
+	ld l, 5
+	jp .WriteOAM
+
+.PlaceCenterIcon:
+; a = grid position, b = screen y, c = first tile, l = attributes
+	push hl
+	push bc
+	ld l, a
+	ld h, 0
+	ld bc, wPokedexGridFlags
+	add hl, bc
+	bit POKEDEX_GRID_SEEN_F, [hl]
+	pop bc
+	pop hl
+	ret z
+	ld a, b
+	ld h, 104
+	call .WriteOAM
+	inc c
+	ld a, b
+	ld h, 112
+	call .WriteOAM
+	inc c
+	ld a, b
+	add 8
+	ld h, 104
+	call .WriteOAM
+	inc c
+	ld a, b
+	add 8
+	ld h, 112
+	jp .WriteOAM
+
+.PlaceCaughtBall:
+; a = grid position, b = screen y, c = screen x
+	push bc
+	ld l, a
+	ld h, 0
+	ld bc, wPokedexGridFlags
+	add hl, bc
+	bit POKEDEX_GRID_CAUGHT_F, [hl]
+	pop bc
+	ret z
+	ld h, c
+	ld a, b
+	ld c, POKEDEX_CAUGHT_BALL_TILE
+	ld l, 1
+	jp .WriteOAM
+
+.PlaceCursor:
+	ld a, [wDexListingCursor]
+	add a
+	ld c, a
+	ld b, 0
+	ld hl, .CursorPositions
+	add hl, bc
+	ld a, [hli]
+	ld [wDexTempCounter], a
+	ld a, [hl]
+	ld [wDexTempCounter + 1], a
+
+	ld h, a
+	ld a, [wDexTempCounter]
+	ld c, POKEDEX_LIST_CURSOR_TILE
+	ld l, 0
+	call .WriteOAM
+	ld a, [wDexTempCounter + 1]
+	add 20
+	ld h, a
+	ld a, [wDexTempCounter]
+	ld l, OAM_XFLIP
+	call .WriteOAM
+	ld a, [wDexTempCounter + 1]
+	ld h, a
+	ld a, [wDexTempCounter]
+	add 20
+	ld l, OAM_YFLIP
+	call .WriteOAM
+	ld a, [wDexTempCounter + 1]
+	add 20
+	ld h, a
+	ld a, [wDexTempCounter]
+	add 20
+	ld l, OAM_XFLIP | OAM_YFLIP
+	jp .WriteOAM
+
+.WriteOAM:
+; a = screen y, h = screen x, c = tile, l = attributes
+	add 16
+	ld [de], a
+	inc de
+	ld a, h
+	add 8
+	ld [de], a
+	inc de
+	ld a, c
+	ld [de], a
+	inc de
+	ld a, l
+	ld [de], a
+	inc de
+	ret
+
+.CursorPositions:
+	db 34, 66
+	db 34, 98
+	db 34, 130
+	db 66, 66
+	db 66, 98
+	db 66, 130
+	db 98, 66
+	db 98, 98
+	db 98, 130
+
+Pokedex_UpdateGridCursorOAM:
+; Static page OAM occupies slots 0-20 and 25. Selection changes only rewrite
+; the four cursor corners in slots 21-24.
+	ld de, wShadowOAMSprite21
+	jp Pokedex_UpdateGridOAM.PlaceCursor
+
 DrawPokedexListWindow:
 	hlcoord 0, 0
 	lb bc, SCREEN_HEIGHT, 12

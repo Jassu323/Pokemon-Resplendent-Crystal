@@ -331,7 +331,7 @@ HDMATransfer_WaitForScanline124:
 	ld b, $7b
 	jr _continue_HDMATransfer
 
-HDMATransfer_WaitForScanline128:
+HDMATransfer_WaitForScanline128::
 	ld b, $7f
 _continue_HDMATransfer:
 ; a lot of waiting around for hardware registers

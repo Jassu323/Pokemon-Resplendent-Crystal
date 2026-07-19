@@ -83,6 +83,18 @@ _GetFrontpic:
 	ld a, BANK(sEnemyFrontPicTileCount)
 	call OpenSRAM
 	push de
+	call _PrepareFrontpic
+	pop hl
+	push hl
+	ld de, sPaddedEnemyFrontPic
+	ld c, 7 * 7
+	ldh a, [hROMBank]
+	ld b, a
+	call Get2bpp
+	pop hl
+	ret
+
+_PrepareFrontpic:
 	call GetBaseData
 	ld a, [wBasePicSize]
 	and $f
@@ -105,16 +117,7 @@ _GetFrontpic:
 	pop bc
 	ld hl, sPaddedEnemyFrontPic
 	ld de, wDecompressScratch
-	call PadFrontpic
-	pop hl
-	push hl
-	ld de, sPaddedEnemyFrontPic
-	ld c, 7 * 7
-	ldh a, [hROMBank]
-	ld b, a
-	call Get2bpp
-	pop hl
-	ret
+	jp PadFrontpic
 
 GetPicIndirectPointer:
 	ld a, [wCurPartySpecies]

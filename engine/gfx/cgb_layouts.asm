@@ -468,16 +468,7 @@ _CGB_PokedexList:
 	ld hl, PokedexUIPalette
 	ld de, wBGPals1 palette 0
 	call LoadHLPaletteIntoDE
-	ld a, [wCurPartySpecies]
-	cp $ff
-	jr nz, .pokemon_palette
-	ld hl, PokedexQuestionMarkPalette
-	call LoadHLPaletteIntoDE
-	jr .side_icon_palettes
-
-.pokemon_palette
-	call GetMonPalettePointer
-	call LoadPalette_White_Col1_Col2_Black
+	call CGB_PokedexLoadFrontpicPalette
 
 .side_icon_palettes
 	ld a, [wPokedexGridIconPalettes + 0]
@@ -551,6 +542,40 @@ _CGB_PokedexList:
 	ld bc, 1 palettes
 	ld a, BANK(wBGPals1)
 	jp FarCopyWRAM
+
+CGB_PokedexPrepareFrontpicPalette::
+; Stage the selected frontpic palette without making it visible yet.
+	ldh a, [hCGB]
+	and a
+	ret z
+	jp CGB_PokedexLoadFrontpicPalette
+
+CGB_PokedexQueueFrontpicPalette::
+; Make the staged frontpic palette eligible for the next VBlank. Preserve
+; every static UI and icon palette already loaded by _CGB_PokedexList.
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld hl, wBGPals1 palette 1
+	ld de, wBGPals2 palette 1
+	ld bc, 1 palettes
+	ld a, BANK(wGBCPalettes)
+	call FarCopyWRAM
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+CGB_PokedexLoadFrontpicPalette:
+	ld de, wBGPals1 palette 1
+	ld a, [wCurPartySpecies]
+	cp $ff
+	jr nz, .pokemon_palette
+	ld hl, PokedexQuestionMarkPalette
+	jp LoadHLPaletteIntoDE
+
+.pokemon_palette
+	call GetMonPalettePointer
+	jp LoadPalette_White_Col1_Col2_Black
 
 PokedexUIPalette:
 	RGB 31, 31, 31

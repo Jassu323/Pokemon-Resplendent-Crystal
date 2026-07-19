@@ -334,7 +334,7 @@ Pokedex_InitMainScreen:
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
 	call Pokedex_RecordRenderedSelectionKey
-	call Pokedex_UpdateGridOAM
+	farcall Pokedex_UpdateGridOAM
 	farcall DrawPokedexListWindow
 	call Pokedex_PrintSelectedName
 	hlcoord 0, 17
@@ -347,22 +347,41 @@ Pokedex_UpdateMainScreen:
 	ld hl, hJoyPressed
 	ld a, [hl]
 	and PAD_B
-	jr nz, .b
+	jp nz, .b
 	ld a, [hl]
 	and PAD_A
-	jr nz, .a
+	jp nz, .a
 	ld a, [hl]
 	and PAD_SELECT
-	jr nz, .select
+	jp nz, .select
 	ld a, [hl]
 	and PAD_START
-	jr nz, .start
+	jp nz, .start
 	call Pokedex_GridHandleDPadInput
 	ret nc
 	call Pokedex_GetSelectionRenderKey
 	ld hl, wPokedexRenderedSelectionKey
 	cp [hl]
-	jr z, .update_oam
+	jr z, .update_cursor
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg_selection
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	xor a
+	ldh [hBGMapMode], a
+	call Pokedex_PrintSelectedName
+	call Pokedex_PrepareSelectedMonTiles
+	farcall CGB_PokedexPrepareFrontpicPalette
+	farcall Pokedex_UpdateGridCursorOAM
+	farcall Pokedex_CommitStagedSelection
+	farcall CGB_PokedexQueueFrontpicPalette
+	xor a
+	ldh [hOAMUpdate], a
+	call Pokedex_RecordRenderedSelectionKey
+	ret
+
+.dmg_selection
 	xor a
 	ldh [hBGMapMode], a
 	call Pokedex_PrintSelectedName
@@ -372,8 +391,8 @@ Pokedex_UpdateMainScreen:
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
 	call Pokedex_RecordRenderedSelectionKey
-.update_oam
-	call Pokedex_UpdateGridOAM
+.update_cursor
+	farcall Pokedex_UpdateGridCursorOAM
 	ret
 
 .a
@@ -2371,169 +2390,6 @@ Pokedex_DisplayTypeNotFoundMessage:
 	db   "The specified type"
 	next "was not found.@"
 
-Pokedex_UpdateGridOAM:
-	call ClearSprites
-	ld de, wShadowOAMSprite00
-
-	ld a, 1
-	lb bc, 40, POKEDEX_CENTER_ICON_TILE + 0 * 4
-	ld l, OAM_BANK1 | 2
-	call .PlaceCenterIcon
-	ld a, 4
-	lb bc, 72, POKEDEX_CENTER_ICON_TILE + 1 * 4
-	ld l, OAM_BANK1 | 3
-	call .PlaceCenterIcon
-	ld a, 7
-	lb bc, 104, POKEDEX_CENTER_ICON_TILE + 2 * 4
-	ld l, OAM_BANK1 | 4
-	call .PlaceCenterIcon
-
-	ld a, 0
-	lb bc, 44, 64
-	call .PlaceCaughtBall
-	ld a, 1
-	lb bc, 44, 96
-	call .PlaceCaughtBall
-	ld a, 2
-	lb bc, 44, 128
-	call .PlaceCaughtBall
-	ld a, 3
-	lb bc, 76, 64
-	call .PlaceCaughtBall
-	ld a, 4
-	lb bc, 76, 96
-	call .PlaceCaughtBall
-	ld a, 5
-	lb bc, 76, 128
-	call .PlaceCaughtBall
-	ld a, 6
-	lb bc, 108, 64
-	call .PlaceCaughtBall
-	ld a, 7
-	lb bc, 108, 96
-	call .PlaceCaughtBall
-	ld a, 8
-	lb bc, 108, 128
-	call .PlaceCaughtBall
-
-	call .PlaceCursor
-	ld a, 68
-	ld h, 54
-	ld c, POKEDEX_SCROLL_THUMB_TILE
-	ld l, 5
-	jp .WriteOAM
-
-.PlaceCenterIcon:
-; a = grid position, b = screen y, c = first tile, l = attributes
-	push hl
-	push bc
-	ld l, a
-	ld h, 0
-	ld bc, wPokedexGridFlags
-	add hl, bc
-	bit POKEDEX_GRID_SEEN_F, [hl]
-	pop bc
-	pop hl
-	ret z
-	ld a, b
-	ld h, 104
-	call .WriteOAM
-	inc c
-	ld a, b
-	ld h, 112
-	call .WriteOAM
-	inc c
-	ld a, b
-	add 8
-	ld h, 104
-	call .WriteOAM
-	inc c
-	ld a, b
-	add 8
-	ld h, 112
-	jp .WriteOAM
-
-.PlaceCaughtBall:
-; a = grid position, b = screen y, c = screen x
-	push bc
-	ld l, a
-	ld h, 0
-	ld bc, wPokedexGridFlags
-	add hl, bc
-	bit POKEDEX_GRID_CAUGHT_F, [hl]
-	pop bc
-	ret z
-	ld h, c
-	ld a, b
-	ld c, POKEDEX_CAUGHT_BALL_TILE
-	ld l, 1
-	jp .WriteOAM
-
-.PlaceCursor:
-	ld a, [wDexListingCursor]
-	add a
-	ld c, a
-	ld b, 0
-	ld hl, .CursorPositions
-	add hl, bc
-	ld a, [hli]
-	ld [wDexTempCounter], a
-	ld a, [hl]
-	ld [wDexTempCounter + 1], a
-
-	ld h, a
-	ld a, [wDexTempCounter]
-	ld c, POKEDEX_LIST_CURSOR_TILE
-	ld l, 0
-	call .WriteOAM
-	ld a, [wDexTempCounter + 1]
-	add 20
-	ld h, a
-	ld a, [wDexTempCounter]
-	ld l, OAM_XFLIP
-	call .WriteOAM
-	ld a, [wDexTempCounter + 1]
-	ld h, a
-	ld a, [wDexTempCounter]
-	add 20
-	ld l, OAM_YFLIP
-	call .WriteOAM
-	ld a, [wDexTempCounter + 1]
-	add 20
-	ld h, a
-	ld a, [wDexTempCounter]
-	add 20
-	ld l, OAM_XFLIP | OAM_YFLIP
-	jp .WriteOAM
-
-.WriteOAM:
-; a = screen y, h = screen x, c = tile, l = attributes
-	add 16
-	ld [de], a
-	inc de
-	ld a, h
-	add 8
-	ld [de], a
-	inc de
-	ld a, c
-	ld [de], a
-	inc de
-	ld a, l
-	ld [de], a
-	inc de
-	ret
-
-.CursorPositions:
-	db 34, 66
-	db 34, 98
-	db 34, 130
-	db 66, 66
-	db 66, 98
-	db 66, 130
-	db 98, 66
-	db 98, 98
-	db 98, 130
-
 Pokedex_UpdateCursorOAM:
 	ld a, [wCurDexMode]
 	cp DEXMODE_OLD
@@ -2986,6 +2842,43 @@ Pokedex_LoadSelectedMonTiles:
 	call Get2bpp
 	call CloseSRAM
 	ret
+
+Pokedex_PrepareSelectedMonTiles:
+; Build one complete 7x7 selection image in Dex-only WRAM0. The currently
+; displayed vTiles2 image remains untouched until Pokedex_CommitStagedSelection.
+	call Pokedex_GetSelectedMon
+	call Pokedex_CheckSeen
+	jr z, .question_mark
+	ld a, [wFirstUnownSeen]
+	ld [wUnownLetter], a
+	ld a, [wTempSpecies]
+	ld [wCurPartySpecies], a
+	ld [wCurSpecies], a
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(sEnemyFrontPicTileCount)
+	call OpenSRAM
+	farcall _PrepareFrontpic
+	ld hl, sPaddedEnemyFrontPic
+	ld de, wPokedexWRAM0Scratch
+	ld bc, 7 * 7 tiles
+	call CopyBytes
+	pop af
+	ldh [rWBK], a
+	call CloseSRAM
+	ret
+
+.question_mark
+	ld a, -1
+	ld [wCurPartySpecies], a
+	ld a, BANK(sScratch)
+	call OpenSRAM
+	farcall LoadQuestionMarkPic
+	ld hl, sScratch
+	ld de, wPokedexWRAM0Scratch
+	ld bc, 7 * 7 tiles
+	call CopyBytes
+	jp CloseSRAM
 
 Pokedex_LoadCurrentFootprint:
 	call Pokedex_GetSelectedMon
