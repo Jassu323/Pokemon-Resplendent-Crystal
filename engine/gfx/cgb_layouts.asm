@@ -422,9 +422,13 @@ StatsScreenPals:
 INCLUDE "gfx/stats/stats.pal"
 
 _CGB_Pokedex:
+	ld a, [wJumptableIndex]
+	cp DEXSTATE_MAIN_SCR
+	jp z, _CGB_PokedexList
+	cp DEXSTATE_UPDATE_MAIN_SCR
+	jp z, _CGB_PokedexList
+	ld hl, PokedexUIPalette
 	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
 	call LoadHLPaletteIntoDE ; dex interface palette
 	ld a, [wCurPartySpecies]
 	cp $ff
@@ -459,6 +463,121 @@ INCLUDE "gfx/pokedex/question_mark.pal"
 
 PokedexCursorPalette:
 INCLUDE "gfx/pokedex/cursor.pal"
+
+_CGB_PokedexList:
+	ld hl, PokedexUIPalette
+	ld de, wBGPals1 palette 0
+	call LoadHLPaletteIntoDE
+	ld a, [wCurPartySpecies]
+	cp $ff
+	jr nz, .pokemon_palette
+	ld hl, PokedexQuestionMarkPalette
+	call LoadHLPaletteIntoDE
+	jr .side_icon_palettes
+
+.pokemon_palette
+	call GetMonPalettePointer
+	call LoadPalette_White_Col1_Col2_Black
+
+.side_icon_palettes
+	ld a, [wPokedexGridIconPalettes + 0]
+	ld de, wBGPals1 palette 2
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 2]
+	ld de, wBGPals1 palette 3
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 3]
+	ld de, wBGPals1 palette 4
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 5]
+	ld de, wBGPals1 palette 5
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 6]
+	ld de, wBGPals1 palette 6
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 8]
+	ld de, wBGPals1 palette 7
+	call .LoadBGIconPalette
+
+	ld hl, PokedexListCursorPalette
+	ld de, wOBPals1 palette 0
+	call LoadHLPaletteIntoDE
+	ld hl, PokedexListCaughtBallPalette
+	ld de, wOBPals1 palette 1
+	call LoadHLPaletteIntoDE
+	ld a, [wPokedexGridIconPalettes + 1]
+	ld de, wOBPals1 palette 2
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 4]
+	ld de, wOBPals1 palette 3
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 7]
+	ld de, wOBPals1 palette 4
+	call .LoadIconPalette
+	ld hl, PokedexListScrollThumbPalette
+	ld de, wOBPals1 palette 5
+	call LoadHLPaletteIntoDE
+
+	call WipeAttrmap
+	hlcoord 1, 1, wAttrmap
+	lb bc, 7, 7
+	ld a, 1
+	call FillBoxCGB
+	call ApplyAttrmap
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+.LoadBGIconPalette:
+	push de
+	call .LoadIconPalette
+	pop de
+	ld hl, PokedexListDarkGray
+	ld bc, 1 colors
+	ld a, BANK(wBGPals1)
+	jp FarCopyWRAM
+
+.LoadIconPalette:
+; a = PartyMenuOBPals palette, de = destination palette
+	and $f
+	add a
+	add a
+	add a
+	ld l, a
+	ld h, 0
+	ld bc, PartyMenuOBPals
+	add hl, bc
+	ld bc, 1 palettes
+	ld a, BANK(wBGPals1)
+	jp FarCopyWRAM
+
+PokedexUIPalette:
+	RGB 31, 31, 31
+	RGB 26, 10, 06
+	RGB 05, 05, 05
+	RGB 00, 00, 00
+
+PokedexListCursorPalette:
+	RGB 00, 00, 00
+	RGB 11, 23, 00
+	RGB 00, 00, 00
+	RGB 00, 00, 00
+
+PokedexListCaughtBallPalette:
+	RGB 00, 00, 00
+	RGB 31, 31, 31
+	RGB 31, 20, 10
+	RGB 31, 07, 01
+
+PokedexListScrollThumbPalette:
+	RGB 00, 00, 00
+	RGB 27, 31, 27
+	RGB 31, 07, 01
+	RGB 00, 00, 00
+
+PokedexListDarkGray:
+	RGB 05, 05, 05
 
 _CGB_BillsPC:
 	ld de, wBGPals1
@@ -515,9 +634,8 @@ BillsPCOrangePalette:
 INCLUDE "gfx/pc/orange.pal"
 
 _CGB_PokedexUnownMode:
+	ld hl, PokedexUIPalette
 	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
 	call LoadHLPaletteIntoDE
 	ld a, [wCurPartySpecies]
 	call GetMonPalettePointer
@@ -1179,9 +1297,8 @@ _CGB_BetaPikachuMinigame:
 	ret
 
 _CGB_PokedexSearchOption:
+	ld hl, PokedexUIPalette
 	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
 	call LoadHLPaletteIntoDE
 	call WipeAttrmap
 	call ApplyAttrmap
