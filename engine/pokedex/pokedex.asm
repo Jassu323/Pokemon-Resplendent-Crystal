@@ -34,6 +34,7 @@ DEF POKEDEX_SCROLL_THUMB_TILE  EQU $0f
 DEF POKEDEX_GFX_TILE_COUNT     EQU $40
 DEF POKEDEX_JOINED_LEFT_TILE   EQU $54
 DEF POKEDEX_JOINED_MIDDLE_TILE EQU $5b
+DEF POKEDEX_RENDER_KEY_UNSEEN  EQU -1
 
 Pokedex:
 	ldh a, [hWX]
@@ -332,6 +333,7 @@ Pokedex_InitMainScreen:
 	call Pokedex_LoadSelectedMonTiles
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call Pokedex_RecordRenderedSelectionKey
 	call Pokedex_UpdateGridOAM
 	farcall DrawPokedexListWindow
 	call Pokedex_PrintSelectedName
@@ -357,6 +359,10 @@ Pokedex_UpdateMainScreen:
 	jr nz, .start
 	call Pokedex_GridHandleDPadInput
 	ret nc
+	call Pokedex_GetSelectionRenderKey
+	ld hl, wPokedexRenderedSelectionKey
+	cp [hl]
+	jr z, .update_oam
 	xor a
 	ldh [hBGMapMode], a
 	call Pokedex_PrintSelectedName
@@ -365,6 +371,8 @@ Pokedex_UpdateMainScreen:
 	call Pokedex_ResetBGMapMode
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	call Pokedex_RecordRenderedSelectionKey
+.update_oam
 	call Pokedex_UpdateGridOAM
 	ret
 
@@ -2033,6 +2041,21 @@ Pokedex_GetSelectedMon:
 	call LockPokemonID
 	pop hl
 	ld [wTempSpecies], a
+	ret
+
+Pokedex_GetSelectionRenderKey:
+; Known selections use their species ID. All unseen selections share one key
+; because their name, frontpic, and palette are identical.
+	call Pokedex_GetSelectedMon
+	call Pokedex_CheckSeen
+	ld a, POKEDEX_RENDER_KEY_UNSEEN
+	ret z
+	ld a, [wTempSpecies]
+	ret
+
+Pokedex_RecordRenderedSelectionKey:
+	ld a, [wCurPartySpecies]
+	ld [wPokedexRenderedSelectionKey], a
 	ret
 
 Pokedex_CheckSeen:
