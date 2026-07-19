@@ -905,6 +905,14 @@ wOverworldMapBlocksEnd::
 
 SECTION UNION "Overworld Map", WRAM0
 
+; Pokedex-only scratch space. StartMenu_Pokedex rebuilds the overwritten
+; overworld block data before CloseSubmenu returns to the map.
+wPokedexWRAM0Scratch:: ds wOverworldMapBlocksEnd - wOverworldMapBlocks
+wPokedexWRAM0ScratchEnd::
+
+
+SECTION UNION "Overworld Map", WRAM0
+
 ; reclaimed GB Printer data
 wReclaimedPrinterWRAM0:: ds $40c
 wReclaimedPrinterWRAM0End::

@@ -464,6 +464,9 @@ StartMenu_Pokedex:
 
 	call FadeToMenu
 	farcall Pokedex
+	; The Pokedex may use the overworld map WRAM union as scratch space.
+	; Rebuild its block data before CloseSubmenu redraws the map from it.
+	call ReturnToMapFromSubmenu
 	call CloseSubmenu
 
 .empty
