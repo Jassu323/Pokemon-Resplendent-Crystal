@@ -446,6 +446,19 @@ _CGB_Pokedex:
 	lb bc, 7, 7
 	ld a, $1 ; green question mark palette
 	call FillBoxCGB
+	ld a, [wJumptableIndex]
+	cp DEXSTATE_DEX_ENTRY_SCR
+	jr c, .skip_footprint
+	cp DEXSTATE_REINIT_DEX_ENTRY_SCR + 1
+	jr nc, .skip_footprint
+	ld a, [wPokedexResidentFootprintSpecies]
+	cp -1
+	jr z, .skip_footprint
+	hlcoord 18, 1, wAttrmap
+	lb bc, 2, 2
+	ld a, BG_BANK1
+	call FillBoxCGB
+.skip_footprint
 	call InitPartyMenuOBPals
 	ld hl, PokedexCursorPalette
 	ld de, wOBPals1 palette 7 ; green cursor palette
@@ -512,7 +525,16 @@ _CGB_PokedexList:
 	call WipeAttrmap
 	hlcoord 1, 1, wAttrmap
 	lb bc, 7, 7
+	ld a, [wCurPartySpecies]
+	cp $ff
 	ld a, 1
+	jr nz, .got_frontpic_attr
+	or BG_BANK1
+.got_frontpic_attr
+	call FillBoxCGB
+	hlcoord 0, 8, wAttrmap
+	lb bc, 1, 7
+	ld a, BG_BANK1
 	call FillBoxCGB
 	call ApplyAttrmap
 	call ApplyPals
@@ -669,6 +691,42 @@ _CGB_PokedexUnownMode:
 	hlcoord 7, 5, wAttrmap
 	lb bc, 7, 7
 	ld a, $1 ; mon palette
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 3, wAttrmap
+	lb bc, 1, 11
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 4, wAttrmap
+	lb bc, 8, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 14, 4, wAttrmap
+	lb bc, 7, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 3, 2, wAttrmap
+	lb bc, 1, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 5, 2, wAttrmap
+	lb bc, 1, 9
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 15, 2, wAttrmap
+	lb bc, 1, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 3, 4, wAttrmap
+	lb bc, 8, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 15, 4, wAttrmap
+	lb bc, 7, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 15, wAttrmap
+	lb bc, 1, 12
 	call FillBoxCGB
 	call InitPartyMenuOBPals
 	call ApplyAttrmap

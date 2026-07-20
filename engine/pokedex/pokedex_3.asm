@@ -79,10 +79,26 @@ Pokedex_CommitStagedSelection:
 	cp 64
 	jr c, .wait_frontpic_row
 
+	call Pokedex_CommitStagedFrontpicMap
+	ld a, [wCurPartySpecies]
+	cp -1
+	ret z
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld c, 7 * 7
 	call Pokedex_HDMATransferFrontpic
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld de, vTiles4 tile $31
+	ld c, 4
+	call Pokedex_HDMATransferSelectionGFX
+	pop af
+	ldh [rVBK], a
+	ld a, [wCurPartySpecies]
+	ld [wPokedexResidentFootprintSpecies], a
 	ret
 
 .lcd_off
@@ -90,10 +106,85 @@ Pokedex_CommitStagedSelection:
 	ld de, vBGMap1 + TILEMAP_WIDTH
 	ld bc, 11
 	call CopyBytes
+	call Pokedex_CommitStagedFrontpicMap
+	ld a, [wCurPartySpecies]
+	cp -1
+	ret z
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld bc, 7 * 7 tiles
 	call CopyBytes
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld de, vTiles4 tile $31
+	ld bc, 4 tiles
+	call CopyBytes
+	pop af
+	ldh [rVBK], a
+	ld a, [wCurPartySpecies]
+	ld [wPokedexResidentFootprintSpecies], a
+	ret
+
+Pokedex_CommitStagedFrontpicMap:
+; The frontpic tilemap only changes when crossing the seen/unseen boundary.
+	ld a, [wPokedexRenderedSelectionKey]
+	cp POKEDEX_RENDER_KEY_UNSEEN
+	jr z, .copy
+	ld a, [wCurPartySpecies]
+	cp -1
+	ret nz
+.copy
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles
+	call .copy_plane
+	ld a, BANK(vBGMap2)
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles + 7 * 7
+	call .copy_plane
+	pop af
+	ldh [rVBK], a
+	ret
+
+.copy_plane
+	push hl
+	ldh a, [hBGMapAddress]
+	ld l, a
+	ldh a, [hBGMapAddress + 1]
+	ld h, a
+	ld de, TILEMAP_WIDTH + 1
+	add hl, de
+	ld d, h
+	ld e, l
+	pop hl
+	ld b, 7
+.row
+	ld c, 7
+.col
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .col
+	push bc
+	ld a, e
+	add TILEMAP_WIDTH - 7
+	ld e, a
+	jr nc, .no_carry
+	inc d
+.no_carry
+	pop bc
+	dec b
+	jr nz, .row
 	ret
 
 Pokedex_UpdateGridOAM:

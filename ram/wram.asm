@@ -760,6 +760,7 @@ wPokedexGridSpecies:: ds 9
 wPokedexGridFlags:: ds 9
 wPokedexGridIconPalettes:: ds 9
 wPokedexRenderedSelectionKey:: db ; species ID, or -1 for the shared unseen rendering
+wPokedexResidentFootprintSpecies:: db
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -767,7 +768,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 203
+	ds 202
 
 NEXTU
 ; pokegear

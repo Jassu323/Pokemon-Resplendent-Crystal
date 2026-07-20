@@ -34,6 +34,11 @@ DEF POKEDEX_SCROLL_THUMB_TILE  EQU $0f
 DEF POKEDEX_GFX_TILE_COUNT     EQU $40
 DEF POKEDEX_JOINED_LEFT_TILE   EQU $54
 DEF POKEDEX_JOINED_MIDDLE_TILE EQU $5b
+DEF POKEDEX_RESIDENT_UNSEEN_TILE        EQU $80
+DEF POKEDEX_RESIDENT_FOOTPRINT_TILE     EQU $b1
+DEF POKEDEX_RESIDENT_UNOWN_FONT_TILE    EQU $b5
+DEF POKEDEX_RESIDENT_JOINED_LEFT_TILE   EQU $d0
+DEF POKEDEX_RESIDENT_JOINED_MIDDLE_TILE EQU $d1
 DEF POKEDEX_RENDER_KEY_UNSEEN  EQU -1
 
 Pokedex:
@@ -105,6 +110,8 @@ InitPokedex:
 	ld bc, wPokedexDataEnd - wPokedexDataStart
 	xor a
 	call ByteFill
+	ld a, -1
+	ld [wPokedexResidentFootprintSpecies], a
 
 	xor a
 	ld [wJumptableIndex], a
@@ -448,7 +455,7 @@ Pokedex_InitDexEntryScreen:
 	ld a, h
 	ld [wPrevDexEntry + 1], a
 	farcall DisplayDexEntry
-	call Pokedex_DrawFootprint
+	call Pokedex_DrawResidentFootprint
 	call WaitBGMap
 	ld a, $a7
 	ldh [hWX], a
@@ -526,7 +533,7 @@ Pokedex_ReinitDexEntryScreen:
 	ld a, h
 	ld [wPrevDexEntry + 1], a
 	farcall DisplayDexEntry
-	call Pokedex_DrawFootprint
+	call Pokedex_DrawResidentFootprint
 	call Pokedex_LoadSelectedMonTiles
 	call WaitBGMap
 	call Pokedex_GetSelectedMon
@@ -596,7 +603,7 @@ Pokedex_RedisplayDexEntry:
 	call Pokedex_DrawDexEntryScreenBG
 	call Pokedex_GetSelectedMon
 	farcall DisplayDexEntry
-	call Pokedex_DrawFootprint
+	call Pokedex_DrawResidentFootprint
 	ret
 
 Pokedex_InitOptionScreen:
@@ -899,7 +906,9 @@ Pokedex_UpdateSearchResultsScreen:
 	ret
 
 Pokedex_InitUnownMode:
-	call Pokedex_LoadUnownFont
+	ldh a, [hCGB]
+	and a
+	call z, Pokedex_LoadUnownFont
 	call Pokedex_DrawUnownModeBG
 	xor a
 	ld [wDexCurUnownIndex], a
@@ -925,6 +934,9 @@ Pokedex_UpdateUnownMode:
 	ld a, DEXSTATE_OPTION_SCR
 	ld [wJumptableIndex], a
 	call DelayFrame
+	ldh a, [hCGB]
+	and a
+	jr nz, .done
 	call Pokedex_CheckSGB
 	jr nz, .decompress
 	farcall LoadSGBPokedexGFX2
@@ -986,11 +998,23 @@ Pokedex_UnownModeHandleDPadInput:
 
 Pokedex_UnownModeEraseCursor:
 	ld c, ' '
+	push af
+	ldh a, [hCGB]
+	and a
+	jr z, .got_tile
+	ld c, $32
+.got_tile
+	pop af
 	jr Pokedex_UnownModeUpdateCursorGfx
 
 Pokedex_UnownModePlaceCursor:
-	ld a, [wDexCurUnownIndex]
 	ld c, FIRST_UNOWN_CHAR + NUM_UNOWN ; diamond cursor
+	ldh a, [hCGB]
+	and a
+	jr z, .got_tile
+	ld c, POKEDEX_RESIDENT_UNOWN_FONT_TILE + NUM_UNOWN
+.got_tile
+	ld a, [wDexCurUnownIndex]
 
 Pokedex_UnownModeUpdateCursorGfx:
 	ld e, a
@@ -1287,9 +1311,19 @@ Pokedex_DrawMainScreenBG:
 	lb bc, 7, 6
 	call Pokedex_PlaceBorder
 	hlcoord 0, 8
-	ld [hl], POKEDEX_JOINED_LEFT_TILE
-	inc hl
+	ldh a, [hCGB]
+	and a
+	ld a, POKEDEX_JOINED_LEFT_TILE
+	jr z, .got_joined_left_tile
+	ld a, POKEDEX_RESIDENT_JOINED_LEFT_TILE
+.got_joined_left_tile
+	ld [hli], a
+	ldh a, [hCGB]
+	and a
 	ld a, POKEDEX_JOINED_MIDDLE_TILE
+	jr z, .got_joined_middle_tile
+	ld a, POKEDEX_RESIDENT_JOINED_MIDDLE_TILE
+.got_joined_middle_tile
 	ld bc, 6
 	call ByteFill
 	hlcoord 1, 10
@@ -1351,7 +1385,7 @@ Pokedex_DrawMainScreenBG:
 	jr nz, .scrollbar_middle
 	ld a, POKEDEX_SCROLLBAR_TILE + 4
 	call .PlaceScrollbarRow
-	call Pokedex_PlaceFrontpicTopLeftCorner
+	call Pokedex_PlaceSelectedFrontpicTopLeftCorner
 	ret
 
 .PlaceScrollbarRow:
@@ -1569,7 +1603,16 @@ endr
 	ld h, [hl]
 	ld l, a
 	pop af
-	add FIRST_UNOWN_CHAR - 1 ; Unown A
+	ld c, a
+	ldh a, [hCGB]
+	and a
+	ld a, c
+	jr z, .dmg_letter
+	add POKEDEX_RESIDENT_UNOWN_FONT_TILE - 1
+	jr .place_letter
+.dmg_letter
+	add FIRST_UNOWN_CHAR - 1
+.place_letter
 	ld [hl], a
 	inc de
 	inc b
@@ -1621,6 +1664,7 @@ Pokedex_PlaceFrontpicTopLeftCorner:
 	hlcoord 1, 1
 Pokedex_PlaceFrontpicAtHL:
 	xor a
+Pokedex_PlaceFrontpicAtHLWithTile:
 	ld b, $7
 .row
 	ld c, $7
@@ -1639,6 +1683,19 @@ Pokedex_PlaceFrontpicAtHL:
 	dec b
 	jr nz, .row
 	ret
+
+Pokedex_PlaceSelectedFrontpicTopLeftCorner:
+	ldh a, [hCGB]
+	and a
+	jr z, Pokedex_PlaceFrontpicTopLeftCorner
+	call Pokedex_GetSelectedMon
+	call Pokedex_CheckSeen
+	ld a, 0
+	jr nz, .place
+	ld a, POKEDEX_RESIDENT_UNSEEN_TILE
+.place
+	hlcoord 1, 1
+	jr Pokedex_PlaceFrontpicAtHLWithTile
 
 Pokedex_PlaceString:
 .loop
@@ -2020,11 +2077,20 @@ Pokedex_PlaceDefaultStringIfNotSeen:
 Pokedex_DrawFootprint:
 	hlcoord 18, 1
 	ld a, $62
+	jr Pokedex_DrawFootprintWithTile
+
+Pokedex_DrawResidentFootprint:
+	ldh a, [hCGB]
+	and a
+	jr z, Pokedex_DrawFootprint
+	ld a, POKEDEX_RESIDENT_FOOTPRINT_TILE
+	hlcoord 18, 1
+Pokedex_DrawFootprintWithTile:
 	ld [hli], a
 	inc a
 	ld [hl], a
+	inc a
 	hlcoord 18, 2
-	ld a, $64
 	ld [hli], a
 	inc a
 	ld [hl], a
@@ -2826,11 +2892,17 @@ Pokedex_LoadSelectedMonTiles:
 	call GetBaseData
 	ld de, vTiles2
 	predef GetMonFrontpic
-	ret
+	ldh a, [hCGB]
+	and a
+	ret z
+	jp Pokedex_LoadCurrentFootprint
 
 .QuestionMark:
 	ld a, -1
 	ld [wCurPartySpecies], a
+	ldh a, [hCGB]
+	and a
+	ret nz
 	ld a, BANK(sScratch)
 	call OpenSRAM
 	farcall LoadQuestionMarkPic
@@ -2866,24 +2938,47 @@ Pokedex_PrepareSelectedMonTiles:
 	pop af
 	ldh [rWBK], a
 	call CloseSRAM
-	ret
+	ld a, [wCurPartySpecies]
+	ld [wTempSpecies], a
+	call Pokedex_PrepareCurrentFootprint
+	jp Pokedex_StageSelectedFrontpicMap
 
 .question_mark
 	ld a, -1
 	ld [wCurPartySpecies], a
-	ld a, BANK(sScratch)
-	call OpenSRAM
-	farcall LoadQuestionMarkPic
-	ld hl, sScratch
-	ld de, wPokedexWRAM0Scratch
-	ld bc, 7 * 7 tiles
-	call CopyBytes
-	jp CloseSRAM
+	jp Pokedex_StageSelectedFrontpicMap
 
 Pokedex_LoadCurrentFootprint:
 	call Pokedex_GetSelectedMon
+	ldh a, [hCGB]
+	and a
+	jr z, Pokedex_LoadAnyFootprint
+	ld a, [wPokedexResidentFootprintSpecies]
+	ld hl, wTempSpecies
+	cp [hl]
+	ret z
+	call Pokedex_PrepareCurrentFootprint
+	call Pokedex_TransferPreparedFootprint
+	ld a, [wTempSpecies]
+	ld [wPokedexResidentFootprintSpecies], a
+	ret
 
 Pokedex_LoadAnyFootprint:
+	call Pokedex_GetFootprintPointer
+	ld hl, vTiles2 tile $62
+	lb bc, BANK(Footprints), 4
+	jp Request1bpp
+
+Pokedex_PrepareCurrentFootprint:
+	call Pokedex_GetFootprintPointer
+	ld h, d
+	ld l, e
+	ld de, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld bc, 4 * TILE_1BPP_SIZE
+	ld a, BANK(Footprints)
+	jp FarCopyBytesDouble
+
+Pokedex_GetFootprintPointer:
 	ld a, [wTempSpecies]
 	call GetPokemonIndexFromID
 	dec hl
@@ -2894,14 +2989,56 @@ Pokedex_LoadAnyFootprint:
 	add hl, hl
 	ld de, Footprints
 	add hl, de
-
 	ld e, l
 	ld d, h
-	ld hl, vTiles2 tile $62
-	lb bc, BANK(Footprints), 4
-	jp Request1bpp
+	ret
+
+Pokedex_TransferPreparedFootprint:
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld de, vTiles4 tile $31
+	ld c, 4
+	call Pokedex_HDMATransferSelectionGFX
+	pop af
+	ldh [rVBK], a
+	ret
+
+Pokedex_StageSelectedFrontpicMap:
+	ld a, [wCurPartySpecies]
+	cp -1
+	ld a, 0
+	jr nz, .got_tile
+	ld a, POKEDEX_RESIDENT_UNSEEN_TILE
+.got_tile
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles
+	ld b, 7
+.row
+	ld c, 7
+	push af
+.col
+	ld [hli], a
+	add 7
+	dec c
+	jr nz, .col
+	pop af
+	inc a
+	dec b
+	jr nz, .row
+	ld a, [wCurPartySpecies]
+	cp -1
+	ld a, 1
+	jr nz, .got_attr
+	or BG_BANK1
+.got_attr
+	ld bc, 7 * 7
+	jp ByteFill
 
 Pokedex_LoadGFX:
+	ld a, -1
+	ld [wPokedexResidentFootprintSpecies], a
 	call DisableLCD
 	ld hl, vTiles2
 	ld bc, $31 tiles
@@ -2928,10 +3065,43 @@ Pokedex_LoadGFX:
 	ld de, vTiles0
 	call Decompress
 	call Pokedex_LoadListStaticGFX
+	call Pokedex_LoadPermanentCGBGFX
 	ld a, 6
 	call SkipMusic
 	call EnableLCD
 	ret
+
+Pokedex_LoadPermanentCGBGFX:
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld a, BANK(sScratch)
+	call OpenSRAM
+	farcall LoadQuestionMarkPic
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, vTiles4
+	ld de, sScratch
+	ld c, 7 * 7
+	ldh a, [hROMBank]
+	ld b, a
+	call Get2bpp
+	ld de, PokedexListJoinedLeftGFX
+	ld hl, vTiles4 tile $50
+	lb bc, BANK(PokedexListJoinedLeftGFX), 1
+	call Get2bpp
+	ld de, PokedexListJoinedMiddleGFX
+	ld hl, vTiles4 tile $51
+	lb bc, BANK(PokedexListJoinedMiddleGFX), 1
+	call Get2bpp
+	ld hl, vTiles5 tile $32
+	call Pokedex_MakeTileDarkGray
+	pop af
+	ldh [rVBK], a
+	call CloseSRAM
+	jp Pokedex_LoadUnownFont
 
 Pokedex_LoadListStaticGFX:
 	ldh a, [rVBK]
@@ -2959,6 +3129,9 @@ Pokedex_LoadListStaticGFX:
 	ret
 
 Pokedex_LoadListJoinedBorderGFX:
+	ldh a, [hCGB]
+	and a
+	ret nz
 	ldh a, [rVBK]
 	push af
 	xor a
@@ -2993,6 +3166,7 @@ Pokedex_LoadInvertedFont:
 
 Pokedex_MakeSpaceTileDarkGray:
 	ld hl, vTiles2 tile ' '
+Pokedex_MakeTileDarkGray:
 	ld b, TILE_WIDTH
 .row
 	xor a
@@ -3072,10 +3246,25 @@ Pokedex_LoadUnownFont:
 	ld hl, sScratch + $188
 	ld bc, (NUM_UNOWN + 1) tiles
 	call Pokedex_InvertTiles
-	ld de, sScratch + $188
+	ldh a, [rVBK]
+	push af
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, vTiles4 tile $35
+	jr .load
+.dmg
+	xor a
+	ldh [rVBK], a
 	ld hl, vTiles2 tile FIRST_UNOWN_CHAR
+.load
+	ld de, sScratch + $188
 	lb bc, BANK(Pokedex_LoadUnownFont), NUM_UNOWN + 1
-	call Request2bpp
+	call Get2bpp
+	pop af
+	ldh [rVBK], a
 	call CloseSRAM
 	ret
 

@@ -21,7 +21,12 @@ UpdateUnownDex:
 PrintUnownWord:
 	hlcoord 4, 15
 	ld bc, 12
+	ldh a, [hCGB]
+	and a
 	ld a, ' '
+	jr z, .got_blank
+	ld a, $32
+.got_blank
 	call ByteFill
 	ld a, [wDexCurUnownIndex]
 	ld e, a
@@ -43,6 +48,13 @@ PrintUnownWord:
 	cp -1
 	ret z
 	inc de
+	ld c, a
+	ldh a, [hCGB]
+	and a
+	ld a, c
+	jr z, .place
+	add POKEDEX_RESIDENT_UNOWN_FONT_TILE - FIRST_UNOWN_CHAR
+.place
 	ld [hli], a
 	jr .loop
 

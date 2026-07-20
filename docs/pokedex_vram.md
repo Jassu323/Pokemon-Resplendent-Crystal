@@ -25,9 +25,9 @@ the common unseen frontpic remains resident in VRAM bank 1.
 | `vTiles1 $46-$49` | Unseen grid icon | 4 | Replaces signed characters `$c6-$c9`. |
 | `vTiles2 $00-$30` | Selected known frontpic | 49 | Area-map graphics temporarily overwrite `$00-$2f`. |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 | Loaded from `pokedex.2bpp`. |
-| `vTiles2 $54` and `$5b` | Listing joined border | 2 | Listing-specific overlays inside the shared UI range. |
-| `vTiles2 $62-$65` | Selected footprint | 4 | Description-specific overlay inside the shared UI range. |
-| `vTiles2 $40-$5a` | Unown glyphs and cursor | 27 | Unown-mode overlay inside the shared UI range. |
+| `vTiles2 $54` and `$5b` | DMG Listing joined border | 2 | CGB uses the resident bank-1 copies instead. |
+| `vTiles2 $62-$65` | Standalone-entry/DMG footprint | 4 | The normal CGB Dex uses the resident bank-1 footprint. |
+| `vTiles2 $40-$5a` | DMG Unown glyphs and cursor | 27 | CGB uses the resident bank-1 copies instead. |
 
 The footprint, joined-border, and Unown writes explain why those screens
 currently need mode-specific graphics restoration even though their main UI
@@ -38,8 +38,12 @@ comes from the same 64-tile source.
 | Region | Current owner | Tiles | Notes |
 | --- | --- | ---: | --- |
 | `vTiles3 $00-$0b` | Center-column mini-sprites | 12 | Three 2x2 OBJ icons. |
-| `vTiles4` | Unused by the normal Pokedex | 128 | Available for permanent cross-screen assets. |
+| `vTiles4 $00-$30` | Resident unseen 7x7 frontpic | 49 | Loaded once when the Dex starts. |
+| `vTiles4 $31-$34` | Selected footprint | 4 | Prepared alongside the current known selection. |
+| `vTiles4 $35-$4f` | Unown glyphs and cursor | 27 | Loaded once when the Dex starts. |
+| `vTiles4 $50-$51` | Listing joined border | 2 | Permanent copies outside the shared bank-0 UI range. |
 | `vTiles5 $00-$17` | Left/right mini-sprites | 24 | Six 2x2 BG icons. |
+| `vTiles5 $32` | Unown cursor background | 1 | Bank-1 copy of the dark-gray background tile. |
 
 ## Target permanent allocation
 
@@ -57,22 +61,25 @@ requirements without assigning VRAM for neighboring known frontpics.
 | `vTiles4 $00-$30` | Resident unseen 7x7 frontpic | 49 |
 | `vTiles4 $31-$34` | Preloaded selected footprint | 4 |
 | `vTiles4 $35-$4f` | Permanent Unown glyphs and cursor | 27 |
+| `vTiles4 $50-$51` | Permanent Listing joined border | 2 |
 | `vTiles5 $00-$27` | Five left/right mini-sprite rows | 40 |
+| `vTiles5 $32` | Unown cursor background | 1 |
 
 The `vTiles4` ranges above are physical offsets within the `$8800-$8fff`
 region. With signed BG tile addressing they appear in tilemaps as `$80-$b0`,
-`$b1-$b4`, and `$b5-$cf`, respectively, with the VRAM-bank attribute set.
+`$b1-$b4`, `$b5-$cf`, and `$d0-$d1`, respectively, with the VRAM-bank
+attribute set.
 
-This leaves 244 tiles free in VRAM bank 1: 108 in `vTiles3`, 48 in
-`vTiles4`, and 88 in `vTiles5`. The footprint and Unown overlays must move
-to their bank-1 destinations in later residency phases. The listing-specific
-joined-border tiles can remain in bank 0 if the final cross-screen tilemap
-audit confirms that no other Pokedex screen needs the original tiles.
+This leaves 241 tiles free in VRAM bank 1: 108 in `vTiles3`, 46 in
+`vTiles4`, and 87 in `vTiles5`. The resident CGB footprint, Unown overlays,
+joined border, and cursor-background tile are loaded into these destinations
+when the Pokedex starts.
 
 Search, search results, and options currently load no unique tile graphics;
 they use the shared font and Pokedex UI. The normal description path also
-reuses the listing frontpic. Its only species-specific VRAM load is the
-four-tile footprint, which will be prepared while that species is selected.
+reuses the listing frontpic. Its four-tile footprint is prepared and loaded
+while that known species is selected, so entering Description from Listing
+does not load species graphics.
 
 The area map remains an explicit temporary overlay. It loads 48 town-map
 tiles to `vTiles2 $00-$2f` and five OBJ tiles to `vTiles0 $78-$7b/$7f`.
@@ -94,6 +101,7 @@ maximum sizes include:
 | --- | ---: |
 | Padded 7x7 frontpic | 784 |
 | Frontpic plus four 2bpp footprint tiles | 848 |
+| Frontpic, footprint, and packed 7x7 tile/attribute maps | 946 |
 | Native 20x18 tilemap and attrmap | 720 |
 | HDMA-padded 32x18 tilemap and attrmap | 1152 |
 | Nine 2x2 mini-sprites | 576 |
