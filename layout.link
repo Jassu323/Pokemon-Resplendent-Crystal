@@ -496,8 +496,9 @@ ROMX $9f
 	"Battle Move Info GFX"
 ROMX $a0
 	; MBC30 high ROM bank.
-	; Reserved for front/back pic overflow.
+	; Reserved for front/back pic overflow and Dex animation streaming.
 	"Pics 29"
+	"Pokedex Animation"
 ROMX $a1
 ROMX $a2
 ROMX $a3

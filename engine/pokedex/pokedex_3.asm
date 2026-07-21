@@ -79,14 +79,13 @@ Pokedex_CommitStagedSelection:
 	cp 64
 	jr c, .wait_frontpic_row
 
-	call Pokedex_CommitStagedFrontpicMap
-	ld a, [wCurPartySpecies]
-	cp -1
-	ret z
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld c, 7 * 7
 	call Pokedex_HDMATransferFrontpic
+	ld a, [wCurPartySpecies]
+	cp -1
+	ret z
 	ldh a, [rVBK]
 	push af
 	ld a, BANK(vTiles4)
@@ -106,14 +105,13 @@ Pokedex_CommitStagedSelection:
 	ld de, vBGMap1 + TILEMAP_WIDTH
 	ld bc, 11
 	call CopyBytes
-	call Pokedex_CommitStagedFrontpicMap
-	ld a, [wCurPartySpecies]
-	cp -1
-	ret z
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld bc, 7 * 7 tiles
 	call CopyBytes
+	ld a, [wCurPartySpecies]
+	cp -1
+	ret z
 	ldh a, [rVBK]
 	push af
 	ld a, BANK(vTiles4)
@@ -128,44 +126,88 @@ Pokedex_CommitStagedSelection:
 	ld [wPokedexResidentFootprintSpecies], a
 	ret
 
-Pokedex_CommitStagedFrontpicMap:
-; The frontpic tilemap only changes when crossing the seen/unseen boundary.
-	ld a, [wPokedexRenderedSelectionKey]
-	cp POKEDEX_RENDER_KEY_UNSEEN
+Pokedex_CommitAnimationFrontpicMap::
+; de = packed 7x7 tilemap immediately followed by packed attributes.
+	ld h, d
+	ld l, e
+	push hl
+	decoord 1, 1
+	call Pokedex_CopyPackedFrontpicMapToBacking
+	pop hl
+	ld bc, 7 * 7
+	add hl, bc
+	decoord 1, 1, wAttrmap
+	call Pokedex_CopyPackedFrontpicMapToBacking
+	; fallthrough
+
+Pokedex_CommitCurrentFrontpicMap::
+; Reveal a complete map only after the frontpic's visible scanlines have
+; passed. The graphics upload has already completed (or deliberately
+; underrun) before this map is installed.
+	xor a
+	ldh [hBGMapMode], a
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
 	jr z, .copy
-	ld a, [wCurPartySpecies]
-	cp -1
-	ret nz
+	ldh a, [rLY]
+	cp 64
+	jr nc, .copy
+.wait_frontpic
+	ldh a, [rLY]
+	cp 64
+	jr c, .wait_frontpic
 .copy
 	ldh a, [rVBK]
 	push af
 	xor a
 	ldh [rVBK], a
-	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles
-	call .copy_plane
+	hlcoord 1, 1
+	call Pokedex_CopyBackingFrontpicMapToVRAM
 	ld a, BANK(vBGMap2)
 	ldh [rVBK], a
-	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles + 7 * 7
-	call .copy_plane
+	hlcoord 1, 1, wAttrmap
+	call Pokedex_CopyBackingFrontpicMapToVRAM
 	pop af
 	ldh [rVBK], a
 	ret
 
-.copy_plane
+Pokedex_CopyPackedFrontpicMapToBacking:
+	ld b, 7
+.backing_row
+	ld c, 7
+.backing_col
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .backing_col
+	ld a, e
+	add SCREEN_WIDTH - 7
+	ld e, a
+	jr nc, .no_backing_carry
+	inc d
+.no_backing_carry
+	dec b
+	jr nz, .backing_row
+	ret
+
+Pokedex_CopyBackingFrontpicMapToVRAM:
 	push hl
 	ldh a, [hBGMapAddress]
-	ld l, a
+	ld e, a
 	ldh a, [hBGMapAddress + 1]
-	ld h, a
-	ld de, TILEMAP_WIDTH + 1
-	add hl, de
-	ld d, h
-	ld e, l
+	ld d, a
+	ld a, e
+	add TILEMAP_WIDTH + 1
+	ld e, a
+	jr nc, .got_vram_dest
+	inc d
+.got_vram_dest
 	pop hl
 	ld b, 7
-.row
+.vram_row
 	ld c, 7
-.col
+.vram_col
 .wait_vram
 	ldh a, [rSTAT]
 	and STAT_BUSY
@@ -174,17 +216,21 @@ Pokedex_CommitStagedFrontpicMap:
 	ld [de], a
 	inc de
 	dec c
-	jr nz, .col
-	push bc
+	jr nz, .vram_col
+	ld a, l
+	add SCREEN_WIDTH - 7
+	ld l, a
+	jr nc, .no_source_carry
+	inc h
+.no_source_carry
 	ld a, e
 	add TILEMAP_WIDTH - 7
 	ld e, a
-	jr nc, .no_carry
+	jr nc, .no_dest_carry
 	inc d
-.no_carry
-	pop bc
+.no_dest_carry
 	dec b
-	jr nz, .row
+	jr nz, .vram_row
 	ret
 
 Pokedex_UpdateGridOAM:

@@ -353,6 +353,89 @@ PokeAnim_InitAnim:
 	ldh [rWBK], a
 	ret
 
+PokeAnim_InitFrameProducer::
+; Initialize the shared animation parser without touching VRAM or playing a cry.
+; de = 7x7 logical tilemap, b = speed, c = idle animation flag.
+	ld h, d
+	ld l, e
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wPokeAnimStruct)
+	ldh [rWBK], a
+	push bc
+	ld bc, 0
+	ld d, 0
+	call PokeAnim_InitPicAttributes
+	pop bc
+	call PokeAnim_InitAnim
+	call PokeAnim_PlaceGraphic
+	ld a, [wPokeAnimFrontpicHeight]
+	ld c, a
+	pop af
+	ldh [rWBK], a
+	ld a, c
+	ret
+
+PokeAnim_DecodeNextVisualFrame::
+; Advance through control commands and produce the next visual frame in the
+; logical tilemap. Carry is set for a visual frame, with its duration in a and
+; any preceding repeat-exit holds in b. Carry is clear at end-of-animation.
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wPokeAnimStruct)
+	ldh [rWBK], a
+	xor a
+	ld [wPokeAnimWaitCounter], a
+.loop
+	call PokeAnim_GetPointer
+	ld a, [wPokeAnimCommand]
+	cp endanim_command
+	jr z, .end
+	cp setrepeat_command
+	jr z, .set_repeat
+	cp dorepeat_command
+	jr z, .do_repeat
+	call PokeAnim_GetFrame
+	ld a, [wPokeAnimParameter]
+	call PokeAnim_GetDuration
+	ld c, a
+	ld a, [wPokeAnimWaitCounter]
+	ld b, a
+	pop af
+	ldh [rWBK], a
+	ld a, c
+	scf
+	ret
+
+.set_repeat
+	ld a, [wPokeAnimParameter]
+	ld [wPokeAnimRepeatTimer], a
+	jr .loop
+
+.do_repeat
+	ld a, [wPokeAnimRepeatTimer]
+	and a
+	jr z, .repeat_finished
+	dec a
+	ld [wPokeAnimRepeatTimer], a
+	jr z, .repeat_finished
+	ld a, [wPokeAnimParameter]
+	ld [wPokeAnimFrame], a
+	jr .loop
+
+.repeat_finished
+	ld hl, wPokeAnimWaitCounter
+	inc [hl]
+	jr .loop
+
+.end
+	ld a, [wPokeAnimWaitCounter]
+	ld b, a
+	pop af
+	ldh [rWBK], a
+	xor a
+	ret
+
 PokeAnim_DoAnimScript:
 	xor a
 	ldh [hBGMapMode], a
@@ -437,6 +520,14 @@ PokeAnim_GetFrame:
 	push hl
 	call PokeAnim_CopyBitmaskToBuffer
 	pop hl
+	push hl
+	call PokeAnim_CountBitmaskTiles
+	pop hl
+	ld b, 0
+	ld de, wPokeAnimFrameTiles
+	ld a, [wPokeAnimFramesBank]
+	call FarCopyBytes
+	ld de, wPokeAnimFrameTiles
 	call PokeAnim_ConvertAndApplyBitmask
 	ret
 
@@ -546,6 +637,25 @@ PokeAnim_CopyBitmaskToBuffer:
 
 .Sizes: db 4, 5, 7
 
+PokeAnim_CountBitmaskTiles:
+	xor a
+	ld [wPokeAnimBitmaskCurBit], a
+	ld [wPokeAnimBitmaskCurRow], a
+	ld [wPokeAnimBitmaskCurCol], a
+	ld c, a
+.loop
+	push bc
+	call PokeAnim_IsCurBitSet
+	ld a, b
+	pop bc
+	add c
+	ld c, a
+	push bc
+	call PokeAnim_NextBit
+	pop bc
+	jr nc, .loop
+	ret
+
 MACRO poke_anim_box
 	for y, 1, \1 + 1
 		for x, 7 - \1, 7
@@ -560,28 +670,25 @@ PokeAnim_ConvertAndApplyBitmask:
 	ld [wPokeAnimBitmaskCurRow], a
 	ld [wPokeAnimBitmaskCurCol], a
 .loop
-	push hl
-	call .IsCurBitSet
-	pop hl
+	push de
+	call PokeAnim_IsCurBitSet
+	pop de
 	ld a, b
 	and a
 	jr z, .next
 
-	ld a, [wPokeAnimFramesBank]
-	call GetFarByte
-	inc hl
-	push hl
-	call .ApplyFrame
-	pop hl
+	ld a, [de]
+	inc de
+	push de
+	call PokeAnim_ApplyFrame
+	pop de
 
 .next
-	push hl
-	call .NextBit
-	pop hl
+	call PokeAnim_NextBit
 	jr nc, .loop
 	ret
 
-.IsCurBitSet:
+PokeAnim_IsCurBitSet:
 ; which byte
 	ld a, [wPokeAnimBitmaskCurBit]
 	and $f8
@@ -618,7 +725,7 @@ PokeAnim_ConvertAndApplyBitmask:
 	inc [hl]
 	ret
 
-.ApplyFrame:
+PokeAnim_ApplyFrame:
 	push af
 	call .GetCoord
 	pop af
@@ -758,7 +865,7 @@ PokeAnim_ConvertAndApplyBitmask:
 	add hl, bc
 	ret
 
-.NextBit:
+PokeAnim_NextBit:
 	ld a, [wPokeAnimBitmaskCurRow]
 	inc a
 	ld [wPokeAnimBitmaskCurRow], a

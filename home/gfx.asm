@@ -20,6 +20,10 @@ Pokedex_HDMATransferFrontpic::
 	homecall HDMATransfer_WaitForScanline128
 	ret
 
+Pokedex_HDMATransferAnimationGFX::
+	homecall HDMATransfer_Exact_NoDI_Arbitrary
+	ret
+
 BattleMenuGraphic_ClearForText_Home::
 	farcall BattleMenuGraphic_ClearForText
 	ret

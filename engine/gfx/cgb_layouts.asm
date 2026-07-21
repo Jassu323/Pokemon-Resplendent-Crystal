@@ -447,9 +447,9 @@ _CGB_Pokedex:
 	ld a, $1 ; green question mark palette
 	call FillBoxCGB
 	ld a, [wJumptableIndex]
-	cp DEXSTATE_DEX_ENTRY_SCR
+	cp DEXSTATE_DETAIL_ENTER
 	jr c, .skip_footprint
-	cp DEXSTATE_REINIT_DEX_ENTRY_SCR + 1
+	cp DEXSTATE_DETAIL_SWITCH + 1
 	jr nc, .skip_footprint
 	ld a, [wPokedexResidentFootprintSpecies]
 	cp -1

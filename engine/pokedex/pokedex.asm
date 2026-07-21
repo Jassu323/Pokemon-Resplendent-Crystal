@@ -2,9 +2,9 @@
 	const_def
 	const DEXSTATE_MAIN_SCR
 	const DEXSTATE_UPDATE_MAIN_SCR
-	const DEXSTATE_DEX_ENTRY_SCR
-	const DEXSTATE_UPDATE_DEX_ENTRY_SCR
-	const DEXSTATE_REINIT_DEX_ENTRY_SCR
+	const DEXSTATE_DETAIL_ENTER
+	const DEXSTATE_DETAIL_UPDATE
+	const DEXSTATE_DETAIL_SWITCH
 	const DEXSTATE_SEARCH_SCR
 	const DEXSTATE_UPDATE_SEARCH_SCR
 	const DEXSTATE_OPTION_SCR
@@ -14,6 +14,18 @@
 	const DEXSTATE_UNOWN_MODE
 	const DEXSTATE_UPDATE_UNOWN_MODE
 	const DEXSTATE_EXIT
+
+	const_def
+	const DEXDETAIL_VIEW_DESCRIPTION
+
+	const_def
+	const DEXDETAIL_STATE_ENTERING
+	const DEXDETAIL_STATE_ACTIVE
+	const DEXDETAIL_STATE_SWITCHING
+	const DEXDETAIL_STATE_LEAVING
+
+	const_def
+	const DEXDETAIL_ACTION_NONE
 
 EXPORT DEF POKEDEX_SCX EQU 5
 
@@ -34,12 +46,42 @@ DEF POKEDEX_SCROLL_THUMB_TILE  EQU $0f
 DEF POKEDEX_GFX_TILE_COUNT     EQU $40
 DEF POKEDEX_JOINED_LEFT_TILE   EQU $54
 DEF POKEDEX_JOINED_MIDDLE_TILE EQU $5b
-DEF POKEDEX_RESIDENT_UNSEEN_TILE        EQU $80
 DEF POKEDEX_RESIDENT_FOOTPRINT_TILE     EQU $b1
 DEF POKEDEX_RESIDENT_UNOWN_FONT_TILE    EQU $b5
 DEF POKEDEX_RESIDENT_JOINED_LEFT_TILE   EQU $d0
 DEF POKEDEX_RESIDENT_JOINED_MIDDLE_TILE EQU $d1
 DEF POKEDEX_RENDER_KEY_UNSEEN  EQU -1
+
+DEF POKEDEX_ANIM_PAYLOAD       EQUS "wPokedexWRAM0Scratch"
+DEF POKEDEX_ANIM_LOGICAL_MAP   EQUS "wPokedexWRAM0Scratch + $310"
+DEF POKEDEX_ANIM_SLOT_A_MAP    EQUS "wPokedexWRAM0Scratch + $39c"
+DEF POKEDEX_ANIM_SLOT_A_ATTRS  EQUS "wPokedexWRAM0Scratch + $3cd"
+DEF POKEDEX_ANIM_SLOT_B_MAP    EQUS "wPokedexWRAM0Scratch + $3fe"
+DEF POKEDEX_ANIM_SLOT_B_ATTRS  EQUS "wPokedexWRAM0Scratch + $42f"
+DEF POKEDEX_ANIM_SOURCE_TILES  EQUS "wPokedexWRAM0Scratch + $460"
+
+DEF POKEDEX_ANIM_BUFFER_A_TILE EQU $80
+DEF POKEDEX_ANIM_BUFFER_B_TILE EQU $33
+
+DEF POKEDEX_ANIM_SLOT_EMPTY            EQU 0
+DEF POKEDEX_ANIM_SLOT_BUILDING         EQU 1
+DEF POKEDEX_ANIM_SLOT_READY            EQU 2
+DEF POKEDEX_ANIM_SLOT_DISPLAYED        EQU 3
+
+DEF POKEDEX_ANIM_PRODUCER_INACTIVE EQU 0
+DEF POKEDEX_ANIM_PRODUCER_PENDING  EQU 1
+DEF POKEDEX_ANIM_PRODUCER_ACTIVE   EQU 2
+DEF POKEDEX_ANIM_PRODUCER_ENDED    EQU 3
+
+DEF POKEDEX_ANIM_PHASE_MAIN EQU 0
+DEF POKEDEX_ANIM_PHASE_IDLE EQU 1
+
+DEF POKEDEX_ANIM_PLAYBACK_INACTIVE EQU 0
+DEF POKEDEX_ANIM_PLAYBACK_WAITING  EQU 1
+DEF POKEDEX_ANIM_PLAYBACK_PLAYING  EQU 2
+DEF POKEDEX_ANIM_PLAYBACK_MAIN_HOLD EQU 3
+DEF POKEDEX_ANIM_PLAYBACK_PREHOLD  EQU 4
+DEF POKEDEX_ANIM_PLAYBACK_DONE     EQU 5
 
 Pokedex:
 	ldh a, [hWX]
@@ -291,9 +333,9 @@ Pokedex_RunJumptable:
 ; entries correspond to DEXSTATE_* constants
 	dw Pokedex_InitMainScreen
 	dw Pokedex_UpdateMainScreen
-	dw Pokedex_InitDexEntryScreen
-	dw Pokedex_UpdateDexEntryScreen
-	dw Pokedex_ReinitDexEntryScreen
+	dw Pokedex_InitDetail
+	dw Pokedex_UpdateDetail
+	dw Pokedex_SwitchDetailSpecies
 	dw Pokedex_InitSearchScreen
 	dw Pokedex_UpdateSearchScreen
 	dw Pokedex_InitOptionScreen
@@ -338,8 +380,11 @@ Pokedex_InitMainScreen:
 
 	call Pokedex_ResetBGMapMode
 	call Pokedex_LoadSelectedMonTiles
+	farcall Pokedex_StartAnimationPrefetch
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	xor a
+	ldh [hBGMapMode], a
 	call Pokedex_RecordRenderedSelectionKey
 	farcall Pokedex_UpdateGridOAM
 	farcall DrawPokedexListWindow
@@ -365,11 +410,15 @@ Pokedex_UpdateMainScreen:
 	and PAD_START
 	jp nz, .start
 	call Pokedex_GridHandleDPadInput
-	ret nc
+	jr c, .selection_changed
+	farcall Pokedex_ServiceAnimationProducer
+	ret
+.selection_changed
 	call Pokedex_GetSelectionRenderKey
 	ld hl, wPokedexRenderedSelectionKey
 	cp [hl]
 	jr z, .update_cursor
+	farcall Pokedex_CancelAnimationPrefetch
 	ldh a, [hCGB]
 	and a
 	jr z, .dmg_selection
@@ -386,6 +435,7 @@ Pokedex_UpdateMainScreen:
 	xor a
 	ldh [hOAMUpdate], a
 	call Pokedex_RecordRenderedSelectionKey
+	farcall Pokedex_StartAnimationPrefetch
 	ret
 
 .dmg_selection
@@ -406,7 +456,7 @@ Pokedex_UpdateMainScreen:
 	call Pokedex_GetSelectedMon
 	call Pokedex_CheckSeen
 	ret z
-	ld a, DEXSTATE_DEX_ENTRY_SCR
+	ld a, DEXSTATE_DETAIL_ENTER
 	ld [wJumptableIndex], a
 	ld a, DEXSTATE_MAIN_SCR
 	ld [wPrevDexEntryJumptableIndex], a
@@ -439,112 +489,53 @@ Pokedex_UpdateMainScreen:
 	ld [wJumptableIndex], a
 	ret
 
-Pokedex_InitDexEntryScreen:
-	call LowVolume
-	xor a ; page 1
-	ld [wPokedexStatus], a
-	xor a
-	ldh [hBGMapMode], a
-	call ClearSprites
-	call Pokedex_LoadCurrentFootprint
-	call Pokedex_DrawDexEntryScreenBG
-	call Pokedex_InitArrowCursor
-	call Pokedex_GetSelectedMon
-	ld a, l
-	ld [wPrevDexEntry], a
-	ld a, h
-	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
-	call Pokedex_DrawResidentFootprint
-	call WaitBGMap
-	ld a, $a7
-	ldh [hWX], a
-	call Pokedex_GetSelectedMon
-	ld [wCurPartySpecies], a
-	ld a, SCGB_POKEDEX
-	call Pokedex_GetSGBLayout
-	call DelayFrame
-	ld a, [wCurPartySpecies]
-	call PlayMonCry2
-	call Pokedex_IncrementDexPointer
+Pokedex_InitDetail:
+	farcall PokedexDetail_Enter
 	ret
 
-Pokedex_UpdateDexEntryScreen:
+Pokedex_UpdateDetail:
+	farcall PokedexDetail_Update
+	ret
+
+Pokedex_SwitchDetailSpecies:
+	farcall PokedexDetail_SwitchSpecies
+	ret
+
+PokedexDetail_MoveArrowCursor:
 	ld de, DexEntryScreen_ArrowCursorData
 	call Pokedex_MoveArrowCursor
-	ld hl, hJoyPressed
-	ld a, [hl]
-	and PAD_B
-	jr nz, .return_to_prev_screen
-	vc_hook Forbid_printing_Pokedex
-	ld a, [hl]
-	and PAD_A
-	jr nz, .do_menu_action
-	call Pokedex_NextOrPreviousDexEntry
-	ret nc
-	call Pokedex_IncrementDexPointer
+	push af
+	call PokedexDetail_CommitArrowCursor
+	pop af
 	ret
 
-.do_menu_action
-	ld a, [wDexArrowCursorPosIndex]
-	ld hl, DexEntryScreen_MenuActionJumptable
-	call Pokedex_LoadPointer
-	jp hl
-
-.return_to_prev_screen
-	ld a, [wLastVolume]
-	and a
-	jr z, .max_volume
-	ld a, NORMAL_MAX_VOLUME
-	ld [wLastVolume], a
-
-.max_volume
-	call MaxVolume
-	ld a, [wPrevDexEntryJumptableIndex]
-	ld [wJumptableIndex], a
-	ret
-
-Pokedex_Page:
-	ld a, [wPokedexStatus]
-	xor 1 ; toggle page
-	ld [wPokedexStatus], a
-	call Pokedex_GetSelectedMon
-	ld a, l
-	ld [wPrevDexEntry], a
-	ld a, h
-	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
-	call WaitBGMap
-	ret
-
-Pokedex_ReinitDexEntryScreen:
-; Reinitialize the Pokédex entry screen after changing the selected mon.
-	call Pokedex_BlackOutBG
-	xor a ; page 1
-	ld [wPokedexStatus], a
+PokedexDetail_CommitArrowCursor:
 	xor a
 	ldh [hBGMapMode], a
-	call Pokedex_DrawDexEntryScreenBG
-	call Pokedex_InitArrowCursor
-	call Pokedex_LoadCurrentFootprint
-	call Pokedex_GetSelectedMon
-	ld a, l
-	ld [wPrevDexEntry], a
-	ld a, h
-	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
-	call Pokedex_DrawResidentFootprint
-	call Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
-	call Pokedex_GetSelectedMon
-	ld [wCurPartySpecies], a
-	ld a, SCGB_POKEDEX
-	call Pokedex_GetSGBLayout
-	call DelayFrame
-	ld a, [wCurPartySpecies]
-	call PlayMonCry2
-	ld hl, wJumptableIndex
-	dec [hl]
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	hlcoord 1, 17
+	debgcoord 1, 17
+	call PokedexDetail_CopyBackingTileToVRAM
+	hlcoord 6, 17
+	debgcoord 6, 17
+	call PokedexDetail_CopyBackingTileToVRAM
+	hlcoord 11, 17
+	debgcoord 11, 17
+	call PokedexDetail_CopyBackingTileToVRAM
+	pop af
+	ldh [rVBK], a
+	ret
+
+PokedexDetail_CopyBackingTileToVRAM:
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hl]
+	ld [de], a
 	ret
 
 DexEntryScreen_ArrowCursorData:
@@ -552,59 +543,6 @@ DexEntryScreen_ArrowCursorData:
 	dwcoord 1, 17  ; PAGE
 	dwcoord 6, 17  ; AREA
 	dwcoord 11, 17 ; CRY
-
-DexEntryScreen_MenuActionJumptable:
-	dw Pokedex_Page
-	dw .Area
-	dw .Cry
-
-.Area:
-	call Pokedex_BlackOutBG
-	xor a
-	ldh [hSCX], a
-	call DelayFrame
-	ld a, $7
-	ldh [hWX], a
-	ld a, $90
-	ldh [hWY], a
-	call Pokedex_GetSelectedMon
-	ld a, [wDexCurLocation]
-	ld e, a
-	predef Pokedex_GetArea
-	call Pokedex_BlackOutBG
-	call DelayFrame
-	xor a
-	ldh [hBGMapMode], a
-	ld a, $90
-	ldh [hWY], a
-	ld a, POKEDEX_SCX
-	ldh [hSCX], a
-	call DelayFrame
-	call Pokedex_RedisplayDexEntry
-	call Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
-	call Pokedex_GetSelectedMon
-	ld [wCurPartySpecies], a
-	ld a, SCGB_POKEDEX
-	call Pokedex_GetSGBLayout
-	ret
-
-.Cry:
-; BUG: Playing Entei's Pokédex cry can distort Raikou's and Suicune's (see docs/bugs_and_glitches.md)
-	call Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	call GetCryIndex
-	ld e, c
-	ld d, b
-	call PlayCry
-	ret
-
-Pokedex_RedisplayDexEntry:
-	call Pokedex_DrawDexEntryScreenBG
-	call Pokedex_GetSelectedMon
-	farcall DisplayDexEntry
-	call Pokedex_DrawResidentFootprint
-	ret
 
 Pokedex_InitOptionScreen:
 	xor a
@@ -877,7 +815,7 @@ Pokedex_UpdateSearchResultsScreen:
 	call Pokedex_GetSelectedMon
 	call Pokedex_CheckSeen
 	ret z
-	ld a, DEXSTATE_DEX_ENTRY_SCR
+	ld a, DEXSTATE_DETAIL_ENTER
 	ld [wJumptableIndex], a
 	ld a, DEXSTATE_SEARCH_RESULTS_SCR
 	ld [wPrevDexEntryJumptableIndex], a
@@ -1685,17 +1623,7 @@ Pokedex_PlaceFrontpicAtHLWithTile:
 	ret
 
 Pokedex_PlaceSelectedFrontpicTopLeftCorner:
-	ldh a, [hCGB]
-	and a
-	jr z, Pokedex_PlaceFrontpicTopLeftCorner
-	call Pokedex_GetSelectedMon
-	call Pokedex_CheckSeen
-	ld a, 0
-	jr nz, .place
-	ld a, POKEDEX_RESIDENT_UNSEEN_TILE
-.place
-	hlcoord 1, 1
-	jr Pokedex_PlaceFrontpicAtHLWithTile
+	jr Pokedex_PlaceFrontpicTopLeftCorner
 
 Pokedex_PlaceString:
 .loop
@@ -2853,6 +2781,9 @@ Pokedex_BlackOutBG:
 	ldh [rWBK], a
 	ret
 
+Pokedex_GetDexSGBLayout:
+	ld a, SCGB_POKEDEX
+	; fallthrough
 Pokedex_GetSGBLayout:
 	ld b, a
 	call GetSGBLayout
@@ -2900,9 +2831,6 @@ Pokedex_LoadSelectedMonTiles:
 .QuestionMark:
 	ld a, -1
 	ld [wCurPartySpecies], a
-	ldh a, [hCGB]
-	and a
-	ret nz
 	ld a, BANK(sScratch)
 	call OpenSRAM
 	farcall LoadQuestionMarkPic
@@ -2941,12 +2869,20 @@ Pokedex_PrepareSelectedMonTiles:
 	ld a, [wCurPartySpecies]
 	ld [wTempSpecies], a
 	call Pokedex_PrepareCurrentFootprint
-	jp Pokedex_StageSelectedFrontpicMap
+	ret
 
 .question_mark
 	ld a, -1
 	ld [wCurPartySpecies], a
-	jp Pokedex_StageSelectedFrontpicMap
+	ld a, BANK(sScratch)
+	call OpenSRAM
+	farcall LoadQuestionMarkPic
+	ld hl, sScratch
+	ld de, wPokedexWRAM0Scratch
+	ld bc, 7 * 7 tiles
+	call CopyBytes
+	call CloseSRAM
+	ret
 
 Pokedex_LoadCurrentFootprint:
 	call Pokedex_GetSelectedMon
@@ -3006,36 +2942,6 @@ Pokedex_TransferPreparedFootprint:
 	ldh [rVBK], a
 	ret
 
-Pokedex_StageSelectedFrontpicMap:
-	ld a, [wCurPartySpecies]
-	cp -1
-	ld a, 0
-	jr nz, .got_tile
-	ld a, POKEDEX_RESIDENT_UNSEEN_TILE
-.got_tile
-	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles + 4 tiles
-	ld b, 7
-.row
-	ld c, 7
-	push af
-.col
-	ld [hli], a
-	add 7
-	dec c
-	jr nz, .col
-	pop af
-	inc a
-	dec b
-	jr nz, .row
-	ld a, [wCurPartySpecies]
-	cp -1
-	ld a, 1
-	jr nz, .got_attr
-	or BG_BANK1
-.got_attr
-	ld bc, 7 * 7
-	jp ByteFill
-
 Pokedex_LoadGFX:
 	ld a, -1
 	ld [wPokedexResidentFootprintSpecies], a
@@ -3065,43 +2971,11 @@ Pokedex_LoadGFX:
 	ld de, vTiles0
 	call Decompress
 	call Pokedex_LoadListStaticGFX
-	call Pokedex_LoadPermanentCGBGFX
+	farcall Pokedex_LoadPermanentCGBGFX
 	ld a, 6
 	call SkipMusic
 	call EnableLCD
 	ret
-
-Pokedex_LoadPermanentCGBGFX:
-	ldh a, [hCGB]
-	and a
-	ret z
-	ld a, BANK(sScratch)
-	call OpenSRAM
-	farcall LoadQuestionMarkPic
-	ldh a, [rVBK]
-	push af
-	ld a, BANK(vTiles4)
-	ldh [rVBK], a
-	ld hl, vTiles4
-	ld de, sScratch
-	ld c, 7 * 7
-	ldh a, [hROMBank]
-	ld b, a
-	call Get2bpp
-	ld de, PokedexListJoinedLeftGFX
-	ld hl, vTiles4 tile $50
-	lb bc, BANK(PokedexListJoinedLeftGFX), 1
-	call Get2bpp
-	ld de, PokedexListJoinedMiddleGFX
-	ld hl, vTiles4 tile $51
-	lb bc, BANK(PokedexListJoinedMiddleGFX), 1
-	call Get2bpp
-	ld hl, vTiles5 tile $32
-	call Pokedex_MakeTileDarkGray
-	pop af
-	ldh [rVBK], a
-	call CloseSRAM
-	jp Pokedex_LoadUnownFont
 
 Pokedex_LoadListStaticGFX:
 	ldh a, [rVBK]
@@ -3176,6 +3050,11 @@ Pokedex_MakeTileDarkGray:
 	dec b
 	jr nz, .row
 	ret
+
+Pokedex_MakeTileDarkGrayAtDE:
+	ld h, d
+	ld l, e
+	jr Pokedex_MakeTileDarkGray
 
 Pokedex_InvertTiles:
 .loop

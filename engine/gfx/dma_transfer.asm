@@ -393,6 +393,50 @@ _continue_HDMATransfer:
 
 	ret
 
+HDMATransfer_Exact_NoDI_Arbitrary::
+; HDMA transfer from hl to de, with c 16-byte blocks. Interrupts remain
+; enabled so sampled audio can continue. Request the exact transfer length
+; and wait on the hardware state instead of cancelling a speculative block.
+	; [rVDMA_SRC_HIGH, rVDMA_SRC_LOW] = hl & $fff0
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	and $f0
+	ldh [rVDMA_SRC_LOW], a
+	; [rVDMA_DEST_HIGH, rVDMA_DEST_LOW] = de & $1ff0
+	ld a, d
+	and $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, e
+	and $f0
+	ldh [rVDMA_DEST_LOW], a
+	; b = (c - 1) | %10000000
+	ld a, c
+	dec a
+	or $80
+	ld b, a
+	; d = $80 - c
+	ld a, $80
+	sub c
+	ld d, a
+	; Wait for a frame with enough visible scanlines remaining.
+.ly_loop
+	ldh a, [rLY]
+	cp d
+	jr nc, .ly_loop
+	; Start outside HBlank so the first block uses the next complete HBlank.
+.mode_loop
+	ldh a, [rSTAT]
+	and STAT_MODE
+	jr z, .mode_loop
+	ld a, b
+	ldh [rVDMA_LEN], a
+.wait
+	ldh a, [rVDMA_LEN]
+	bit 7, a
+	jr z, .wait
+	ret
+
 _LoadHDMAParameters:
 	ld a, h
 	ldh [rVDMA_SRC_HIGH], a

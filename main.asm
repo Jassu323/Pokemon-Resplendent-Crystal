@@ -308,6 +308,12 @@ INCLUDE "data/moves/moves.asm"
 INCLUDE "engine/pokemon/evolve.asm"
 
 
+SECTION "Pokedex Animation", ROMX
+
+INCLUDE "engine/pokedex/pokedex_animation.asm"
+INCLUDE "engine/pokedex/pokedex_detail.asm"
+
+
 SECTION "bank11", ROMX
 
 INCLUDE "engine/events/fruit_trees.asm"

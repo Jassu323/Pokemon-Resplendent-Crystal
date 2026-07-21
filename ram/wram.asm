@@ -761,6 +761,28 @@ wPokedexGridFlags:: ds 9
 wPokedexGridIconPalettes:: ds 9
 wPokedexRenderedSelectionKey:: db ; species ID, or -1 for the shared unseen rendering
 wPokedexResidentFootprintSpecies:: db
+wPokedexDetailSpecies:: db
+wPokedexDetailView:: db
+wPokedexDetailState:: db
+wPokedexDetailGeneration:: db
+wPokedexDetailPendingAction:: db
+wPokedexDetailReturnState:: db
+wPokedexAnimOwner:: db
+wPokedexAnimProducerState:: db
+wPokedexAnimProducerPhase:: db
+wPokedexAnimProduceSlot:: db
+wPokedexAnimConsumeSlot:: db
+wPokedexAnimDisplaySlot:: db
+wPokedexAnimSlotStates:: ds 2
+wPokedexAnimSlotDurations:: ds 2
+wPokedexAnimSlotPreholds:: ds 2
+wPokedexAnimSlotTileCounts:: ds 2
+wPokedexAnimPlaybackState:: db
+wPokedexAnimPlaybackTimer:: db
+wPokedexAnimHoldTimer:: db
+wPokedexAnimTrailingHold:: db
+wPokedexAnimFrontpicDim:: db
+wPokedexAnimUnderflowCount:: dw
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -768,7 +790,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 202
+	ds 175
 
 NEXTU
 ; pokegear
@@ -3434,6 +3456,7 @@ wPokeAnimBitmaskCurBit:: db
 wPokeAnimBitmaskBuffer:: ds 7
 	ds 2
 wPokeAnimStructEnd::
+wPokeAnimFrameTiles:: ds 7 * 7
 
 
 SECTION "16-bit WRAM tables", WRAMX
