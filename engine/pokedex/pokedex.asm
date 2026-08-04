@@ -47,6 +47,8 @@ DEF POKEDEX_GRID_SCROLL_SELECTION_F EQU 0
 DEF POKEDEX_SCROLLBAR_TILE     EQU $ba
 DEF POKEDEX_UNSEEN_TILE        EQU $c6
 DEF POKEDEX_SIDE_ICON_TILE     EQU $00
+DEF POKEDEX_SIDE_ICON_FRAME1_TILE EQU $d2
+DEF POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE EQU $52
 DEF POKEDEX_CENTER_ICON_TILE   EQU $00
 DEF POKEDEX_LIST_CURSOR_TILE   EQU $40
 DEF POKEDEX_CAUGHT_BALL_TILE   EQU $41
@@ -60,6 +62,8 @@ DEF POKEDEX_RESIDENT_JOINED_LEFT_TILE   EQU $d0
 DEF POKEDEX_RESIDENT_JOINED_MIDDLE_TILE EQU $d1
 DEF POKEDEX_RENDER_KEY_UNSEEN  EQU -1
 
+DEF POKEDEX_GRID_ICON_ANIM_FRAME_F EQU 3
+
 DEF POKEDEX_ANIM_PAYLOAD       EQUS "wPokedexWRAM0Scratch"
 DEF POKEDEX_ANIM_LOGICAL_MAP   EQUS "wPokedexWRAM0Scratch + $310"
 DEF POKEDEX_ANIM_SLOT_A_MAP    EQUS "wPokedexWRAM0Scratch + $39c"
@@ -69,10 +73,11 @@ DEF POKEDEX_ANIM_SLOT_B_ATTRS  EQUS "wPokedexWRAM0Scratch + $42f"
 DEF POKEDEX_ANIM_SOURCE_TILES  EQUS "wPokedexWRAM0Scratch + $460"
 
 ; Selection staging ends at $350. The animation producer is inactive while
-; a Listing row is being changed, so its map workspace can stage one incoming
-; row without reserving another persistent buffer.
-DEF POKEDEX_GRID_CENTER_GFX EQUS "wPokedexWRAM0Scratch + $350"
-DEF POKEDEX_GRID_SIDE_GFX   EQUS "wPokedexWRAM0Scratch + $390"
+; a Listing row is being changed, so its map workspace can stage both frames
+; of one incoming icon row without reserving another persistent buffer.
+DEF POKEDEX_GRID_CENTER_GFX     EQUS "wPokedexWRAM0Scratch + $350"
+DEF POKEDEX_GRID_SIDE_FRAME0_GFX EQUS "wPokedexWRAM0Scratch + $3d0"
+DEF POKEDEX_GRID_SIDE_FRAME1_GFX EQUS "wPokedexWRAM0Scratch + $450"
 
 DEF POKEDEX_ANIM_BUFFER_A_TILE EQU $80
 DEF POKEDEX_ANIM_BUFFER_B_TILE EQU $33
@@ -382,13 +387,17 @@ Pokedex_IncrementDexPointer:
 	ret
 
 Pokedex_Exit:
+	xor a
+	ldh [hVBlank], a
 	ld hl, wJumptableIndex
 	set JUMPTABLE_EXIT_F, [hl]
 	ret
 
 Pokedex_InitMainScreen:
 	xor a
+	ldh [hVBlank], a
 	ldh [hBGMapMode], a
+	ld [wPokedexGridIconAnimFrame], a
 	ld a, TRUE
 	ldh [hOAMUpdate], a
 	ldh a, [hCGB]
@@ -467,6 +476,12 @@ Pokedex_InitMainScreen:
 	xor a
 	ldh [hOAMUpdate], a
 .revealed
+	ldh a, [hCGB]
+	and a
+	jr z, .handler_ready
+	ld a, VBLANK_POKEDEX
+	ldh [hVBlank], a
+.handler_ready
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -500,15 +515,18 @@ Pokedex_UpdateMainScreen:
 	ldh a, [hCGB]
 	and a
 	jr z, .dmg_selection
-	ld a, TRUE
-	ldh [hOAMUpdate], a
 	xor a
 	ldh [hBGMapMode], a
 	call Pokedex_PrintSelectedName
 	call Pokedex_PrepareSelectedMonTiles
 	farcall CGB_PokedexPrepareFrontpicPalette
-	farcall Pokedex_UpdateGridCursorOAM
 	farcall Pokedex_CommitStagedSelection
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	farcall Pokedex_SyncGridIconAnimationFrame
+	farcall Pokedex_UpdateGridCursorOAM
+	farcall Pokedex_StageGridIconAnimation
+	farcall Pokedex_CommitGridIconAnimationFrame
 	farcall CGB_PokedexQueueFrontpicPalette
 	xor a
 	ldh [hOAMUpdate], a
@@ -538,6 +556,7 @@ Pokedex_UpdateMainScreen:
 	call Pokedex_GetSelectedMon
 	call Pokedex_CheckSeen
 	ret z
+	call Pokedex_StopGridIconAnimation
 	call Pokedex_SaveListingViewport
 	ld a, DEXSTATE_DETAIL_ENTER
 	ld [wJumptableIndex], a
@@ -546,6 +565,7 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .select
+	call Pokedex_StopGridIconAnimation
 	call Pokedex_BlackOutBG
 	ld a, DEXSTATE_OPTION_SCR
 	ld [wJumptableIndex], a
@@ -557,6 +577,7 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .start
+	call Pokedex_StopGridIconAnimation
 	call Pokedex_BlackOutBG
 	ld a, DEXSTATE_SEARCH_SCR
 	ld [wJumptableIndex], a
@@ -568,8 +589,14 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .b
+	call Pokedex_StopGridIconAnimation
 	ld a, DEXSTATE_EXIT
 	ld [wJumptableIndex], a
+	ret
+
+Pokedex_StopGridIconAnimation:
+	xor a
+	ldh [hVBlank], a
 	ret
 
 Pokedex_InitDetail:
@@ -1232,6 +1259,8 @@ Pokedex_GridHandleDPadInput:
 	ret
 
 Pokedex_ScrollGridUp:
+	ld a, TRUE
+	ldh [hOAMUpdate], a
 	ld hl, wDexListingScrollOffset
 	ld a, [hl]
 	sub POKEDEX_GRID_WIDTH
@@ -1255,6 +1284,8 @@ Pokedex_ScrollGridUp:
 	ret
 
 Pokedex_ScrollGridDown:
+	ld a, TRUE
+	ldh [hOAMUpdate], a
 	ld hl, wDexListingScrollOffset
 	ld a, [hl]
 	add POKEDEX_GRID_WIDTH

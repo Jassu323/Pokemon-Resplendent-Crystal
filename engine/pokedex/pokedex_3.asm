@@ -14,7 +14,9 @@ LoadSGBPokedexGFX2:
 SGBPokedexGFX_LZ:
 INCBIN "gfx/pokedex/pokedex_sgb.2bpp.lz"
 
-ASSERT POKEDEX_GRID_SIDE_GFX + 8 tiles <= POKEDEX_ANIM_SOURCE_TILES
+ASSERT POKEDEX_GRID_CENTER_GFX + 8 tiles == POKEDEX_GRID_SIDE_FRAME0_GFX
+ASSERT POKEDEX_GRID_SIDE_FRAME0_GFX + 8 tiles == POKEDEX_GRID_SIDE_FRAME1_GFX
+ASSERT POKEDEX_GRID_SIDE_FRAME1_GFX + 8 tiles <= wPokedexWRAM0ScratchEnd
 
 Pokedex_InitGridCacheState:
 	ld hl, wPokedexGridCacheRowOffsets
@@ -420,7 +422,7 @@ Pokedex_PrepareGridCacheRow:
 	ld [wPokedexGridPendingRowOffset + 1], a
 	call Pokedex_InvalidatePendingGridCacheRow
 	ld hl, POKEDEX_GRID_CENTER_GFX
-	ld bc, 3 * 4 tiles
+	ld bc, 3 * 8 tiles
 	xor a
 	call ByteFill
 	ld a, [wPokedexGridPendingRowOffset]
@@ -450,18 +452,41 @@ Pokedex_PrepareGridCacheRow:
 	ldh [hTempBank], a
 	ld h, d
 	ld l, e
-	push hl
 	ld a, [wDexTempCounter]
+	cp 1
+	jr z, .copy_center
+	push hl
 	add a
 	ld e, a
 	ld d, 0
-	ld hl, .StagingDestinations
+	ld hl, .SideFrame0StagingDestinations
 	add hl, de
 	ld a, [hli]
 	ld d, [hl]
 	ld e, a
 	pop hl
 	ld bc, 4 tiles
+	ldh a, [hTempBank]
+	call FarCopyBytes
+	push hl
+	ld a, [wDexTempCounter]
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .SideFrame1StagingDestinations
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+	pop hl
+	ld bc, 4 tiles
+	ldh a, [hTempBank]
+	call FarCopyBytes
+	jr .next
+
+.copy_center
+	ld de, POKEDEX_GRID_CENTER_GFX
+	ld bc, 8 tiles
 	ldh a, [hTempBank]
 	call FarCopyBytes
 .next
@@ -520,10 +545,15 @@ Pokedex_PrepareGridCacheRow:
 	xor a
 	ret
 
-.StagingDestinations:
-	dw POKEDEX_GRID_SIDE_GFX
-	dw POKEDEX_GRID_CENTER_GFX
-	dw POKEDEX_GRID_SIDE_GFX + 4 tiles
+.SideFrame0StagingDestinations:
+	dw POKEDEX_GRID_SIDE_FRAME0_GFX
+	dw 0
+	dw POKEDEX_GRID_SIDE_FRAME0_GFX + 4 tiles
+
+.SideFrame1StagingDestinations:
+	dw POKEDEX_GRID_SIDE_FRAME1_GFX
+	dw 0
+	dw POKEDEX_GRID_SIDE_FRAME1_GFX + 4 tiles
 
 Pokedex_InvalidatePendingGridCacheRow:
 	ld a, [wPokedexGridPendingPhysicalRow]
@@ -538,8 +568,8 @@ Pokedex_InvalidatePendingGridCacheRow:
 	ret
 
 Pokedex_UploadPendingGridCacheRow:
-; Upload the staged first-frame icon row and publish its ownership tag only
-; after both BG and OBJ chunks have reached VRAM bank 1.
+; Upload both frames of the staged icon row and publish its ownership tag only
+; after every BG and OBJ chunk has reached VRAM bank 1.
 	ldh a, [rVBK]
 	push af
 	ld a, BANK(vTiles3)
@@ -551,12 +581,12 @@ Pokedex_UploadPendingGridCacheRow:
 	add a
 	ld e, a
 	ld d, 0
-	ld hl, .SideRowDestinations
+	ld hl, .SideFrame0RowDestinations
 	add hl, de
 	ld a, [hli]
 	ld d, [hl]
 	ld e, a
-	ld hl, POKEDEX_GRID_SIDE_GFX
+	ld hl, POKEDEX_GRID_SIDE_FRAME0_GFX
 	ld c, 8
 	call Pokedex_HDMATransferCacheGFX
 	ld a, [wPokedexGridPendingPhysicalRow]
@@ -569,7 +599,19 @@ Pokedex_UploadPendingGridCacheRow:
 	ld d, [hl]
 	ld e, a
 	ld hl, POKEDEX_GRID_CENTER_GFX
-	ld c, 4
+	ld c, 8
+	call Pokedex_HDMATransferCacheGFX
+	ld a, [wPokedexGridPendingPhysicalRow]
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .SideFrame1RowDestinations
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+	ld hl, POKEDEX_GRID_SIDE_FRAME1_GFX
+	ld c, 8
 	call Pokedex_HDMATransferCacheGFX
 	jr .publish
 
@@ -578,12 +620,12 @@ Pokedex_UploadPendingGridCacheRow:
 	add a
 	ld e, a
 	ld d, 0
-	ld hl, .SideRowDestinations
+	ld hl, .SideFrame0RowDestinations
 	add hl, de
 	ld a, [hli]
 	ld d, [hl]
 	ld e, a
-	ld hl, POKEDEX_GRID_SIDE_GFX
+	ld hl, POKEDEX_GRID_SIDE_FRAME0_GFX
 	ld bc, 8 tiles
 	call CopyBytes
 	ld a, [wPokedexGridPendingPhysicalRow]
@@ -596,7 +638,19 @@ Pokedex_UploadPendingGridCacheRow:
 	ld d, [hl]
 	ld e, a
 	ld hl, POKEDEX_GRID_CENTER_GFX
-	ld bc, 4 tiles
+	ld bc, 8 tiles
+	call CopyBytes
+	ld a, [wPokedexGridPendingPhysicalRow]
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, .SideFrame1RowDestinations
+	add hl, de
+	ld a, [hli]
+	ld d, [hl]
+	ld e, a
+	ld hl, POKEDEX_GRID_SIDE_FRAME1_GFX
+	ld bc, 8 tiles
 	call CopyBytes
 
 .publish
@@ -615,18 +669,25 @@ Pokedex_UploadPendingGridCacheRow:
 	ret
 
 .CenterRowDestinations:
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 0 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 1 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 2 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 3 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 4 * 4)
+	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 0 * 8)
+	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 1 * 8)
+	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 2 * 8)
+	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 3 * 8)
+	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 4 * 8)
 
-.SideRowDestinations:
+.SideFrame0RowDestinations:
 	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 0 * 8)
 	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 1 * 8)
 	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 2 * 8)
 	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 3 * 8)
 	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 4 * 8)
+
+.SideFrame1RowDestinations:
+	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 0 * 8)
+	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 1 * 8)
+	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 2 * 8)
+	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 3 * 8)
+	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 4 * 8)
 
 LoadQuestionMarkPic:
 	ld hl, .QuestionMarkLZ
@@ -847,6 +908,245 @@ Pokedex_CopyBackingFrontpicMapToVRAM:
 	jr nz, .vram_row
 	ret
 
+Pokedex_SyncGridIconAnimationFrame:
+; Stage the phase that will be current after the next VBlank. Selection and
+; scrolling reveals use the same clock as the interrupt-owned idle animator.
+	ldh a, [hCGB]
+	and a
+	ret z
+	ldh a, [hVBlankCounter]
+	inc a
+	and 1 << POKEDEX_GRID_ICON_ANIM_FRAME_F
+	ld [wPokedexGridIconAnimFrame], a
+	ret
+
+Pokedex_StageGridIconAnimation:
+; Build the tilemap and center-column shadow OAM for the synchronized phase.
+	ldh a, [hCGB]
+	and a
+	ret z
+	call Pokedex_DrawListGrid
+	jp Pokedex_UpdateCenterIconAnimationOAM
+
+Pokedex_VBlankGridIconAnimation::
+; Both frames are resident. On a hardware-clock phase change, rewrite only
+; the owned side-cell tile IDs and center-cell shadow OAM tile IDs.
+	ldh a, [hBGMapUpdate]
+	and a
+	ret nz
+	ldh a, [hCGBPalUpdate]
+	and a
+	ret nz
+	ldh a, [hDMATransfer]
+	and a
+	ret nz
+	ldh a, [hBGMapMode]
+	and a
+	ret nz
+	ldh a, [hOAMUpdate]
+	and a
+	ret nz
+	ldh a, [hVBlankCounter]
+	inc a
+	and 1 << POKEDEX_GRID_ICON_ANIM_FRAME_F
+	ld b, a
+	ld a, [wPokedexGridIconAnimFrame]
+	cp b
+	ret z
+	ld a, b
+	ld [wPokedexGridIconAnimFrame], a
+	call Pokedex_UpdateCenterIconAnimationOAM
+
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld a, 0
+	lb bc, 0, 0
+	ld de, vBGMap1 + 5 * TILEMAP_WIDTH + 1
+	call .UpdateSideCell
+	ld a, 2
+	lb bc, 0, 4
+	ld de, vBGMap1 + 5 * TILEMAP_WIDTH + 9
+	call .UpdateSideCell
+	ld a, 3
+	lb bc, 1, 0
+	ld de, vBGMap1 + 9 * TILEMAP_WIDTH + 1
+	call .UpdateSideCell
+	ld a, 5
+	lb bc, 1, 4
+	ld de, vBGMap1 + 9 * TILEMAP_WIDTH + 9
+	call .UpdateSideCell
+	ld a, 6
+	lb bc, 2, 0
+	ld de, vBGMap1 + 13 * TILEMAP_WIDTH + 1
+	call .UpdateSideCell
+	ld a, 8
+	lb bc, 2, 4
+	ld de, vBGMap1 + 13 * TILEMAP_WIDTH + 9
+	call .UpdateSideCell
+
+	pop af
+	ldh [rVBK], a
+	ret
+
+.UpdateSideCell:
+; a = visible grid index, b = visible row, c = side tile offset, de = BG map.
+	ld l, a
+	ld h, 0
+	push de
+	ld de, wPokedexGridFlags
+	add hl, de
+	pop de
+	bit POKEDEX_GRID_CAUGHT_F, [hl]
+	ret z
+
+	ld a, [wPokedexGridTopPhysicalRow]
+	add b
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .got_physical_row
+	sub POKEDEX_GRID_CACHE_ROWS
+.got_physical_row
+	add a
+	add a
+	add a
+	add c
+	ld c, a
+	ld a, [wPokedexGridIconAnimFrame]
+	bit POKEDEX_GRID_ICON_ANIM_FRAME_F, a
+	ld a, c
+	jr z, .got_tile
+	add POKEDEX_SIDE_ICON_FRAME1_TILE
+.got_tile
+	ld [de], a
+	inc e
+	inc a
+	ld [de], a
+	inc a
+	ld c, a
+	ld a, e
+	add TILEMAP_WIDTH - 1
+	ld e, a
+	jr nc, .got_second_row
+	inc d
+.got_second_row
+	ld a, c
+	ld [de], a
+	inc e
+	inc a
+	ld [de], a
+	ret
+
+Pokedex_CommitGridIconAnimationFrame:
+; A selection change owns the hide-stage-reveal transaction. Once the old grid
+; rows have passed, install all 24 side-column IDs for the synchronized phase;
+; the caller releases the prepared center-column OAM and palette at VBlank.
+	ldh a, [hCGB]
+	and a
+	ret z
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .copy
+
+.wait_grid_end
+	ldh a, [rLY]
+	cp 144
+	jr nc, .wait_next_frame
+	cp 120
+	jr c, .wait_grid_end
+	di
+	call .CopySideRows
+	ei
+	ret
+
+.wait_next_frame
+	ldh a, [rLY]
+	cp 144
+	jr nc, .wait_next_frame
+	jr .wait_grid_end
+
+.copy
+	call .CopySideRows
+	ret
+
+.CopySideRows
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, .SideTilemapCopies
+	ld a, 2 * 2 * POKEDEX_GRID_HEIGHT
+.next_row
+	push af
+	ld c, [hl]
+	inc hl
+	ld b, [hl]
+	inc hl
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	inc hl
+	push hl
+	ld h, b
+	ld l, c
+	ld c, 2
+.next_tile
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .next_tile
+	pop hl
+	pop af
+	dec a
+	jr nz, .next_row
+	pop af
+	ldh [rVBK], a
+	ret
+
+.SideTilemapCopies:
+	dw wTilemap +  5 * SCREEN_WIDTH + 1, vBGMap1 +  5 * TILEMAP_WIDTH + 1
+	dw wTilemap +  6 * SCREEN_WIDTH + 1, vBGMap1 +  6 * TILEMAP_WIDTH + 1
+	dw wTilemap +  5 * SCREEN_WIDTH + 9, vBGMap1 +  5 * TILEMAP_WIDTH + 9
+	dw wTilemap +  6 * SCREEN_WIDTH + 9, vBGMap1 +  6 * TILEMAP_WIDTH + 9
+	dw wTilemap +  9 * SCREEN_WIDTH + 1, vBGMap1 +  9 * TILEMAP_WIDTH + 1
+	dw wTilemap + 10 * SCREEN_WIDTH + 1, vBGMap1 + 10 * TILEMAP_WIDTH + 1
+	dw wTilemap +  9 * SCREEN_WIDTH + 9, vBGMap1 +  9 * TILEMAP_WIDTH + 9
+	dw wTilemap + 10 * SCREEN_WIDTH + 9, vBGMap1 + 10 * TILEMAP_WIDTH + 9
+	dw wTilemap + 13 * SCREEN_WIDTH + 1, vBGMap1 + 13 * TILEMAP_WIDTH + 1
+	dw wTilemap + 14 * SCREEN_WIDTH + 1, vBGMap1 + 14 * TILEMAP_WIDTH + 1
+	dw wTilemap + 13 * SCREEN_WIDTH + 9, vBGMap1 + 13 * TILEMAP_WIDTH + 9
+	dw wTilemap + 14 * SCREEN_WIDTH + 9, vBGMap1 + 14 * TILEMAP_WIDTH + 9
+
+Pokedex_UpdateCenterIconAnimationOAM:
+	ld hl, wShadowOAMSprite00TileID
+	xor a
+	call .UpdateRow
+	ld hl, wShadowOAMSprite04TileID
+	ld a, 1
+	call .UpdateRow
+	ld hl, wShadowOAMSprite08TileID
+	ld a, 2
+	; fallthrough
+.UpdateRow
+	push hl
+	call Pokedex_UpdateGridOAM.GetCenterIconTile
+	pop hl
+	ld de, OBJ_SIZE
+	ld b, 4
+.next_tile
+	ld [hl], c
+	inc c
+	add hl, de
+	dec b
+	jr nz, .next_tile
+	ret
+
 Pokedex_UpdateGridOAM:
 	call ClearSprites
 	ld de, wShadowOAMSprite00
@@ -930,8 +1230,30 @@ Pokedex_UpdateGridOAM:
 .got_center_row
 	add a
 	add a
+	add a
 	add POKEDEX_CENTER_ICON_TILE
 	ld c, a
+	push hl
+	push de
+	ld a, b
+	add a
+	add b
+	inc a
+	ld e, a
+	ld d, 0
+	ld hl, wPokedexGridFlags
+	add hl, de
+	bit POKEDEX_GRID_CAUGHT_F, [hl]
+	jr z, .got_center_frame
+	ld hl, wPokedexGridIconAnimFrame
+	bit POKEDEX_GRID_ICON_ANIM_FRAME_F, [hl]
+	jr z, .got_center_frame
+	ld a, c
+	add 4
+	ld c, a
+.got_center_frame
+	pop de
+	pop hl
 	ret
 
 .GetScrollThumbY:
@@ -1347,8 +1669,25 @@ Pokedex_DrawListGrid:
 	ld a, c
 	and a
 	ld a, b
-	ret z
+	jr z, .got_frame0_tile
 	add 4
+.got_frame0_tile
+	ld b, a
+	ld a, [wDexTempCounter]
+	ld e, a
+	ld d, 0
+	ld hl, wPokedexGridFlags
+	add hl, de
+	bit POKEDEX_GRID_CAUGHT_F, [hl]
+	jr z, .use_frame0
+	ld hl, wPokedexGridIconAnimFrame
+	bit POKEDEX_GRID_ICON_ANIM_FRAME_F, [hl]
+	jr z, .use_frame0
+	ld a, b
+	add POKEDEX_SIDE_ICON_FRAME1_TILE
+	ret
+.use_frame0
+	ld a, b
 	ret
 
 DrawPokedexSearchResultsWindow:

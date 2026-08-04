@@ -762,6 +762,7 @@ wPokedexGridIconPalettes:: ds 9
 wPokedexGridTopPhysicalRow:: db
 wPokedexGridScrollDirection:: db
 wPokedexGridScrollFlags:: db
+wPokedexGridIconAnimFrame:: db
 wPokedexGridCacheRowOffsets:: ds 2 * 5
 wPokedexGridPendingRowOffset:: dw
 wPokedexGridPendingPhysicalRow:: db
@@ -797,7 +798,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 157
+	ds 156
 
 NEXTU
 ; pokegear

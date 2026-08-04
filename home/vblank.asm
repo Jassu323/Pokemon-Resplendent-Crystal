@@ -44,8 +44,23 @@ VBlankHandlers:
 	dw VBlank_Serial
 	dw VBlank_Credits
 	dw VBlank_DMATransfer
-	dw VBlank_Normal ; unused
+	dw VBlank_Pokedex
 	assert_table_length NUM_VBLANK_HANDLERS
+
+VBlank_Pokedex:
+; Let the Listing animate its resident mini-sprites while synchronous
+; frontpic preparation is running. Selection and scrolling transactions lock
+; OAM and perform their own final frame synchronization.
+; Avoid FarCall's shared scratch because this interrupt may occur inside an
+; unrelated farcall. The outer VBlank entry already preserves all registers.
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(Pokedex_VBlankGridIconAnimation)
+	rst Bankswitch
+	call Pokedex_VBlankGridIconAnimation
+	pop af
+	rst Bankswitch
+	jp VBlank_Normal
 
 VBlank_Normal::
 ; normal operation

@@ -38,12 +38,13 @@ comes from the same 64-tile source.
 
 | Region | Current owner | Tiles | Notes |
 | --- | --- | ---: | --- |
-| `vTiles3 $00-$13` | Center-column mini-sprites | 20 | Five physical 2x2 OBJ-icon rows: three visible plus one above and below. |
+| `vTiles3 $00-$27` | Center-column mini-sprites | 40 | Both 2x2 frames for five physical OBJ-icon rows: three visible plus one above and below. |
 | `vTiles4 $00-$30` | Animation buffer A | 49 | Streams only changed tiles; tilemap entries use `$80-$b0`. |
 | `vTiles4 $31-$34` | Selected footprint | 4 | Prepared alongside the current known selection. |
 | `vTiles4 $35-$4f` | Unown glyphs and cursor | 27 | Loaded once when the Dex starts. |
 | `vTiles4 $50-$51` | Listing joined border | 2 | Permanent copies outside the shared bank-0 UI range. |
-| `vTiles5 $00-$27` | Left/right mini-sprites | 40 | Ten 2x2 BG icons across the five physical cache rows. |
+| `vTiles4 $52-$79` | Left/right mini-sprite frame 1 | 40 | Second frame for ten 2x2 BG icons across the five physical cache rows. |
+| `vTiles5 $00-$27` | Left/right mini-sprite frame 0 | 40 | First frame for ten 2x2 BG icons across the five physical cache rows. |
 | `vTiles5 $32` | Unown cursor background | 1 | Bank-1 copy of the dark-gray background tile. |
 | `vTiles5 $33-$63` | Animation buffer B | 49 | Streams only changed tiles; tilemap entries use `$33-$63`. |
 
@@ -59,38 +60,46 @@ requirements without assigning VRAM for neighboring known frontpics.
 | `vTiles1 $00-$7f` | Inverted font plus the existing scrollbar/grid-icon substitutions | 128 |
 | `vTiles2 $00-$30` | Current known frontpic or unseen image | 49 |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 |
-| `vTiles3 $00-$13` | Five cached center-column mini-sprite rows | 20 |
+| `vTiles3 $00-$27` | Both frames for five cached center-column mini-sprite rows | 40 |
 | `vTiles4 $00-$30` | Animation buffer A | 49 |
 | `vTiles4 $31-$34` | Preloaded selected footprint | 4 |
 | `vTiles4 $35-$4f` | Permanent Unown glyphs and cursor | 27 |
 | `vTiles4 $50-$51` | Permanent Listing joined border | 2 |
-| `vTiles5 $00-$27` | Five cached left/right mini-sprite rows | 40 |
+| `vTiles4 $52-$79` | Frame 1 for five cached left/right mini-sprite rows | 40 |
+| `vTiles5 $00-$27` | Frame 0 for five cached left/right mini-sprite rows | 40 |
 | `vTiles5 $32` | Unown cursor background | 1 |
 | `vTiles5 $33-$63` | Animation buffer B | 49 |
 
 The `vTiles4` ranges above are physical offsets within the `$8800-$8fff`
 region. With signed BG tile addressing they appear in tilemaps as `$80-$b0`,
-`$b1-$b4`, `$b5-$cf`, and `$d0-$d1`, respectively, with the VRAM-bank
-attribute set. Buffer B uses unsigned tile numbers `$33-$63` with that same
-attribute.
+`$b1-$b4`, `$b5-$cf`, `$d0-$d1`, and `$d2-$f9`, respectively, with the
+VRAM-bank attribute set. Buffer B uses unsigned tile numbers `$33-$63` with
+that same attribute.
 
 The Listing uses a five-row ring: the three visible rows plus one fully
-prepared row above and below. A scroll consumes the already-resident incoming
-row, reveals the complete visible state, and then refills only the newly
-offscreen look-ahead/look-behind row before accepting more input. This leaves
-192 tiles free in VRAM bank 1: 108 in
-`vTiles3`, 46 in `vTiles4`, and 38 in `vTiles5`. The CGB
+prepared row above and below. Each physical row retains both animation frames.
+A scroll consumes the already-resident incoming row, reveals the complete
+visible state, and then refills only the newly offscreen look-ahead/look-behind
+row before accepting more input. This leaves 132 tiles free in VRAM bank 1:
+88 in `vTiles3`, 6 in `vTiles4`, and 38 in `vTiles5`. The CGB
 footprint, Unown overlays, joined border, and cursor-background tile are
 loaded into their permanent destinations when the Pokedex starts.
 
 The cold-open prime fills all five physical icon rows while the LCD is off,
-before their ownership tags can be reused by the Listing. Scrolls consume an
-already-resident row and stage the complete frontpic, icon palette, grid map,
+before their ownership tags can be reused by the Listing. Owned icons alternate
+between their two frames every eight hardware frames; seen-but-uncaught icons
+remain on frame 0. While the Listing is active, its dedicated VBlank handler
+rewrites only the 24 resident side-column BG tile IDs and 12 center-column shadow
+OAM tile IDs. This keeps the visible grid animating while synchronous frontpic
+preparation runs. A render-changing selection locks OAM only for its final
+reveal, synchronizes both columns to the hardware phase, installs the side-column
+IDs after scanline 119, and releases the center-column OAM with the frontpic
+palette. Scrolls claim the same ownership before changing grid metadata, consume
+an already-resident row, and stage the complete frontpic, icon palette, grid map,
 and OAM state while the old frame remains visible. The name is replaced after
 scanline 15, the frontpic after scanline 63, and the nine 2x2 grid cells plus
-their dependent palettes after scanline 119. Normal VBlank then reveals the
-prepared shadow OAM. The offscreen row is refilled only after that complete
-new frame is visible.
+their dependent palettes after scanline 119. The offscreen row is refilled only
+after that complete new frame is visible.
 
 Search, search results, and options currently load no unique tile graphics;
 they use the shared font and Pokedex UI. The normal description path also
@@ -128,13 +137,14 @@ pending.
 
 Listing scrolls temporarily use the animation-map portion of this workspace
 while that producer is cancelled. The next offscreen center icon row occupies
-64 bytes at `$350`; its left and right icons occupy 128 contiguous bytes at
-`$390`. The Listing keeps the Pack's cache ownership and post-reveal refill
-model, but uses a Dex-specific visible commit: only 72 tilemap/attribute bytes,
-BG palettes 1-7, and OBJ palettes 2-4 are changed. Exact-length HBlank DMA
-transfers then refill the newly vacated physical cache row. The completed
-graphics remain resident in the five-row VRAM ring; the WRAM staging bytes are
-immediately reusable by animation.
+128 bytes at `$350`, its side-icon frame 0 occupies 128 bytes at `$3d0`, and
+its side-icon frame 1 occupies 128 bytes at `$450`. The Listing keeps the
+Pack's cache ownership and post-reveal refill model, but uses a Dex-specific
+visible commit: only 72 tilemap/attribute bytes, BG palettes 1-7, and OBJ
+palettes 2-4 are changed. Three exact-length eight-tile HBlank DMA transfers
+then refill the newly vacated physical cache row. The completed graphics remain
+resident in the five-row VRAM ring; the WRAM staging bytes are immediately
+reusable by animation.
 
 Other useful maximum sizes include:
 
@@ -152,6 +162,7 @@ The producer batches a frame's source indexes in a separate 49-byte buffer in
 WRAMX bank 2, then switches to WRAMX bank 6 once to gather every changed tile.
 The two animation tilemaps and payload stay in WRAM0, avoiding per-tile WRAM
 bank changes. Twenty-one bytes in `wPokedexData` hold producer, consumer,
-timing, slot, and underrun-diagnostic state. The Listing cache adds 13 bytes:
-five 16-bit row-ownership tags plus a 16-bit pending row and its physical-row
-index. It remains inside the existing 280-byte Pokedex union.
+timing, slot, and underrun-diagnostic state. The Listing cache adds 14 bytes:
+five 16-bit row-ownership tags, a 16-bit pending row, its physical-row index,
+and the last rendered owned-icon animation frame. It remains inside the existing
+280-byte Pokedex union by consuming one byte of its reserved padding.

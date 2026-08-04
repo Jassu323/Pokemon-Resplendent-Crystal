@@ -27,19 +27,20 @@ Pokedex_UpdateScrolledGrid:
 	ld hl, wPokedexGridScrollFlags
 	set POKEDEX_GRID_SCROLL_SELECTION_F, [hl]
 .selection_key_ready
-	farcall Pokedex_DrawListGrid
 	ld a, [wPokedexGridScrollFlags]
 	bit POKEDEX_GRID_SCROLL_SELECTION_F, a
 	jr z, .selection_prepared
 	farcall Pokedex_PrintSelectedName
 	farcall Pokedex_PrepareSelectedMonTiles
 .selection_prepared
-	farcall CGB_PokedexStageListPalettes
 	ld a, [wPokedexGridScrollFlags]
 	bit POKEDEX_GRID_SCROLL_SELECTION_F, a
 	jr z, .selection_committed
 	farcall Pokedex_CommitStagedSelection
 .selection_committed
+	farcall Pokedex_SyncGridIconAnimationFrame
+	farcall Pokedex_DrawListGrid
+	farcall CGB_PokedexStageListPalettes
 	farcall Pokedex_UpdateGridOAM
 	call Pokedex_CommitScrolledGridReveal
 	farcall Pokedex_RecordRenderedSelectionKey
