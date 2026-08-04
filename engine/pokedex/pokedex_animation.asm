@@ -2,6 +2,221 @@ ASSERT POKEDEX_ANIM_SLOT_A_MAP + 7 * 7 == POKEDEX_ANIM_SLOT_A_ATTRS
 ASSERT POKEDEX_ANIM_SLOT_B_MAP + 7 * 7 == POKEDEX_ANIM_SLOT_B_ATTRS
 ASSERT POKEDEX_ANIM_SOURCE_TILES + 7 * 7 <= wPokedexWRAM0ScratchEnd
 
+Pokedex_UpdateScrolledGrid:
+; Preserve the visible Listing while the next selection and grid are staged.
+; The final grid map, palette, and OAM state is revealed as one transaction.
+	call Pokedex_CancelAnimationPrefetch
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	xor a
+	ldh [hBGMapMode], a
+	ldh [hCGBPalUpdate], a
+	ld [wPokedexGridScrollFlags], a
+
+	; FarCall preserves flags but not a. Rebuild the returned render key from
+	; the preserved seen result and wTempSpecies before comparing or staging it.
+	farcall Pokedex_GetSelectionRenderKey
+	ld a, POKEDEX_RENDER_KEY_UNSEEN
+	jr z, .got_selection_key
+	ld a, [wTempSpecies]
+.got_selection_key
+	ld [wCurPartySpecies], a
+	ld hl, wPokedexRenderedSelectionKey
+	cp [hl]
+	jr z, .selection_key_ready
+	ld hl, wPokedexGridScrollFlags
+	set POKEDEX_GRID_SCROLL_SELECTION_F, [hl]
+.selection_key_ready
+	farcall Pokedex_DrawListGrid
+	ld a, [wPokedexGridScrollFlags]
+	bit POKEDEX_GRID_SCROLL_SELECTION_F, a
+	jr z, .selection_prepared
+	farcall Pokedex_PrintSelectedName
+	farcall Pokedex_PrepareSelectedMonTiles
+.selection_prepared
+	farcall CGB_PokedexStageListPalettes
+	ld a, [wPokedexGridScrollFlags]
+	bit POKEDEX_GRID_SCROLL_SELECTION_F, a
+	jr z, .selection_committed
+	farcall Pokedex_CommitStagedSelection
+.selection_committed
+	farcall Pokedex_UpdateGridOAM
+	call Pokedex_CommitScrolledGridReveal
+	farcall Pokedex_RecordRenderedSelectionKey
+
+	; The incoming row was already resident. Refill the newly offscreen cache
+	; row only after the complete visible state has been revealed.
+	farcall Pokedex_PrepareGridCacheRefill
+	farcall Pokedex_UploadPendingGridCacheRow
+	call Pokedex_StartAnimationPrefetch
+	ret
+
+Pokedex_CommitScrolledGridReveal:
+; Rows 5-14 contain the nine 2x2 grid cells. Wait until their final visible
+; scanline has passed, then replace only their tilemap and attributes. The
+; selection-dependent palettes are committed in the same transaction, and
+; the prepared shadow OAM is released for the following VBlank.
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .lcd_off
+
+.wait_grid_end
+	ldh a, [rLY]
+	cp 144
+	jr nc, .wait_next_frame
+	cp 120
+	jr c, .wait_grid_end
+	jr .reveal
+
+.wait_next_frame
+	ldh a, [rLY]
+	cp 144
+	jr nc, .wait_next_frame
+	jr .wait_grid_end
+
+.reveal
+	di
+	call Pokedex_CopyScrolledGridToVRAM
+	call Pokedex_CommitScrolledGridPalettes
+	xor a
+	ldh [hOAMUpdate], a
+	ei
+	call DelayFrame
+	ret
+
+.lcd_off
+	call Pokedex_CopyScrolledGridToVRAM
+	xor a
+	ldh [hOAMUpdate], a
+	ret
+
+Pokedex_CopyScrolledGridToVRAM:
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, .TilemapCells
+	call .CopyCells
+	ld a, BANK(vTiles3)
+	ldh [rVBK], a
+	ld hl, .AttrmapCells
+	call .CopyCells
+	pop af
+	ldh [rVBK], a
+	ret
+
+.CopyCells:
+	ld a, POKEDEX_GRID_SIZE
+.next_cell
+	push af
+	ld c, [hl]
+	inc hl
+	ld b, [hl]
+	inc hl
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	inc hl
+	push hl
+	ld h, b
+	ld l, c
+	call .CopyCell
+	pop hl
+	pop af
+	dec a
+	jr nz, .next_cell
+	ret
+
+.CopyCell:
+	ld c, 2
+.next_row
+	ld b, 2
+.next_tile
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .next_tile
+	dec c
+	ret z
+	ld a, l
+	add SCREEN_WIDTH - 2
+	ld l, a
+	jr nc, .source_ready
+	inc h
+.source_ready
+	ld a, e
+	add TILEMAP_WIDTH - 2
+	ld e, a
+	jr nc, .dest_ready
+	inc d
+.dest_ready
+	jr .next_row
+
+.TilemapCells:
+	dw wTilemap +  5 * SCREEN_WIDTH + 1, vBGMap1 +  5 * TILEMAP_WIDTH + 1
+	dw wTilemap +  5 * SCREEN_WIDTH + 5, vBGMap1 +  5 * TILEMAP_WIDTH + 5
+	dw wTilemap +  5 * SCREEN_WIDTH + 9, vBGMap1 +  5 * TILEMAP_WIDTH + 9
+	dw wTilemap +  9 * SCREEN_WIDTH + 1, vBGMap1 +  9 * TILEMAP_WIDTH + 1
+	dw wTilemap +  9 * SCREEN_WIDTH + 5, vBGMap1 +  9 * TILEMAP_WIDTH + 5
+	dw wTilemap +  9 * SCREEN_WIDTH + 9, vBGMap1 +  9 * TILEMAP_WIDTH + 9
+	dw wTilemap + 13 * SCREEN_WIDTH + 1, vBGMap1 + 13 * TILEMAP_WIDTH + 1
+	dw wTilemap + 13 * SCREEN_WIDTH + 5, vBGMap1 + 13 * TILEMAP_WIDTH + 5
+	dw wTilemap + 13 * SCREEN_WIDTH + 9, vBGMap1 + 13 * TILEMAP_WIDTH + 9
+
+.AttrmapCells:
+	dw wAttrmap +  5 * SCREEN_WIDTH + 1, vBGMap1 +  5 * TILEMAP_WIDTH + 1
+	dw wAttrmap +  5 * SCREEN_WIDTH + 5, vBGMap1 +  5 * TILEMAP_WIDTH + 5
+	dw wAttrmap +  5 * SCREEN_WIDTH + 9, vBGMap1 +  5 * TILEMAP_WIDTH + 9
+	dw wAttrmap +  9 * SCREEN_WIDTH + 1, vBGMap1 +  9 * TILEMAP_WIDTH + 1
+	dw wAttrmap +  9 * SCREEN_WIDTH + 5, vBGMap1 +  9 * TILEMAP_WIDTH + 5
+	dw wAttrmap +  9 * SCREEN_WIDTH + 9, vBGMap1 +  9 * TILEMAP_WIDTH + 9
+	dw wAttrmap + 13 * SCREEN_WIDTH + 1, vBGMap1 + 13 * TILEMAP_WIDTH + 1
+	dw wAttrmap + 13 * SCREEN_WIDTH + 5, vBGMap1 + 13 * TILEMAP_WIDTH + 5
+	dw wAttrmap + 13 * SCREEN_WIDTH + 9, vBGMap1 + 13 * TILEMAP_WIDTH + 9
+
+Pokedex_CommitScrolledGridPalettes:
+	ldh a, [hCGB]
+	and a
+	ret z
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rWBK], a
+
+	ld hl, wBGPals2 palette 1
+	ld a, BGPI_AUTOINC palette 1
+	ldh [rBGPI], a
+	ld c, LOW(rBGPD)
+	ld b, 7 palettes
+	call .CopyBytes
+
+	ld hl, wOBPals2 palette 2
+	ld a, OBPI_AUTOINC palette 2
+	ldh [rOBPI], a
+	ld c, LOW(rOBPD)
+	ld b, 3 palettes
+	call .CopyBytes
+
+	pop af
+	ldh [rWBK], a
+	ret
+
+.CopyBytes:
+.wait_palette
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_palette
+	ld a, [hli]
+	ldh [c], a
+	dec b
+	jr nz, .CopyBytes
+	ret
+
 Pokedex_CancelAnimationPrefetch:
 	xor a
 	ld [wPokedexAnimProducerState], a

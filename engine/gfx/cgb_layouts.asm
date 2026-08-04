@@ -482,26 +482,7 @@ _CGB_PokedexList:
 	ld de, wBGPals1 palette 0
 	call LoadHLPaletteIntoDE
 	call CGB_PokedexLoadFrontpicPalette
-
-.side_icon_palettes
-	ld a, [wPokedexGridIconPalettes + 0]
-	ld de, wBGPals1 palette 2
-	call .LoadBGIconPalette
-	ld a, [wPokedexGridIconPalettes + 2]
-	ld de, wBGPals1 palette 3
-	call .LoadBGIconPalette
-	ld a, [wPokedexGridIconPalettes + 3]
-	ld de, wBGPals1 palette 4
-	call .LoadBGIconPalette
-	ld a, [wPokedexGridIconPalettes + 5]
-	ld de, wBGPals1 palette 5
-	call .LoadBGIconPalette
-	ld a, [wPokedexGridIconPalettes + 6]
-	ld de, wBGPals1 palette 6
-	call .LoadBGIconPalette
-	ld a, [wPokedexGridIconPalettes + 8]
-	ld de, wBGPals1 palette 7
-	call .LoadBGIconPalette
+	call CGB_PokedexLoadListIconPalettes
 
 	ld hl, PokedexListCursorPalette
 	ld de, wOBPals1 palette 0
@@ -509,15 +490,6 @@ _CGB_PokedexList:
 	ld hl, PokedexListCaughtBallPalette
 	ld de, wOBPals1 palette 1
 	call LoadHLPaletteIntoDE
-	ld a, [wPokedexGridIconPalettes + 1]
-	ld de, wOBPals1 palette 2
-	call .LoadIconPalette
-	ld a, [wPokedexGridIconPalettes + 4]
-	ld de, wOBPals1 palette 3
-	call .LoadIconPalette
-	ld a, [wPokedexGridIconPalettes + 7]
-	ld de, wOBPals1 palette 4
-	call .LoadIconPalette
 	ld hl, PokedexListScrollThumbPalette
 	ld de, wOBPals1 palette 5
 	call LoadHLPaletteIntoDE
@@ -542,6 +514,36 @@ _CGB_PokedexList:
 	ldh [hCGBPalUpdate], a
 	ret
 
+CGB_PokedexLoadListIconPalettes:
+	ld a, [wPokedexGridIconPalettes + 0]
+	ld de, wBGPals1 palette 2
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 2]
+	ld de, wBGPals1 palette 3
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 3]
+	ld de, wBGPals1 palette 4
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 5]
+	ld de, wBGPals1 palette 5
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 6]
+	ld de, wBGPals1 palette 6
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 8]
+	ld de, wBGPals1 palette 7
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 1]
+	ld de, wOBPals1 palette 2
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 4]
+	ld de, wOBPals1 palette 3
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 7]
+	ld de, wOBPals1 palette 4
+	call .LoadIconPalette
+	ret
+
 .LoadBGIconPalette:
 	push de
 	call .LoadIconPalette
@@ -564,6 +566,13 @@ _CGB_PokedexList:
 	ld bc, 1 palettes
 	ld a, BANK(wBGPals1)
 	jp FarCopyWRAM
+
+CGB_PokedexStageListPalettes::
+; Build the complete selection-dependent palette state immediately before the
+; scroll transaction copies it to hardware.
+	call CGB_PokedexLoadFrontpicPalette
+	call CGB_PokedexLoadListIconPalettes
+	jp ApplyPals
 
 CGB_PokedexPrepareFrontpicPalette::
 ; Stage the selected frontpic palette without making it visible yet.

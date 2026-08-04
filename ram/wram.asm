@@ -759,6 +759,13 @@ wDexTempCounter:: dw
 wPokedexGridSpecies:: ds 9
 wPokedexGridFlags:: ds 9
 wPokedexGridIconPalettes:: ds 9
+wPokedexGridTopPhysicalRow:: db
+wPokedexGridScrollDirection:: db
+wPokedexGridScrollFlags:: db
+wPokedexGridCacheRowOffsets:: ds 2 * 5
+wPokedexGridPendingRowOffset:: dw
+wPokedexGridPendingPhysicalRow:: db
+wPokedexListingSavedScrollOffset:: dw
 wPokedexRenderedSelectionKey:: db ; species ID, or -1 for the shared unseen rendering
 wPokedexResidentFootprintSpecies:: db
 wPokedexDetailSpecies:: db
@@ -790,7 +797,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 175
+	ds 157
 
 NEXTU
 ; pokegear

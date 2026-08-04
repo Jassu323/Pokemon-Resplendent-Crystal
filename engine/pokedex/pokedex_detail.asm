@@ -87,6 +87,11 @@ PokedexDetail_Update:
 .max_volume
 	call MaxVolume
 	ld a, [wPokedexDetailReturnState]
+	cp DEXSTATE_MAIN_SCR
+	jr nz, .set_return_state
+	farcall Pokedex_NormalizeListingAfterDetail
+.set_return_state
+	ld a, [wPokedexDetailReturnState]
 	ld [wJumptableIndex], a
 	ret
 

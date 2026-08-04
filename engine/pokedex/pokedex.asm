@@ -32,9 +32,17 @@ EXPORT DEF POKEDEX_SCX EQU 5
 DEF POKEDEX_GRID_WIDTH  EQU 3
 DEF POKEDEX_GRID_HEIGHT EQU 3
 DEF POKEDEX_GRID_SIZE   EQU POKEDEX_GRID_WIDTH * POKEDEX_GRID_HEIGHT
+DEF POKEDEX_GRID_CACHE_ROWS EQU POKEDEX_GRID_HEIGHT + 2
 
 DEF POKEDEX_GRID_SEEN_F   EQU 0
 DEF POKEDEX_GRID_CAUGHT_F EQU 1
+
+	const_def
+	const POKEDEX_GRID_SCROLL_NONE
+	const POKEDEX_GRID_SCROLL_UP
+	const POKEDEX_GRID_SCROLL_DOWN
+
+DEF POKEDEX_GRID_SCROLL_SELECTION_F EQU 0
 
 DEF POKEDEX_SCROLLBAR_TILE     EQU $ba
 DEF POKEDEX_UNSEEN_TILE        EQU $c6
@@ -59,6 +67,12 @@ DEF POKEDEX_ANIM_SLOT_A_ATTRS  EQUS "wPokedexWRAM0Scratch + $3cd"
 DEF POKEDEX_ANIM_SLOT_B_MAP    EQUS "wPokedexWRAM0Scratch + $3fe"
 DEF POKEDEX_ANIM_SLOT_B_ATTRS  EQUS "wPokedexWRAM0Scratch + $42f"
 DEF POKEDEX_ANIM_SOURCE_TILES  EQUS "wPokedexWRAM0Scratch + $460"
+
+; Selection staging ends at $350. The animation producer is inactive while
+; a Listing row is being changed, so its map workspace can stage one incoming
+; row without reserving another persistent buffer.
+DEF POKEDEX_GRID_CENTER_GFX EQUS "wPokedexWRAM0Scratch + $350"
+DEF POKEDEX_GRID_SIDE_GFX   EQUS "wPokedexWRAM0Scratch + $390"
 
 DEF POKEDEX_ANIM_BUFFER_A_TILE EQU $80
 DEF POKEDEX_ANIM_BUFFER_B_TILE EQU $33
@@ -168,6 +182,12 @@ InitPokedex:
 
 	farcall Pokedex_OrderMonsByMode
 	call Pokedex_InitGridCursorPosition
+	ldh a, [hCGB]
+	and a
+	jr z, .grid_cache_ready
+	farcall Pokedex_EnsureGridCache
+.grid_cache_ready
+	call EnableLCD
 	call Pokedex_GetLandmark
 	farcall DrawDexEntryScreenRightEdge
 	call Pokedex_ResetBGMapMode
@@ -197,8 +217,18 @@ Pokedex_InitGridCursorPosition:
 	ld [wDexListingScrollOffset], a
 	ld [wDexListingScrollOffset + 1], a
 	ld [wDexListingCursor], a
+	ld [wPokedexGridScrollDirection], a
+	ld [wPokedexGridScrollFlags], a
+	farcall Pokedex_InitGridCacheState
 	ld a, POKEDEX_GRID_SIZE
 	ld [wDexListingHeight], a
+	ret
+
+Pokedex_SaveListingViewport:
+	ld a, [wDexListingScrollOffset]
+	ld [wPokedexListingSavedScrollOffset], a
+	ld a, [wDexListingScrollOffset + 1]
+	ld [wPokedexListingSavedScrollOffset + 1], a
 	ret
 
 Pokedex_InitCursorPosition:
@@ -359,32 +389,59 @@ Pokedex_Exit:
 Pokedex_InitMainScreen:
 	xor a
 	ldh [hBGMapMode], a
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	ldh a, [hCGB]
+	and a
+	jr z, .stage_listing
+	ld a, $a7
+	ldh [hWX], a
+	call ClearPalettes
+	call DelayFrame
+.stage_listing
 	call ClearSprites
 	call Pokedex_LoadListJoinedBorderGFX
+	ldh a, [hCGB]
+	and a
+	jr z, .cache_ready
+	farcall Pokedex_EnsureGridCache
+.cache_ready
 	call Pokedex_LoadGridPage
 	farcall DrawPokedexListWindow
 	call Pokedex_PrintSelectedName
 	hlcoord 0, 17
 	ld de, String_START_SEARCH
 	call Pokedex_PlaceString
-	call Pokedex_SetBGMapMode_3ifDMG_4ifCGB
+	ldh a, [hCGB]
+	and a
+	jr z, .copy_dmg_window
+	farcall Pokedex_CopyBackingToWindow
+	jr .window_staged
+.copy_dmg_window
+	call Pokedex_SetBGMapMode3
+.window_staged
 	call Pokedex_ResetBGMapMode
 	call Pokedex_DrawMainScreenBG
 	ld a, POKEDEX_SCX
 	ldh [hSCX], a
-	ld a, $47
-	ldh [hWX], a
 	xor a
 	ldh [hWY], a
-	call WaitBGMap
-
-	call Pokedex_ResetBGMapMode
 	call Pokedex_LoadSelectedMonTiles
-	farcall Pokedex_StartAnimationPrefetch
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
 	xor a
 	ldh [hBGMapMode], a
+	ldh a, [hCGB]
+	and a
+	jr z, .copy_dmg_bg
+	xor a
+	ldh [hCGBPalUpdate], a
+	farcall Pokedex_CopyBackingToBG
+	jr .bg_staged
+.copy_dmg_bg
+	call WaitBGMap
+	call Pokedex_ResetBGMapMode
+.bg_staged
 	call Pokedex_RecordRenderedSelectionKey
 	farcall Pokedex_UpdateGridOAM
 	farcall DrawPokedexListWindow
@@ -392,6 +449,24 @@ Pokedex_InitMainScreen:
 	hlcoord 0, 17
 	ld de, String_START_SEARCH
 	call Pokedex_PlaceString
+	farcall Pokedex_StartAnimationPrefetch
+	ldh a, [hCGB]
+	and a
+	jr z, .reveal_dmg
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ld a, $47
+	ldh [hWX], a
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
+	jr .revealed
+.reveal_dmg
+	ld a, $47
+	ldh [hWX], a
+	xor a
+	ldh [hOAMUpdate], a
+.revealed
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -414,6 +489,9 @@ Pokedex_UpdateMainScreen:
 	farcall Pokedex_ServiceAnimationProducer
 	ret
 .selection_changed
+	ld a, [wPokedexGridScrollDirection]
+	and a
+	jr nz, .grid_scrolled
 	call Pokedex_GetSelectionRenderKey
 	ld hl, wPokedexRenderedSelectionKey
 	cp [hl]
@@ -452,10 +530,15 @@ Pokedex_UpdateMainScreen:
 	farcall Pokedex_UpdateGridCursorOAM
 	ret
 
+.grid_scrolled
+	farcall Pokedex_UpdateScrolledGrid
+	ret
+
 .a
 	call Pokedex_GetSelectedMon
 	call Pokedex_CheckSeen
 	ret z
+	call Pokedex_SaveListingViewport
 	ld a, DEXSTATE_DETAIL_ENTER
 	ld [wJumptableIndex], a
 	ld a, DEXSTATE_MAIN_SCR
@@ -1049,6 +1132,8 @@ Pokedex_NextOrPreviousDexEntry:
 	ret
 
 Pokedex_GridHandleDPadInput:
+	xor a
+	ld [wPokedexGridScrollDirection], a
 	ld a, [wDexListingCursor]
 	ld b, a
 	ld hl, hJoyLast
@@ -1065,16 +1150,48 @@ Pokedex_GridHandleDPadInput:
 .up
 	ld a, b
 	cp POKEDEX_GRID_WIDTH
-	jr c, .no_move
+	jr c, .scroll_up
 	sub POKEDEX_GRID_WIDTH
 	jr .try_target
+
+.scroll_up
+	ld hl, wDexListingScrollOffset
+	ld a, [hli]
+	or [hl]
+	jr z, .no_move
+	call Pokedex_ScrollGridUp
+	scf
+	ret
 
 .down
 	ld a, b
 	cp POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
-	jr nc, .no_move
+	jr nc, .scroll_down
 	add POKEDEX_GRID_WIDTH
 	jr .try_target
+
+.scroll_down
+	ld e, b
+	ld d, 0
+	ld hl, wDexListingScrollOffset
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	add hl, de
+	ld de, POKEDEX_GRID_WIDTH
+	add hl, de
+	ld a, [wDexListingEnd]
+	ld e, a
+	ld a, [wDexListingEnd + 1]
+	ld d, a
+	ld a, l
+	sub e
+	ld a, h
+	sbc d
+	jr nc, .no_move
+	call Pokedex_ScrollGridDown
+	scf
+	ret
 
 .left
 	ld a, b
@@ -1112,6 +1229,107 @@ Pokedex_GridHandleDPadInput:
 
 .no_move
 	and a
+	ret
+
+Pokedex_ScrollGridUp:
+	ld hl, wDexListingScrollOffset
+	ld a, [hl]
+	sub POKEDEX_GRID_WIDTH
+	ld [hli], a
+	jr nc, .got_offset
+	dec [hl]
+.got_offset
+	ld hl, wPokedexGridTopPhysicalRow
+	ld a, [hl]
+	and a
+	jr nz, .decrement_physical_row
+	ld a, POKEDEX_GRID_CACHE_ROWS
+.decrement_physical_row
+	dec a
+	ld [hl], a
+	call Pokedex_ShiftGridMetadataDown
+	xor a
+	call Pokedex_CacheGridRow
+	ld a, POKEDEX_GRID_SCROLL_UP
+	ld [wPokedexGridScrollDirection], a
+	ret
+
+Pokedex_ScrollGridDown:
+	ld hl, wDexListingScrollOffset
+	ld a, [hl]
+	add POKEDEX_GRID_WIDTH
+	ld [hli], a
+	jr nc, .got_offset
+	inc [hl]
+.got_offset
+	ld hl, wPokedexGridTopPhysicalRow
+	ld a, [hl]
+	inc a
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .got_physical_row
+	xor a
+.got_physical_row
+	ld [hl], a
+	call Pokedex_ShiftGridMetadataUp
+	ld a, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+	call Pokedex_CacheGridRow
+	ld a, POKEDEX_GRID_SCROLL_DOWN
+	ld [wPokedexGridScrollDirection], a
+	ret
+
+Pokedex_ShiftGridMetadataUp:
+; The old middle and bottom rows become the new top and middle rows.
+	ld hl, wPokedexGridSpecies + POKEDEX_GRID_WIDTH
+	ld de, wPokedexGridSpecies
+	ld bc, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+	call CopyBytes
+	ld hl, wPokedexGridFlags + POKEDEX_GRID_WIDTH
+	ld de, wPokedexGridFlags
+	ld bc, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+	call CopyBytes
+	ld hl, wPokedexGridIconPalettes + POKEDEX_GRID_WIDTH
+	ld de, wPokedexGridIconPalettes
+	ld bc, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+	jp CopyBytes
+
+Pokedex_ShiftGridMetadataDown:
+; Copy backwards so the old top and middle rows become the new middle and
+; bottom rows without clobbering their source entries.
+	ld hl, wPokedexGridSpecies + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
+	ld de, wPokedexGridSpecies + POKEDEX_GRID_SIZE - 1
+	call .CopyArrayBackward
+	ld hl, wPokedexGridFlags + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
+	ld de, wPokedexGridFlags + POKEDEX_GRID_SIZE - 1
+	call .CopyArrayBackward
+	ld hl, wPokedexGridIconPalettes + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
+	ld de, wPokedexGridIconPalettes + POKEDEX_GRID_SIZE - 1
+	; fallthrough
+
+.CopyArrayBackward:
+	ld c, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+.loop
+	ld a, [hld]
+	ld [de], a
+	dec de
+	dec c
+	jr nz, .loop
+	ret
+
+Pokedex_CacheGridRow:
+; a = first visible grid position in the incoming row.
+	ld [wDexTempCounter], a
+	ld b, POKEDEX_GRID_WIDTH
+.loop
+	push bc
+	ld a, [wDexTempCounter]
+	push af
+	call Pokedex_CacheGridPosition
+	pop af
+	inc a
+	ld [wDexTempCounter], a
+	pop bc
+	dec b
+	jr nz, .loop
 	ret
 
 Pokedex_ListingHandleDPadInput:
@@ -1692,48 +1910,6 @@ Pokedex_LoadGridPage:
 	cp POKEDEX_GRID_SIZE
 	jr c, .cache_loop
 
-	xor a
-.gfx_loop
-	ld [wDexTempCounter], a
-	ld e, a
-	ld d, 0
-	ld hl, wPokedexGridFlags
-	add hl, de
-	bit POKEDEX_GRID_SEEN_F, [hl]
-	jr z, .next_gfx
-	ld hl, wPokedexGridSpecies
-	add hl, de
-	ld c, [hl]
-	farcall ReadMonMenuIconForPokedex
-	push bc
-	push de
-	ld a, c
-	swap a
-	and $f
-	ld c, a
-	ld a, [wDexTempCounter]
-	ld e, a
-	ld d, 0
-	ld hl, wPokedexGridIconPalettes
-	add hl, de
-	ld [hl], c
-	ld a, e
-	add a
-	ld e, a
-	ld hl, PokedexGridIconDestinations
-	add hl, de
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	pop de
-	pop bc
-	ld c, 4
-	call Get2bppViaHDMAToVRAMBank1
-.next_gfx
-	ld a, [wDexTempCounter]
-	inc a
-	cp POKEDEX_GRID_SIZE
-	jr c, .gfx_loop
 	ret
 
 Pokedex_CacheGridPosition:
@@ -1741,6 +1917,16 @@ Pokedex_CacheGridPosition:
 	ld [wDexTempCounter], a
 	ld e, a
 	ld d, 0
+	ld hl, wPokedexGridSpecies
+	add hl, de
+	xor a
+	ld [hl], a
+	ld hl, wPokedexGridFlags
+	add hl, de
+	ld [hl], a
+	ld hl, wPokedexGridIconPalettes
+	add hl, de
+	ld [hl], a
 	ld hl, wDexListingScrollOffset
 	ld a, [hli]
 	ld h, [hl]
@@ -1820,18 +2006,8 @@ Pokedex_CacheGridPosition:
 .not_caught
 	pop af
 	ldh [rSVBK], a
+	farcall Pokedex_CacheGridIconPalette
 	ret
-
-PokedexGridIconDestinations:
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 0 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 0 * 4)
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 1 * 4)
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 2 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 1 * 4)
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 3 * 4)
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 4 * 4)
-	dw vTiles3 tile (POKEDEX_CENTER_ICON_TILE + 2 * 4)
-	dw vTiles5 tile (POKEDEX_SIDE_ICON_TILE + 5 * 4)
 
 Pokedex_PrintSelectedName:
 	hlcoord 0, 1
@@ -2974,7 +3150,6 @@ Pokedex_LoadGFX:
 	farcall Pokedex_LoadPermanentCGBGFX
 	ld a, 6
 	call SkipMusic
-	call EnableLCD
 	ret
 
 Pokedex_LoadListStaticGFX:
