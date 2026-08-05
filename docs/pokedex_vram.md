@@ -10,6 +10,15 @@ selected known or unseen static frontpic occupies one 49-tile bank-0 region.
 Two bank-1 regions stream only the changed tiles required by the selected
 known Pokemon's main and idle animation frames.
 
+Each compressed frontpic is stored as a small container. Its first LZ stream
+contains only the native 5x5, 6x6, or 7x7 base pose; subsequent streams contain
+at most 16 animation-dictionary tiles apiece. Normal frontpic consumers decode
+all streams immediately. A Listing selection decodes only the base stream and
+pads it directly into Dex WRAM0, reveals the new selection, and retains the tail
+address, destination, and tile count as a cancellable background job. One tail
+stream is decoded after input on each otherwise-idle update. The existing
+animation producer is marked pending only after that dictionary is complete.
+
 ## Current VRAM writes
 
 ### VRAM bank 0
@@ -161,8 +170,9 @@ Other useful maximum sizes include:
 The producer batches a frame's source indexes in a separate 49-byte buffer in
 WRAMX bank 2, then switches to WRAMX bank 6 once to gather every changed tile.
 The two animation tilemaps and payload stay in WRAM0, avoiding per-tile WRAM
-bank changes. Twenty-one bytes in `wPokedexData` hold producer, consumer,
-timing, slot, and underrun-diagnostic state. The Listing cache adds 14 bytes:
-five 16-bit row-ownership tags, a 16-bit pending row, its physical-row index,
-and the last rendered owned-icon animation frame. It remains inside the existing
-280-byte Pokedex union by consuming one byte of its reserved padding.
+bank changes. Twenty-eight bytes in `wPokedexData` hold producer, consumer,
+timing, slot, underrun-diagnostic, and background-dictionary state. The Listing
+cache adds 14 bytes: five 16-bit row-ownership tags, a 16-bit pending row, its
+physical-row index, and the last rendered owned-icon animation frame. It remains
+inside the existing 280-byte Pokedex union by consuming eight bytes of its
+reserved padding.

@@ -520,7 +520,11 @@ ROMX $b2
 ROMX $b3
 ROMX $b4
 ROMX $b5
+	; Front/back pic overflow for chunked animated frontpics.
+	"Pics 30"
 ROMX $b6
+	; Front/back pic overflow for chunked animated frontpics.
+	"Pics 31"
 ROMX $b7
 ROMX $b8
 ROMX $b9

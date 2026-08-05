@@ -702,13 +702,24 @@ Pokedex_CommitStagedSelection:
 ; Keep the old name and frontpic intact through their visible scanlines, then
 ; replace both later in the same frame. Palette and cursor OAM are queued by
 ; the caller for the following VBlank, revealing one complete new selection.
+; If staging finishes before the frontpic's final scanline, upload the frontpic
+; and then replace the already-scanned name in the current frame. Otherwise
+; retain the full next-frame schedule.
 	ldh a, [rLCDC]
 	bit B_LCDC_ENABLE, a
 	jr z, .lcd_off
 
 	ldh a, [rLY]
-	cp 16
-	jr c, .wait_name_row
+	cp 64
+	jr nc, .wait_next_frame
+
+.wait_fast_frontpic_row
+	ldh a, [rLY]
+	cp 64
+	jr c, .wait_fast_frontpic_row
+	call .commit_frontpic
+	call .commit_name
+	ret
 
 .wait_next_frame
 	ldh a, [rLY]
@@ -719,41 +730,14 @@ Pokedex_CommitStagedSelection:
 	ldh a, [rLY]
 	cp 16
 	jr c, .wait_name_row
-
-	ldh a, [rVBK]
-	push af
-	xor a
-	ldh [rVBK], a
-	hlcoord 0, 1
-	ld de, vBGMap1 + TILEMAP_WIDTH
-	ld c, 11
-.copy_name
-.wait_vram
-	ldh a, [rSTAT]
-	and STAT_BUSY
-	jr nz, .wait_vram
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .copy_name
-	pop af
-	ldh [rVBK], a
-
-	ldh a, [rLY]
-	cp 64
-	jr c, .wait_frontpic_row
-
-.wait_next_frontpic_frame
-	ldh a, [rLY]
-	cp 64
-	jr nc, .wait_next_frontpic_frame
+	call .commit_name
 
 .wait_frontpic_row
 	ldh a, [rLY]
 	cp 64
 	jr c, .wait_frontpic_row
 
+.commit_frontpic
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld c, 7 * 7
@@ -773,6 +757,28 @@ Pokedex_CommitStagedSelection:
 	ldh [rVBK], a
 	ld a, [wCurPartySpecies]
 	ld [wPokedexResidentFootprintSpecies], a
+	ret
+
+.commit_name
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	hlcoord 0, 1
+	ld de, vBGMap1 + TILEMAP_WIDTH
+	ld c, 11
+.copy_name
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .copy_name
+	pop af
+	ldh [rVBK], a
 	ret
 
 .lcd_off

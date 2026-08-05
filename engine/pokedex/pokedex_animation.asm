@@ -222,6 +222,7 @@ Pokedex_CancelAnimationPrefetch:
 	xor a
 	ld [wPokedexAnimProducerState], a
 	ld [wPokedexAnimPlaybackState], a
+	ld [wPokedexAnimDictionaryTilesRemaining], a
 	ld hl, wPokedexAnimSlotStates
 	ld bc, 2
 	call ByteFill
@@ -230,10 +231,6 @@ Pokedex_CancelAnimationPrefetch:
 	ret
 
 Pokedex_StartAnimationPrefetch:
-; The static frontpic loader has already left this species' complete tile
-; dictionary in WRAMX6. Starting a job only updates state; decoding remains an
-; idle-frame operation so selection changes do not gain any extra latency.
-	call Pokedex_CancelAnimationPrefetch
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -241,7 +238,20 @@ Pokedex_StartAnimationPrefetch:
 	farcall Pokedex_CheckSeen
 	ret z
 	ld a, [wTempSpecies]
+	ld hl, wPokedexAnimOwner
+	cp [hl]
+	jr nz, .complete_dictionary
+	ld a, [wPokedexAnimProducerState]
+	cp POKEDEX_ANIM_PRODUCER_LOADING
+	jr z, .initialize
+.complete_dictionary
+	call Pokedex_CancelAnimationPrefetch
+	ld a, [wTempSpecies]
 	ld [wPokedexAnimOwner], a
+	ld a, POKEDEX_ANIM_PRODUCER_PENDING
+	ld [wPokedexAnimProducerState], a
+.initialize
+	ld a, [wTempSpecies]
 	ld [wCurPartySpecies], a
 	xor a
 	ld [wBoxAlignment], a
@@ -252,8 +262,6 @@ Pokedex_StartAnimationPrefetch:
 	ld hl, wPokedexAnimSlotStates
 	ld bc, 8
 	call ByteFill
-	ld a, POKEDEX_ANIM_PRODUCER_PENDING
-	ld [wPokedexAnimProducerState], a
 	ret
 
 Pokedex_BeginDescriptionAnimation:
@@ -288,11 +296,17 @@ Pokedex_ServiceAnimationProducer:
 	and a
 	ret z
 	ld a, [wPokedexAnimProducerState]
+	cp POKEDEX_ANIM_PRODUCER_LOADING
+	jr z, .load_dictionary
 	cp POKEDEX_ANIM_PRODUCER_PENDING
 	jr z, .initialize
 	cp POKEDEX_ANIM_PRODUCER_ACTIVE
 	ret nz
 	jr .produce
+
+.load_dictionary
+	call Pokedex_LoadAnimationDictionaryChunk
+	ret
 
 .initialize
 	ld de, POKEDEX_ANIM_LOGICAL_MAP
@@ -332,6 +346,47 @@ Pokedex_ServiceAnimationProducer:
 	ld a, b
 	ld [wPokedexAnimTrailingHold], a
 	ld a, POKEDEX_ANIM_PRODUCER_ENDED
+	ld [wPokedexAnimProducerState], a
+	ret
+
+Pokedex_LoadAnimationDictionaryChunk:
+; Each stream expands to at most 16 tiles. Input has already been serviced for
+; this frame, so a new selection can cancel the job before the next stream.
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wDecompressScratch)
+	ldh [rWBK], a
+	ld a, [wPokedexAnimDictionaryAddress]
+	ld l, a
+	ld a, [wPokedexAnimDictionaryAddress + 1]
+	ld h, a
+	ld a, [wPokedexAnimDictionaryDestination]
+	ld e, a
+	ld a, [wPokedexAnimDictionaryDestination + 1]
+	ld d, a
+	ld a, [wPokedexAnimDictionaryBank]
+	call FarDecompress
+	inc hl
+	ld a, l
+	ld [wPokedexAnimDictionaryAddress], a
+	ld a, h
+	ld [wPokedexAnimDictionaryAddress + 1], a
+	ld a, e
+	ld [wPokedexAnimDictionaryDestination], a
+	ld a, d
+	ld [wPokedexAnimDictionaryDestination + 1], a
+	pop af
+	ldh [rWBK], a
+
+	ld hl, wPokedexAnimDictionaryTilesRemaining
+	ld a, [hl]
+	sub POKEDEX_ANIM_DICTIONARY_CHUNK_TILES
+	jr nc, .store_remaining
+	xor a
+.store_remaining
+	ld [hl], a
+	ret nz
+	ld a, POKEDEX_ANIM_PRODUCER_PENDING
 	ld [wPokedexAnimProducerState], a
 	ret
 

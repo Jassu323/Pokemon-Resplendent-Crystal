@@ -141,6 +141,9 @@ pokecrystal11_vc.gbc: RGBFIXFLAGS += -i BYTE -n 1
 
 ### LZ compression rules
 
+gfx/pokemon/%/front.animated.2bpp.lz: gfx/pokemon/%/front.animated.2bpp gfx/pokemon/%/front.dimensions tools/frontpic_lz
+	tools/frontpic_lz $(word 1,$^) $(word 2,$^) $@
+
 %.lz: %
 	tools/lzcomp -- $< $@
 

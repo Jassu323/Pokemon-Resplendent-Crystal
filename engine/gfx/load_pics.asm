@@ -98,26 +98,112 @@ _PrepareFrontpic:
 	call GetBaseData
 	ld a, [wBasePicSize]
 	and $f
-	ld b, a
-	push bc
+	push af
+	call GetFrontpicBaseTileCount
+	push af
 	call GetFrontpicPointer
+	ld a, b
+	call GetFarByte
+	ld [sEnemyFrontPicTileCount], a
+	inc hl
+	push bc
 	ld a, BANK(wDecompressScratch)
 	ldh [rWBK], a
 	ld a, b
 	ld de, wDecompressScratch
 	call FarDecompress
-	; calculate tile count from final address; requires wDecompressScratch to be at the beginning of the bank
-	swap e
-	swap d
-	ld a, d
-	and $f0 ; get rid of the upper nibble of the address
-	or e
-	; and save the tile count for later
-	ld [sEnemyFrontPicTileCount], a
+	pop bc
+	pop af
+	ld c, a
+	ld a, [sEnemyFrontPicTileCount]
+	sub c
+	ld c, a
+.tail_loop
+	ld a, c
+	and a
+	jr z, .dictionary_ready
+	inc hl
+	push bc
+	ld a, b
+	call FarDecompress
+	pop bc
+	ld a, c
+	sub POKEDEX_ANIM_DICTIONARY_CHUNK_TILES
+	jr nc, .store_remaining
+	xor a
+.store_remaining
+	ld c, a
+	jr .tail_loop
+.dictionary_ready
 	pop bc
 	ld hl, sPaddedEnemyFrontPic
 	ld de, wDecompressScratch
 	jp PadFrontpic
+
+Pokedex_PrepareFrontpicBase::
+; Decompress only the native first frame. The remaining independently
+; compressed streams are retained as a cancellable Dex animation job. Pad the
+; base directly into Dex WRAM0 so selection staging does not round-trip through
+; sPaddedEnemyFrontPic.
+	call GetBaseData
+	ld a, [wBasePicSize]
+	and $f
+	push af
+	call GetFrontpicBaseTileCount
+	push af
+	call GetFrontpicPointer
+	ld a, b
+	call GetFarByte
+	ld [sEnemyFrontPicTileCount], a
+	ld [wPokedexAnimDictionaryTileCount], a
+	inc hl
+	push bc
+	ld a, BANK(wDecompressScratch)
+	ldh [rWBK], a
+	ld a, b
+	ld de, wDecompressScratch
+	call FarDecompress
+	pop bc
+	inc hl
+	ld a, b
+	ld [wPokedexAnimDictionaryBank], a
+	ld a, l
+	ld [wPokedexAnimDictionaryAddress], a
+	ld a, h
+	ld [wPokedexAnimDictionaryAddress + 1], a
+	ld a, e
+	ld [wPokedexAnimDictionaryDestination], a
+	ld a, d
+	ld [wPokedexAnimDictionaryDestination + 1], a
+	pop af
+	ld c, a
+	ld a, [wPokedexAnimDictionaryTileCount]
+	sub c
+	ld [wPokedexAnimDictionaryTilesRemaining], a
+	ld a, [wCurPartySpecies]
+	ld [wPokedexAnimOwner], a
+	ld a, [wPokedexAnimDictionaryTilesRemaining]
+	and a
+	ld a, POKEDEX_ANIM_PRODUCER_PENDING
+	jr z, .state_ready
+	ld a, POKEDEX_ANIM_PRODUCER_LOADING
+.state_ready
+	ld [wPokedexAnimProducerState], a
+	pop bc
+	ld hl, wPokedexWRAM0Scratch
+	ld de, wDecompressScratch
+	jp PadFrontpic
+
+GetFrontpicBaseTileCount:
+; a = native square dimension; return its tile count in a.
+	ld c, a
+	ld b, a
+	xor a
+.row
+	add c
+	dec b
+	jr nz, .row
+	ret
 
 GetPicIndirectPointer:
 	ld a, [wCurPartySpecies]

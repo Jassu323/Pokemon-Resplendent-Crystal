@@ -791,6 +791,11 @@ wPokedexAnimHoldTimer:: db
 wPokedexAnimTrailingHold:: db
 wPokedexAnimFrontpicDim:: db
 wPokedexAnimUnderflowCount:: dw
+wPokedexAnimDictionaryBank:: db
+wPokedexAnimDictionaryAddress:: dw
+wPokedexAnimDictionaryDestination:: dw
+wPokedexAnimDictionaryTilesRemaining:: db
+wPokedexAnimDictionaryTileCount:: db
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -798,7 +803,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 156
+	ds 149
 
 NEXTU
 ; pokegear
