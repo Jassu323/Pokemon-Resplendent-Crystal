@@ -365,6 +365,8 @@ Pokedex_PrepareGridCacheRefill:
 	ld a, [wPokedexGridScrollDirection]
 	cp POKEDEX_GRID_SCROLL_DOWN
 	jr z, .scrolling_down
+	cp POKEDEX_GRID_SCROLL_WRAP_DOWN
+	jr z, .scrolling_down
 	ld a, [wPokedexGridTopPhysicalRow]
 	and a
 	jr nz, .got_up_physical
@@ -689,6 +691,135 @@ Pokedex_UploadPendingGridCacheRow:
 	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 3 * 8)
 	dw vTiles4 tile (POKEDEX_SIDE_ICON_FRAME1_VRAM_TILE + 4 * 8)
 
+Pokedex_CommitWrappedSelectionGFX:
+; LCD-off fallback for the wrapped Listing reveal. The live-screen path owns
+; this transfer from the Pokédex VBlank transaction below.
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch
+	ld de, vTiles2
+	ld bc, 7 * 7 tiles
+	call CopyBytes
+	pop af
+	ldh [rVBK], a
+	ret
+
+Pokedex_PrepareWrappedGridRows:
+; Reinterpret the existing five-row ring without reserving more VRAM:
+; old P+3/P+4 become destination top/middle, and old P becomes bottom.
+	ld a, [wPokedexGridTopPhysicalRow]
+	add POKEDEX_GRID_HEIGHT
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .got_top_physical
+	sub POKEDEX_GRID_CACHE_ROWS
+.got_top_physical
+	ld b, a
+	ld hl, wDexListingScrollOffset
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld a, b
+	call Pokedex_PrepareGridCacheRow
+	call Pokedex_UploadPendingGridCacheRow
+
+	ld a, [wPokedexGridTopPhysicalRow]
+	add POKEDEX_GRID_HEIGHT + 1
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .got_middle_physical
+	sub POKEDEX_GRID_CACHE_ROWS
+.got_middle_physical
+	ld b, a
+	ld hl, wDexListingScrollOffset
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld a, e
+	add POKEDEX_GRID_WIDTH
+	ld e, a
+	jr nc, .got_middle_offset
+	inc d
+.got_middle_offset
+	ld a, b
+	call Pokedex_PrepareGridCacheRow
+	call Pokedex_UploadPendingGridCacheRow
+
+	ld a, [wPokedexGridTopPhysicalRow]
+	ld b, a
+	ld hl, wDexListingScrollOffset
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld a, e
+	add 2 * POKEDEX_GRID_WIDTH
+	ld e, a
+	jr nc, .got_bottom_offset
+	inc d
+.got_bottom_offset
+	ld a, b
+	call Pokedex_PrepareGridCacheRow
+
+	ld hl, wPokedexGridTopPhysicalRow
+	ld a, [hl]
+	add POKEDEX_GRID_HEIGHT
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .set_new_top
+	sub POKEDEX_GRID_CACHE_ROWS
+.set_new_top
+	ld [hl], a
+	ret
+
+Pokedex_UploadWrappedBottomRow:
+; The pending row owns the old top physical slots. Begin only after every old
+; top-row BG/OBJ pixel has been scanned, leaving ample HBlank time to finish.
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jp z, Pokedex_UploadPendingGridCacheRow
+	ldh a, [rLY]
+	cp 56
+	jr c, .wait_row_end
+.wait_next_frame
+	ldh a, [rLY]
+	cp 56
+	jr nc, .wait_next_frame
+.wait_row_end
+	ldh a, [rLY]
+	cp 56
+	jr c, .wait_row_end
+	jp Pokedex_UploadPendingGridCacheRow
+
+Pokedex_FinalizeWrappedGridCache:
+; Refill the one real neighbor row and invalidate the opposite endpoint row.
+	call Pokedex_PrepareGridCacheRefill
+	call Pokedex_UploadPendingGridCacheRow
+	ld a, [wPokedexGridScrollDirection]
+	cp POKEDEX_GRID_SCROLL_WRAP_DOWN
+	jr z, .invalidate_previous
+	ld a, [wPokedexGridTopPhysicalRow]
+	add POKEDEX_GRID_HEIGHT
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .invalidate
+	sub POKEDEX_GRID_CACHE_ROWS
+	jr .invalidate
+.invalidate_previous
+	ld a, [wPokedexGridTopPhysicalRow]
+	and a
+	jr nz, .decrement
+	ld a, POKEDEX_GRID_CACHE_ROWS
+.decrement
+	dec a
+.invalidate
+	add a
+	ld e, a
+	ld d, 0
+	ld hl, wPokedexGridCacheRowOffsets
+	add hl, de
+	ld a, -1
+	ld [hli], a
+	ld [hl], a
+	ret
+
 LoadQuestionMarkPic:
 	ld hl, .QuestionMarkLZ
 	ld de, sScratch
@@ -718,7 +849,7 @@ Pokedex_CommitStagedSelection:
 	cp 64
 	jr c, .wait_fast_frontpic_row
 	call .commit_frontpic
-	call .commit_name
+	call Pokedex_CommitStagedSelectionName
 	ret
 
 .wait_next_frame
@@ -730,7 +861,7 @@ Pokedex_CommitStagedSelection:
 	ldh a, [rLY]
 	cp 16
 	jr c, .wait_name_row
-	call .commit_name
+	call Pokedex_CommitStagedSelectionName
 
 .wait_frontpic_row
 	ldh a, [rLY]
@@ -759,28 +890,6 @@ Pokedex_CommitStagedSelection:
 	ld [wPokedexResidentFootprintSpecies], a
 	ret
 
-.commit_name
-	ldh a, [rVBK]
-	push af
-	xor a
-	ldh [rVBK], a
-	hlcoord 0, 1
-	ld de, vBGMap1 + TILEMAP_WIDTH
-	ld c, 11
-.copy_name
-.wait_vram
-	ldh a, [rSTAT]
-	and STAT_BUSY
-	jr nz, .wait_vram
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .copy_name
-	pop af
-	ldh [rVBK], a
-	ret
-
 .lcd_off
 	hlcoord 0, 1
 	ld de, vBGMap1 + TILEMAP_WIDTH
@@ -805,6 +914,29 @@ Pokedex_CommitStagedSelection:
 	ldh [rVBK], a
 	ld a, [wCurPartySpecies]
 	ld [wPokedexResidentFootprintSpecies], a
+	ret
+
+Pokedex_CommitStagedSelectionName:
+; Commit only the Listing header after its visible scanline has passed.
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	hlcoord 0, 1
+	ld de, vBGMap1 + TILEMAP_WIDTH
+	ld c, 11
+.copy_name
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .copy_name
+	pop af
+	ldh [rVBK], a
 	ret
 
 Pokedex_CommitAnimationFrontpicMap::
@@ -935,6 +1067,13 @@ Pokedex_StageGridIconAnimation:
 	jp Pokedex_UpdateCenterIconAnimationOAM
 
 Pokedex_VBlankGridIconAnimation::
+; A full-grid wrap publishes its portrait, palettes, and shadow OAM as one
+; VBlank-owned transaction. Mainline code has already replaced each target
+; grid row after its outgoing pixels passed.
+	ld hl, wPokedexGridScrollFlags
+	bit POKEDEX_GRID_SCROLL_COMMIT_F, [hl]
+	jp nz, Pokedex_VBlankCommitWrappedGrid
+
 ; Both frames are resident. On a hardware-clock phase change, rewrite only
 ; the owned side-cell tile IDs and center-cell shadow OAM tile IDs.
 	ldh a, [hBGMapUpdate]
@@ -971,33 +1110,95 @@ Pokedex_VBlankGridIconAnimation::
 	ld a, 0
 	lb bc, 0, 0
 	ld de, vBGMap1 + 5 * TILEMAP_WIDTH + 1
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 	ld a, 2
 	lb bc, 0, 4
 	ld de, vBGMap1 + 5 * TILEMAP_WIDTH + 9
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 	ld a, 3
 	lb bc, 1, 0
 	ld de, vBGMap1 + 9 * TILEMAP_WIDTH + 1
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 	ld a, 5
 	lb bc, 1, 4
 	ld de, vBGMap1 + 9 * TILEMAP_WIDTH + 9
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 	ld a, 6
 	lb bc, 2, 0
 	ld de, vBGMap1 + 13 * TILEMAP_WIDTH + 1
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 	ld a, 8
 	lb bc, 2, 4
 	ld de, vBGMap1 + 13 * TILEMAP_WIDTH + 9
-	call .UpdateSideCell
+	call Pokedex_VBlankUpdateSideCell
 
 	pop af
 	ldh [rVBK], a
 	ret
 
-.UpdateSideCell:
+Pokedex_VBlankCommitWrappedGrid:
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+
+	ld a, [wPokedexGridScrollFlags]
+	bit POKEDEX_GRID_SCROLL_SELECTION_F, a
+	jr z, .palettes
+	ld hl, wPokedexWRAM0Scratch
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	and $f0
+	ldh [rVDMA_SRC_LOW], a
+	ld a, HIGH(vTiles2)
+	and $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, LOW(vTiles2)
+	and $f0
+	ldh [rVDMA_DEST_LOW], a
+	ld a, 7 * 7 - 1
+	ldh [rVDMA_LEN], a
+
+.palettes
+	ldh a, [hCGB]
+	and a
+	jp z, .oam
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rWBK], a
+
+	ld hl, wBGPals2 palette 1
+	ld a, BGPI_AUTOINC palette 1
+	ldh [rBGPI], a
+	ld c, LOW(rBGPD)
+	rept 7 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
+
+	ld hl, wOBPals2 palette 2
+	ld a, OBPI_AUTOINC palette 2
+	ldh [rOBPI], a
+	ld c, LOW(rOBPD)
+	rept 3 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
+
+	pop af
+	ldh [rWBK], a
+
+.oam
+	call hTransferShadowOAM
+	pop af
+	ldh [rVBK], a
+	ld hl, wPokedexGridScrollFlags
+	res POKEDEX_GRID_SCROLL_COMMIT_F, [hl]
+	ret
+
+Pokedex_VBlankUpdateSideCell:
 ; a = visible grid index, b = visible row, c = side tile offset, de = BG map.
 	ld l, a
 	ld h, 0

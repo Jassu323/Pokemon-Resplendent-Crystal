@@ -41,8 +41,11 @@ DEF POKEDEX_GRID_CAUGHT_F EQU 1
 	const POKEDEX_GRID_SCROLL_NONE
 	const POKEDEX_GRID_SCROLL_UP
 	const POKEDEX_GRID_SCROLL_DOWN
+	const POKEDEX_GRID_SCROLL_WRAP_UP
+	const POKEDEX_GRID_SCROLL_WRAP_DOWN
 
 DEF POKEDEX_GRID_SCROLL_SELECTION_F EQU 0
+DEF POKEDEX_GRID_SCROLL_COMMIT_F    EQU 1
 
 DEF POKEDEX_SCROLLBAR_TILE     EQU $ba
 DEF POKEDEX_UNSEEN_TILE        EQU $c6
@@ -508,6 +511,8 @@ Pokedex_UpdateMainScreen:
 	ret
 .selection_changed
 	ld a, [wPokedexGridScrollDirection]
+	cp POKEDEX_GRID_SCROLL_WRAP_UP
+	jp nc, .grid_wrapped
 	and a
 	jr nz, .grid_scrolled
 	call Pokedex_GetSelectionRenderKey
@@ -524,13 +529,13 @@ Pokedex_UpdateMainScreen:
 	call Pokedex_PrepareSelectedMonTiles
 	farcall CGB_PokedexPrepareFrontpicPalette
 	farcall Pokedex_CommitStagedSelection
+	farcall CGB_PokedexCommitFrontpicPalette
 	ld a, TRUE
 	ldh [hOAMUpdate], a
 	farcall Pokedex_SyncGridIconAnimationFrame
 	farcall Pokedex_UpdateGridCursorOAM
 	farcall Pokedex_StageGridIconAnimation
 	farcall Pokedex_CommitGridIconAnimationFrame
-	farcall CGB_PokedexQueueFrontpicPalette
 	xor a
 	ldh [hOAMUpdate], a
 	call Pokedex_RecordRenderedSelectionKey
@@ -553,6 +558,10 @@ Pokedex_UpdateMainScreen:
 
 .grid_scrolled
 	farcall Pokedex_UpdateScrolledGrid
+	ret
+
+.grid_wrapped
+	farcall Pokedex_UpdateWrappedGrid
 	ret
 
 .a
@@ -1188,19 +1197,18 @@ Pokedex_GridHandleDPadInput:
 	ld hl, wDexListingScrollOffset
 	ld a, [hli]
 	or [hl]
-	jr z, .no_move
+	jr z, .wrap_up
 	call Pokedex_ScrollGridUp
 	scf
 	ret
 
-.down
-	ld a, b
-	cp POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
-	jr nc, .scroll_down
-	add POKEDEX_GRID_WIDTH
-	jr .try_target
+.wrap_up
+	farcall Pokedex_WrapGridToBottom
+	ret
 
-.scroll_down
+.down
+	; Test the absolute entry first. This also detects a partial final row,
+	; where the cursor may not yet occupy the bottom local grid row.
 	ld e, b
 	ld d, 0
 	ld hl, wDexListingScrollOffset
@@ -1218,9 +1226,20 @@ Pokedex_GridHandleDPadInput:
 	sub e
 	ld a, h
 	sbc d
-	jr nc, .no_move
+	jr nc, .wrap_down
+	ld a, b
+	cp POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
+	jr nc, .scroll_down
+	add POKEDEX_GRID_WIDTH
+	jr .try_target
+
+.scroll_down
 	call Pokedex_ScrollGridDown
 	scf
+	ret
+
+.wrap_down
+	farcall Pokedex_WrapGridToTop
 	ret
 
 .left

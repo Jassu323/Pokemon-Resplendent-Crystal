@@ -581,9 +581,9 @@ CGB_PokedexPrepareFrontpicPalette::
 	ret z
 	jp CGB_PokedexLoadFrontpicPalette
 
-CGB_PokedexQueueFrontpicPalette::
-; Make the staged frontpic palette eligible for the next VBlank. Preserve
-; every static UI and icon palette already loaded by _CGB_PokedexList.
+CGB_PokedexCommitFrontpicPalette::
+; Copy only the staged frontpic palette into the active buffer and hardware.
+; The caller schedules this after the old portrait's final visible scanline.
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -592,8 +592,27 @@ CGB_PokedexQueueFrontpicPalette::
 	ld bc, 1 palettes
 	ld a, BANK(wGBCPalettes)
 	call FarCopyWRAM
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rWBK], a
+	ld hl, wBGPals2 palette 1
+	ld a, BGPI_AUTOINC palette 1
+	ldh [rBGPI], a
+	ld c, LOW(rBGPD)
+	ld b, 1 palettes
+.copy
+.wait_palette
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_palette
+	ld a, [hli]
+	ldh [c], a
+	dec b
+	jr nz, .copy
+	pop af
+	ldh [rWBK], a
 	ret
 
 CGB_PokedexLoadFrontpicPalette:
