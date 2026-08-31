@@ -769,12 +769,17 @@ wPokedexGridPendingPhysicalRow:: db
 wPokedexListingSavedScrollOffset:: dw
 wPokedexRenderedSelectionKey:: db ; species ID, or -1 for the shared unseen rendering
 wPokedexResidentFootprintSpecies:: db
-wPokedexDetailSpecies:: db
-wPokedexDetailView:: db
-wPokedexDetailState:: db
-wPokedexDetailGeneration:: db
-wPokedexDetailPendingAction:: db
-wPokedexDetailReturnState:: db
+wPokedexSelectedIndex:: dw
+wPokedexSelectedPendingIndex:: dw
+wPokedexSelectedSpecies:: db
+wPokedexSelectedView:: db
+wPokedexSelectedState:: db
+wPokedexSelectedGeneration:: db
+wPokedexSelectedReturnState:: db
+wPokedexDescriptionPage:: db
+wPokedexOwnerTransition:: db
+wPokedexSelectedBGPaletteDirty:: db
+wPokedexSelectedOBJPaletteDirty:: db
 wPokedexAnimOwner:: db
 wPokedexAnimProducerState:: db
 wPokedexAnimProducerPhase:: db
@@ -803,7 +808,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 149
+	ds 142
 
 NEXTU
 ; pokegear
@@ -3483,7 +3488,7 @@ SECTION "Bug Contest WRAM", WRAMX, BANK[2]
 wContestMon:: party_struct wContestMon
 
 
-SECTION "Battle Tower RAM", WRAMX
+SECTION UNION "Battle Tower RAM", WRAMX
 
 w3_d000:: ds 1
 w3_d001:: ds 1
@@ -3551,6 +3556,14 @@ NEXTU
 	ds $98
 w3_de00:: ds $200
 ENDU
+
+
+SECTION UNION "Battle Tower RAM", WRAMX
+
+; The Pokedex and Battle Tower are mutually exclusive. These aligned buffers
+; hold complete 32x18 BG maps for an owner handoff during one VBlank.
+wPokedexOwnerTilemapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
+wPokedexOwnerAttrmapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
 
 
 SECTION "Sampled Cry RAM", WRAMX

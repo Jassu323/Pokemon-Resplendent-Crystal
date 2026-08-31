@@ -1,83 +1,156 @@
-PokedexDetail_Enter:
+PokedexSelectedMon_Enter:
 	call LowVolume
 	xor a
-	ld [wPokedexDetailView], a
-	ld [wPokedexDetailPendingAction], a
-	ld [wPokedexStatus], a ; description page 1
-	ld a, DEXDETAIL_STATE_ENTERING
-	ld [wPokedexDetailState], a
+	ld [wPokedexSelectedView], a
+	ld [wPokedexDescriptionPage], a
+	ld [wPokedexStatus], a
+	ld a, DEXSELECT_STATE_ENTERING
+	ld [wPokedexSelectedState], a
 	ld a, [wPrevDexEntryJumptableIndex]
-	ld [wPokedexDetailReturnState], a
-	ld hl, wPokedexDetailGeneration
+	ld [wPokedexSelectedReturnState], a
+	ld hl, wPokedexSelectedGeneration
 	inc [hl]
+	farcall Pokedex_SaveListingViewport
+	call PokedexSelectedMon_CaptureListingSelection
+	ld a, [wPokedexSelectedReturnState]
+	cp DEXSTATE_MAIN_SCR
+	jr nz, .hidden_transition
+	call PokedexSelectedMon_BeginWarmTransition
+	jr .transition_ready
+
+.hidden_transition
+	call PokedexSelectedMon_BeginHiddenTransition
+.transition_ready
+	call PokedexSelectedMon_StageDescription
+	jr c, .revealed
+	call PokedexSelectedMon_Reveal
+.revealed
+	call Pokedex_BeginDescriptionAnimation
+	call Pokedex_ServiceAnimationProducer
+	call Pokedex_UpdateDescriptionAnimation
+	ld a, DEXSELECT_STATE_ACTIVE
+	ld [wPokedexSelectedState], a
+	farcall Pokedex_IncrementDexPointer
+	ret
+
+PokedexSelectedMon_Update:
+	call Pokedex_ServiceAnimationProducer
+	call Pokedex_UpdateDescriptionAnimation
+	farcall PokedexSelectedMon_ReadFooterCursor
+	push af
+	call PokedexSelectedMon_CommitFooterCursor
+	pop af
+	ld hl, hJoyPressed
+	ld a, [hl]
+	and PAD_B
+	jp nz, PokedexSelectedMon_Leave
+	ld a, [hl]
+	and PAD_A
+	jp nz, PokedexSelectedMon_ActivateFooterView
+	call PokedexSelectedMon_FindNextSeen
+	ret nc
+	jp PokedexSelectedMon_ChangeSpecies
+
+PokedexSelectedMon_CommitFooterCursor:
 	xor a
 	ldh [hBGMapMode], a
-	call ClearSprites
-	farcall Pokedex_LoadCurrentFootprint
-	farcall Pokedex_DrawDexEntryScreenBG
-	farcall Pokedex_InitArrowCursor
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	hlcoord 1, 17
+	debgcoord 1, 17
+	call PokedexSelectedMon_CopyBackingTileToVRAM
+	hlcoord 6, 17
+	debgcoord 6, 17
+	call PokedexSelectedMon_CopyBackingTileToVRAM
+	hlcoord 11, 17
+	debgcoord 11, 17
+	call PokedexSelectedMon_CopyBackingTileToVRAM
+	hlcoord 15, 17
+	debgcoord 15, 17
+	call PokedexSelectedMon_CopyBackingTileToVRAM
+	pop af
+	ldh [rVBK], a
+	ret
+
+PokedexSelectedMon_CopyBackingTileToVRAM:
+.wait_vram
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_vram
+	ld a, [hl]
+	ld [de], a
+	ret
+
+PokedexSelectedMon_ActivateFooterView:
+	ld a, [wDexArrowCursorPosIndex]
+	ld hl, PokedexSelectedMon_ViewActionJumptable
+	call PokedexSelectedMon_LoadPointer
+	jp hl
+
+PokedexSelectedMon_ViewActionJumptable:
+	dw PokedexSelectedMon_ToggleDescriptionPage
+	dw PokedexSelectedMon_Unavailable
+	dw PokedexSelectedMon_Unavailable
+	dw PokedexSelectedMon_Area
+
+PokedexSelectedMon_Unavailable:
+	ret
+
+PokedexSelectedMon_ToggleDescriptionPage:
+	ld a, [wPokedexDescriptionPage]
+	xor 1
+	ld [wPokedexDescriptionPage], a
+	ld [wPokedexStatus], a
+	xor a
+	ldh [hBGMapMode], a
 	farcall Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	ld [wPokedexDetailSpecies], a
 	ld a, l
 	ld [wPrevDexEntry], a
 	ld a, h
 	ld [wPrevDexEntry + 1], a
 	farcall DisplayDexEntry
-	farcall Pokedex_DrawResidentFootprint
-	call WaitBGMap
-	ld a, $a7
-	ldh [hWX], a
-	farcall Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	ld [wCurPartySpecies], a
-	farcall Pokedex_GetDexSGBLayout
+	farcall Pokedex_CopyBackingToBG
 	xor a
 	ldh [hBGMapMode], a
+	ret
+
+PokedexSelectedMon_ChangeSpecies:
+	ld a, DEXSELECT_STATE_SWITCHING_SPECIES
+	ld [wPokedexSelectedState], a
+	ld hl, wPokedexSelectedGeneration
+	inc [hl]
+	call Pokedex_CancelAnimationPrefetch
+	call PokedexSelectedMon_BeginHiddenTransition
+	ld hl, wPokedexSelectedPendingIndex
+	ld a, [hli]
+	ld [wPokedexSelectedIndex], a
+	ld a, [hl]
+	ld [wPokedexSelectedIndex + 1], a
+	xor a
+	ld [wPokedexDescriptionPage], a
+	ld [wPokedexStatus], a
+	call PokedexSelectedMon_StageDescription
+	call PokedexSelectedMon_Reveal
+	call Pokedex_StartAnimationPrefetch
 	call Pokedex_BeginDescriptionAnimation
-	call DelayFrame
-	ldh a, [hCGB]
-	and a
-	jr z, .dmg_cry
 	call Pokedex_ServiceAnimationProducer
 	call Pokedex_UpdateDescriptionAnimation
-	jr .done
-.dmg_cry
-	ld a, [wCurPartySpecies]
-	call PlayMonCry2
-.done
-	ld a, DEXDETAIL_STATE_ACTIVE
-	ld [wPokedexDetailState], a
-	farcall Pokedex_IncrementDexPointer
+	ld a, DEXSELECT_STATE_ACTIVE
+	ld [wPokedexSelectedState], a
 	ret
 
-PokedexDetail_Update:
-	call Pokedex_ServiceAnimationProducer
-	call Pokedex_UpdateDescriptionAnimation
-	farcall PokedexDetail_MoveArrowCursor
-	ld hl, hJoyPressed
-	ld a, [hl]
-	and PAD_B
-	jr nz, .return_to_prev_screen
-	vc_hook Forbid_printing_Pokedex
-	ld a, [hl]
-	and PAD_A
-	jr nz, .do_menu_action
-	farcall Pokedex_NextOrPreviousDexEntry
-	ret nc
-	farcall Pokedex_IncrementDexPointer
-	ret
+PokedexSelectedMon_Leave:
+	ld a, DEXSELECT_STATE_LEAVING
+	ld [wPokedexSelectedState], a
+	call Pokedex_CancelAnimationPrefetch
+	ld a, [wPokedexSelectedReturnState]
+	cp DEXSTATE_MAIN_SCR
+	jr z, .restore_volume
+	call PokedexSelectedMon_BeginHiddenTransition
 
-.do_menu_action
-	ld a, [wDexArrowCursorPosIndex]
-	ld hl, DexEntryScreen_MenuActionJumptable
-	call PokedexDetail_LoadPointer
-	jp hl
-
-.return_to_prev_screen
-	ld a, DEXDETAIL_STATE_LEAVING
-	ld [wPokedexDetailState], a
-	call Pokedex_StopDescriptionAnimation
+.restore_volume
 	ld a, [wLastVolume]
 	and a
 	jr z, .max_volume
@@ -86,139 +159,314 @@ PokedexDetail_Update:
 
 .max_volume
 	call MaxVolume
-	ld a, [wPokedexDetailReturnState]
+	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
-	jr nz, .set_return_state
-	farcall Pokedex_NormalizeListingAfterDetail
+	jr nz, .linear_return
+	farcall Pokedex_NormalizeListingAfterSelectedMon
+	jr .set_return_state
+
+.linear_return
+	xor a
+	ld [wPokedexSelectedState], a
+	call PokedexSelectedMon_NormalizeLinearReturn
 .set_return_state
-	ld a, [wPokedexDetailReturnState]
+	ld a, [wPokedexSelectedReturnState]
 	ld [wJumptableIndex], a
 	ret
 
-PokedexDetail_Page:
-	ld a, [wPokedexStatus]
-	xor 1
-	ld [wPokedexStatus], a
-	farcall Pokedex_GetSelectedMon
-	ld a, l
-	ld [wPrevDexEntry], a
-	ld a, h
-	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
-	call WaitBGMap
-	xor a
-	ldh [hBGMapMode], a
-	ret
-
-PokedexDetail_SwitchSpecies:
-; Reinitialize the Detail view after changing the selected mon.
-	ld a, DEXDETAIL_STATE_SWITCHING
-	ld [wPokedexDetailState], a
-	xor a
-	ld [wPokedexDetailPendingAction], a
-	ld hl, wPokedexDetailGeneration
+PokedexSelectedMon_Area:
+	ld a, DEXSELECT_STATE_SWITCHING_VIEW
+	ld [wPokedexSelectedState], a
+	ld a, DEXSELECT_VIEW_AREA
+	ld [wPokedexSelectedView], a
+	ld hl, wPokedexSelectedGeneration
 	inc [hl]
-	call Pokedex_StopDescriptionAnimation
-	farcall Pokedex_BlackOutBG
-	xor a
-	ld [wPokedexStatus], a ; description page 1
-	ldh [hBGMapMode], a
-	farcall Pokedex_DrawDexEntryScreenBG
-	farcall Pokedex_InitArrowCursor
-	farcall Pokedex_LoadCurrentFootprint
-	farcall Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	ld [wPokedexDetailSpecies], a
-	ld a, l
-	ld [wPrevDexEntry], a
-	ld a, h
-	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
-	farcall Pokedex_DrawResidentFootprint
-	farcall Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
-	farcall Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	ld [wCurPartySpecies], a
-	farcall Pokedex_GetDexSGBLayout
-	xor a
-	ldh [hBGMapMode], a
-	call Pokedex_StartAnimationPrefetch
-	call Pokedex_BeginDescriptionAnimation
-	call DelayFrame
-	ldh a, [hCGB]
-	and a
-	jr z, .dmg_cry
-	call Pokedex_ServiceAnimationProducer
-	call Pokedex_UpdateDescriptionAnimation
-	jr .done
-.dmg_cry
-	ld a, [wCurPartySpecies]
-	call PlayMonCry2
-.done
-	ld a, DEXDETAIL_STATE_ACTIVE
-	ld [wPokedexDetailState], a
-	ld hl, wJumptableIndex
-	dec [hl]
-	ret
-
-DexEntryScreen_MenuActionJumptable:
-	dw PokedexDetail_Page
-	dw PokedexDetail_Area
-	dw PokedexDetail_Cry
-
-PokedexDetail_Area:
-	call Pokedex_StopDescriptionAnimation
-	farcall Pokedex_BlackOutBG
+	call Pokedex_CancelAnimationPrefetch
+	call PokedexSelectedMon_BeginHiddenTransition
 	xor a
 	ldh [hSCX], a
-	call DelayFrame
 	ld a, $7
 	ldh [hWX], a
 	ld a, $90
 	ldh [hWY], a
+	ld a, DEXSELECT_STATE_AREA_ACTIVE
+	ld [wPokedexSelectedState], a
 	farcall Pokedex_GetSelectedMon
 	ld a, [wDexCurLocation]
 	ld e, a
 	predef Pokedex_GetArea
-	farcall Pokedex_BlackOutBG
-	call DelayFrame
-	xor a
-	ldh [hBGMapMode], a
+
+	call PokedexSelectedMon_BeginHiddenTransition
 	ld a, $90
 	ldh [hWY], a
 	ld a, POKEDEX_SCX
 	ldh [hSCX], a
-	call DelayFrame
-	call PokedexDetail_Redisplay
+	ld a, DEXSELECT_VIEW_DESCRIPTION
+	ld [wPokedexSelectedView], a
+	call PokedexSelectedMon_StageDescription
+	call PokedexSelectedMon_Reveal
+	call Pokedex_StartAnimationPrefetch
+	call Pokedex_BeginDescriptionAnimation
+	ld a, DEXSELECT_STATE_ACTIVE
+	ld [wPokedexSelectedState], a
+	ret
+
+PokedexSelectedMon_StageDescription:
+	xor a
+	ldh [hBGMapMode], a
+	farcall Pokedex_DrawDexEntryScreenBG
+	farcall Pokedex_InitArrowCursor
+	farcall Pokedex_GetSelectedMon
+	ld a, [wTempSpecies]
+	ld [wPokedexSelectedSpecies], a
+	ld [wCurPartySpecies], a
+	ld a, l
+	ld [wPrevDexEntry], a
+	ld a, h
+	ld [wPrevDexEntry + 1], a
+	ld a, [wPokedexDescriptionPage]
+	ld [wPokedexStatus], a
+	farcall DisplayDexEntry
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_ENTERING
+	jr nz, .load_selected_tiles
+	ld a, [wPokedexSelectedReturnState]
+	cp DEXSTATE_MAIN_SCR
+	jr z, .selected_tiles_ready
+
+.load_selected_tiles
 	farcall Pokedex_LoadSelectedMonTiles
-	call WaitBGMap
+.selected_tiles_ready
+	farcall Pokedex_DrawResidentFootprint
 	farcall Pokedex_GetSelectedMon
 	ld a, [wTempSpecies]
 	ld [wCurPartySpecies], a
+	ldh a, [hCGB]
+	and a
+	jr z, .sgb_layout
+	farcall CGB_PokedexStageSelectedMonLayout
+	farcall Pokedex_ApplyUsualPals
+	xor a
+	ldh [hCGBPalUpdate], a
+	jr .copy_backing
+
+.sgb_layout
 	farcall Pokedex_GetDexSGBLayout
+.copy_backing
+	farcall Pokedex_PublishOrStageDescriptionBacking
+	ret
+
+PokedexSelectedMon_BeginHiddenTransition:
 	xor a
 	ldh [hBGMapMode], a
+	call ClearSprites
+	ldh [hOAMUpdate], a
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	farcall Pokedex_BlackOutSelectedMonBG
+	farcall ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	call DelayFrame
+	jr .hold_oam
+
+.dmg
+	call ClearPalettes
+	call DelayFrame
+
+.hold_oam
+	ld a, TRUE
+	ldh [hOAMUpdate], a
 	ret
 
-PokedexDetail_Cry:
-; BUG: Playing Entei's Pokedex cry can distort Raikou's and Suicune's (see docs/bugs_and_glitches.md)
-	farcall Pokedex_GetSelectedMon
-	ld a, [wTempSpecies]
-	call GetCryIndex
-	ld e, c
-	ld d, b
-	call PlayCry
+PokedexSelectedMon_BeginWarmTransition:
+; Keep the outgoing owner visible while its replacement is prepared.
+	xor a
+	ldh [hBGMapMode], a
+	ldh [hCGBPalUpdate], a
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	call ClearSprites
 	ret
 
-PokedexDetail_Redisplay:
-	farcall Pokedex_DrawDexEntryScreenBG
-	farcall Pokedex_GetSelectedMon
-	farcall DisplayDexEntry
-	farcall Pokedex_DrawResidentFootprint
+PokedexSelectedMon_Reveal:
+	xor a
+	ldh [hBGMapMode], a
+	ld a, $a7
+	ldh [hWX], a
+	ldh a, [hCGB]
+	and a
+	jr z, .show_oam
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+.show_oam
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
 	ret
 
-PokedexDetail_LoadPointer:
+PokedexSelectedMon_CaptureListingSelection:
+	ld hl, wDexListingScrollOffset
+	ld a, [hli]
+	ld e, a
+	ld d, [hl]
+	ld a, [wDexListingCursor]
+	add e
+	ld e, a
+	ld a, d
+	adc 0
+	ld d, a
+	ld a, e
+	ld [wPokedexSelectedIndex], a
+	ld a, d
+	ld [wPokedexSelectedIndex + 1], a
+	ret
+
+PokedexSelectedMon_NormalizeLinearReturn:
+; Search Results owns a conventional linear viewport. Keep its previous
+; viewport when possible and otherwise place the selected entry at an edge.
+	ld hl, wPokedexSelectedIndex
+	ld a, [hli]
+	ld e, a
+	ld d, [hl]
+	ld hl, wPokedexListingSavedScrollOffset
+	ld a, [hli]
+	ld c, a
+	ld b, [hl]
+	ld a, d
+	cp b
+	jr c, .above_view
+	jr nz, .check_below
+	ld a, e
+	cp c
+	jr c, .above_view
+
+.check_below
+	ld h, b
+	ld l, c
+	ld a, [wDexListingHeight]
+	add l
+	ld l, a
+	ld a, h
+	adc 0
+	ld h, a
+	ld a, d
+	cp h
+	jr c, .use_saved
+	jr nz, .below_view
+	ld a, e
+	cp l
+	jr c, .use_saved
+
+.below_view
+	ld h, d
+	ld l, e
+	ld a, [wDexListingHeight]
+	dec a
+	ld c, a
+	ld b, 0
+	ld a, l
+	sub c
+	ld l, a
+	ld a, h
+	sbc b
+	ld h, a
+	jr .store_view
+
+.above_view
+	ld h, d
+	ld l, e
+	jr .store_view
+
+.use_saved
+	ld h, b
+	ld l, c
+
+.store_view
+	ld a, l
+	ld [wDexListingScrollOffset], a
+	ld c, a
+	ld a, h
+	ld [wDexListingScrollOffset + 1], a
+	ld b, a
+	ld a, e
+	sub c
+	ld e, a
+	ld a, d
+	sbc b
+	ld a, e
+	ld [wDexListingCursor], a
+	ret
+
+PokedexSelectedMon_FindNextSeen:
+	ldh a, [hJoyLast]
+	and PAD_UP
+	jr nz, .previous
+	ldh a, [hJoyLast]
+	and PAD_DOWN
+	ret z
+
+	ld hl, wPokedexSelectedIndex
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+.next
+	inc hl
+	call .IndexBeforeEnd
+	ret nc
+	push hl
+	ld d, h
+	ld e, l
+	farcall Pokedex_GetMonAtOrderIndexDE
+	farcall Pokedex_CheckSeen
+	pop hl
+	jr z, .next
+	jr .found
+
+.previous
+	ld hl, wPokedexSelectedIndex
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+.previous_loop
+	ld a, h
+	or l
+	ret z
+	dec hl
+	push hl
+	ld d, h
+	ld e, l
+	farcall Pokedex_GetMonAtOrderIndexDE
+	farcall Pokedex_CheckSeen
+	pop hl
+	jr z, .previous_loop
+
+.found
+	ld a, l
+	ld [wPokedexSelectedPendingIndex], a
+	ld a, h
+	ld [wPokedexSelectedPendingIndex + 1], a
+	scf
+	ret
+
+.IndexBeforeEnd:
+	ld a, [wDexListingEnd]
+	ld e, a
+	ld a, [wDexListingEnd + 1]
+	ld d, a
+	ld a, h
+	cp d
+	jr c, .valid
+	ret nz
+	ld a, l
+	cp e
+	ret nc
+.valid
+	scf
+	ret
+
+PokedexSelectedMon_LoadPointer:
 	ld e, a
 	ld d, 0
 	add hl, de

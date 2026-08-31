@@ -2,9 +2,9 @@
 	const_def
 	const DEXSTATE_MAIN_SCR
 	const DEXSTATE_UPDATE_MAIN_SCR
-	const DEXSTATE_DETAIL_ENTER
-	const DEXSTATE_DETAIL_UPDATE
-	const DEXSTATE_DETAIL_SWITCH
+	const DEXSTATE_SELECTED_MON_ENTER
+	const DEXSTATE_SELECTED_MON_UPDATE
+	const DEXSTATE_SELECTED_MON_RESERVED
 	const DEXSTATE_SEARCH_SCR
 	const DEXSTATE_UPDATE_SEARCH_SCR
 	const DEXSTATE_OPTION_SCR
@@ -16,16 +16,26 @@
 	const DEXSTATE_EXIT
 
 	const_def
-	const DEXDETAIL_VIEW_DESCRIPTION
+	const DEXSELECT_VIEW_DESCRIPTION
+	const DEXSELECT_VIEW_STATS
+	const DEXSELECT_VIEW_MOVES
+	const DEXSELECT_VIEW_AREA
 
 	const_def
-	const DEXDETAIL_STATE_ENTERING
-	const DEXDETAIL_STATE_ACTIVE
-	const DEXDETAIL_STATE_SWITCHING
-	const DEXDETAIL_STATE_LEAVING
+	const DEXSELECT_STATE_ENTERING
+	const DEXSELECT_STATE_ACTIVE
+	const DEXSELECT_STATE_SWITCHING_SPECIES
+	const DEXSELECT_STATE_SWITCHING_VIEW
+	const DEXSELECT_STATE_AREA_ACTIVE
+	const DEXSELECT_STATE_LEAVING
 
 	const_def
-	const DEXDETAIL_ACTION_NONE
+	const POKEDEX_OWNER_TRANSITION_NONE
+	const POKEDEX_OWNER_TRANSITION_DESCRIPTION
+	const POKEDEX_OWNER_TRANSITION_LISTING
+
+DEF POKEDEX_SELECTED_EXTENDED_BG_PALS EQU %11111100
+DEF POKEDEX_LISTING_OBJ_PALS EQU %00111111
 
 EXPORT DEF POKEDEX_SCX EQU 5
 
@@ -374,9 +384,9 @@ Pokedex_RunJumptable:
 ; entries correspond to DEXSTATE_* constants
 	dw Pokedex_InitMainScreen
 	dw Pokedex_UpdateMainScreen
-	dw Pokedex_InitDetail
-	dw Pokedex_UpdateDetail
-	dw Pokedex_SwitchDetailSpecies
+	dw Pokedex_InitSelectedMon
+	dw Pokedex_UpdateSelectedMon
+	dw Pokedex_UpdateSelectedMon
 	dw Pokedex_InitSearchScreen
 	dw Pokedex_UpdateSearchScreen
 	dw Pokedex_InitOptionScreen
@@ -408,6 +418,9 @@ Pokedex_InitMainScreen:
 	ldh [hOAMUpdate], a
 	ldh a, [hCGB]
 	and a
+	jr z, .stage_listing
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
 	jr z, .stage_listing
 	ld a, $a7
 	ldh [hWX], a
@@ -441,9 +454,29 @@ Pokedex_InitMainScreen:
 	ldh [hSCX], a
 	xor a
 	ldh [hWY], a
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
+	jr z, .selected_tiles_ready
 	call Pokedex_LoadSelectedMonTiles
+.selected_tiles_ready
+	ldh a, [hCGB]
+	and a
+	jr z, .sgb_layout
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
+	jr nz, .cgb_cold_layout
+	farcall CGB_PokedexStageListLayout
+	jr .layout_ready
+
+.cgb_cold_layout
 	ld a, SCGB_POKEDEX
 	call Pokedex_GetSGBLayout
+	jr .layout_ready
+
+.sgb_layout
+	ld a, SCGB_POKEDEX
+	call Pokedex_GetSGBLayout
+.layout_ready
 	xor a
 	ldh [hBGMapMode], a
 	ldh a, [hCGB]
@@ -451,7 +484,7 @@ Pokedex_InitMainScreen:
 	jr z, .copy_dmg_bg
 	xor a
 	ldh [hCGBPalUpdate], a
-	farcall Pokedex_CopyBackingToBG
+	farcall Pokedex_PublishOrStageListingBacking
 	jr .bg_staged
 .copy_dmg_bg
 	call WaitBGMap
@@ -468,13 +501,7 @@ Pokedex_InitMainScreen:
 	ldh a, [hCGB]
 	and a
 	jr z, .reveal_dmg
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ld a, $47
-	ldh [hWX], a
-	xor a
-	ldh [hOAMUpdate], a
-	call DelayFrame
+	farcall Pokedex_RevealOrCommitListing
 	jr .revealed
 .reveal_dmg
 	ld a, $47
@@ -488,6 +515,8 @@ Pokedex_InitMainScreen:
 	ld a, VBLANK_POKEDEX
 	ldh [hVBlank], a
 .handler_ready
+	xor a
+	ld [wPokedexSelectedState], a
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -570,7 +599,7 @@ Pokedex_UpdateMainScreen:
 	ret z
 	call Pokedex_StopGridIconAnimation
 	call Pokedex_SaveListingViewport
-	ld a, DEXSTATE_DETAIL_ENTER
+	ld a, DEXSTATE_SELECTED_MON_ENTER
 	ld [wJumptableIndex], a
 	ld a, DEXSTATE_MAIN_SCR
 	ld [wPrevDexEntryJumptableIndex], a
@@ -611,60 +640,24 @@ Pokedex_StopGridIconAnimation:
 	ldh [hVBlank], a
 	ret
 
-Pokedex_InitDetail:
-	farcall PokedexDetail_Enter
+Pokedex_InitSelectedMon:
+	farcall PokedexSelectedMon_Enter
 	ret
 
-Pokedex_UpdateDetail:
-	farcall PokedexDetail_Update
+Pokedex_UpdateSelectedMon:
+	farcall PokedexSelectedMon_Update
 	ret
 
-Pokedex_SwitchDetailSpecies:
-	farcall PokedexDetail_SwitchSpecies
-	ret
-
-PokedexDetail_MoveArrowCursor:
+PokedexSelectedMon_ReadFooterCursor:
 	ld de, DexEntryScreen_ArrowCursorData
-	call Pokedex_MoveArrowCursor
-	push af
-	call PokedexDetail_CommitArrowCursor
-	pop af
-	ret
-
-PokedexDetail_CommitArrowCursor:
-	xor a
-	ldh [hBGMapMode], a
-	ldh a, [rVBK]
-	push af
-	xor a
-	ldh [rVBK], a
-	hlcoord 1, 17
-	debgcoord 1, 17
-	call PokedexDetail_CopyBackingTileToVRAM
-	hlcoord 6, 17
-	debgcoord 6, 17
-	call PokedexDetail_CopyBackingTileToVRAM
-	hlcoord 11, 17
-	debgcoord 11, 17
-	call PokedexDetail_CopyBackingTileToVRAM
-	pop af
-	ldh [rVBK], a
-	ret
-
-PokedexDetail_CopyBackingTileToVRAM:
-.wait_vram
-	ldh a, [rSTAT]
-	and STAT_BUSY
-	jr nz, .wait_vram
-	ld a, [hl]
-	ld [de], a
-	ret
+	jp Pokedex_MoveArrowCursor
 
 DexEntryScreen_ArrowCursorData:
-	db PAD_RIGHT | PAD_LEFT, 3
-	dwcoord 1, 17  ; PAGE
-	dwcoord 6, 17  ; AREA
-	dwcoord 11, 17 ; CRY
+	db PAD_RIGHT | PAD_LEFT, 4
+	dwcoord 1, 17  ; DESC
+	dwcoord 6, 17  ; STAT
+	dwcoord 11, 17 ; MOV
+	dwcoord 15, 17 ; AREA
 
 Pokedex_InitOptionScreen:
 	xor a
@@ -937,7 +930,7 @@ Pokedex_UpdateSearchResultsScreen:
 	call Pokedex_GetSelectedMon
 	call Pokedex_CheckSeen
 	ret z
-	ld a, DEXSTATE_DETAIL_ENTER
+	ld a, DEXSTATE_SELECTED_MON_ENTER
 	ld [wJumptableIndex], a
 	ld a, DEXSTATE_SEARCH_RESULTS_SCR
 	ld [wPrevDexEntryJumptableIndex], a
@@ -1627,18 +1620,18 @@ Pokedex_DrawDexEntryScreenBG:
 	ld b, 15
 	call Pokedex_FillColumn
 	ld [hl], $39
-	hlcoord 1, 10
+	hlcoord 1, 8
 	ld bc, 19
-	ld a, $61
+	ld a, $55
 	call ByteFill
 	hlcoord 1, 17
 	ld bc, 18
 	ld a, ' '
 	call ByteFill
-	hlcoord 9, 7
+	hlcoord 9, 5
 	ld de, .Height
 	call Pokedex_PlaceString
-	hlcoord 9, 9
+	hlcoord 9, 6
 	ld de, .Weight
 	call Pokedex_PlaceString
 	hlcoord 0, 17
@@ -1654,7 +1647,7 @@ Pokedex_DrawDexEntryScreenBG:
 .Weight:
 	db "Wt   ???lb", -1
 .MenuItems:
-	db $3b, " Page Area Cry Prnt", -1
+	db $3b, " Desc Stat Mov Area", -1
 
 Pokedex_DrawOptionScreenBG:
 	call Pokedex_FillBackgroundColor2
@@ -2255,12 +2248,19 @@ Pokedex_DrawFootprintWithTile:
 
 Pokedex_GetSelectedMon:
 ; Gets the species of the currently selected Pokémon. This corresponds to the
-; position of the cursor in the main listing, but this function can be used
-; on all Pokédex screens.
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
+; position owned by the active Pokédex section.
+	ld a, [wJumptableIndex]
+	cp DEXSTATE_SELECTED_MON_ENTER
+	jr c, .listing_selection
+	cp DEXSTATE_SELECTED_MON_RESERVED + 1
+	jr nc, .listing_selection
+	ld hl, wPokedexSelectedIndex
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	jr Pokedex_GetMonAtOrderIndex
+
+.listing_selection
 	ld hl, wDexListingScrollOffset
 	ld a, [hli]
 	ld h, [hl]
@@ -2269,6 +2269,14 @@ Pokedex_GetSelectedMon:
 	ld e, a
 	ld d, 0
 	add hl, de
+	; fallthrough
+
+Pokedex_GetMonAtOrderIndex:
+; hl = absolute entry index in wPokedexOrder.
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wPokedexOrder)
+	ldh [rSVBK], a
 	ld de, wPokedexOrder
 	add hl, hl
 	add hl, de
@@ -2284,6 +2292,13 @@ Pokedex_GetSelectedMon:
 	pop hl
 	ld [wTempSpecies], a
 	ret
+
+Pokedex_GetMonAtOrderIndexDE:
+; de = absolute entry index in wPokedexOrder. This entry point is safe for
+; farcall callers because the macro uses hl for the destination address.
+	ld h, d
+	ld l, e
+	jr Pokedex_GetMonAtOrderIndex
 
 Pokedex_GetSelectionRenderKey:
 ; Known selections use their species ID. All unseen selections share one key

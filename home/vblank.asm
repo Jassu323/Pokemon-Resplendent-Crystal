@@ -57,7 +57,7 @@ VBlank_Pokedex:
 	push af
 	ld a, BANK(Pokedex_VBlankGridIconAnimation)
 	rst Bankswitch
-	call Pokedex_VBlankGridIconAnimation
+	call Pokedex_VBlankDispatch
 	pop af
 	rst Bankswitch
 	jp VBlank_Normal

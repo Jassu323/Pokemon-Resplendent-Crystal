@@ -56,19 +56,13 @@ Pokedex_CopyBackingToMap:
 	ldh [hBGMapAddress + 1], a
 	ret
 
-Pokedex_NormalizeListingAfterDetail:
-; Detail uses the generic linear-list cursor. Restore the closest aligned
-; three-column Listing viewport that contains its selected absolute entry.
-	ld hl, wDexListingScrollOffset
+Pokedex_NormalizeListingAfterSelectedMon:
+; Restore the closest aligned Listing viewport containing the absolute entry
+; returned by the Selected Mon owner.
+	ld hl, wPokedexSelectedIndex
 	ld a, [hli]
 	ld e, a
 	ld d, [hl]
-	ld a, [wDexListingCursor]
-	add e
-	ld e, a
-	ld a, d
-	adc 0
-	ld d, a
 	ld a, e
 	ld [wDexTempCounter], a
 	ld a, d
@@ -1065,6 +1059,244 @@ Pokedex_StageGridIconAnimation:
 	ret z
 	call Pokedex_DrawListGrid
 	jp Pokedex_UpdateCenterIconAnimationOAM
+
+Pokedex_StageOwnerTransitionMaps::
+; Convert both 20x18 backing maps to VRAM's 32-byte row stride in the
+; Pokedex-only bank 3 overlay.
+	ldh a, [rSVBK]
+	push af
+	ldh a, [hMapObjectIndex]
+	push af
+	ld a, BANK(wPokedexOwnerTilemapBuffer)
+	ldh [rSVBK], a
+	decoord 0, 0, wAttrmap
+	ld hl, wPokedexOwnerAttrmapBuffer
+	ld c, 0
+	call .PadMap
+	decoord 0, 0
+	ld hl, wPokedexOwnerTilemapBuffer
+	ld c, ' '
+	call .PadMap
+	pop af
+	ldh [hMapObjectIndex], a
+	pop af
+	ldh [rSVBK], a
+	ret
+
+.PadMap:
+	ld a, c
+	ldh [hMapObjectIndex], a
+	ld c, SCREEN_HEIGHT
+.next_row
+	ld b, SCREEN_WIDTH
+.copy_visible
+	ld a, [de]
+	inc de
+	ld [hli], a
+	dec b
+	jr nz, .copy_visible
+	ldh a, [hMapObjectIndex]
+	ld b, TILEMAP_WIDTH - SCREEN_WIDTH
+.pad_row
+	ld [hli], a
+	dec b
+	jr nz, .pad_row
+	dec c
+	jr nz, .next_row
+	ret
+
+ASSERT BANK(wPokedexOwnerTilemapBuffer) == 3
+ASSERT BANK(wPokedexOwnerAttrmapBuffer) == 3
+ASSERT (LOW(wPokedexOwnerTilemapBuffer) & $f) == 0
+ASSERT (LOW(wPokedexOwnerAttrmapBuffer) & $f) == 0
+
+Pokedex_PublishOrStageDescriptionBacking::
+	ldh a, [hCGB]
+	and a
+	jr z, .publish
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_ENTERING
+	jr nz, .publish
+	ld a, [wPokedexSelectedReturnState]
+	cp DEXSTATE_MAIN_SCR
+	jr nz, .publish
+	call Pokedex_StageOwnerTransitionMaps
+	ld a, POKEDEX_OWNER_TRANSITION_DESCRIPTION
+	call Pokedex_QueueOwnerTransition
+	xor a
+	ldh [hVBlank], a
+	scf
+	ret
+.publish
+	call Pokedex_CopyBackingToBG
+	and a
+	ret
+
+Pokedex_PublishOrStageListingBacking::
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
+	jp z, Pokedex_StageOwnerTransitionMaps
+	jp Pokedex_CopyBackingToBG
+
+Pokedex_RevealOrCommitListing::
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
+	jr nz, .cold
+	ld a, POKEDEX_OWNER_TRANSITION_LISTING
+	jp Pokedex_QueueOwnerTransition
+.cold
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ld a, $47
+	ldh [hWX], a
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
+	xor a
+	ld [wPokedexSelectedBGPaletteDirty], a
+	ld [wPokedexSelectedOBJPaletteDirty], a
+	ret
+
+Pokedex_BlackOutSelectedMonBG::
+	ld hl, wPokedexSelectedBGPaletteDirty
+	ld a, [hl]
+	or POKEDEX_SELECTED_EXTENDED_BG_PALS
+	ld [hl], a
+	ld a, POKEDEX_LISTING_OBJ_PALS
+	ld [wPokedexSelectedOBJPaletteDirty], a
+	farcall Pokedex_BlackOutBG
+	ret
+
+Pokedex_VBlankDispatch::
+	call Pokedex_VBlankOwnerTransition
+	ret c
+	jp Pokedex_VBlankGridIconAnimation
+
+Pokedex_QueueOwnerTransition::
+; a = POKEDEX_OWNER_TRANSITION_*. The staged maps, palette targets, and
+; shadow OAM must all be complete before publishing the request.
+	ld [wPokedexOwnerTransition], a
+	xor a
+	ldh [hBGMapMode], a
+	ldh [hCGBPalUpdate], a
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	ld a, VBLANK_POKEDEX
+	ldh [hVBlank], a
+.wait
+	call DelayFrame
+	ld a, [wPokedexOwnerTransition]
+	and a
+	jr nz, .wait
+	xor a
+	ldh [hOAMUpdate], a
+	ret
+
+Pokedex_VBlankOwnerTransition::
+; Publish one complete BG0 owner while the LCD is in VBlank. Return carry
+; when committed so the dispatcher skips Listing animation. Publish the
+; prepared shadow OAM here before VBlank_Normal performs its bookkeeping.
+	ld a, [wPokedexOwnerTransition]
+	and a
+	ret z
+	ldh a, [hBGMapUpdate]
+	and a
+	ret nz
+	ldh a, [hDMATransfer]
+	and a
+	ret nz
+	ldh a, [rLY]
+	cp LY_VBLANK + 1
+	ret nc
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_LISTING
+	ld a, $47
+	jr z, .got_wx
+	ld a, $a7
+.got_wx
+	ldh [hWX], a
+	ldh [rWX], a
+	xor a
+	ldh [hWY], a
+	ldh [rWY], a
+
+	ldh a, [rSVBK]
+	push af
+	ldh a, [rVBK]
+	push af
+
+	ld a, BANK(wPokedexOwnerAttrmapBuffer)
+	ldh [rSVBK], a
+	ld a, BANK(vBGMap2)
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerAttrmapBuffer
+	call .TransferMap
+	xor a
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerTilemapBuffer
+	call .TransferMap
+
+	ld a, BANK(wBGPals2)
+	ldh [rSVBK], a
+	call .CommitDirtyBGPals
+	call .CommitDirtyOBPals
+
+	pop af
+	ldh [rVBK], a
+	pop af
+	ldh [rSVBK], a
+	call hTransferShadowOAM
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	xor a
+	ld [wPokedexOwnerTransition], a
+	ld [wPokedexSelectedBGPaletteDirty], a
+	ld [wPokedexSelectedOBJPaletteDirty], a
+	scf
+	ret
+
+.CommitDirtyBGPals:
+	ld a, [wPokedexSelectedBGPaletteDirty]
+	and a
+	ret z
+	ld a, BGPI_AUTOINC palette 2
+	ldh [rBGPI], a
+	ld hl, wBGPals2 palette 2
+	ld c, LOW(rBGPD)
+	rept 6 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
+	ret
+
+.CommitDirtyOBPals:
+	ld a, [wPokedexSelectedOBJPaletteDirty]
+	and a
+	ret z
+	ld a, OBPI_AUTOINC palette 0
+	ldh [rOBPI], a
+	ld hl, wOBPals2 palette 0
+	ld c, LOW(rOBPD)
+	rept 6 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
+	ret
+
+.TransferMap:
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	and $f0
+	ldh [rVDMA_SRC_LOW], a
+	ld a, HIGH(vBGMap0)
+	and $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, LOW(vBGMap0)
+	ldh [rVDMA_DEST_LOW], a
+	ld a, 2 * SCREEN_HEIGHT - 1
+	ldh [rVDMA_LEN], a
+	ret
 
 Pokedex_VBlankGridIconAnimation::
 ; A full-grid wrap publishes its portrait, palettes, and shadow OAM as one

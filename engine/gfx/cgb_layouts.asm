@@ -427,6 +427,10 @@ _CGB_Pokedex:
 	jp z, _CGB_PokedexList
 	cp DEXSTATE_UPDATE_MAIN_SCR
 	jp z, _CGB_PokedexList
+	call CGB_PokedexBuildSelectedMonLayout
+	jr CGB_PokedexApplyLayout
+
+CGB_PokedexBuildSelectedMonLayout:
 	ld hl, PokedexUIPalette
 	ld de, wBGPals1
 	call LoadHLPaletteIntoDE ; dex interface palette
@@ -447,9 +451,9 @@ _CGB_Pokedex:
 	ld a, $1 ; green question mark palette
 	call FillBoxCGB
 	ld a, [wJumptableIndex]
-	cp DEXSTATE_DETAIL_ENTER
+	cp DEXSTATE_SELECTED_MON_ENTER
 	jr c, .skip_footprint
-	cp DEXSTATE_DETAIL_SWITCH + 1
+	cp DEXSTATE_SELECTED_MON_RESERVED + 1
 	jr nc, .skip_footprint
 	ld a, [wPokedexResidentFootprintSpecies]
 	cp -1
@@ -465,11 +469,21 @@ _CGB_Pokedex:
 	ld bc, 1 palettes
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
+	ret
+
+CGB_PokedexApplyLayout:
 	call ApplyAttrmap
 	call ApplyPals
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+CGB_PokedexStageSelectedMonLayout::
+; Build the Selected Mon attrmap and palette buffers without changing the
+; currently visible Pokédex owner.
+	call ResetBGPals
+	call CGB_PokedexBuildSelectedMonLayout
+	jp ApplyPals
 
 PokedexQuestionMarkPalette:
 INCLUDE "gfx/pokedex/question_mark.pal"
@@ -478,6 +492,10 @@ PokedexCursorPalette:
 INCLUDE "gfx/pokedex/cursor.pal"
 
 _CGB_PokedexList:
+	call CGB_PokedexBuildListLayout
+	jr CGB_PokedexApplyLayout
+
+CGB_PokedexBuildListLayout:
 	ld hl, PokedexUIPalette
 	ld de, wBGPals1 palette 0
 	call LoadHLPaletteIntoDE
@@ -508,11 +526,13 @@ _CGB_PokedexList:
 	lb bc, 1, 7
 	ld a, BG_BANK1
 	call FillBoxCGB
-	call ApplyAttrmap
-	call ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
 	ret
+
+CGB_PokedexStageListLayout::
+; Build the Listing attrmap and palette buffers while its Window is hidden.
+	call ResetBGPals
+	call CGB_PokedexBuildListLayout
+	jp ApplyPals
 
 CGB_PokedexLoadListIconPalettes:
 	ld a, [wPokedexGridIconPalettes + 0]
