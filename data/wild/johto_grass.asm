@@ -1282,58 +1282,58 @@ JohtoGrassWildMons:
 	db 10 percent, 10 percent, 10 percent ; encounter rates: morn/day/nite
 	; morn
 	; encounterPercent, SPECIES, minLevel, maxLevel
-	dbwbb 30, MEWTWO,        2,  2
-	dbwbb 30, DUSKNOIR,       2,  2
-	dbwbb 20, MEWTWO,        3,  3
-	dbwbb 10, DUSKNOIR,       3,  3
-	dbwbb  5, DUSKNOIR,       2,  2
-	dbwbb  4, DUSKNOIR,        3,  3
-	dbwbb  1, DUSKNOIR,        3,  3
+	dbwbb 30, PIDGEY,        2,  2
+	dbwbb 30, SENTRET,       2,  2
+	dbwbb 20, PIDGEY,        3,  3
+	dbwbb 10, SENTRET,       3,  3
+	dbwbb  5, RATTATA,       2,  2
+	dbwbb  4, HOPPIP,        3,  3
+	dbwbb  1, HOPPIP,        3,  3
 	; day
-	dbwbb 30, MEWTWO,        2,  2
-	dbwbb 30, DUSKNOIR,       2,  2
-	dbwbb 20, MEWTWO,        3,  3
-	dbwbb 10, DUSKNOIR,       3,  3
-	dbwbb  5, DUSKNOIR,       2,  2
-	dbwbb  4, DUSKNOIR,        3,  3
-	dbwbb  1, DUSKNOIR,        3,  3
+	dbwbb 30, PIDGEY,        2,  2
+	dbwbb 30, SENTRET,       2,  2
+	dbwbb 20, PIDGEY,        3,  3
+	dbwbb 10, SENTRET,       3,  3
+	dbwbb  5, RATTATA,       2,  2
+	dbwbb  4, HOPPIP,        3,  3
+	dbwbb  1, HOPPIP,        3,  3
 	; nite
-	dbwbb 30, MEWTWO,        2,  2
-	dbwbb 30, DUSKNOIR,       2,  2
-	dbwbb 20, MEWTWO,        3,  3
-	dbwbb 10, DUSKNOIR,       3,  3
-	dbwbb  5, DUSKNOIR,       2,  2
-	dbwbb  4, DUSKNOIR,        3,  3
-	dbwbb  1, DUSKNOIR,        3,  3
+	dbwbb 30, HOOTHOOT,      2,  2
+	dbwbb 30, RATTATA,       2,  2
+	dbwbb 20, HOOTHOOT,      3,  3
+	dbwbb 10, RATTATA,       3,  3
+	dbwbb  5, RATTATA,       2,  2
+	dbwbb  4, HOOTHOOT,      3,  3
+	dbwbb  1, HOOTHOOT,      3,  3
 	end_grass_wildmons
 
 	def_grass_wildmons ROUTE_30
 	db 10 percent, 10 percent, 10 percent ; encounter rates: morn/day/nite
 	; morn
 	; encounterPercent, SPECIES, minLevel, maxLevel
-	dbwbb 30, LUXRAY,        3,  3
-	dbwbb 30, LUXRAY,      3,  3
-	dbwbb 20, LUXRAY,      4,  4
-	dbwbb 10, LUXRAY,        4,  4
-	dbwbb  5, LUXRAY,        3,  3
-	dbwbb  4, LUXRAY,        4,  4
-	dbwbb  1, LUXRAY,        4,  4
+	dbwbb 30, LEDYBA,        3,  3
+	dbwbb 30, CATERPIE,      3,  3
+	dbwbb 20, CATERPIE,      4,  4
+	dbwbb 10, PIDGEY,        4,  4
+	dbwbb  5, WEEDLE,        3,  3
+	dbwbb  4, HOPPIP,        4,  4
+	dbwbb  1, HOPPIP,        4,  4
 	; day
-	dbwbb 30, LUXRAY,        3,  3
-	dbwbb 30, LUXRAY,      3,  3
-	dbwbb 20, LUXRAY,      4,  4
-	dbwbb 10, LUXRAY,        4,  4
-	dbwbb  5, LUXRAY,        3,  3
-	dbwbb  4, LUXRAY,        4,  4
-	dbwbb  1, LUXRAY,        4,  4
+	dbwbb 30, PIDGEY,        3,  3
+	dbwbb 30, CATERPIE,      3,  3
+	dbwbb 20, CATERPIE,      4,  4
+	dbwbb 10, PIDGEY,        4,  4
+	dbwbb  5, WEEDLE,        3,  3
+	dbwbb  4, HOPPIP,        4,  4
+	dbwbb  1, HOPPIP,        4,  4
 	; nite
-	dbwbb 30, LUXRAY,        3,  3
-	dbwbb 30, LUXRAY,      3,  3
-	dbwbb 20, LUXRAY,      4,  4
-	dbwbb 10, LUXRAY,        4,  4
-	dbwbb  5, LUXRAY,        3,  3
-	dbwbb  4, LUXRAY,        4,  4
-	dbwbb  1, LUXRAY,        4,  4
+	dbwbb 30, SPINARAK,      3,  3
+	dbwbb 30, HOOTHOOT,      3,  3
+	dbwbb 20, POLIWAG,       4,  4
+	dbwbb 10, HOOTHOOT,      4,  4
+	dbwbb  5, ZUBAT,         3,  3
+	dbwbb  4, HOOTHOOT,      4,  4
+	dbwbb  1, HOOTHOOT,      4,  4
 	end_grass_wildmons
 
 	def_grass_wildmons ROUTE_31
