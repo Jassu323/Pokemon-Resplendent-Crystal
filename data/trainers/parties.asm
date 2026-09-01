@@ -634,8 +634,7 @@ YoungsterGroup:
 	next_list_item ; YOUNGSTER (1)
 	db "Joey@", TRAINERTYPE_NORMAL
 	db 4
-	; TEMPORARY FRONTPIC TEST DATA: revert before committing.
-	dw DUSKNOIR
+	dw RATTATA
 	db -1 ; end
 
 	next_list_item ; YOUNGSTER (2)
