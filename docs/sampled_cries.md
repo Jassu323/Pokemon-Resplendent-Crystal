@@ -423,8 +423,8 @@ The major runtime stages are:
 4. If there is no sampled cry, the normal synthesized cry path runs.
 5. If there is sampled data, `PlayLoadedSampledCry` calls
    `StartSampledCryAsync`.
-6. Startup saves audio/timer state and decodes an initial cache window into
-   WRAMX bank 4.
+6. Startup saves audio/timer state and synchronously decodes up to 191 blocks
+   into WRAMX bank 4. Battle and non-battle callers use the same startup path.
 7. Startup copies the first decoded block to CH3 wave RAM and starts CH3.
 8. The timer interrupt streams one decoded block per tick.
 9. Mainline calls to `ServiceSampledCryAsync` refill more minmax2 blocks into
@@ -618,7 +618,10 @@ Current symbols from `pokecrystal.sym`:
 
 ```text
 04:d000 wSampledCryDecodedBuffer
-04:dff0 wSampledCryDecodedBufferEnd
+04:dbf0 wSampledCryDecodedBufferEnd
+04:dbf0 wSampledCryMinMax2BitLevels
+04:dff0 wSampledCryMinMax2BitLevelsEnd
+04:dff4 wSampledCryCacheCount
 ```
 
 Layout:
@@ -629,6 +632,8 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
     ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
+wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
+wSampledCryMinMax2BitLevelsEnd::
 wSampledCryLevel0:: db
 wSampledCryLevel1:: db
 wSampledCryLevel2:: db
@@ -644,22 +649,24 @@ wSampledCryBlockPeriod:: db
 Important constants:
 
 ```asm
-DEF SAMPLED_CRY_DECODED_BUFFER_SIZE EQU $0ff0
+DEF SAMPLED_CRY_DECODED_BUFFER_SIZE EQU $0bf0
 DEF SAMPLED_CRY_MAX_DECODED_BLOCKS EQU SAMPLED_CRY_DECODED_BUFFER_SIZE / AUD3WAVE_SIZE
+DEF SAMPLED_CRY_STARTUP_PREFILL_BLOCKS EQU SAMPLED_CRY_MAX_DECODED_BLOCKS
 DEF SAMPLED_CRY_CACHE_REFILL_BLOCKS EQU 8
 ```
 
 The decoded buffer is:
 
 ```text
-$0ff0 bytes
-4080 bytes
-255 raw CH3 blocks
-8160 4-bit samples
-about 0.778 seconds at 10485.76 Hz
+$0bf0 bytes
+3056 bytes
+191 raw CH3 blocks
+6112 4-bit samples
+about 0.583 seconds at 10485.76 Hz
 ```
 
-The remaining 16 bytes at `$dff0-$dfff` hold decoder/cache state.
+The next 1024 bytes at `$dbf0-$dfef` hold the minmax2 level lookup table. The
+remaining 16 bytes at `$dff0-$dfff` hold decoder/cache state.
 
 `w4_d000` remains as a compatibility alias for the old bank-4 base.
 
@@ -671,7 +678,7 @@ Startup:
 2. It switches `rSVBK` to bank 4.
 3. `SampledCry_InitRollingCache` copies compressed block count/address into
    WRAMX state.
-4. `SampledCry_FillRollingCache` decodes up to 255 blocks.
+4. `SampledCry_FillRollingCache` synchronously decodes up to 191 blocks.
 5. The first decoded block is copied to CH3 wave RAM.
 6. CH3 and timer playback begin.
 
@@ -698,7 +705,7 @@ The cache is circular:
 
 ## Large Cries
 
-Cries longer than 255 decoded blocks can still play because the buffer is a
+Cries longer than 191 decoded blocks can still play because the buffer is a
 rolling cache, not a full predecode requirement.
 
 The system must refill fast enough to stay ahead of the timer. Refills happen in

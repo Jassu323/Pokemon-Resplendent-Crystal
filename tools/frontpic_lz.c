@@ -1,7 +1,7 @@
 #include "lz/proto.h"
 
 #define TILE_SIZE 16
-#define TAIL_CHUNK_TILES 16
+#define TAIL_CHUNK_TILES 6
 
 static unsigned read_dimension(const char *filename) {
 	FILE *file = fopen(filename, "rb");

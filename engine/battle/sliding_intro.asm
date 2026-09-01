@@ -24,12 +24,21 @@ BattleIntroSlidingPics:
 	ret
 
 .subfunction2
+	push bc
 	ld d, $90
 	ld e, $72
 	ld a, $48
 	inc a
 .loop1
 	push af
+	ldh a, [rVBK]
+	ld b, a
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	jr z, .producer_serviced
+	; Decode early enough for the next VBlank to upload without holding the slide.
+	farcall BattleFrontpicProducer_Service
+.producer_serviced
 .loop2
 	ldh a, [rLY]
 	cp $60
@@ -50,12 +59,26 @@ BattleIntroSlidingPics:
 	pop de
 
 .skip1
-	call DelayFrame
-	call ServicePreparedBattleSampledCryAsync
+	call .DelayFrame
+	ld a, b
+	ldh [rVBK], a
 	pop af
 	dec a
 	jr nz, .loop1
+	pop bc
 	ret
+
+.DelayFrame:
+	call DelayFrame
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	ret z
+	ldh a, [hDMATransfer]
+	and a
+	ret z
+	ld a, [wBattleFrontpicProducerTransferBank]
+	ldh [rVBK], a
+	jr .DelayFrame
 
 .subfunction3
 	ld hl, wShadowOAMSprite00XCoord

@@ -682,14 +682,12 @@ UnownNBackpic:       INCBIN "gfx/pokemon/unown_n/back.2bpp.lz"
 UnownABackpic:       INCBIN "gfx/pokemon/unown_a/back.2bpp.lz"
 UnownMBackpic:       INCBIN "gfx/pokemon/unown_m/back.2bpp.lz"
 UnownKBackpic:       INCBIN "gfx/pokemon/unown_k/back.2bpp.lz"
-UnownTBackpic:       INCBIN "gfx/pokemon/unown_t/back.2bpp.lz"
 
 
 SECTION "Pics 19", ROMX
 
 ; Seems to be an accidental copy of the previous bank
 
-ForretressBackpic:   INCBIN "gfx/pokemon/forretress/back.2bpp.lz"
 BlazikenFrontpic:   INCBIN "gfx/pokemon/blaziken/front.animated.2bpp.lz"
 BlazikenBackpic:    INCBIN "gfx/pokemon/blaziken/back.2bpp.lz"
 MudkipFrontpic:     INCBIN "gfx/pokemon/mudkip/front.animated.2bpp.lz"
@@ -906,7 +904,6 @@ CranidosBackpic:    INCBIN "gfx/pokemon/cranidos/back.2bpp.lz"
 RampardosFrontpic:  INCBIN "gfx/pokemon/rampardos/front.animated.2bpp.lz"
 RampardosBackpic:   INCBIN "gfx/pokemon/rampardos/back.2bpp.lz"
 ShieldonFrontpic:   INCBIN "gfx/pokemon/shieldon/front.animated.2bpp.lz"
-ShieldonBackpic:    INCBIN "gfx/pokemon/shieldon/back.2bpp.lz"
 BastiodonFrontpic:  INCBIN "gfx/pokemon/bastiodon/front.animated.2bpp.lz"
 BastiodonBackpic:   INCBIN "gfx/pokemon/bastiodon/back.2bpp.lz"
 AmbipomFrontpic:    INCBIN "gfx/pokemon/ambipom/front.animated.2bpp.lz"
@@ -1031,6 +1028,9 @@ UnownYBackpic:       INCBIN "gfx/pokemon/unown_y/back.2bpp.lz"
 UnownPBackpic:       INCBIN "gfx/pokemon/unown_p/back.2bpp.lz"
 UnownIBackpic:       INCBIN "gfx/pokemon/unown_i/back.2bpp.lz"
 UnownRBackpic:       INCBIN "gfx/pokemon/unown_r/back.2bpp.lz"
+UnownTBackpic:       INCBIN "gfx/pokemon/unown_t/back.2bpp.lz"
+ForretressBackpic:   INCBIN "gfx/pokemon/forretress/back.2bpp.lz"
+ShieldonBackpic:     INCBIN "gfx/pokemon/shieldon/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_u/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_q/back.2bpp.lz"
 INCBIN "gfx/pokemon/unown_y/back.2bpp.lz"

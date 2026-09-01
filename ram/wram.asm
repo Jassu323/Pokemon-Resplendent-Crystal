@@ -962,23 +962,24 @@ wReclaimedPrinterWRAM0End::
 
 SECTION UNION "Overworld Map", WRAM0
 
-; Battle-only scratch for prepared sampled cries. This overlays the overworld
-; map buffer, so do not use it from menus/stats screens.
-wPreparedSampledCryState:: db
-wPreparedSampledCryBank:: db
-wPreparedSampledCryHeader:: dw
-wPreparedSampledCryPeriod:: db
-wPreparedSampledCryFrameCounter:: db
-
-
-SECTION UNION "Overworld Map", WRAM0
-
 ; Battle-only VRAM state. This overlays the overworld map buffer, so do not use
-; it from overworld/menu paths. Keep it after the prepared sampled-cry state,
-; since failed-catch cleanup can clear those bytes during battle.
-	ds 6
+; it from overworld/menu paths.
 wBattleMenuGFXFlags:: db
 wBattleMenuSavedBGPals:: ds 2 palettes
+wBattleFrontpicProducerState:: db
+wBattleFrontpicProducerBank:: db
+wBattleFrontpicProducerAddress:: dw
+wBattleFrontpicProducerTilesRemaining:: db
+wBattleFrontpicProducerStagedTiles:: db
+wBattleFrontpicProducerStageOffset:: db
+wBattleFrontpicProducerVRAMAddress:: dw
+wBattleFrontpicProducerTransferBank:: db
+	ds $20 - (@ - wBattleMenuGFXFlags)
+wBattleFrontpicProducerBuffer:: ds 7 * 7 tiles
+wBattleFrontpicProducerBufferEnd::
+
+assert (wBattleFrontpicProducerBuffer & $f) == 0
+assert wBattleFrontpicProducerBufferEnd - wBattleMenuGFXFlags <= wOverworldMapBlocksEnd - wOverworldMapBlocks
 
 
 SECTION UNION "Overworld Map", WRAM0

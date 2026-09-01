@@ -777,7 +777,7 @@ Pokedex_ServiceAnimationProducer:
 	ret
 
 Pokedex_LoadAnimationDictionaryChunk:
-; Each stream expands to at most 16 tiles. Input has already been serviced for
+; Each stream expands to at most six tiles. Input has already been serviced for
 ; this frame, so a new selection can cancel the job before the next stream.
 	ldh a, [rWBK]
 	push af
@@ -807,7 +807,7 @@ Pokedex_LoadAnimationDictionaryChunk:
 
 	ld hl, wPokedexAnimDictionaryTilesRemaining
 	ld a, [hl]
-	sub POKEDEX_ANIM_DICTIONARY_CHUNK_TILES
+	sub FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
 	jr nc, .store_remaining
 	xor a
 .store_remaining

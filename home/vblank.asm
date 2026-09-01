@@ -195,6 +195,11 @@ VBlank_Cutscene::
 	ldh a, [hSCY]
 	ldh [rSCY], a
 
+	call DMATransfer
+	jr nc, .no_dma
+	xor a
+	ldh [rVBK], a
+.no_dma
 	call UpdatePals
 	jr c, .done
 
@@ -279,6 +284,11 @@ VBlank_CutsceneCGB::
 	ldh a, [hSCY]
 	ldh [rSCY], a
 
+	call DMATransfer
+	jr nc, .no_dma
+	xor a
+	ldh [rVBK], a
+.no_dma
 	ldh a, [hCGBPalUpdate]
 	and a
 	call nz, ForceUpdateCGBPals

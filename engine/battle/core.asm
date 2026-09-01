@@ -16,6 +16,7 @@ DEF BATTLE_MOVE_INFO_CATEGORY_ICON_Y    EQU 10
 DoBattle:
 	xor a
 	ld [wBattleMenuGFXFlags], a
+	ld [wBattleFrontpicProducerState], a
 	ld [wBattleParticipantsNotFainted], a
 	ld [wBattleParticipantsIncludingFainted], a
 	ld [wBattlePlayerAction], a
@@ -3847,9 +3848,7 @@ ShowSetEnemyMonAndSendOutAnimation:
 	ld a, OTPARTYMON
 	ld [wMonType], a
 	predef CopyMonToTempMon
-	call GetEnemyMonFrontpic
-	ld a, [wTempEnemyMonSpecies]
-	call PrepareBattleSampledCry
+	farcall BattleFrontpicProducer_StartEnemyOrLoad
 
 	xor a
 	ld [wBattleAfterAnim], a
@@ -3874,10 +3873,7 @@ ShowSetEnemyMonAndSendOutAnimation:
 	farcall CheckBattleScene
 	jr c, .cry_no_anim
 
-	hlcoord 12, 0
-	ld d, $0
-	ld e, ANIM_MON_SLOW
-	predef AnimateFrontpic
+	farcall BattleFrontpicProducer_AnimateSlow
 	jr .skip_cry
 
 .cry_no_anim
@@ -3887,6 +3883,7 @@ ShowSetEnemyMonAndSendOutAnimation:
 	call PlayStereoCry
 
 .skip_cry
+	farcall BattleFrontpicProducer_Cancel
 	call UpdateEnemyHUD
 	call BattleCore_EnemySwitchInHook
 	ld a, $1
@@ -4350,8 +4347,6 @@ SendOutPlayerMon:
 	xor a
 	ld [wEnemyWrapCount], a
 	call SetPlayerTurn
-	ld a, [wCurPartySpecies]
-	call PrepareBattleSampledCry
 	xor a
 	ld [wBattleAfterAnim], a
 	ld [wBattleAnimParam], a
@@ -8685,7 +8680,7 @@ InitEnemyWildmon:
 	ld [wFirstUnownSeen], a
 .skip_unown
 	ld de, vTiles2
-	predef GetAnimatedFrontpic
+	farcall BattleFrontpicProducer_StartOrLoad
 	xor a
 	ld [wTrainerClass], a
 	ldh [hGraphicStartTile], a
@@ -9366,8 +9361,7 @@ InitBattleDisplay:
 	call WaitBGMap
 	xor a
 	ldh [hBGMapMode], a
-	ld a, [wTempEnemyMonSpecies]
-	call PrepareBattleSampledCry
+	farcall BattleFrontpicProducer_PrimeBase
 	farcall BattleIntroSlidingPics
 	ld a, $1
 	ldh [hBGMapMode], a
@@ -9546,10 +9540,7 @@ BattleStartMessage:
 	farcall CheckBattleScene
 	jr c, .cry_no_anim
 
-	hlcoord 12, 0
-	ld d, $0
-	ld e, ANIM_MON_NORMAL
-	predef AnimateFrontpic
+	farcall BattleFrontpicProducer_AnimateNormal
 	jr .skip_cry ; cry is played during the animation
 
 .cry_no_anim
@@ -9559,6 +9550,7 @@ BattleStartMessage:
 	call PlayStereoCry
 
 .skip_cry
+	farcall BattleFrontpicProducer_Cancel
 	ld a, [wBattleType]
 	cp BATTLETYPE_FISH
 	jr nz, .NotFishing

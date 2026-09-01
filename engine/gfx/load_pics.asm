@@ -128,7 +128,7 @@ _PrepareFrontpic:
 	call FarDecompress
 	pop bc
 	ld a, c
-	sub POKEDEX_ANIM_DICTIONARY_CHUNK_TILES
+	sub FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
 	jr nc, .store_remaining
 	xor a
 .store_remaining
@@ -193,6 +193,429 @@ Pokedex_PrepareFrontpicBase::
 	ld hl, wPokedexWRAM0Scratch
 	ld de, wDecompressScratch
 	jp PadFrontpic
+
+DEF BATTLE_FRONTPIC_PRODUCER_INACTIVE   EQU 0
+DEF BATTLE_FRONTPIC_PRODUCER_BASE_BANK0 EQU 1
+DEF BATTLE_FRONTPIC_PRODUCER_BASE_BANK1 EQU 2
+DEF BATTLE_FRONTPIC_PRODUCER_DICTIONARY EQU 3
+
+DEF BATTLE_FRONTPIC_TRANSFER_TILES         EQU 8
+
+BattleFrontpicProducer_Start::
+; Prepare the current enemy's padded base picture and retain the animation
+; dictionary as an incremental battle job. Link data shares this WRAM0 union,
+; so link battles deliberately retain the synchronous loader.
+	xor a
+	ld [wBattleFrontpicProducerState], a
+	ld a, [wLinkMode]
+	and a
+	jr nz, .failed
+	ldh a, [hCGB]
+	and a
+	jr z, .failed
+	ldh a, [hDMATransfer]
+	and a
+	jr nz, .failed
+	ld a, [wRequested2bppSize]
+	and a
+	jr nz, .failed
+	ld a, [wCurPartySpecies]
+	ld [wCurSpecies], a
+	call IsAPokemon
+	jr c, .failed
+
+	ldh a, [rWBK]
+	push af
+	xor a
+	ldh [hBGMapMode], a
+	ld a, BANK(sEnemyFrontPicTileCount)
+	call OpenSRAM
+	call .PrepareBase
+	call CloseSRAM
+	pop af
+	ldh [rWBK], a
+
+	ld a, [wBattleMenuGFXFlags]
+	res BATTLE_MENU_GFX_CLEAN_F, a
+	ld [wBattleMenuGFXFlags], a
+	xor a
+	ldh [rVBK], a
+	scf
+	ret
+
+.failed
+	and a
+	ret
+
+.PrepareBase:
+	call GetBaseData
+	ld a, [wBasePicSize]
+	and $f
+	push af
+	call GetFrontpicBaseTileCount
+	push af
+	call GetFrontpicPointer
+	ld a, b
+	call GetFarByte
+	ld [sEnemyFrontPicTileCount], a
+	inc hl
+	push bc
+	ld a, BANK(wDecompressScratch)
+	ldh [rWBK], a
+	ld a, b
+	ld de, wDecompressScratch
+	call FarDecompress
+	pop bc
+	inc hl
+	ld a, b
+	ld [wBattleFrontpicProducerBank], a
+	ld a, l
+	ld [wBattleFrontpicProducerAddress], a
+	ld a, h
+	ld [wBattleFrontpicProducerAddress + 1], a
+	pop af
+	ld c, a
+	ld a, [sEnemyFrontPicTileCount]
+	sub c
+	ld [wBattleFrontpicProducerTilesRemaining], a
+	xor a
+	ld [wBattleFrontpicProducerStagedTiles], a
+	ld [wBattleFrontpicProducerStageOffset], a
+	ld [wBattleFrontpicProducerTransferBank], a
+	ld a, LOW(vTiles5 + 7 * 7 tiles)
+	ld [wBattleFrontpicProducerVRAMAddress], a
+	ld a, HIGH(vTiles5 + 7 * 7 tiles)
+	ld [wBattleFrontpicProducerVRAMAddress + 1], a
+	ld a, BATTLE_FRONTPIC_PRODUCER_BASE_BANK0
+	ld [wBattleFrontpicProducerState], a
+	pop bc
+	ld hl, wBattleFrontpicProducerBuffer
+	ld de, wDecompressScratch
+	jp PadFrontpic
+
+BattleFrontpicProducer_StartOrLoad::
+	call BattleFrontpicProducer_Start
+	ret c
+	ld de, vTiles2
+	jp GetAnimatedFrontpic
+
+BattleFrontpicProducer_StartEnemyOrLoad::
+; Preserve GetEnemyMonFrontpic's form selection on trainer send-outs.
+	ld hl, wEnemyMonDVs
+	predef GetUnownLetter
+	jp BattleFrontpicProducer_StartOrLoad
+
+BattleFrontpicProducer_Service::
+; Frame drivers treat background services as transparent work.
+	push hl
+	push de
+	push bc
+	push af
+	call .Run
+	pop af
+	pop bc
+	pop de
+	pop hl
+	ret
+
+.Run
+; Produce at most one bounded VRAM transaction for the next frame. A queued
+; transaction retains ownership of rVBK until the frame driver restores it.
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	ret z
+	ldh a, [hDMATransfer]
+	and a
+	jr z, .no_pending_transfer
+	ld a, [wBattleFrontpicProducerTransferBank]
+	ldh [rVBK], a
+	ret
+
+.no_pending_transfer
+	ld a, [wRequested2bppSize]
+	and a
+	ret nz
+	ld a, [wBattleFrontpicProducerState]
+	cp BATTLE_FRONTPIC_PRODUCER_BASE_BANK0
+	jr z, .queue_base_bank0
+	cp BATTLE_FRONTPIC_PRODUCER_BASE_BANK1
+	jr z, .queue_base_bank1
+
+	ld a, [wBattleFrontpicProducerStagedTiles]
+	and a
+	jr nz, .queue_dictionary
+	ld a, [wBattleFrontpicProducerTilesRemaining]
+	and a
+	jr z, .finished
+	call .DecodeDictionaryChunk
+	; fallthrough
+
+.queue_dictionary
+	call .NormalizeDictionaryDestination
+	call .GetDictionaryTransferCount
+	push bc
+	ld b, c
+	ld a, [wBattleFrontpicProducerStagedTiles]
+	cp 1
+	jr nz, .got_logical_transfer_count
+	ld b, 1
+.got_logical_transfer_count
+
+	ld a, [wBattleFrontpicProducerStageOffset]
+	ld l, a
+	ld h, 0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld de, wBattleFrontpicProducerBuffer
+	add hl, de
+	push hl
+
+	ld a, [wBattleFrontpicProducerVRAMAddress]
+	ld e, a
+	ld a, [wBattleFrontpicProducerVRAMAddress + 1]
+	ld d, a
+	push de
+
+	ld hl, wBattleFrontpicProducerStagedTiles
+	ld a, [hl]
+	sub b
+	ld [hl], a
+	ld hl, wBattleFrontpicProducerStageOffset
+	ld a, [hl]
+	add b
+	ld [hl], a
+
+	ld a, b
+	swap a
+	ld l, a
+	and $f
+	ld h, a
+	ld a, l
+	and $f0
+	ld l, a
+	ld a, [wBattleFrontpicProducerVRAMAddress]
+	add l
+	ld [wBattleFrontpicProducerVRAMAddress], a
+	ld a, [wBattleFrontpicProducerVRAMAddress + 1]
+	adc h
+	ld [wBattleFrontpicProducerVRAMAddress + 1], a
+
+	pop de
+	pop hl
+	pop bc
+	ld a, BANK(vTiles5)
+	jp .QueueTransfer
+
+.queue_base_bank0
+	ld a, BATTLE_FRONTPIC_PRODUCER_BASE_BANK1
+	ld [wBattleFrontpicProducerState], a
+	ld hl, wBattleFrontpicProducerBuffer
+	ld de, vTiles2
+	ld c, 7 * 7
+	xor a
+	jp .QueueTransfer
+
+.queue_base_bank1
+	ld a, BATTLE_FRONTPIC_PRODUCER_DICTIONARY
+	ld [wBattleFrontpicProducerState], a
+	ld hl, wBattleFrontpicProducerBuffer
+	ld de, vTiles5
+	ld c, 7 * 7
+	ld a, BANK(vTiles5)
+	jp .QueueTransfer
+
+.finished
+	xor a
+	ld [wBattleFrontpicProducerState], a
+	ret
+
+.DecodeDictionaryChunk:
+	ld a, [wBattleFrontpicProducerTilesRemaining]
+	cp FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
+	jr c, .got_chunk_size
+	ld a, FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
+.got_chunk_size
+	ld [wBattleFrontpicProducerStagedTiles], a
+	ld c, a
+	xor a
+	ld [wBattleFrontpicProducerStageOffset], a
+	ld a, [wBattleFrontpicProducerTilesRemaining]
+	sub c
+	ld [wBattleFrontpicProducerTilesRemaining], a
+
+	ld a, [wBattleFrontpicProducerAddress]
+	ld l, a
+	ld a, [wBattleFrontpicProducerAddress + 1]
+	ld h, a
+	ld a, [wBattleFrontpicProducerBank]
+	ld de, wBattleFrontpicProducerBuffer
+	call FarDecompress
+	inc hl
+	ld a, l
+	ld [wBattleFrontpicProducerAddress], a
+	ld a, h
+	ld [wBattleFrontpicProducerAddress + 1], a
+
+	ld a, [wBattleFrontpicProducerStagedTiles]
+	ld c, a
+	swap a
+	and $f0
+	ld c, a
+	ld hl, wBattleFrontpicProducerBuffer
+	ld d, h
+	ld e, l
+	jp LoadOrientedFrontpic
+
+.NormalizeDictionaryDestination:
+	ld a, [wBattleFrontpicProducerVRAMAddress]
+	cp LOW(vTiles5 tile $7f)
+	ret nz
+	ld a, [wBattleFrontpicProducerVRAMAddress + 1]
+	cp HIGH(vTiles5 tile $7f)
+	ret nz
+	ld a, LOW(vTiles4)
+	ld [wBattleFrontpicProducerVRAMAddress], a
+	ld a, HIGH(vTiles4)
+	ld [wBattleFrontpicProducerVRAMAddress + 1], a
+	ret
+
+.GetDictionaryTransferCount:
+	ld a, [wBattleFrontpicProducerStagedTiles]
+	cp BATTLE_FRONTPIC_TRANSFER_TILES + 1
+	jr c, .within_transfer_limit
+	jr nz, .full_transfer
+	; Split nine tiles as seven plus two; hDMATransfer uses zero as idle and
+	; therefore cannot represent a one-block queued transfer.
+	ld c, BATTLE_FRONTPIC_TRANSFER_TILES - 1
+	jr .respect_vram_gap
+.full_transfer
+	ld c, BATTLE_FRONTPIC_TRANSFER_TILES
+	jr .respect_vram_gap
+.within_transfer_limit
+	ld c, a
+	cp 1
+	jr nz, .respect_vram_gap
+	; A one-tile tail is physically padded to two blocks because zero denotes
+	; an idle hDMATransfer. Only one logical tile is consumed by the caller.
+	inc c
+
+.respect_vram_gap
+	ld a, [wBattleFrontpicProducerStagedTiles]
+	cp 1
+	ret z
+	ld a, [wBattleFrontpicProducerVRAMAddress + 1]
+	cp HIGH(vTiles5 tile $70)
+	ret nz
+	ld a, LOW(vTiles5 tile $7f)
+	ld hl, wBattleFrontpicProducerVRAMAddress
+	sub [hl]
+	swap a
+	and $f
+	ld b, a
+	ld a, c
+	cp b
+	ret c
+	ret z
+	ld c, b
+	ret
+
+.QueueTransfer:
+; a = VRAM bank, hl = aligned WRAM0 source, de = VRAM destination,
+; c = number of 16-byte blocks (always at least two).
+	ld [wBattleFrontpicProducerTransferBank], a
+	ldh [rVBK], a
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	and $f0
+	ldh [rVDMA_SRC_LOW], a
+	ld a, d
+	and $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, e
+	and $f0
+	ldh [rVDMA_DEST_LOW], a
+	ld a, c
+	dec a
+	ldh [hDMATransfer], a
+	ret
+
+BattleFrontpicProducer_PrimeBase::
+; Wild encounters must have both base copies resident before the first visible
+; sliding-intro frame. Dictionary production remains deferred to that slide.
+	ld a, [wBattleMode]
+	cp WILD_BATTLE
+	jr z, .wild
+	xor a
+	ld [wBattleFrontpicProducerState], a
+	ret
+
+.wild
+	ldh a, [rVBK]
+	push af
+.loop
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	jr z, .done
+	cp BATTLE_FRONTPIC_PRODUCER_DICTIONARY
+	jr nz, .service
+	ldh a, [hDMATransfer]
+	and a
+	jr z, .done
+.service
+	call BattleFrontpicProducer_Service
+	call DelayFrame
+	jr .loop
+.done
+	pop af
+	ldh [rVBK], a
+	ret
+
+BattleFrontpicProducer_Finish::
+; This should normally be a no-op by the time the frontpic animation starts.
+; If production fell behind, finish visibly instead of consuming incomplete
+; dictionary tiles.
+	ldh a, [rVBK]
+	push af
+.loop
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	jr z, .done
+	call BattleFrontpicProducer_Service
+	call DelayFrame
+	jr .loop
+.done
+	pop af
+	ldh [rVBK], a
+	ret
+
+BattleFrontpicProducer_AnimateSlow::
+	call BattleFrontpicProducer_Finish
+	hlcoord 12, 0
+	ld d, 0
+	ld e, ANIM_MON_SLOW
+	predef AnimateFrontpic
+	ret
+
+BattleFrontpicProducer_AnimateNormal::
+	call BattleFrontpicProducer_Finish
+	hlcoord 12, 0
+	ld d, 0
+	ld e, ANIM_MON_NORMAL
+	predef AnimateFrontpic
+	ret
+
+BattleFrontpicProducer_Cancel::
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	ret z
+	xor a
+	ld [wBattleFrontpicProducerState], a
+	ld [wBattleFrontpicProducerStagedTiles], a
+	ldh [hDMATransfer], a
+	ret
 
 GetFrontpicBaseTileCount:
 ; a = native square dimension; return its tile count in a.
