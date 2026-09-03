@@ -368,7 +368,7 @@ PokeAnim_InitFrameProducer::
 	call PokeAnim_InitPicAttributes
 	pop bc
 	call PokeAnim_InitAnim
-	call PokeAnim_PlaceGraphic
+	call GetMonDexAnimationPlanPointer
 	ld a, [wPokeAnimFrontpicHeight]
 	ld c, a
 	pop af
@@ -379,7 +379,8 @@ PokeAnim_InitFrameProducer::
 PokeAnim_DecodeNextVisualFrame::
 ; Advance through control commands and produce the next visual frame in the
 ; logical tilemap. Carry is set for a visual frame, with its duration in a and
-; any preceding repeat-exit holds in b. Carry is clear at end-of-animation.
+; any preceding repeat-exit holds in b and its frame ID in e. Carry is clear
+; at end-of-animation.
 	ldh a, [rWBK]
 	push af
 	ld a, BANK(wPokeAnimStruct)
@@ -395,7 +396,8 @@ PokeAnim_DecodeNextVisualFrame::
 	jr z, .set_repeat
 	cp dorepeat_command
 	jr z, .do_repeat
-	call PokeAnim_GetFrame
+	ld a, [wPokeAnimCommand]
+	ld e, a
 	ld a, [wPokeAnimParameter]
 	call PokeAnim_GetDuration
 	ld c, a
@@ -1125,6 +1127,85 @@ GetMonFramesPointer:
 	ld [wPokeAnimFramesAddr], a
 	ld a, HIGH(EggFrames)
 	ld [wPokeAnimFramesAddr + 1], a
+	ret
+
+GetMonDexAnimationPlanPointer:
+	call PokeAnim_IsEgg
+	jr z, .egg
+
+	call PokeAnim_IsUnown
+	ld hl, DexAnimationPlanPointers - 3
+	ld a, BANK(DexAnimationPlanPointers)
+	ld c, 3
+	jr nz, .got_plans
+	ld hl, UnownDexAnimationPlanPointers - 3
+	ld a, BANK(UnownDexAnimationPlanPointers)
+.got_plans
+
+	push af
+	push hl
+	ld a, [wPokeAnimSpeciesOrUnown]
+	ld l, a
+	ld h, 0
+	call nz, GetPokemonIndexFromID
+	ld a, c
+	ld c, l
+	ld b, h
+	pop hl
+	call AddNTimes
+	pop af
+	ld c, a
+	call GetFarByte
+	ld [wPokeAnimDexPlanBank], a
+	inc hl
+	ld a, c
+	call GetFarWord
+	ld a, l
+	ld [wPokeAnimDexPlanAddr], a
+	ld a, h
+	ld [wPokeAnimDexPlanAddr + 1], a
+	ret
+
+.egg
+	ld a, BANK(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanBank], a
+	ld a, LOW(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanAddr], a
+	ld a, HIGH(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanAddr + 1], a
+	ret
+
+PokeAnim_GetDexFramePlanPointer::
+; Return the selected frame plan in d:hl. The frame ID in b is one-based.
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wPokeAnimStruct)
+	ldh [rWBK], a
+	ld a, [wPokeAnimDexPlanBank]
+	ld c, a
+	ld a, [wPokeAnimDexPlanAddr]
+	ld e, a
+	ld a, [wPokeAnimDexPlanAddr + 1]
+	ld d, a
+	pop af
+	ldh [rWBK], a
+
+	ld h, d
+	ld l, e
+	ld a, b
+	dec a
+	add a
+	push bc
+	ld b, 0
+	ld c, a
+	add hl, bc
+	pop bc
+	push de
+	ld a, c
+	call GetFarWord
+	pop de
+	add hl, de
+	ld d, c
 	ret
 
 GetMonBitmaskPointer:

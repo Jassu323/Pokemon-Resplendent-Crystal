@@ -10,14 +10,32 @@ selected known or unseen static frontpic occupies one 49-tile bank-0 region.
 Two bank-1 regions stream only the changed tiles required by the selected
 known Pokemon's main and idle animation frames.
 
-Each compressed frontpic is stored as a small container. Its first LZ stream
-contains only the native 5x5, 6x6, or 7x7 base pose; subsequent streams contain
-at most 16 animation-dictionary tiles apiece. Normal frontpic consumers decode
-all streams immediately. A Listing selection decodes only the base stream and
-pads it directly into Dex WRAM0, reveals the new selection, and retains the tail
-address, destination, and tile count as a cancellable background job. One tail
-stream is decoded after input on each otherwise-idle update. The existing
-animation producer is marked pending only after that dictionary is complete.
+Each frontpic is stored as a small container. Its first LZ stream contains only
+the native 5x5, 6x6, or 7x7 base pose; subsequent streams contain at most six
+animation-dictionary tiles apiece. Normal frontpic consumers decode all streams
+immediately. A Listing selection decodes only the base stream and pads it
+directly into Dex WRAM0, reveals the new selection, and retains the tail address,
+destination, and tile count as a cancellable background job. On each
+otherwise-idle update, the Dex decompresses at most one six-tile tail stream,
+parses at most one pending visual frame, consumes its generated compact stage
+plan, gathers its changed dictionary tiles, and uploads at most 20 tiles to its
+hidden VRAM slot. Input is checked first, so a new selection cancels this work
+before another chunk begins.
+
+The build tools generate one Dex-only stage plan for every visual animation
+frame. Each record directly names the changed 7x7 tilemap position and either
+its padded base tile or animation-dictionary source. Base references come first;
+dictionary references are ordered by source index so the producer can consume
+each newly decompressed prefix immediately. This replaces runtime bitmask
+expansion, coordinate reconstruction, a 256-entry lookup-table clear, a scan of
+the available dictionary, and changed-tile deduplication and sorting.
+
+Entering Description preserves any Listing prefetch and synchronously fills
+only the remaining startup deficit: a complete first visual frame plus a fixed
+48-tail-tile runway, capped by the end of the dictionary. The
+first frame's tilemap is installed in the staged Description backing before the
+owner reveal. Internal Description paging follows the same base-only path; it
+does not fall back to decoding the complete animation dictionary up front.
 
 ## Current VRAM writes
 
@@ -132,8 +150,8 @@ The animated-frontpic path uses these fixed overlapping views:
 
 | Workspace view | Offset | Bytes |
 | --- | ---: | ---: |
-| Changed-tile payload | `$000` | 784 |
-| Logical 7x7 map with 20-byte rows | `$310` | 140 |
+| Changed-tile upload payload | `$000` | 320 maximum |
+| Compact generated stage-plan record | `$310` | 98 maximum |
 | Buffer A tilemap and attributes | `$39c` | 98 |
 | Buffer B tilemap and attributes | `$3fe` | 98 |
 | Changed source-tile indexes | `$460` | 49 |
@@ -167,12 +185,34 @@ Other useful maximum sizes include:
 | Nine 2x2 mini-sprites | 576 |
 | Three rows of three 2x2 mini-sprites | 576 |
 
-The producer batches a frame's source indexes in a separate 49-byte buffer in
-WRAMX bank 2, then switches to WRAMX bank 6 once to gather every changed tile.
-The two animation tilemaps and payload stay in WRAM0, avoiding per-tile WRAM
-bank changes. Twenty-eight bytes in `wPokedexData` hold producer, consumer,
-timing, slot, underrun-diagnostic, and background-dictionary state. The Listing
-cache adds 14 bytes: five 16-bit row-ownership tags, a 16-bit pending row, its
-physical-row index, and the last rendered owned-icon animation frame. It remains
-inside the existing 280-byte Pokedex union by consuming eight bytes of its
-reserved padding.
+The producer seeds a slot with the base 7x7 map, copies at most 98 bytes of plan
+data into WRAM0, and applies those direct position/source pairs. Animation
+sources are already ordered by dictionary index, so no runtime lookup table,
+deduplication, or sort is needed. Duplicate source references deliberately keep
+separate slot tiles; across all 1,722 current frames this adds only 37 tile
+copies among 20,149 changed cells and avoids rebuilding a mapping structure
+every frame. Each service switches to WRAMX bank 6 once,
+decompresses at most one six-tile dictionary stream, and gathers every newly
+available source tile needed by the staged frame. The two animation tilemaps and
+bounded upload payload stay in WRAM0, avoiding per-tile WRAM bank changes. VRAM
+uploads resume from a saved offset in chunks of at most 20 tiles per controller
+update. Each physical animation slot retains its completed frame ID after
+release, allowing an exact later match to become tilemap-only. An underrun
+deliberately installs its incomplete slot and increments
+`wPokedexAnimUnderflowCount` instead of concealing the missed deadline behind the
+previous complete frame.
+
+Twenty-seven bytes in `wPokedexData` hold parser, playback, timing, slot,
+residency, underrun-diagnostic, and background-dictionary state. This is one
+byte smaller than the prior two-slot controller and returns that byte to the
+union's reserved padding; no new WRAM, SRAM, or HRAM is allocated. The Listing
+cache remains inside the same Pokedex union, and all symbols following the
+union retain their previous addresses.
+
+The shared animation parser reuses three former padding bytes for the current
+Dex-plan bank and address, so this optimization also has zero net WRAM cost. Its
+ROM cost is 45,464 bytes of generated plan payload plus a 1,197-byte far-pointer
+table. The payload is isolated in banks `$a1`-`$a3` (decimal 161-163), leaving
+1,232, 1,226, and 1,230 bytes free in those banks respectively. Bank `$a0`
+(decimal 160), which owns the runtime and pointer table, retains 3,704 free
+bytes.

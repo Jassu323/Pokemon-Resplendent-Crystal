@@ -500,8 +500,11 @@ ROMX $a0
 	"Pics 29"
 	"Pokedex Animation"
 ROMX $a1
+	"Dex Animation Plans 1"
 ROMX $a2
+	"Dex Animation Plans 2"
 ROMX $a3
+	"Dex Animation Plans 3"
 ROMX $a4
 ROMX $a5
 ROMX $a6

@@ -145,9 +145,12 @@ Pokedex_PrepareFrontpicBase::
 ; compressed streams are retained as a cancellable Dex animation job. Pad the
 ; base directly into Dex WRAM0 so selection staging does not round-trip through
 ; sPaddedEnemyFrontPic.
+	ld a, [wCurPartySpecies]
+	push af
 	call GetBaseData
 	ld a, [wBasePicSize]
 	and $f
+	ld [wPokedexAnimFrontpicDim], a
 	push af
 	call GetFrontpicBaseTileCount
 	push af
@@ -180,16 +183,29 @@ Pokedex_PrepareFrontpicBase::
 	ld a, [wPokedexAnimDictionaryTileCount]
 	sub c
 	ld [wPokedexAnimDictionaryTilesRemaining], a
-	ld a, [wCurPartySpecies]
-	ld [wPokedexAnimOwner], a
-	ld a, [wPokedexAnimDictionaryTilesRemaining]
-	and a
-	ld a, POKEDEX_ANIM_PRODUCER_PENDING
-	jr z, .state_ready
-	ld a, POKEDEX_ANIM_PRODUCER_LOADING
-.state_ready
-	ld [wPokedexAnimProducerState], a
+	ld a, 1 << POKEDEX_ANIM_ACTIVE_F
+	ld [wPokedexAnimFlags], a
+	xor a
+	ld [wPokedexAnimProducerPhase], a
+	ld [wPokedexAnimStageSlot], a
+	ld [wPokedexAnimStageDuration], a
+	ld [wPokedexAnimStagePrehold], a
+	ld [wPokedexAnimStageTileCount], a
+	ld [wPokedexAnimUploadOffset], a
+	ld [wPokedexAnimPlaybackState], a
+	ld [wPokedexAnimPlaybackTimer], a
+	ld [wPokedexAnimHoldTimer], a
+	ld [wPokedexAnimTrailingHold], a
+	ld [wPokedexAnimStageRequiredTiles], a
+	ld a, -1
+	ld [wPokedexAnimDisplaySlot], a
+	ld [wPokedexAnimStageFrameID], a
+	ld hl, wPokedexAnimResidentFrameIDs
+	ld [hli], a
+	ld [hl], a
 	pop bc
+	pop af
+	ld [wPokedexAnimOwner], a
 	ld hl, wPokedexWRAM0Scratch
 	ld de, wDecompressScratch
 	jp PadFrontpic

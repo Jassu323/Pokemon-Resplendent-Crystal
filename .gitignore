@@ -8,6 +8,7 @@
 *.gbcpal
 *.dimensions
 *.animated.tilemap
+*.dexanim
 *.sgb.tilemap
 gfx/pokemon/*/bitmask.asm
 gfx/pokemon/*/frames.asm

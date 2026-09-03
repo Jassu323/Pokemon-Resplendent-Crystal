@@ -1,6 +1,10 @@
 ASSERT POKEDEX_ANIM_SLOT_A_MAP + 7 * 7 == POKEDEX_ANIM_SLOT_A_ATTRS
+ASSERT POKEDEX_ANIM_SLOT_A_ATTRS + 7 * 7 == POKEDEX_ANIM_SLOT_B_MAP
 ASSERT POKEDEX_ANIM_SLOT_B_MAP + 7 * 7 == POKEDEX_ANIM_SLOT_B_ATTRS
+ASSERT POKEDEX_ANIM_SLOT_B_ATTRS + 7 * 7 == POKEDEX_ANIM_SOURCE_TILES
 ASSERT POKEDEX_ANIM_SOURCE_TILES + 7 * 7 <= wPokedexWRAM0ScratchEnd
+ASSERT POKEDEX_ANIM_PLAN_BUFFER + 2 * 7 * 7 <= POKEDEX_ANIM_SLOT_A_MAP
+ASSERT POKEDEX_ANIM_PAYLOAD + POKEDEX_ANIM_UPLOAD_CHUNK_TILES * TILE_SIZE <= POKEDEX_ANIM_PLAN_BUFFER
 
 DEF POKEDEX_WRAP_MAP_STAGING EQUS "POKEDEX_GRID_CENTER_GFX"
 DEF POKEDEX_WRAP_MAP_BLOCKS EQU 13
@@ -645,16 +649,24 @@ Pokedex_CommitScrolledGridPalettes:
 	jr nz, .CopyBytes
 	ret
 
+
 Pokedex_CancelAnimationPrefetch:
 	xor a
-	ld [wPokedexAnimProducerState], a
+	ld [wPokedexAnimFlags], a
 	ld [wPokedexAnimPlaybackState], a
-	ld [wPokedexAnimDictionaryTilesRemaining], a
-	ld hl, wPokedexAnimSlotStates
-	ld bc, 2
-	call ByteFill
+	ld [wPokedexAnimStageSlot], a
+	ld [wPokedexAnimStageDuration], a
+	ld [wPokedexAnimStagePrehold], a
+	ld [wPokedexAnimStageTileCount], a
+	ld [wPokedexAnimUploadOffset], a
+	ld [wPokedexAnimTrailingHold], a
+	ld [wPokedexAnimStageRequiredTiles], a
 	ld a, -1
 	ld [wPokedexAnimDisplaySlot], a
+	ld [wPokedexAnimStageFrameID], a
+	ld hl, wPokedexAnimResidentFrameIDs
+	ld [hli], a
+	ld [hl], a
 	ret
 
 Pokedex_StartAnimationPrefetch:
@@ -667,28 +679,20 @@ Pokedex_StartAnimationPrefetch:
 	ld a, [wTempSpecies]
 	ld hl, wPokedexAnimOwner
 	cp [hl]
-	jr nz, .complete_dictionary
-	ld a, [wPokedexAnimProducerState]
-	cp POKEDEX_ANIM_PRODUCER_LOADING
-	jr z, .initialize
-.complete_dictionary
+	jr z, .owner_matches
+	jp Pokedex_CancelAnimationPrefetch
+.owner_matches
+	ld a, [wPokedexAnimFlags]
+	bit POKEDEX_ANIM_ACTIVE_F, a
+	ret nz
+	ld a, [wPokedexAnimDictionaryTileCount]
+	and a
+	ret z
 	call Pokedex_CancelAnimationPrefetch
-	ld a, [wTempSpecies]
-	ld [wPokedexAnimOwner], a
-	ld a, POKEDEX_ANIM_PRODUCER_PENDING
-	ld [wPokedexAnimProducerState], a
-.initialize
-	ld a, [wTempSpecies]
-	ld [wCurPartySpecies], a
 	xor a
-	ld [wBoxAlignment], a
-	ld [wPokedexAnimProduceSlot], a
-	ld [wPokedexAnimConsumeSlot], a
 	ld [wPokedexAnimProducerPhase], a
-	ld [wPokedexAnimTrailingHold], a
-	ld hl, wPokedexAnimSlotStates
-	ld bc, 8
-	call ByteFill
+	ld a, 1 << POKEDEX_ANIM_ACTIVE_F
+	ld [wPokedexAnimFlags], a
 	ret
 
 Pokedex_BeginDescriptionAnimation:
@@ -699,22 +703,19 @@ Pokedex_BeginDescriptionAnimation:
 	farcall Pokedex_CheckSeen
 	ret z
 	ld a, [wTempSpecies]
-	ld [wCurPartySpecies], a
 	ld hl, wPokedexAnimOwner
 	cp [hl]
-	jr nz, .restart
-	ld a, [wPokedexAnimProducerState]
-	and a
-	jr z, .restart
-	cp POKEDEX_ANIM_PRODUCER_PENDING
-	jr z, .begin
-	ld a, [wPrevDexEntryJumptableIndex]
-	cp DEXSTATE_MAIN_SCR
-	jr z, .begin
-.restart
-	call Pokedex_StartAnimationPrefetch
-.begin
-	ld a, POKEDEX_ANIM_PLAYBACK_WAITING
+	ret nz
+	call PlayMonCry2
+	ld a, [wPokedexAnimDisplaySlot]
+	cp -1
+	jr z, .no_visual_frame
+	ld a, POKEDEX_ANIM_PLAYBACK_PLAYING
+	ld [wPokedexAnimPlaybackState], a
+	jp Pokedex_PrepareNextAnimationStage
+
+.no_visual_frame
+	ld a, POKEDEX_ANIM_PLAYBACK_DONE
 	ld [wPokedexAnimPlaybackState], a
 	ret
 
@@ -722,306 +723,49 @@ Pokedex_ServiceAnimationProducer:
 	ldh a, [hCGB]
 	and a
 	ret z
-	ld a, [wPokedexAnimProducerState]
-	cp POKEDEX_ANIM_PRODUCER_LOADING
-	jr z, .load_dictionary
-	cp POKEDEX_ANIM_PRODUCER_PENDING
-	jr z, .initialize
-	cp POKEDEX_ANIM_PRODUCER_ACTIVE
-	ret nz
-	jr .produce
-
-.load_dictionary
-	call Pokedex_LoadAnimationDictionaryChunk
-	ret
-
-.initialize
-	ld de, POKEDEX_ANIM_LOGICAL_MAP
-	ld b, 0
-	ld a, [wPokedexAnimProducerPhase]
-	ld c, a
-	farcall PokeAnim_InitFrameProducer
-	ld [wPokedexAnimFrontpicDim], a
-	ld a, POKEDEX_ANIM_PRODUCER_ACTIVE
-	ld [wPokedexAnimProducerState], a
-
-.produce
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotState
-	ld a, [hl]
-	cp POKEDEX_ANIM_SLOT_BUILDING
-	jp z, Pokedex_TryUploadAnimationSlot
-	cp POKEDEX_ANIM_SLOT_EMPTY
+	ld a, [wPokedexAnimFlags]
+	bit POKEDEX_ANIM_ACTIVE_F, a
+	ret z
+	call Pokedex_EnsureAnimationStage
+	ld a, [wPokedexAnimDictionaryTilesRemaining]
+	and a
+	jr nz, .service
+	ld a, [wPokedexAnimFlags]
+	bit POKEDEX_ANIM_STAGE_VALID_F, a
+	ret z
+	bit POKEDEX_ANIM_STAGE_READY_F, a
 	ret nz
 
-	farcall PokeAnim_DecodeNextVisualFrame
-	jr nc, .ended
-	ld [wDexTempCounter], a
-	ld a, b
-	ld [wDexTempCounter + 1], a
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotDuration
-	ld a, [wDexTempCounter]
-	ld [hl], a
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotPrehold
-	ld a, [wDexTempCounter + 1]
-	ld [hl], a
-	jp Pokedex_BuildAnimationSlot
-
-.ended
-	ld a, b
-	ld [wPokedexAnimTrailingHold], a
-	ld a, POKEDEX_ANIM_PRODUCER_ENDED
-	ld [wPokedexAnimProducerState], a
-	ret
-
-Pokedex_LoadAnimationDictionaryChunk:
-; Each stream expands to at most six tiles. Input has already been serviced for
-; this frame, so a new selection can cancel the job before the next stream.
+.service
 	ldh a, [rWBK]
 	push af
 	ld a, BANK(wDecompressScratch)
 	ldh [rWBK], a
-	ld a, [wPokedexAnimDictionaryAddress]
-	ld l, a
-	ld a, [wPokedexAnimDictionaryAddress + 1]
-	ld h, a
-	ld a, [wPokedexAnimDictionaryDestination]
-	ld e, a
-	ld a, [wPokedexAnimDictionaryDestination + 1]
-	ld d, a
-	ld a, [wPokedexAnimDictionaryBank]
-	call FarDecompress
-	inc hl
-	ld a, l
-	ld [wPokedexAnimDictionaryAddress], a
-	ld a, h
-	ld [wPokedexAnimDictionaryAddress + 1], a
-	ld a, e
-	ld [wPokedexAnimDictionaryDestination], a
-	ld a, d
-	ld [wPokedexAnimDictionaryDestination + 1], a
+	ld a, [wPokedexAnimDictionaryTilesRemaining]
+	and a
+	call nz, Pokedex_LoadAnimationDictionaryChunk
+	call Pokedex_GatherReadyAnimationTiles
 	pop af
 	ldh [rWBK], a
 
-	ld hl, wPokedexAnimDictionaryTilesRemaining
-	ld a, [hl]
-	sub FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
-	jr nc, .store_remaining
-	xor a
-.store_remaining
-	ld [hl], a
-	ret nz
-	ld a, POKEDEX_ANIM_PRODUCER_PENDING
-	ld [wPokedexAnimProducerState], a
-	ret
-
-Pokedex_BuildAnimationSlot:
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotTileCount
-	xor a
-	ld [hl], a
-
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotMap
-	ld d, h
-	ld e, l
-	ld hl, POKEDEX_ANIM_LOGICAL_MAP
-	ld b, 7
-.map_row
-	ld c, 7
-.map_col
-	push bc
-	ld a, [hli]
-	call Pokedex_NormalizeAnimationTile
-	jr nc, .base_tile
-
-	push hl
-	push de
-	push af
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotTileCount
-	ld c, [hl]
-	inc [hl]
-	pop af
-	ld b, a
-	ld hl, POKEDEX_ANIM_SOURCE_TILES
-	ld e, c
-	ld d, 0
-	add hl, de
-	ld [hl], b
-	pop de
-	ld a, [wPokedexAnimProduceSlot]
-	and a
-	ld a, POKEDEX_ANIM_BUFFER_A_TILE
-	jr z, .got_buffer_tile
-	ld a, POKEDEX_ANIM_BUFFER_B_TILE
-.got_buffer_tile
-	add c
-	ld [de], a
-	inc de
-	pop hl
-	jr .next_map_tile
-
-.base_tile
-	ld [de], a
-	inc de
-.next_map_tile
-	pop bc
-	dec c
-	jr nz, .map_col
-	push bc
-	ld bc, SCREEN_WIDTH - 7
-	add hl, bc
-	pop bc
-	dec b
-	jr nz, .map_row
-
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotMap
-	ld d, h
-	ld e, l
-	ld bc, 7 * 7
-	add hl, bc
-	ld a, [wPokedexAnimProduceSlot]
-	and a
-	ld b, POKEDEX_ANIM_BUFFER_A_TILE
-	jr z, .got_attr_buffer_tile
-	ld b, POKEDEX_ANIM_BUFFER_B_TILE
-.got_attr_buffer_tile
-	ld c, 7 * 7
-.attr_loop
-	ld a, [de]
-	inc de
-	cp b
-	ld a, 1
-	jr c, .store_attr
-	or BG_BANK1
-.store_attr
-	ld [hli], a
-	dec c
-	jr nz, .attr_loop
-
-	call Pokedex_GatherAnimationTiles
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotState
-	ld [hl], POKEDEX_ANIM_SLOT_BUILDING
-	jp Pokedex_TryUploadAnimationSlot
-
-Pokedex_NormalizeAnimationTile:
-; Convert the parser's padded tile number back to the raw WRAMX6 dictionary
-; index. Carry is set only for tiles that must be streamed into bank 1.
-	cp $80
-	jr c, .no_skipped_tile
-	dec a
-.no_skipped_tile
-	cp 7 * 7
-	jr nc, .animation_tile
-	and a
-	ret
-.animation_tile
-	push af
-	ld a, [wPokedexAnimFrontpicDim]
-	cp 5
-	jr z, .five_by_five
-	cp 6
-	jr z, .six_by_six
-	pop af
-	scf
-	ret
-.five_by_five
-	pop af
-	sub 7 * 7 - 5 * 5
-	scf
-	ret
-.six_by_six
-	pop af
-	sub 7 * 7 - 6 * 6
-	scf
-	ret
-
-Pokedex_GatherAnimationTiles:
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotTileCount
-	ld c, [hl]
 	ld a, c
 	and a
 	ret z
-	ldh a, [rWBK]
+	ld [wDexTempCounter], a
+	ldh a, [rVBK]
 	push af
-	ld a, BANK(wDecompressScratch)
-	ldh [rWBK], a
-	ld hl, POKEDEX_ANIM_SOURCE_TILES
-	ld de, POKEDEX_ANIM_PAYLOAD
-.tile_loop
-	push bc
-	ld a, [hli]
-	push hl
-	ld l, a
-	ld h, 0
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	ld bc, wDecompressScratch
-	add hl, bc
-	ld b, TILE_SIZE
-.byte_loop
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec b
-	jr nz, .byte_loop
-	pop hl
-	pop bc
-	dec c
-	jr nz, .tile_loop
-	pop af
-	ldh [rWBK], a
-	ret
-
-Pokedex_TryUploadAnimationSlot:
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotTileCount
-	ld c, [hl]
-	ld a, c
-	and a
-	jr z, .uploaded
-
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	call Pokedex_GetAnimationUploadPointers
+	ld a, [wDexTempCounter]
+	ld c, a
 	ldh a, [rLCDC]
 	bit B_LCDC_ENABLE, a
 	jr z, .copy_lcd_off
-	ld b, c
-	ld a, $80
-	sub b
-	ld b, a
-	ldh a, [rLY]
-	cp b
-	ret nc
-
-	xor a
-	ldh [hBGMapMode], a
-	ldh a, [rVBK]
-	push af
-	ld a, BANK(vTiles4)
-	ldh [rVBK], a
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotVRAM
-	ld hl, POKEDEX_ANIM_PAYLOAD
 	call Pokedex_HDMATransferAnimationGFX
-	pop af
-	ldh [rVBK], a
-	jr .uploaded
+	jr .transfer_done
 
 .copy_lcd_off
-	ldh a, [rVBK]
-	push af
-	ld a, BANK(vTiles4)
-	ldh [rVBK], a
-	ld a, [wPokedexAnimProduceSlot]
-	call Pokedex_GetAnimationSlotVRAM
-	ld hl, POKEDEX_ANIM_PAYLOAD
 	ld b, 0
 	ld a, c
 	swap a
@@ -1032,33 +776,476 @@ Pokedex_TryUploadAnimationSlot:
 	and $f0
 	ld c, a
 	call CopyBytes
+.transfer_done
 	pop af
 	ldh [rVBK], a
 
-.uploaded
-	ld a, [wPokedexAnimProduceSlot]
+	ld a, [wDexTempCounter]
+	ld hl, wPokedexAnimUploadOffset
+	add [hl]
+	ld [hl], a
+	ld c, a
+	ld a, [wPokedexAnimStageTileCount]
+	cp c
+	ret nz
+	jp Pokedex_FinishAnimationStage
+
+Pokedex_EnsureAnimationStage:
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_PARSER_READY_F, [hl]
+	jr nz, .parser_ready
+	ld a, [wPokedexAnimOwner]
+	ld [wCurPartySpecies], a
+	xor a
+	ld [wBoxAlignment], a
+	ld de, POKEDEX_ANIM_PLAN_BUFFER
+	ld b, 0
+	ld a, [wPokedexAnimProducerPhase]
+	ld c, a
+	farcall PokeAnim_InitFrameProducer
+	ld [wPokedexAnimFrontpicDim], a
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_PARSER_READY_F, [hl]
+	res POKEDEX_ANIM_ENDED_F, [hl]
+
+.parser_ready
+	bit POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	ret nz
+	bit POKEDEX_ANIM_ENDED_F, [hl]
+	ret nz
+	; fallthrough
+
+Pokedex_PrepareNextAnimationStage:
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_ACTIVE_F, [hl]
+	ret z
+	bit POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	ret nz
+	bit POKEDEX_ANIM_ENDED_F, [hl]
+	ret nz
+
+	farcall PokeAnim_DecodeNextVisualFrame
+	jr nc, .ended
+	ld [wPokedexAnimStageDuration], a
+	ld a, b
+	ld [wPokedexAnimStagePrehold], a
+	ld a, e
+	ld [wPokedexAnimStageFrameID], a
+	xor a
+	ld [wPokedexAnimUploadOffset], a
+	ld [wPokedexAnimStageRequiredTiles], a
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	res POKEDEX_ANIM_STAGE_READY_F, [hl]
+
+	ld a, [wPokedexAnimStageFrameID]
+	and a
+	jr z, .base_frame
 	ld b, a
-	ld a, [wPokedexAnimDisplaySlot]
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationResidentFrameID
+	ld a, [hl]
 	cp b
-	ld c, POKEDEX_ANIM_SLOT_DISPLAYED
-	jr z, .set_slot_state
-	ld c, POKEDEX_ANIM_SLOT_READY
-.set_slot_state
+	jr z, .resident
+	ld [hl], -1
+	call Pokedex_BuildAnimationStage
+	ld a, [wPokedexAnimStageTileCount]
+	and a
+	ret nz
+	jp Pokedex_FinishAnimationStage
+
+.resident
+	xor a
+	ld [wPokedexAnimStageTileCount], a
+	jp Pokedex_FinishAnimationStage
+
+.base_frame
+	call Pokedex_BuildAnimationStage
+	jp Pokedex_FinishAnimationStage
+
+.ended
 	ld a, b
-	call Pokedex_GetAnimationSlotState
+	ld [wPokedexAnimTrailingHold], a
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_ENDED_F, [hl]
+	ret
+
+Pokedex_LoadAnimationDictionaryChunk:
+; rWBK is already set to the graphics scratch bank. Each stream expands to at
+; most six dictionary tiles so input can cancel before the next service call.
+	ld a, [wPokedexAnimDictionaryAddress]
+	ld l, a
+	ld a, [wPokedexAnimDictionaryAddress + 1]
+	ld h, a
+	ld a, [wPokedexAnimDictionaryDestination]
+	ld e, a
+	ld a, [wPokedexAnimDictionaryDestination + 1]
+	ld d, a
+	ld a, [wPokedexAnimDictionaryTilesRemaining]
+	cp FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
+	jr c, .got_chunk_size
+	ld a, FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
+.got_chunk_size
+	ld c, a
+	push bc
+	ld a, [wPokedexAnimDictionaryBank]
+	call FarDecompress
+	inc hl
+	pop bc
+	ld a, l
+	ld [wPokedexAnimDictionaryAddress], a
+	ld a, h
+	ld [wPokedexAnimDictionaryAddress + 1], a
+	ld a, e
+	ld [wPokedexAnimDictionaryDestination], a
+	ld a, d
+	ld [wPokedexAnimDictionaryDestination + 1], a
+
+	ld hl, wPokedexAnimDictionaryTilesRemaining
+	ld a, [hl]
+	sub c
+	ld [hl], a
+	ret
+
+Pokedex_BuildAnimationStage:
+	call Pokedex_InitializeAnimationStageMap
+	xor a
+	ld [wPokedexAnimStageTileCount], a
+	ld [wPokedexAnimStageRequiredTiles], a
+	ld a, [wPokedexAnimStageFrameID]
+	and a
+	ret z
+
+	ld b, a
+	farcall PokeAnim_GetDexFramePlanPointer
+	ld a, d
+	ld [wDexTempCounter], a
+	call GetFarByte
+	ld [wDexTempCounter + 1], a
+	and a
+	ret z
+	add a
+	ld c, a
+	ld b, 0
+	inc hl
+	ld de, POKEDEX_ANIM_PLAN_BUFFER
+	ld a, [wDexTempCounter]
+	call FarCopyBytes
+
+	xor a
+	ld [wDexTempCounter], a
+	ld hl, POKEDEX_ANIM_PLAN_BUFFER
+
+.pair_loop
+	ld a, [hli]
+	ld e, a
+	ld d, 0
+	ld a, [hli]
+	ld c, a
+	push hl
+	bit 7, e
+	jr nz, .base_tile
+
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationSlotMap
+	add hl, de
+	ld a, [wPokedexAnimStageSlot]
+	and a
+	ld a, POKEDEX_ANIM_BUFFER_A_TILE
+	jr z, .got_buffer_tile
+	ld a, POKEDEX_ANIM_BUFFER_B_TILE
+.got_buffer_tile
+	ld b, a
+	ld a, [wPokedexAnimStageTileCount]
+	add b
+	ld [hl], a
+	push bc
+	ld bc, 7 * 7
+	add hl, bc
+	ld [hl], 1 | BG_BANK1
+	pop bc
+
+	ld a, [wPokedexAnimStageTileCount]
+	ld e, a
+	ld d, 0
+	ld hl, POKEDEX_ANIM_SOURCE_TILES
+	add hl, de
+	ld a, c
+	ld [hl], a
+	inc a
+	ld [wPokedexAnimStageRequiredTiles], a
+	ld hl, wPokedexAnimStageTileCount
+	inc [hl]
+	jr .pair_done
+
+.base_tile
+	res 7, e
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationSlotMap
+	add hl, de
 	ld [hl], c
+
+.pair_done
+	pop hl
+
+	ld a, [wDexTempCounter]
+	inc a
+	ld [wDexTempCounter], a
+	ld b, a
+	ld a, [wDexTempCounter + 1]
+	cp b
+	jr nz, .pair_loop
+	ret
+
+Pokedex_InitializeAnimationStageMap:
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationSlotMap
+	ld d, h
+	ld e, l
+	ld hl, .BaseMap
+	ld bc, 7 * 7
+	call CopyBytes
+	ld h, d
+	ld l, e
+	ld a, 1
+	ld bc, 7 * 7
+	call ByteFill
+	ret
+
+.BaseMap:
+	db  0,  7, 14, 21, 28, 35, 42
+	db  1,  8, 15, 22, 29, 36, 43
+	db  2,  9, 16, 23, 30, 37, 44
+	db  3, 10, 17, 24, 31, 38, 45
+	db  4, 11, 18, 25, 32, 39, 46
+	db  5, 12, 19, 26, 33, 40, 47
+	db  6, 13, 20, 27, 34, 41, 48
+
+Pokedex_GetAnimationBaseTileCount:
+	ld a, [wPokedexAnimFrontpicDim]
+	ld b, a
+	ld c, a
+	xor a
+.row
+	add c
+	dec b
+	jr nz, .row
+	ret
+
+Pokedex_GatherReadyAnimationTiles:
+; rWBK is already set to the decompression bank. Return in c the changed tiles
+; now ready for one bounded transfer.
+	ld c, 0
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	ret z
+	bit POKEDEX_ANIM_STAGE_READY_F, [hl]
+	ret nz
+	ld a, [wPokedexAnimDictionaryTileCount]
+	ld hl, wPokedexAnimDictionaryTilesRemaining
+	sub [hl]
+	ld [wDexTempCounter], a
+	xor a
+	ld [wDexTempCounter + 1], a
+
+	ld a, [wPokedexAnimUploadOffset]
+	ld c, a
+	ld b, 0
+	ld a, c
+	ld l, a
+	ld h, 0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld de, POKEDEX_ANIM_PAYLOAD
+	add hl, de
+	ld d, h
+	ld e, l
+	ld a, [wPokedexAnimUploadOffset]
+	ld c, a
+	ld b, 0
+	ld hl, POKEDEX_ANIM_SOURCE_TILES
+	add hl, bc
+
+.tile_loop
+	ld a, [wPokedexAnimUploadOffset]
+	ld b, a
+	ld a, [wDexTempCounter + 1]
+	add b
+	ld b, a
+	ld a, [wPokedexAnimStageTileCount]
+	cp b
+	jr z, .done
+	ld a, [wDexTempCounter + 1]
+	cp POKEDEX_ANIM_UPLOAD_CHUNK_TILES
+	jr z, .done
+	ld a, [hli]
+	ld b, a
+	ld a, [wDexTempCounter]
+	cp b
+	jr c, .done
+	jr z, .done
+	push hl
+	ld l, b
+	ld h, 0
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	add hl, hl
+	ld bc, wDecompressScratch
+	add hl, bc
+	ld b, TILE_SIZE
+.copy_tile
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec b
+	jr nz, .copy_tile
+	pop hl
+	ld a, [wDexTempCounter + 1]
+	inc a
+	ld [wDexTempCounter + 1], a
+	jr .tile_loop
+
+.done
+	ld a, [wDexTempCounter + 1]
+	ld c, a
+	ret
+
+Pokedex_GetAnimationUploadPointers:
+	ld a, [wPokedexAnimUploadOffset]
+	ld c, a
+	ld b, 0
+	sla c
+	rl b
+	sla c
+	rl b
+	sla c
+	rl b
+	sla c
+	rl b
+	ld hl, POKEDEX_ANIM_PAYLOAD
+	add hl, bc
+	push hl
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationSlotVRAM
+	ld h, d
+	ld l, e
+	add hl, bc
+	ld d, h
+	ld e, l
+	pop hl
+	ret
+
+Pokedex_FinishAnimationStage:
+	ld a, [wPokedexAnimStageFrameID]
+	and a
+	jr z, .ready
+	ld b, a
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationResidentFrameID
+	ld [hl], b
+.ready
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_STAGE_READY_F, [hl]
+	ret
+
+Pokedex_PrimeDescriptionAnimation:
+; Fill the fixed eight-stream runway and make the first visual frame complete.
+; Listing prefetch work is retained, so this loop performs only the deficit.
+	ldh a, [hCGB]
+	and a
+	ret z
+.loop
+	ld a, [wPokedexAnimFlags]
+	bit POKEDEX_ANIM_ACTIVE_F, a
+	ret z
+	call Pokedex_HasAnimationStartupRunway
+	ret c
+	call Pokedex_ServiceAnimationProducer
+	jr .loop
+
+Pokedex_HasAnimationStartupRunway:
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_STAGE_READY_F, [hl]
+	jr nz, .check_tiles
+	bit POKEDEX_ANIM_ENDED_F, [hl]
+	jr nz, .ready
+	and a
+	ret
+
+.check_tiles
+	call Pokedex_GetAnimationBaseTileCount
+	ld b, a
+	ld a, [wPokedexAnimDictionaryTileCount]
+	sub b
+	cp POKEDEX_ANIM_STARTUP_TILES
+	jr c, .all_tiles
 	ld a, b
+	add POKEDEX_ANIM_STARTUP_TILES
+	jr .check_stage_requirement
+.all_tiles
+	ld a, [wPokedexAnimDictionaryTileCount]
+.check_stage_requirement
+	ld b, a
+	ld a, [wPokedexAnimStageRequiredTiles]
+	cp b
+	jr c, .got_target
+	ld b, a
+.got_target
+	ld a, [wPokedexAnimDictionaryTileCount]
+	cp b
+	jr nc, .target_bounded
+	ld b, a
+.target_bounded
+	ld a, [wPokedexAnimDictionaryTileCount]
+	ld hl, wPokedexAnimDictionaryTilesRemaining
+	sub [hl]
+	cp b
+	jr c, .not_ready
+.ready
+	scf
+	ret
+.not_ready
+	and a
+	ret
+
+Pokedex_StageInitialAnimationFrame:
+; Install the ready frame into the backing maps before the Selected owner is
+; published, so the first visible Description frame is already complete.
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_STAGE_READY_F, [hl]
+	ret z
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationSlotMap
+	ld d, h
+	ld e, l
+	farcall Pokedex_StageAnimationFrontpicMap
+	ld a, [wPokedexAnimStageSlot]
+	ld [wPokedexAnimDisplaySlot], a
+	ld a, [wPokedexAnimStageDuration]
+	ld [wPokedexAnimPlaybackTimer], a
+	ld a, POKEDEX_ANIM_PLAYBACK_WAITING
+	ld [wPokedexAnimPlaybackState], a
+	ld hl, wPokedexAnimFlags
+	res POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	res POKEDEX_ANIM_STAGE_READY_F, [hl]
+	ld hl, wPokedexAnimStageSlot
+	ld a, [hl]
 	xor 1
-	ld [wPokedexAnimProduceSlot], a
+	ld [hl], a
+	scf
 	ret
 
 Pokedex_UpdateDescriptionAnimation:
 	ldh a, [hCGB]
 	and a
 	ret z
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_MAP_PENDING_F, [hl]
+	ret nz
 	ld a, [wPokedexAnimPlaybackState]
-	cp POKEDEX_ANIM_PLAYBACK_WAITING
-	jr z, .waiting
 	cp POKEDEX_ANIM_PLAYBACK_PLAYING
 	jr z, .playing
 	cp POKEDEX_ANIM_PLAYBACK_MAIN_HOLD
@@ -1066,28 +1253,6 @@ Pokedex_UpdateDescriptionAnimation:
 	cp POKEDEX_ANIM_PLAYBACK_PREHOLD
 	jr z, .holding
 	ret
-
-.waiting
-	xor a
-	call Pokedex_GetAnimationSlotState
-	ld a, [hl]
-	cp POKEDEX_ANIM_SLOT_READY
-	ret nz
-	ld a, 1
-	call Pokedex_GetAnimationSlotState
-	ld a, [hl]
-	cp POKEDEX_ANIM_SLOT_READY
-	jr z, .start
-	ld a, [wPokedexAnimProducerState]
-	cp POKEDEX_ANIM_PRODUCER_ENDED
-	ret nz
-.start
-	ld a, [wPokedexAnimOwner]
-	call PlayMonCry2
-	ld a, POKEDEX_ANIM_PLAYBACK_PLAYING
-	ld [wPokedexAnimPlaybackState], a
-	xor a
-	jp Pokedex_InstallAnimationSlot
 
 .playing
 	ld hl, wPokedexAnimPlaybackTimer
@@ -1104,32 +1269,30 @@ Pokedex_UpdateDescriptionAnimation:
 	jp Pokedex_AdvanceDescriptionAnimation
 
 Pokedex_AdvanceDescriptionAnimation:
-	ld a, [wPokedexAnimConsumeSlot]
-	call Pokedex_GetAnimationSlotPrehold
-	ld a, [hl]
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	jr z, .check_phase_end
+	ld a, [wPokedexAnimStagePrehold]
 	and a
-	jr z, .check_slot
+	jr z, .check_stage
 	ld [wPokedexAnimHoldTimer], a
 	xor a
-	ld [hl], a
+	ld [wPokedexAnimStagePrehold], a
 	ld a, POKEDEX_ANIM_PLAYBACK_PREHOLD
 	ld [wPokedexAnimPlaybackState], a
 	ret
 
-.check_slot
-	ld a, [wPokedexAnimConsumeSlot]
-	call Pokedex_GetAnimationSlotState
-	ld a, [hl]
-	cp POKEDEX_ANIM_SLOT_READY
-	jr z, .install
-	cp POKEDEX_ANIM_SLOT_BUILDING
-	jr z, .underrun_install
-	ld a, [wPokedexAnimProducerState]
-	cp POKEDEX_ANIM_PRODUCER_ENDED
-	jr nz, .underrun_empty
+.check_stage
+	bit POKEDEX_ANIM_STAGE_READY_F, [hl]
+	jr z, .underrun_stage
+	jp Pokedex_InstallAnimationStage
+
+.check_phase_end
+	bit POKEDEX_ANIM_ENDED_F, [hl]
+	jr z, .underrun_empty
 	ld a, [wPokedexAnimTrailingHold]
 	and a
-	jr z, .check_phase_end
+	jr z, .phase_finished
 	ld [wPokedexAnimHoldTimer], a
 	xor a
 	ld [wPokedexAnimTrailingHold], a
@@ -1137,48 +1300,43 @@ Pokedex_AdvanceDescriptionAnimation:
 	ld [wPokedexAnimPlaybackState], a
 	ret
 
-.check_phase_end
+.phase_finished
 	ld a, [wPokedexAnimProducerPhase]
 	cp POKEDEX_ANIM_PHASE_MAIN
 	jr nz, .finished
-
-.begin_main_hold
 	call Pokedex_RestoreBaseFrontpicMap
 	ld a, POKEDEX_ANIM_PHASE_IDLE
 	ld [wPokedexAnimProducerPhase], a
-	ld a, POKEDEX_ANIM_PRODUCER_PENDING
-	ld [wPokedexAnimProducerState], a
+	ld hl, wPokedexAnimFlags
+	res POKEDEX_ANIM_PARSER_READY_F, [hl]
+	res POKEDEX_ANIM_ENDED_F, [hl]
+	res POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	res POKEDEX_ANIM_STAGE_READY_F, [hl]
 	xor a
-	ld [wPokedexAnimProduceSlot], a
-	ld [wPokedexAnimConsumeSlot], a
+	ld [wPokedexAnimStageSlot], a
 	ld a, 18
 	ld [wPokedexAnimHoldTimer], a
 	ld a, POKEDEX_ANIM_PLAYBACK_MAIN_HOLD
 	ld [wPokedexAnimPlaybackState], a
-	ret
+	jp Pokedex_EnsureAnimationStage
 
 .finished
 	call Pokedex_RestoreBaseFrontpicMap
 	ld a, POKEDEX_ANIM_PLAYBACK_DONE
 	ld [wPokedexAnimPlaybackState], a
-	xor a
-	ld [wPokedexAnimProducerState], a
+	ld a, [wPokedexAnimFlags]
+	and 1 << POKEDEX_ANIM_MAP_PENDING_F
+	ld [wPokedexAnimFlags], a
 	ret
 
-.underrun_install
+.underrun_stage
 	call Pokedex_CountAnimationUnderflow
-.install
-	ld a, [wPokedexAnimConsumeSlot]
-	jp Pokedex_InstallAnimationSlot
+	jp Pokedex_InstallAnimationStage
 
 .underrun_empty
 	call Pokedex_CountAnimationUnderflow
 	call Pokedex_BuildAnimationUnderflowMap
-	ld a, [wPokedexAnimConsumeSlot]
-	call Pokedex_InstallAnimationSlot
-	ld a, [wPokedexAnimConsumeSlot]
-	ld [wPokedexAnimProduceSlot], a
-	ret
+	jp Pokedex_InstallAnimationStage
 
 Pokedex_CountAnimationUnderflow:
 	ld hl, wPokedexAnimUnderflowCount
@@ -1189,14 +1347,14 @@ Pokedex_CountAnimationUnderflow:
 	ret
 
 Pokedex_BuildAnimationUnderflowMap:
-; With no decoded frame at all, expose every tile in the expected buffer.
-; This deliberately displays stale/incomplete graphics instead of hiding an
-; underrun behind the previous complete frame.
-	ld a, [wPokedexAnimConsumeSlot]
+	ld a, [wPokedexAnimStageSlot]
+	call Pokedex_GetAnimationResidentFrameID
+	ld [hl], -1
+	ld a, [wPokedexAnimStageSlot]
 	call Pokedex_GetAnimationSlotMap
 	ld d, h
 	ld e, l
-	ld a, [wPokedexAnimConsumeSlot]
+	ld a, [wPokedexAnimStageSlot]
 	and a
 	ld a, POKEDEX_ANIM_BUFFER_A_TILE
 	jr z, .got_tile
@@ -1209,54 +1367,43 @@ Pokedex_BuildAnimationUnderflowMap:
 	inc a
 	dec c
 	jr nz, .map_loop
-	ld a, [wPokedexAnimConsumeSlot]
+	ld a, [wPokedexAnimStageSlot]
 	call Pokedex_GetAnimationSlotMap
 	ld bc, 7 * 7
 	add hl, bc
 	ld a, 1 | BG_BANK1
+	ld bc, 7 * 7
 	call ByteFill
-	ld a, [wPokedexAnimConsumeSlot]
-	call Pokedex_GetAnimationSlotDuration
-	ld [hl], 1
-	ld a, [wPokedexAnimConsumeSlot]
-	call Pokedex_GetAnimationSlotState
-	ld [hl], POKEDEX_ANIM_SLOT_READY
+	ld a, 1
+	ld [wPokedexAnimStageDuration], a
+	xor a
+	ld [wPokedexAnimStagePrehold], a
+	ld [wPokedexAnimStageTileCount], a
+	ld a, -1
+	ld [wPokedexAnimStageFrameID], a
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	res POKEDEX_ANIM_STAGE_READY_F, [hl]
 	ret
 
-Pokedex_InstallAnimationSlot:
-; a = slot. Install the packed tile/attribute maps, then release the buffer
-; that was visible previously.
-	push af
+Pokedex_InstallAnimationStage:
+	ld a, [wPokedexAnimStageSlot]
 	call Pokedex_GetAnimationSlotMap
 	ld d, h
 	ld e, l
 	farcall Pokedex_CommitAnimationFrontpicMap
-	pop af
-	ld b, a
-	ld a, [wPokedexAnimDisplaySlot]
-	cp -1
-	jr z, .set_new
-	cp b
-	jr z, .set_new
-	call Pokedex_GetAnimationSlotState
-	ld [hl], POKEDEX_ANIM_SLOT_EMPTY
-.set_new
-	ld a, b
+	ld a, [wPokedexAnimStageSlot]
 	ld [wPokedexAnimDisplaySlot], a
-	call Pokedex_GetAnimationSlotState
-	ld a, [hl]
-	cp POKEDEX_ANIM_SLOT_BUILDING
-	jr z, .set_timer
-	ld [hl], POKEDEX_ANIM_SLOT_DISPLAYED
-.set_timer
-	ld a, b
-	call Pokedex_GetAnimationSlotDuration
-	ld a, [hl]
+	ld a, [wPokedexAnimStageDuration]
 	ld [wPokedexAnimPlaybackTimer], a
-	ld a, b
+	ld hl, wPokedexAnimFlags
+	res POKEDEX_ANIM_STAGE_VALID_F, [hl]
+	res POKEDEX_ANIM_STAGE_READY_F, [hl]
+	ld hl, wPokedexAnimStageSlot
+	ld a, [hl]
 	xor 1
-	ld [wPokedexAnimConsumeSlot], a
-	ret
+	ld [hl], a
+	jp Pokedex_PrepareNextAnimationStage
 
 Pokedex_RestoreBaseFrontpicMap:
 	farcall Pokedex_PlaceFrontpicTopLeftCorner
@@ -1274,10 +1421,6 @@ Pokedex_RestoreBaseFrontpicMap:
 	dec b
 	jr nz, .attr_row
 	farcall Pokedex_CommitCurrentFrontpicMap
-	ld hl, wPokedexAnimSlotStates
-	ld bc, 2
-	xor a
-	call ByteFill
 	ld a, -1
 	ld [wPokedexAnimDisplaySlot], a
 	ret
@@ -1291,21 +1434,11 @@ Pokedex_StopDescriptionAnimation:
 	call nz, Pokedex_RestoreBaseFrontpicMap
 	jp Pokedex_CancelAnimationPrefetch
 
-Pokedex_GetAnimationSlotState:
-	ld hl, wPokedexAnimSlotStates
-	jr Pokedex_AddSlotOffset
+Pokedex_GetAnimationResidentFrameID:
+	ld hl, wPokedexAnimResidentFrameIDs
+	jr Pokedex_AddAnimationSlotOffset
 
-Pokedex_GetAnimationSlotDuration:
-	ld hl, wPokedexAnimSlotDurations
-	jr Pokedex_AddSlotOffset
-
-Pokedex_GetAnimationSlotPrehold:
-	ld hl, wPokedexAnimSlotPreholds
-	jr Pokedex_AddSlotOffset
-
-Pokedex_GetAnimationSlotTileCount:
-	ld hl, wPokedexAnimSlotTileCounts
-Pokedex_AddSlotOffset:
+Pokedex_AddAnimationSlotOffset:
 	ld e, a
 	ld d, 0
 	add hl, de

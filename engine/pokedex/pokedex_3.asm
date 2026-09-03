@@ -863,52 +863,71 @@ Pokedex_CommitStagedSelection:
 	jr c, .wait_frontpic_row
 
 .commit_frontpic
-	ld hl, wPokedexWRAM0Scratch
-	ld de, vTiles2
-	ld c, 7 * 7
-	call Pokedex_HDMATransferFrontpic
-	ld a, [wCurPartySpecies]
-	cp -1
-	ret z
-	ldh a, [rVBK]
-	push af
-	ld a, BANK(vTiles4)
-	ldh [rVBK], a
-	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
-	ld de, vTiles4 tile $31
-	ld c, 4
-	call Pokedex_HDMATransferSelectionGFX
-	pop af
-	ldh [rVBK], a
-	ld a, [wCurPartySpecies]
-	ld [wPokedexResidentFootprintSpecies], a
-	ret
+	jp Pokedex_CommitPreparedSelectedMonGFX
 
 .lcd_off
 	hlcoord 0, 1
 	ld de, vBGMap1 + TILEMAP_WIDTH
 	ld bc, 11
 	call CopyBytes
+	; fallthrough
+
+Pokedex_CommitPreparedSelectedMonGFX::
+; Publish the prepared base frontpic and footprint without touching either
+; owner's tilemaps. This is shared by cold Listing setup and hidden Selected
+; staging, where the complete map is committed separately.
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .copy_frontpic
+	ld hl, wPokedexWRAM0Scratch
+	ld de, vTiles2
+	ld c, 7 * 7
+	call Pokedex_HDMATransferFrontpic
+	jr .frontpic_ready
+
+.copy_frontpic
 	ld hl, wPokedexWRAM0Scratch
 	ld de, vTiles2
 	ld bc, 7 * 7 tiles
 	call CopyBytes
+
+.frontpic_ready
 	ld a, [wCurPartySpecies]
 	cp -1
-	ret z
-	ldh a, [rVBK]
-	push af
+	jr z, .done
 	ld a, BANK(vTiles4)
 	ldh [rVBK], a
+	ldh a, [rLCDC]
+	bit B_LCDC_ENABLE, a
+	jr z, .copy_footprint
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld de, vTiles4 tile $31
+	ld c, 4
+	call Pokedex_HDMATransferSelectionGFX
+	jr .footprint_ready
+
+.copy_footprint
 	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
 	ld de, vTiles4 tile $31
 	ld bc, 4 tiles
 	call CopyBytes
-	pop af
-	ldh [rVBK], a
+
+.footprint_ready
 	ld a, [wCurPartySpecies]
 	ld [wPokedexResidentFootprintSpecies], a
+
+.done
+	pop af
+	ldh [rVBK], a
 	ret
+
+Pokedex_PrepareAndCommitSelectedMonGFX::
+	farcall Pokedex_PrepareSelectedMonTiles
+	jp Pokedex_CommitPreparedSelectedMonGFX
 
 Pokedex_CommitStagedSelectionName:
 ; Commit only the Listing header after its visible scanline has passed.
@@ -935,6 +954,12 @@ Pokedex_CommitStagedSelectionName:
 
 Pokedex_CommitAnimationFrontpicMap::
 ; de = packed 7x7 tilemap immediately followed by packed attributes.
+	call Pokedex_StageAnimationFrontpicMap
+	jr Pokedex_CommitCurrentFrontpicMap
+
+Pokedex_StageAnimationFrontpicMap::
+; Patch only the owner backing maps. The caller can stage this before an
+; atomic owner transition without exposing a partially installed frame.
 	ld h, d
 	ld l, e
 	push hl
@@ -945,37 +970,57 @@ Pokedex_CommitAnimationFrontpicMap::
 	add hl, bc
 	decoord 1, 1, wAttrmap
 	call Pokedex_CopyPackedFrontpicMapToBacking
-	; fallthrough
+	ret
 
 Pokedex_CommitCurrentFrontpicMap::
-; Reveal a complete map only after the frontpic's visible scanlines have
-; passed. The graphics upload has already completed (or deliberately
-; underrun) before this map is installed.
+; Publish the prepared tilemap and attributes together in VBlank. The
+; graphics upload has already completed (or deliberately underrun).
 	xor a
 	ldh [hBGMapMode], a
-	ldh a, [rLCDC]
-	bit B_LCDC_ENABLE, a
-	jr z, .copy
-	ldh a, [rLY]
-	cp 64
-	jr nc, .copy
-.wait_frontpic
-	ldh a, [rLY]
-	cp 64
-	jr c, .wait_frontpic
-.copy
-	ldh a, [rVBK]
+	call Pokedex_StageCurrentFrontpicOwnerMaps
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_MAP_PENDING_F, [hl]
+	ld a, VBLANK_POKEDEX
+	ldh [hVBlank], a
+	ret
+
+Pokedex_StageCurrentFrontpicOwnerMaps:
+	ldh a, [rSVBK]
 	push af
-	xor a
-	ldh [rVBK], a
+	ld a, BANK(wPokedexOwnerTilemapBuffer)
+	ldh [rSVBK], a
 	hlcoord 1, 1
-	call Pokedex_CopyBackingFrontpicMapToVRAM
-	ld a, BANK(vBGMap2)
-	ldh [rVBK], a
+	ld de, wPokedexOwnerTilemapBuffer + TILEMAP_WIDTH + 1
+	call .CopyMap
 	hlcoord 1, 1, wAttrmap
-	call Pokedex_CopyBackingFrontpicMapToVRAM
+	ld de, wPokedexOwnerAttrmapBuffer + TILEMAP_WIDTH + 1
+	call .CopyMap
 	pop af
-	ldh [rVBK], a
+	ldh [rSVBK], a
+	ret
+
+.CopyMap:
+	ld b, 7
+.row
+	ld c, 7
+.col
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .col
+	push bc
+	ld bc, SCREEN_WIDTH - 7
+	add hl, bc
+	pop bc
+	ld a, e
+	add TILEMAP_WIDTH - 7
+	ld e, a
+	jr nc, .no_dest_carry
+	inc d
+.no_dest_carry
+	dec b
+	jr nz, .row
 	ret
 
 Pokedex_CopyPackedFrontpicMapToBacking:
@@ -996,48 +1041,6 @@ Pokedex_CopyPackedFrontpicMapToBacking:
 .no_backing_carry
 	dec b
 	jr nz, .backing_row
-	ret
-
-Pokedex_CopyBackingFrontpicMapToVRAM:
-	push hl
-	ldh a, [hBGMapAddress]
-	ld e, a
-	ldh a, [hBGMapAddress + 1]
-	ld d, a
-	ld a, e
-	add TILEMAP_WIDTH + 1
-	ld e, a
-	jr nc, .got_vram_dest
-	inc d
-.got_vram_dest
-	pop hl
-	ld b, 7
-.vram_row
-	ld c, 7
-.vram_col
-.wait_vram
-	ldh a, [rSTAT]
-	and STAT_BUSY
-	jr nz, .wait_vram
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .vram_col
-	ld a, l
-	add SCREEN_WIDTH - 7
-	ld l, a
-	jr nc, .no_source_carry
-	inc h
-.no_source_carry
-	ld a, e
-	add TILEMAP_WIDTH - 7
-	ld e, a
-	jr nc, .no_dest_carry
-	inc d
-.no_dest_carry
-	dec b
-	jr nz, .vram_row
 	ret
 
 Pokedex_SyncGridIconAnimationFrame:
@@ -1114,13 +1117,13 @@ Pokedex_PublishOrStageDescriptionBacking::
 	ldh a, [hCGB]
 	and a
 	jr z, .publish
+	call Pokedex_StageOwnerTransitionMaps
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_ENTERING
 	jr nz, .publish
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
 	jr nz, .publish
-	call Pokedex_StageOwnerTransitionMaps
 	ld a, POKEDEX_OWNER_TRANSITION_DESCRIPTION
 	call Pokedex_QueueOwnerTransition
 	xor a
@@ -1169,6 +1172,8 @@ Pokedex_BlackOutSelectedMonBG::
 
 Pokedex_VBlankDispatch::
 	call Pokedex_VBlankOwnerTransition
+	ret c
+	call Pokedex_VBlankAnimationFrontpicMap
 	ret c
 	jp Pokedex_VBlankGridIconAnimation
 
@@ -1298,10 +1303,76 @@ Pokedex_VBlankOwnerTransition::
 	ldh [rVDMA_LEN], a
 	ret
 
+Pokedex_VBlankAnimationFrontpicMap:
+; Publish all seven rows containing the Selected frontpic from the persistent
+; owner buffers. Both VRAM banks complete in one VBlank before BG0 is scanned.
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_MAP_PENDING_F, [hl]
+	jr nz, .pending
+	and a
+	ret
+
+.pending
+	ldh a, [hBGMapUpdate]
+	and a
+	jr nz, .defer
+	ldh a, [hDMATransfer]
+	and a
+	jr nz, .defer
+	ldh a, [rLY]
+	cp LY_VBLANK + 2
+	jr nc, .defer
+
+	ldh a, [rSVBK]
+	push af
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(wPokedexOwnerTilemapBuffer)
+	ldh [rSVBK], a
+
+	ld a, BANK(vBGMap2)
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerAttrmapBuffer + TILEMAP_WIDTH
+	call .TransferRows
+	xor a
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerTilemapBuffer + TILEMAP_WIDTH
+	call .TransferRows
+
+	pop af
+	ldh [rVBK], a
+	pop af
+	ldh [rSVBK], a
+	ld hl, wPokedexAnimFlags
+	res POKEDEX_ANIM_MAP_PENDING_F, [hl]
+	xor a
+	ldh [hVBlank], a
+.defer
+	scf
+	ret
+
+.TransferRows:
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	and $f0
+	ldh [rVDMA_SRC_LOW], a
+	ld a, HIGH(vBGMap0 + TILEMAP_WIDTH)
+	and $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, LOW(vBGMap0 + TILEMAP_WIDTH)
+	ldh [rVDMA_DEST_LOW], a
+	ld a, 7 * TILEMAP_WIDTH / $10 - 1
+	ldh [rVDMA_LEN], a
+	ret
+
 Pokedex_VBlankGridIconAnimation::
 ; A full-grid wrap publishes its portrait, palettes, and shadow OAM as one
 ; VBlank-owned transaction. Mainline code has already replaced each target
 ; grid row after its outgoing pixels passed.
+	ld a, [wPokedexSelectedState]
+	and a
+	ret nz
 	ld hl, wPokedexGridScrollFlags
 	bit POKEDEX_GRID_SCROLL_COMMIT_F, [hl]
 	jp nz, Pokedex_VBlankCommitWrappedGrid

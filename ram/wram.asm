@@ -781,15 +781,16 @@ wPokedexOwnerTransition:: db
 wPokedexSelectedBGPaletteDirty:: db
 wPokedexSelectedOBJPaletteDirty:: db
 wPokedexAnimOwner:: db
-wPokedexAnimProducerState:: db
+wPokedexAnimFlags:: db
 wPokedexAnimProducerPhase:: db
-wPokedexAnimProduceSlot:: db
-wPokedexAnimConsumeSlot:: db
+wPokedexAnimStageSlot:: db
 wPokedexAnimDisplaySlot:: db
-wPokedexAnimSlotStates:: ds 2
-wPokedexAnimSlotDurations:: ds 2
-wPokedexAnimSlotPreholds:: ds 2
-wPokedexAnimSlotTileCounts:: ds 2
+wPokedexAnimStageDuration:: db
+wPokedexAnimStagePrehold:: db
+wPokedexAnimStageTileCount:: db
+wPokedexAnimStageFrameID:: db
+wPokedexAnimResidentFrameIDs:: ds 2
+wPokedexAnimUploadOffset:: db
 wPokedexAnimPlaybackState:: db
 wPokedexAnimPlaybackTimer:: db
 wPokedexAnimHoldTimer:: db
@@ -801,6 +802,7 @@ wPokedexAnimDictionaryAddress:: dw
 wPokedexAnimDictionaryDestination:: dw
 wPokedexAnimDictionaryTilesRemaining:: db
 wPokedexAnimDictionaryTileCount:: db
+wPokedexAnimStageRequiredTiles:: db
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -808,7 +810,7 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 142
+	ds 143
 
 NEXTU
 ; pokegear
@@ -3468,12 +3470,12 @@ wPokeAnimCurBitmask:: db
 wPokeAnimWaitCounter:: db
 wPokeAnimCommand:: db
 wPokeAnimParameter:: db
-	ds 1
+wPokeAnimDexPlanBank:: db
 wPokeAnimBitmaskCurCol:: db
 wPokeAnimBitmaskCurRow:: db
 wPokeAnimBitmaskCurBit:: db
 wPokeAnimBitmaskBuffer:: ds 7
-	ds 2
+wPokeAnimDexPlanAddr:: dw
 wPokeAnimStructEnd::
 wPokeAnimFrameTiles:: ds 7 * 7
 

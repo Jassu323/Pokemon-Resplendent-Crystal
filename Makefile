@@ -71,6 +71,7 @@ clean: tidy
 	     ! -path "gfx/pokemon/unown/*" \
 	     \( -name "bitmask.asm" \
 	        -o -name "frames.asm" \
+	        -o -name "front.dexanim" \
 	        -o -name "front.animated.tilemap" \
 	        -o -name "front.dimensions" \) \
 	     -delete
@@ -158,6 +159,8 @@ gfx/pokemon/%/bitmask.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fr
 	tools/pokemon_animation -b $^ > $@
 gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions
 	tools/pokemon_animation -f $^ > $@
+gfx/pokemon/%/front.dexanim: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions tools/pokemon_animation
+	tools/pokemon_animation --dex-plan $@ $(word 1,$^) $(word 2,$^)
 
 
 ### Pokemon and trainer sprite rules

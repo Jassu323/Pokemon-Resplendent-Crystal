@@ -26,16 +26,12 @@ PokedexSelectedMon_Enter:
 	call PokedexSelectedMon_Reveal
 .revealed
 	call Pokedex_BeginDescriptionAnimation
-	call Pokedex_ServiceAnimationProducer
-	call Pokedex_UpdateDescriptionAnimation
 	ld a, DEXSELECT_STATE_ACTIVE
 	ld [wPokedexSelectedState], a
 	farcall Pokedex_IncrementDexPointer
 	ret
 
 PokedexSelectedMon_Update:
-	call Pokedex_ServiceAnimationProducer
-	call Pokedex_UpdateDescriptionAnimation
 	farcall PokedexSelectedMon_ReadFooterCursor
 	push af
 	call PokedexSelectedMon_CommitFooterCursor
@@ -48,8 +44,9 @@ PokedexSelectedMon_Update:
 	and PAD_A
 	jp nz, PokedexSelectedMon_ActivateFooterView
 	call PokedexSelectedMon_FindNextSeen
-	ret nc
-	jp PokedexSelectedMon_ChangeSpecies
+	jp c, PokedexSelectedMon_ChangeSpecies
+	call Pokedex_ServiceAnimationProducer
+	jp Pokedex_UpdateDescriptionAnimation
 
 PokedexSelectedMon_CommitFooterCursor:
 	xor a
@@ -133,10 +130,7 @@ PokedexSelectedMon_ChangeSpecies:
 	ld [wPokedexStatus], a
 	call PokedexSelectedMon_StageDescription
 	call PokedexSelectedMon_Reveal
-	call Pokedex_StartAnimationPrefetch
 	call Pokedex_BeginDescriptionAnimation
-	call Pokedex_ServiceAnimationProducer
-	call Pokedex_UpdateDescriptionAnimation
 	ld a, DEXSELECT_STATE_ACTIVE
 	ld [wPokedexSelectedState], a
 	ret
@@ -205,7 +199,6 @@ PokedexSelectedMon_Area:
 	ld [wPokedexSelectedView], a
 	call PokedexSelectedMon_StageDescription
 	call PokedexSelectedMon_Reveal
-	call Pokedex_StartAnimationPrefetch
 	call Pokedex_BeginDescriptionAnimation
 	ld a, DEXSELECT_STATE_ACTIVE
 	ld [wPokedexSelectedState], a
@@ -235,9 +228,18 @@ PokedexSelectedMon_StageDescription:
 	jr z, .selected_tiles_ready
 
 .load_selected_tiles
+	ldh a, [hCGB]
+	and a
+	jr z, .load_selected_tiles_dmg
+	farcall Pokedex_PrepareAndCommitSelectedMonGFX
+	jr .selected_tiles_ready
+
+.load_selected_tiles_dmg
 	farcall Pokedex_LoadSelectedMonTiles
 .selected_tiles_ready
 	farcall Pokedex_DrawResidentFootprint
+	call Pokedex_StartAnimationPrefetch
+	call Pokedex_PrimeDescriptionAnimation
 	farcall Pokedex_GetSelectedMon
 	ld a, [wTempSpecies]
 	ld [wCurPartySpecies], a
@@ -248,6 +250,7 @@ PokedexSelectedMon_StageDescription:
 	farcall Pokedex_ApplyUsualPals
 	xor a
 	ldh [hCGBPalUpdate], a
+	call Pokedex_StageInitialAnimationFrame
 	jr .copy_backing
 
 .sgb_layout

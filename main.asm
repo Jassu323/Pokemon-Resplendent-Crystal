@@ -312,6 +312,8 @@ SECTION "Pokedex Animation", ROMX
 
 INCLUDE "engine/pokedex/pokedex_animation.asm"
 INCLUDE "engine/pokedex/pokedex_detail.asm"
+INCLUDE "gfx/pokemon/dex_animation_plan_pointers.asm"
+INCLUDE "gfx/pokemon/dex_animation_plans.asm"
 
 
 SECTION "bank11", ROMX
