@@ -190,6 +190,15 @@ unknown height/weight values.
 
 ## Adjacent Deferred Work
 
+### BATTLE-MOVE-01: String Shot reports or applies an Attack drop
+
+Status: Deferred investigation
+
+When an opposing Weedle uses String Shot against the player's Dusknoir, the
+battle text says `Dusknoir's Attack fell!` instead of reporting a Speed drop.
+Determine whether String Shot is actually modifying Attack or whether only the
+stat-down message is selecting the wrong stat before implementing a fix.
+
 ### BATTLE-CATCH-01: Caught indicator remains during EXP award
 
 Status: Deferred
