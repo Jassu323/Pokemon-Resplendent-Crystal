@@ -1,3 +1,6 @@
+ASSERT POKEDEX_GRID_SIDE_FRAME1_GFX + 8 tiles == POKEDEX_ORDER_SEEN_FLAGS
+ASSERT POKEDEX_ORDER_SEEN_FLAGS + POKEDEX_ORDER_SEEN_BYTES <= wPokedexWRAM0ScratchEnd
+
 Pokedex_OrderMonsByMode:
 	ld hl, wEndPokedexSeen - 1
 	ld c, wEndPokedexSeen - wPokedexSeen
@@ -39,12 +42,15 @@ Pokedex_OrderMonsByMode:
 	ld hl, wDexListingEnd
 	ld [hli], a
 	ld [hl], a
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld bc, POKEDEX_ORDER_SEEN_BYTES
+	call ByteFill
 	jr .restore_bank_and_exit
 
 .Jumptable:
 	dw .NewMode
 	dw .OldMode
-	dw Pokedex_ABCMode
+	dw .ABCMode
 
 .LoadPointer:
 	ld e, a
@@ -90,38 +96,77 @@ Pokedex_OrderMonsByMode:
 	ld a, e
 	ld [hli], a
 	ld [hl], d
-	ret
+	; Old order position n corresponds directly to species index n + 1.
+	ld a, BANK(wPokedexSeen)
+	ldh [rSVBK], a
+	ld hl, wPokedexSeen
+	ld de, POKEDEX_ORDER_SEEN_FLAGS
+	ld bc, POKEDEX_ORDER_SEEN_BYTES
+	jp CopyBytes
 
 .NewMode:
 	ld hl, NewPokedexOrder
 	ld de, wPokedexOrder
 	ld bc, NUM_POKEMON * 2
 	call CopyBytes
+	; New order permutes species, so build a position-keyed eligibility mask
+	; while finding the position immediately after its final seen entry.
 	ld a, BANK(wPokedexSeen)
 	ldh [rSVBK], a
-	ld bc, NUM_POKEMON
-	ld hl, NewPokedexOrder + (2 * NUM_POKEMON) - 1
-.new_mode_last_seen_loop
-	ld a, [hld]
-	ld d, a
-	ld a, [hld]
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld bc, POKEDEX_ORDER_SEEN_BYTES
+	xor a
+	call ByteFill
+	ld hl, wDexListingEnd
+	ld [hli], a
+	ld [hl], a
+	ld hl, NewPokedexOrder
+	ld bc, 0
+.new_mode_seen_loop
+	ld a, [hli]
 	ld e, a
+	ld a, [hli]
+	ld d, a
 	push hl
 	push bc
 	call CheckSeenMonIndex
 	pop bc
 	pop hl
-	jr nz, .found_last_seen_index
-	dec bc
-	ld a, b
-	or c
-	jr nz, .new_mode_last_seen_loop
-.found_last_seen_index
-	ld hl, wDexListingEnd
+	jr z, .new_mode_next
+	push hl
+	push bc
+	ld d, b
+	ld e, c
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld b, SET_FLAG
+	call FlagAction
+	pop bc
+	pop hl
+	inc bc
 	ld a, c
-	ld [hli], a
-	ld [hl], b
+	ld [wDexListingEnd], a
+	ld a, b
+	ld [wDexListingEnd + 1], a
+	jr .new_mode_check_end
+
+.new_mode_next
+	inc bc
+.new_mode_check_end
+	ld a, b
+	cp HIGH(NUM_POKEMON)
+	jr nz, .new_mode_seen_loop
+	ld a, c
+	cp LOW(NUM_POKEMON)
+	jr nz, .new_mode_seen_loop
 	ret
+
+.ABCMode:
+	call Pokedex_ABCMode
+	; ABC mode compacts the order to seen Pokemon only.
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld bc, POKEDEX_ORDER_SEEN_BYTES
+	ld a, $ff
+	jp ByteFill
 
 Pokedex_ABCMode:
 	; called in the WRAM bank of wPokedexOrder; the function doesn't preserve it

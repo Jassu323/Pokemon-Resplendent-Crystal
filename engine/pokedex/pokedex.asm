@@ -92,6 +92,11 @@ DEF POKEDEX_GRID_CENTER_GFX     EQUS "wPokedexWRAM0Scratch + $350"
 DEF POKEDEX_GRID_SIDE_FRAME0_GFX EQUS "wPokedexWRAM0Scratch + $3d0"
 DEF POKEDEX_GRID_SIDE_FRAME1_GFX EQUS "wPokedexWRAM0Scratch + $450"
 
+; Persistent for the full Pokedex session. This begins after both the
+; animation workspace and the Listing's temporary icon-row staging.
+DEF POKEDEX_ORDER_SEEN_FLAGS EQUS "wPokedexWRAM0Scratch + $4d0"
+DEF POKEDEX_ORDER_SEEN_BYTES EQU (NUM_POKEMON + 7) / 8
+
 DEF POKEDEX_ANIM_BUFFER_A_TILE EQU $80
 DEF POKEDEX_ANIM_BUFFER_B_TILE EQU $33
 

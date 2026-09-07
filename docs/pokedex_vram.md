@@ -146,7 +146,7 @@ It is valid only during the Start-menu Pokedex session. `StartMenu_Pokedex`
 calls `ReturnToMapFromSubmenu` before `CloseSubmenu`, rebuilding both map and
 connection block data before the overworld is drawn again.
 
-The animated-frontpic path uses these fixed overlapping views:
+The Dex uses these fixed overlapping views:
 
 | Workspace view | Offset | Bytes |
 | --- | ---: | ---: |
@@ -155,7 +155,8 @@ The animated-frontpic path uses these fixed overlapping views:
 | Buffer A tilemap and attributes | `$39c` | 98 |
 | Buffer B tilemap and attributes | `$3fe` | 98 |
 | Changed source-tile indexes | `$460` | 49 |
-| Unused tail | `$491` | 131 |
+| Active-order seen mask | `$4d0` | 47 currently |
+| Persistent unused tail | `$4ff` | 21 currently |
 
 The first 848 bytes still overlap the selection-change staging layout: 784
 bytes for the static frontpic and 64 bytes for its footprint. That is
@@ -172,6 +173,12 @@ palettes 2-4 are changed. Three exact-length eight-tile HBlank DMA transfers
 then refill the newly vacated physical cache row. The completed graphics remain
 resident in the five-row VRAM ring; the WRAM staging bytes are immediately
 reusable by animation.
+
+The active-order seen mask starts after that final icon-row staging buffer, so
+it remains valid across Listing movement and Selected-page animation. It uses
+one bit per position in the current Dex ordering and is rebuilt whenever that
+ordering changes. Its maximum 64-byte size under the current 512-species flag
+capacity also fits in the 68-byte persistent tail.
 
 Other useful maximum sizes include:
 

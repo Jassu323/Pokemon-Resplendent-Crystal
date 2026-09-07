@@ -8,6 +8,8 @@ PokedexSelectedMon_Enter:
 	ld [wPokedexSelectedState], a
 	ld a, [wPrevDexEntryJumptableIndex]
 	ld [wPokedexSelectedReturnState], a
+	cp DEXSTATE_SEARCH_RESULTS_SCR
+	call z, PokedexSelectedMon_MarkSearchOrderSeen
 	ld hl, wPokedexSelectedGeneration
 	inc [hl]
 	farcall Pokedex_SaveListingViewport
@@ -326,6 +328,14 @@ PokedexSelectedMon_CaptureListingSelection:
 	ld [wPokedexSelectedIndex + 1], a
 	ret
 
+PokedexSelectedMon_MarkSearchOrderSeen:
+; Search results are compacted from seen Pokemon, so every valid order
+; position is eligible for Selected-page paging.
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld bc, POKEDEX_ORDER_SEEN_BYTES
+	ld a, $ff
+	jp ByteFill
+
 PokedexSelectedMon_NormalizeLinearReturn:
 ; Search Results owns a conventional linear viewport. Keep its previous
 ; viewport when possible and otherwise place the selected entry at an edge.
@@ -417,13 +427,12 @@ PokedexSelectedMon_FindNextSeen:
 .next
 	inc hl
 	call .IndexBeforeEnd
-	ret nc
-	push hl
-	ld d, h
-	ld e, l
-	farcall Pokedex_GetMonAtOrderIndexDE
-	farcall Pokedex_CheckSeen
-	pop hl
+	jr c, .next_in_range
+	ld hl, 0
+.next_in_range
+	call .IsCurrentIndex
+	ret z
+	call .IndexIsSeen
 	jr z, .next
 	jr .found
 
@@ -435,14 +444,16 @@ PokedexSelectedMon_FindNextSeen:
 .previous_loop
 	ld a, h
 	or l
-	ret z
+	jr nz, .previous_in_range
+	ld hl, wDexListingEnd
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+.previous_in_range
 	dec hl
-	push hl
-	ld d, h
-	ld e, l
-	farcall Pokedex_GetMonAtOrderIndexDE
-	farcall Pokedex_CheckSeen
-	pop hl
+	call .IsCurrentIndex
+	ret z
+	call .IndexIsSeen
 	jr z, .previous_loop
 
 .found
@@ -451,6 +462,24 @@ PokedexSelectedMon_FindNextSeen:
 	ld a, h
 	ld [wPokedexSelectedPendingIndex + 1], a
 	scf
+	ret
+
+.IsCurrentIndex:
+	ld a, [wPokedexSelectedIndex]
+	cp l
+	ret nz
+	ld a, [wPokedexSelectedIndex + 1]
+	cp h
+	ret
+
+.IndexIsSeen:
+	push hl
+	ld d, h
+	ld e, l
+	ld hl, POKEDEX_ORDER_SEEN_FLAGS
+	ld b, CHECK_FLAG
+	call FlagAction
+	pop hl
 	ret
 
 .IndexBeforeEnd:
