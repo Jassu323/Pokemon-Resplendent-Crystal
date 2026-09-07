@@ -186,5 +186,5 @@ INCLUDE "audio/cries.asm"
 
 SECTION "Sampled Cries", ROMX
 
-INCLUDE "audio/sampled_cry_player.asm"
 INCLUDE "audio/sampled_cries.asm"
+INCLUDE "audio/sampled_cry_pair_lookup.asm"

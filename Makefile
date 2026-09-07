@@ -54,7 +54,8 @@ RGBGFXFLAGS  ?= -Weverything
 	crystal \
 	clean \
 	tidy \
-	tools
+	tools \
+	verify-sampled-cries
 
 all: crystal
 crystal:    pokecrystal.gbc
@@ -92,6 +93,12 @@ tidy:
 
 tools:
 	$(MAKE) -C tools/
+
+verify-sampled-cries: pokecrystal.gbc
+	python3 -B tools/verify_sampled_cry_lookup.py \
+		--rom pokecrystal.gbc \
+		--sym pokecrystal.sym \
+		--assets audio/sampled_cries
 
 
 RGBASMFLAGS += -Q8 -P includes.asm

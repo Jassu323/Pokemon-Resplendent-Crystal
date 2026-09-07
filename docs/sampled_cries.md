@@ -36,10 +36,11 @@ mapping is added.
 Runtime code:
 
 ```text
-audio/sampled_cry_player.asm
+audio/sampled_cry_pair_lookup.asm
 audio/sampled_cries.asm
 audio.asm
 home/audio.asm
+home/sampled_cry_player.asm
 home/pokemon.asm
 home/mobile.asm
 home/header.asm
@@ -56,6 +57,7 @@ Asset pipeline:
 
 ```text
 tools/wav2pcm4.py
+tools/verify_sampled_cry_lookup.py
 audio/sampled_cries/mastering_profiles.json
 audio/sampled_cries/*.mm2
 ```
@@ -215,14 +217,12 @@ byte 0: min/max nibble pair
 bytes 1-8: 32 two-bit selectors, 4 selectors per byte
 ```
 
-The first byte indexes a 16x16 min/max table:
-
-```asm
-MinMax2BitLevels:
-for minlevel, 0, 16
-    for maxlevel, 0, 16
-        ...
-```
+The first byte encodes the minimum and maximum nibble levels. The runtime's
+4 KiB pair lookup combines that header with two selectors at a time and returns
+one packed PCM4 byte directly. This replaces the older 1 KiB four-level lookup
+table that was copied to WRAMX during boot. The pair lookup remains in ROMX bank
+`$a4`, while compressed refill batches are staged in WRAMX bank 4 before the
+decoder switches ROM banks.
 
 For each block, the decoder derives four possible nibble levels:
 
@@ -423,7 +423,7 @@ The major runtime stages are:
 4. If there is no sampled cry, the normal synthesized cry path runs.
 5. If there is sampled data, `PlayLoadedSampledCry` calls
    `StartSampledCryAsync`.
-6. Startup saves audio/timer state and synchronously decodes up to 191 blocks
+6. Startup saves audio/timer state and synchronously decodes up to 32 blocks
    into WRAMX bank 4. Battle and non-battle callers use the same startup path.
 7. Startup copies the first decoded block to CH3 wave RAM and starts CH3.
 8. The timer interrupt streams one decoded block per tick.
@@ -619,8 +619,10 @@ Current symbols from `pokecrystal.sym`:
 ```text
 04:d000 wSampledCryDecodedBuffer
 04:dbf0 wSampledCryDecodedBufferEnd
-04:dbf0 wSampledCryMinMax2BitLevels
-04:dff0 wSampledCryMinMax2BitLevelsEnd
+04:dbf0 wSampledCryCompressedStaging
+04:dc38 wSampledCryCompressedStagingEnd
+04:dff0 wSampledCryFillBlocksRemaining
+04:dff1 wSampledCryStagedBlocks
 04:dff4 wSampledCryCacheCount
 ```
 
@@ -632,12 +634,12 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
     ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
-wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
-wSampledCryMinMax2BitLevelsEnd::
-wSampledCryLevel0:: db
-wSampledCryLevel1:: db
-wSampledCryLevel2:: db
-wSampledCryLevel3:: db
+wSampledCryCompressedStaging:: ds SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryCompressedStagingEnd::
+    ds SAMPLED_CRY_DECODER_WORKSPACE_SIZE - SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryFillBlocksRemaining:: db
+wSampledCryStagedBlocks:: db
+    ds 2
 wSampledCryCacheCount:: db
 wSampledCryCompressedBlocks:: dw
 wSampledCryCompressedAddress:: dw
@@ -651,8 +653,11 @@ Important constants:
 ```asm
 DEF SAMPLED_CRY_DECODED_BUFFER_SIZE EQU $0bf0
 DEF SAMPLED_CRY_MAX_DECODED_BLOCKS EQU SAMPLED_CRY_DECODED_BUFFER_SIZE / AUD3WAVE_SIZE
-DEF SAMPLED_CRY_STARTUP_PREFILL_BLOCKS EQU SAMPLED_CRY_MAX_DECODED_BLOCKS
+DEF SAMPLED_CRY_STARTUP_PREFILL_BLOCKS EQU 32
 DEF SAMPLED_CRY_CACHE_REFILL_BLOCKS EQU 8
+DEF SAMPLED_CRY_PAIR_STAGE_BLOCKS EQU SAMPLED_CRY_CACHE_REFILL_BLOCKS
+DEF SAMPLED_CRY_PAIR_STAGE_SIZE EQU SAMPLED_CRY_PAIR_STAGE_BLOCKS * SAMPLED_CRY_COMPRESSED_BLOCK_SIZE
+DEF SAMPLED_CRY_DECODER_WORKSPACE_SIZE EQU $400
 ```
 
 The decoded buffer is:
@@ -665,8 +670,10 @@ $0bf0 bytes
 about 0.583 seconds at 10485.76 Hz
 ```
 
-The next 1024 bytes at `$dbf0-$dfef` hold the minmax2 level lookup table. The
-remaining 16 bytes at `$dff0-$dfff` hold decoder/cache state.
+The next 1024 bytes at `$dbf0-$dfef` are the decoder workspace. Its first 72
+bytes stage eight compressed blocks; the unused remainder stays reserved so the
+cache-state addresses at `$dff0-$dfff` do not move. The 4 KiB pair lookup lives
+in ROMX bank `$a4`, not WRAM.
 
 `w4_d000` remains as a compatibility alias for the old bank-4 base.
 
@@ -678,7 +685,7 @@ Startup:
 2. It switches `rSVBK` to bank 4.
 3. `SampledCry_InitRollingCache` copies compressed block count/address into
    WRAMX state.
-4. `SampledCry_FillRollingCache` synchronously decodes up to 191 blocks.
+4. `SampledCry_FillRollingCache` synchronously decodes up to 32 blocks.
 5. The first decoded block is copied to CH3 wave RAM.
 6. CH3 and timer playback begin.
 
@@ -693,8 +700,12 @@ Mainline refill:
 
 1. `ServiceSampledCryAsync` checks `hSampledCryTimer`.
 2. If active, it switches to WRAMX bank 4.
-3. It decodes up to `SAMPLED_CRY_CACHE_REFILL_BLOCKS` more compressed blocks.
-4. Current refill cap is `8` blocks per service call.
+3. It stages up to `SAMPLED_CRY_CACHE_REFILL_BLOCKS` compressed blocks from the
+   active sample bank.
+4. It switches to ROMX bank `$a4` and expands selector pairs through the 4 KiB
+   lookup table directly into the rolling cache.
+5. Current refill cap is `8` blocks per service call. The 32-block startup fill
+   runs this same eight-block batch path up to four times.
 
 The cache is circular:
 
@@ -787,24 +798,23 @@ BGM/SFX disruption, inspect the save/restore boundary first.
 ```asm
 SECTION "Sampled Cries", ROMX
 
-INCLUDE "audio/sampled_cry_player.asm"
 INCLUDE "audio/sampled_cries.asm"
+INCLUDE "audio/sampled_cry_pair_lookup.asm"
 ```
 
-The section is movable. The current no-active-mappings build places the compact
-runtime/metadata section in ROMX bank `$01` / decimal `1`:
+The sampled-cry metadata and payload sections are movable. The player itself is
+home-bank code in `home/sampled_cry_player.asm`. The pair lookup has its own
+aligned section pinned by `layout.link` to ROMX bank `$a4` / decimal `164`:
 
 ```text
-01:74c0 StartSampledCryAsync
-01:7c99 TryLoadSampledCryBySpeciesIndex
-01:7ce5 SampledCryIndexByPokemon
-01:7de0 SampledCryPointers
+a4:4000 SampledCryMinMax2PairLookup
+a4:5000 SampledCryMinMax2PairLookupEnd
+a4:5000 SampledCry_DecodePairBatch
 ```
 
-Do not rely on that bank being permanent unless the section is pinned later. The
-code uses `BANK(...)` and `dba` pointers, so bank movement is okay as long as all
-far calls/pointers remain correct. Adding real `INCBIN`ed sample payloads can
-move this section again.
+The decoder depends on the table's 4 KiB alignment and uses `BANK(...)` when it
+switches away from the active sample bank. Sample payloads remain independently
+banked and can move without changing this lookup section.
 
 ## Cleanup Before Production Content
 

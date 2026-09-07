@@ -1,17 +1,3 @@
-InitSampledCryMinMax2BitLevels::
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wSampledCryMinMax2BitLevels)
-	ldh [rSVBK], a
-	ld a, BANK(MinMax2BitLevels)
-	ld hl, MinMax2BitLevels
-	ld de, wSampledCryMinMax2BitLevels
-	ld bc, SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
-	call FarCopyBytes
-	pop af
-	ldh [rSVBK], a
-	ret
-
 StartSampledCryAsync::
 ; Start a minmax2-compressed sampled cry on CH3 and return immediately.
 ; input: a = sample bank, de = sample header in that bank, c = timer/CH3 block period
@@ -245,140 +231,88 @@ SampledCry_FillRollingCache::
 	ld a, b
 	and a
 	ret z
+	ld [wSampledCryFillBlocksRemaining], a
 
-.fill_loop
-	call SampledCry_CanFillRollingCache
+.next_batch
+	ld a, [wSampledCryFillBlocksRemaining]
+	and a
 	ret z
-	push bc
-	call SampledCry_DecodeOneRollingCacheBlock
-	pop bc
-	dec b
-	jr nz, .fill_loop
-	ret
+	cp SAMPLED_CRY_PAIR_STAGE_BLOCKS + 1
+	jr c, .requested_count_ready
+	ld a, SAMPLED_CRY_PAIR_STAGE_BLOCKS
+.requested_count_ready
+	ld c, a
 
-SampledCry_DecodeOneRollingCacheBlock:
+	ld a, [wSampledCryCompressedBlocks + 1]
+	and a
+	jr nz, .check_cache_space
+	ld a, [wSampledCryCompressedBlocks]
+	cp c
+	jr nc, .check_cache_space
+	ld c, a
+
+.check_cache_space
+	ld a, [wSampledCryCacheCount]
+	ld b, a
+	ld a, SAMPLED_CRY_MAX_DECODED_BLOCKS
+	sub b
+	cp c
+	jr nc, .batch_count_ready
+	ld c, a
+.batch_count_ready
+	ld a, c
+	and a
+	ret z
+	ld [wSampledCryStagedBlocks], a
+
 	ld a, [wSampledCryCompressedAddress]
 	ld l, a
 	ld a, [wSampledCryCompressedAddress + 1]
 	ld h, a
-
-	ld a, [wSampledCryCacheWriteAddress]
-	ld e, a
-	ld a, [wSampledCryCacheWriteAddress + 1]
-	ld d, a
-
-	call SampledCry_DecodeMinMax2BlockToDE
+	ld de, wSampledCryCompressedStaging
+	ld a, [wSampledCryStagedBlocks]
+	ld b, a
+.stage_block
+	push bc
+	ld c, SAMPLED_CRY_COMPRESSED_BLOCK_SIZE
+.stage_byte
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .stage_byte
+	pop bc
+	dec b
+	jr nz, .stage_block
 
 	ld a, l
 	ld [wSampledCryCompressedAddress], a
 	ld a, h
 	ld [wSampledCryCompressedAddress + 1], a
 
-	ld a, e
-	cp LOW(wSampledCryDecodedBufferEnd)
-	jr nz, .store_write_pointer
-	ld a, d
-	cp HIGH(wSampledCryDecodedBufferEnd)
-	jr nz, .store_write_pointer
-	ld de, wSampledCryDecodedBuffer
-
-.store_write_pointer
-	ld a, e
-	ld [wSampledCryCacheWriteAddress], a
-	ld a, d
-	ld [wSampledCryCacheWriteAddress + 1], a
-
+	ld a, [wSampledCryStagedBlocks]
+	ld c, a
 	ld hl, wSampledCryCompressedBlocks
 	ld a, [hl]
-	sub 1
+	sub c
 	ld [hli], a
-	jr nc, .increment_cache_count
+	jr nc, .subtract_requested
 	dec [hl]
 
-.increment_cache_count
-	ld hl, wSampledCryCacheCount
-	inc [hl]
-	ret
+.subtract_requested
+	ld hl, wSampledCryFillBlocksRemaining
+	ld a, [hl]
+	sub c
+	ld [hl], a
 
-SampledCry_DecodeMinMax2BlockToDE::
-	ld a, [hli]
-	push hl
-	push de
-	ld c, a
-	ld b, 0
-	sla c
-	rl b
-	sla c
-	rl b
-	ld hl, wSampledCryMinMax2BitLevels
-	add hl, bc
-	ld a, [hli]
-	ld [wSampledCryLevel0], a
-	ld a, [hli]
-	ld [wSampledCryLevel1], a
-	ld a, [hli]
-	ld [wSampledCryLevel2], a
-	ld a, [hli]
-	ld [wSampledCryLevel3], a
-	pop de
-	pop hl
-
-rept 8
-	ld a, [hli]
-	ld c, a
-
-	ld a, c
-	and %11000000
-	rlca
-	rlca
-	call SampledCry_GetMinMax2Level
-	swap a
-	ld b, a
-	ld a, c
-	and %00110000
-	swap a
-	call SampledCry_GetMinMax2Level
-	or b
-	ld [de], a
-	inc de
-
-	ld a, c
-	and %00001100
-	rrca
-	rrca
-	call SampledCry_GetMinMax2Level
-	swap a
-	ld b, a
-	ld a, c
-	and %00000011
-	call SampledCry_GetMinMax2Level
-	or b
-	ld [de], a
-	inc de
-endr
-	ret
-
-SampledCry_GetMinMax2Level:
-	and %00000011
-	jr z, .level0
-	dec a
-	jr z, .level1
-	dec a
-	jr z, .level2
-	ld a, [wSampledCryLevel3]
-	ret
-
-.level0
-	ld a, [wSampledCryLevel0]
-	ret
-
-.level1
-	ld a, [wSampledCryLevel1]
-	ret
-
-.level2
-	ld a, [wSampledCryLevel2]
-	ret
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(SampledCryMinMax2PairLookup)
+	rst Bankswitch
+	call SampledCry_DecodePairBatch
+	pop af
+	rst Bankswitch
+	jr .next_batch
 
 SampledCry_RestartCH3::
 ; WRAMX bank 4 must be selected.
@@ -399,17 +333,6 @@ SampledCry_RestartCH3::
 
 
 SECTION "Sampled Cry ROM0 Gap", ROM0[$0063]
-
-SampledCry_CanFillRollingCache:
-	ld a, [wSampledCryCompressedBlocks]
-	ld c, a
-	ld a, [wSampledCryCompressedBlocks + 1]
-	or c
-	ret z
-
-	ld a, [wSampledCryCacheCount]
-	cp SAMPLED_CRY_MAX_DECODED_BLOCKS
-	ret
 
 StopSampledCryAsync_NoInterruptControl::
 	xor a

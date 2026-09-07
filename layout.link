@@ -506,6 +506,7 @@ ROMX $a2
 ROMX $a3
 	"Dex Animation Plans 3"
 ROMX $a4
+	"Sampled Cry Pair Lookup"
 ROMX $a5
 ROMX $a6
 ROMX $a7

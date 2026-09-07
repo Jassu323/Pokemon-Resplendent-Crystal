@@ -3576,12 +3576,12 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
 	ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
-wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
-wSampledCryMinMax2BitLevelsEnd::
-wSampledCryLevel0:: db
-wSampledCryLevel1:: db
-wSampledCryLevel2:: db
-wSampledCryLevel3:: db
+wSampledCryCompressedStaging:: ds SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryCompressedStagingEnd::
+	ds SAMPLED_CRY_DECODER_WORKSPACE_SIZE - SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryFillBlocksRemaining:: db
+wSampledCryStagedBlocks:: db
+	ds 2
 wSampledCryCacheCount:: db
 wSampledCryCompressedBlocks:: dw
 wSampledCryCompressedAddress:: dw
