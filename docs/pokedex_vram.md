@@ -1,5 +1,9 @@
 # Pokedex VRAM and scratch-RAM plan
 
+For the current execution/ownership contract and adaptation to other owners,
+see [Selected animation scheduler](pokedex_animation_scheduler.md). The resource
+allocation below remains unchanged by the 2026-09-20 scheduler integration.
+
 This document records the current Pokedex graphics ownership and the target
 permanent allocation for the listing, description, search, search-results,
 options, and Unown screens. The area map is the only normal Pokedex screen
@@ -16,26 +20,43 @@ animation-dictionary tiles apiece. Normal frontpic consumers decode all streams
 immediately. A Listing selection decodes only the base stream and pads it
 directly into Dex WRAM0, reveals the new selection, and retains the tail address,
 destination, and tile count as a cancellable background job. On each
-otherwise-idle update, the Dex decompresses at most one six-tile tail stream,
-parses at most one pending visual frame, consumes its generated compact stage
-plan, gathers its changed dictionary tiles, and uploads at most 20 tiles to its
-hidden VRAM slot. Input is checked first, so a new selection cancels this work
-before another chunk begins.
+otherwise-idle Listing update, the Dex can decompress one six-tile tail stream
+and prepare its initial stage. Settled Selected playback instead chooses one
+useful regular decode or upload action per hardware tick, with an optional
+budget-admitted complete finishing upload. Input is checked first, so a new
+selection cancels this work before another chunk begins.
 
 The build tools generate one Dex-only stage plan for every visual animation
-frame. Each record directly names the changed 7x7 tilemap position and either
-its padded base tile or animation-dictionary source. Base references come first;
+frame. Each record begins with its changed-tile count and dictionary high-water
+mark, then directly names each changed 7x7 tilemap position and either its
+padded base tile or animation-dictionary source. Base references come first;
 dictionary references are ordered by source index so the producer can consume
 each newly decompressed prefix immediately. This replaces runtime bitmask
 expansion, coordinate reconstruction, a 256-entry lookup-table clear, a scan of
 the available dictionary, and changed-tile deduplication and sorting.
 
+A separate generated timeline expands the main and idle scripts into exact
+visual durations. The first event's decode target covers the bounded startup
+lead and the first three events' dictionary high-water marks. Every later
+event targets the full dictionary extent, permitting early bounded decoding
+during repeated poses; this is permission to progress, not a synchronous load.
+The controller prepares a
+hidden slot ahead of time and publishes its tilemap and attributes atomically
+on an absolute `hVBlankCounter` deadline. Deadlines accumulate from the prior
+deadline instead of the controller's completion time, so ordinary scheduling
+jitter cannot stretch the animation. Structural asset validation checks the
+timeline and source ranges; linked-code timing replay, not an optimistic
+tiles-per-tick simulation, establishes runtime feasibility for tested cases.
+
 Entering Description preserves any Listing prefetch and synchronously fills
 only the remaining startup deficit: a complete first visual frame plus a fixed
-48-tail-tile runway, capped by the end of the dictionary. The
-first frame's tilemap is installed in the staged Description backing before the
-owner reveal. Internal Description paging follows the same base-only path; it
-does not fall back to decoding the complete animation dictionary up front.
+96-tail-tile WRAM runway, capped by the end of the dictionary. This is not 96
+additional resident VRAM tiles. The completed static
+base remains visible while `PlayMonCry2` performs its synchronous setup. The
+first animated pose is then queued for the next VBlank; that publication
+anchors the generated timeline. Internal Description paging follows the same
+base-only path and does not fall back to decoding the complete animation
+dictionary up front.
 
 ## Current VRAM writes
 
@@ -198,28 +219,40 @@ sources are already ordered by dictionary index, so no runtime lookup table,
 deduplication, or sort is needed. Duplicate source references deliberately keep
 separate slot tiles; across all 1,722 current frames this adds only 37 tile
 copies among 20,149 changed cells and avoids rebuilding a mapping structure
-every frame. Each service switches to WRAMX bank 6 once,
-decompresses at most one six-tile dictionary stream, and gathers every newly
-available source tile needed by the staged frame. The two animation tilemaps and
-bounded upload payload stay in WRAM0, avoiding per-tile WRAM bank changes. VRAM
-uploads resume from a saved offset in chunks of at most 20 tiles per controller
-update. Each physical animation slot retains its completed frame ID after
-release, allowing an exact later match to become tilemap-only. An underrun
-deliberately installs its incomplete slot and increments
-`wPokedexAnimUnderflowCount` instead of concealing the missed deadline behind the
-previous complete frame.
+every frame. Services select WRAMX bank 6 for dictionary reads/decompression,
+decode at most one six-tile stream per regular decode action, and gather a
+ready source prefix for each upload. The two animation tilemaps and bounded upload
+payload stay in WRAM0, avoiding per-tile WRAM bank changes. VRAM uploads resume
+from a saved offset in chunks of at most 20 tiles. A separately admitted
+finishing action may complete one ready remainder in that owner iteration. Each
+physical animation slot retains its completed frame ID after release, allowing
+an exact later match to become tilemap-only. An underrun deliberately installs
+its incomplete slot and increments `wPokedexAnimUnderflowCount` instead of
+concealing the missed deadline behind the previous complete frame.
 
-Twenty-seven bytes in `wPokedexData` hold parser, playback, timing, slot,
+Twenty-six bytes in `wPokedexData` hold timeline, playback, deadline, slot,
 residency, underrun-diagnostic, and background-dictionary state. This is one
-byte smaller than the prior two-slot controller and returns that byte to the
-union's reserved padding; no new WRAM, SRAM, or HRAM is allocated. The Listing
-cache remains inside the same Pokedex union, and all symbols following the
-union retain their previous addresses.
+byte smaller than the prior controller and returns that byte to the union's
+reserved padding; no new WRAM, SRAM, or HRAM is allocated. The diagnostic block,
+including the part marked `TEMPORARY DEX ANIMATION SCHEDULER TRACE`, currently
+occupies 136 bytes within the Pokedex union's existing 143-byte reservation. It includes five
+18-byte circular records plus the last VBlank publication and producer phase
+timestamps. Three production scheduler bytes follow it, reusing the former
+compact-schedule cursor for loop tick, last-work tick and control flags. Keep
+those three bytes when removing the instrumentation. No existing RAM symbol
+outside the renamed three-byte state moves.
+The Listing cache remains in the same union, and all symbols following it retain
+their previous addresses. Search that exact marker to remove the temporary
+trace after diagnosis.
 
-The shared animation parser reuses three former padding bytes for the current
-Dex-plan bank and address, so this optimization also has zero net WRAM cost. Its
-ROM cost is 45,464 bytes of generated plan payload plus a 1,197-byte far-pointer
-table. The payload is isolated in banks `$a1`-`$a3` (decimal 161-163), leaving
-1,232, 1,226, and 1,230 bytes free in those banks respectively. Bank `$a0`
-(decimal 160), which owns the runtime and pointer table, retains 3,704 free
-bytes.
+The frame-plan ROM cost is 47,186 bytes of generated payload plus a 1,197-byte
+far-pointer table. The payload remains isolated in banks `$a1`-`$a3` (decimal
+161-163), leaving 654, 656, and 656 bytes free. The generated timelines occupy
+their own bank `$a5` (decimal 165): 12,712 bytes of events plus 798 bytes of
+two-byte pointers, with the 97-byte fixed-bank reader also resident there and
+2,777 bytes free. These are the accepted 2026-09-21 link's totals, including
+the 13-byte increase from Seviper's finite repeat correction. Bank `$a0`
+(decimal 160), which owns the runtime, frame-plan pointer table and 80 global
+finishing-bound bytes, retains 2,979 free bytes in that link. The
+obsolete compact micro-schedule and its reader are removed; bank `$a6` is empty
+and reusable. See the scheduler document for the complete linked resource bill.

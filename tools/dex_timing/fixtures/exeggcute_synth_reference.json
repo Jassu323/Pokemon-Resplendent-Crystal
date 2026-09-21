@@ -1,0 +1,17 @@
+{
+  "scope": "ACTUAL_INITIAL_STATE_CORE_VALIDATED_SYNTH_CONTINUATION",
+  "rom_sha256": "7f4f64cbaeaa958aef31fa3700a75ff1188cc0047fbb732dfb495a1672921c4f",
+  "sym_sha256": "1f791264f9ef3d8bc87a430a6333d3bea24c465017c10bb51e257303cbc6ded5",
+  "initial_fixture_sha256": "0d706bcdab65f8406ea16124caf0e32c09b13a3e86cc4c656bc31faed87c9e1f",
+  "core_sha256": "f4724e266a7165d683ef643828333eb5136048e161bf08484f176832700c27f6",
+  "core_revision": "213a12ce93d66b105a113debd9396306066a7cfc",
+  "trace_format": "Per instruction: elapsed T from publication, ROM bank, PC, AF, BC, DE, HL, SP; eight little-endian uint32. HALT is handled by the hardware clock and not an instruction trace row.",
+  "instruction_count": 385586,
+  "instruction_trace_sha256": "2189044ec34190d96a85e0eed3cbe3fadf9c148638d3654a888d075ebbe4fef7",
+  "animation_intervals": 113,
+  "sound_updates": 114,
+  "hardware_write_count": 949,
+  "hardware_sequence_sha256": "a7ddda1cc8d99c6adb0502be88102c53b96e615b21520e81f164d758c626e821",
+  "channel_completion_intervals": [[47, 49662, 32], [54, 49612, 32], [55, 49762, 32]],
+  "limitations": "Captured Selected no-input continuation from first publication. No waveform rendering; no APU length clocks, frequency sweep or active wave RAM read support. Not evidence for every synthesized cry."
+}

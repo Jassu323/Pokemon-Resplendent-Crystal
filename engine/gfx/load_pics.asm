@@ -186,17 +186,21 @@ Pokedex_PrepareFrontpicBase::
 	ld a, 1 << POKEDEX_ANIM_ACTIVE_F
 	ld [wPokedexAnimFlags], a
 	xor a
-	ld [wPokedexAnimProducerPhase], a
 	ld [wPokedexAnimStageSlot], a
 	ld [wPokedexAnimStageDuration], a
-	ld [wPokedexAnimStagePrehold], a
 	ld [wPokedexAnimStageTileCount], a
 	ld [wPokedexAnimUploadOffset], a
 	ld [wPokedexAnimPlaybackState], a
-	ld [wPokedexAnimPlaybackTimer], a
-	ld [wPokedexAnimHoldTimer], a
-	ld [wPokedexAnimTrailingHold], a
+	ld [wPokedexAnimDeadline], a
 	ld [wPokedexAnimStageRequiredTiles], a
+	ld [wPokedexAnimDictionaryTarget], a
+	ld [wPokedexAnimTimelineAddress], a
+	ld [wPokedexAnimTimelineAddress + 1], a
+	; Preparing another species must not reset the enclosing owner's loop clock.
+	ld [wPokedexAnimWorkTick], a
+	ld [wPokedexAnimSchedulerControl], a
+	ld [wPokedexAnimUnderflowCount], a
+	ld [wPokedexAnimUnderflowCount + 1], a
 	ld a, -1
 	ld [wPokedexAnimDisplaySlot], a
 	ld [wPokedexAnimStageFrameID], a
@@ -206,6 +210,25 @@ Pokedex_PrepareFrontpicBase::
 	pop bc
 	pop af
 	ld [wPokedexAnimOwner], a
+	push bc
+	ld hl, wPokedexAnimDebug
+	ld bc, wPokedexAnimDebugEnd - wPokedexAnimDebug
+	xor a
+	call ByteFill
+	ld a, POKEDEX_ANIM_DEBUG_MAGIC
+	ld [wPokedexAnimDebugMagic], a
+	ld a, POKEDEX_ANIM_DEBUG_VERSION
+	ld [wPokedexAnimDebugVersion], a
+	ld a, [wPokedexAnimOwner]
+	ld [wPokedexAnimDebugOwner], a
+	ld a, -1
+	ld [wPokedexAnimDebugMinReadyLead], a
+	ld a, [wPokedexAnimDictionaryTilesRemaining]
+	ld b, a
+	ld a, [wPokedexAnimDictionaryTileCount]
+	sub b
+	ld [wPokedexAnimDebugMaxLoadedTiles], a
+	pop bc
 	ld hl, wPokedexWRAM0Scratch
 	ld de, wDecompressScratch
 	jp PadFrontpic

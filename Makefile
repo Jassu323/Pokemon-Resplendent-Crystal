@@ -73,6 +73,8 @@ clean: tidy
 	     \( -name "bitmask.asm" \
 	        -o -name "frames.asm" \
 	        -o -name "front.dexanim" \
+	        -o -name "front.dextimeline" \
+	        -o -name "front.dexschedule" \
 	        -o -name "front.animated.tilemap" \
 	        -o -name "front.dimensions" \) \
 	     -delete
@@ -99,6 +101,14 @@ verify-sampled-cries: pokecrystal.gbc
 		--rom pokecrystal.gbc \
 		--sym pokecrystal.sym \
 		--assets audio/sampled_cries
+
+# Opt-in host diagnostics. These targets do not alter or instrument the ROM.
+.PHONY: test-dex-timing verify-dex-timing
+test-dex-timing:
+	python3 -B -m unittest discover -s tools -p 'test_dex_timing.py' -v
+
+verify-dex-timing: pokecrystal.gbc
+	python3 -B tools/verify_dex_timing.py audit
 
 
 RGBASMFLAGS += -Q8 -P includes.asm
@@ -168,6 +178,15 @@ gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fro
 	tools/pokemon_animation -f $^ > $@
 gfx/pokemon/%/front.dexanim: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions tools/pokemon_animation
 	tools/pokemon_animation --dex-plan $@ $(word 1,$^) $(word 2,$^)
+gfx/pokemon/%/front.dextimeline: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions gfx/pokemon/%/anim.asm gfx/pokemon/%/anim_idle.asm tools/pokemon_animation
+	tools/pokemon_animation --dex-timeline $@ $(word 1,$^) $(word 2,$^) $(word 3,$^) $(word 4,$^)
+
+pokemon_anim_scripts := $(filter-out gfx/pokemon/unown/anim.asm,$(wildcard gfx/pokemon/*/anim.asm))
+pokemon_dex_timelines := $(pokemon_anim_scripts:/anim.asm=/front.dextimeline)
+
+.PHONY: verify-dex-animations
+verify-dex-animations: $(pokemon_dex_timelines)
+	@echo "Verified $(words $(pokemon_dex_timelines)) Dex timeline structures; timing requires linked-code replay."
 
 
 ### Pokemon and trainer sprite rules

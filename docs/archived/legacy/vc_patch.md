@@ -1,5 +1,11 @@
 # Nintendo 2DS/3DS Virtual Console Patch
 
+> Legacy upstream reference, archived 2026-09-21. Virtual Console compatibility
+> is not a supported or validated target for this fork. The `crystal11_vc`
+> commands and `pokecrystal11` filenames below describe the old upstream build,
+> not this checkout. Remaining VC-related source/Makefile entries do not imply
+> support. See the [documentation index](../../index.md) for current systems.
+
 The Nintendo Virtual Console is an emulator on the 2DS and 3DS consoles. It can emulate the Game Boy Color (among other consoles), while applying enhancements or modifications to some games, such as replacing Link Cable functionality with the DS' Wireless Link capabilities, or disabling Game Boy Printer features.
 
 Game-specific enhancements are determined by a `.patch` file corresponding to the `.gbc` ROM file. These files are bundled together in a `.cia` file; creating such a file is outside the scope of this project.

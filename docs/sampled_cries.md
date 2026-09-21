@@ -26,10 +26,17 @@ Expected ROM:
 pokecrystal.gbc
 ```
 
-No vanilla Pokemon are currently mapped to sampled cries. The generated Hoenn
-starter and Shinx `.mm2` assets remain in `audio/sampled_cries/` for future
-content work, but they are not `INCBIN`ed into the ROM until a real species
-mapping is added.
+The 251 original species still use synthesized cries. All 122 added species
+currently have real sampled-cry mappings and linked `.mm2` payloads, including
+the Hoenn starters and Shinx. `NUM_POKEMON` is currently 373; the 399 frontpic
+assets include the additional Unown forms and are not 399 species/save flags.
+
+The global player uses a **32-block synchronous startup fill**, an **8-block
+maximum refill per service call**, and the **4 KiB ROMX pair lookup**. The old
+pre-fetch system is removed; the 191-block decoded buffer is capacity, not the
+startup-fill target. The Selected Mon scheduler now coordinates work and audio
+service locally; this is not a global change to battle, Party Stats or New Dex
+Entry scheduling. See [Selected Mon ownership](#selected-mon-scheduling-and-validation).
 
 ## Important Files
 
@@ -45,6 +52,8 @@ home/pokemon.asm
 home/mobile.asm
 home/header.asm
 home/delay.asm
+engine/pokedex/pokedex_animation_policy.asm
+engine/pokedex/new_pokedex_entry.asm
 engine/battle_anims/anim_commands.asm
 audio/engine.asm
 ram/hram.asm
@@ -316,7 +325,7 @@ audio/sampled_cries.asm
 The constants:
 
 ```asm
-DEF NUM_SAMPLED_CRY_SLOTS EQU 60
+DEF NUM_SAMPLED_CRY_SLOTS EQU const_value ; currently 122, after the slot enum
 DEF NO_SAMPLED_CRY EQU $ff
 ```
 
@@ -338,7 +347,7 @@ Each byte is either:
 
 ```text
 $ff = no sampled cry, fall back to synthesized cry
-0-59 = slot into SampledCryPointers
+0 through NUM_SAMPLED_CRY_SLOTS - 1 = slot into SampledCryPointers
 ```
 
 The pointer table:
@@ -346,9 +355,9 @@ The pointer table:
 ```asm
 SampledCryPointers:
     table_width 3
-rept NUM_SAMPLED_CRY_SLOTS
-    dba NullSampledCry
-endr
+    dba TreeckoSampledCry
+    dba GrovyleSampledCry
+    ; ...one real pointer for every enumerated slot...
     assert_table_length NUM_SAMPLED_CRY_SLOTS
 ```
 
@@ -423,8 +432,9 @@ The major runtime stages are:
 4. If there is no sampled cry, the normal synthesized cry path runs.
 5. If there is sampled data, `PlayLoadedSampledCry` calls
    `StartSampledCryAsync`.
-6. Startup saves audio/timer state and synchronously decodes up to 32 blocks
-   into WRAMX bank 4. Battle and non-battle callers use the same startup path.
+6. Startup prepares and synchronously decodes up to 32 blocks into WRAMX bank
+   4, then saves audio/timer state when arming playback. Battle and non-battle
+   callers use the same startup path.
 7. Startup copies the first decoded block to CH3 wave RAM and starts CH3.
 8. The timer interrupt streams one decoded block per tick.
 9. Mainline calls to `ServiceSampledCryAsync` refill more minmax2 blocks into
@@ -437,8 +447,8 @@ The major runtime stages are:
 `home/audio.asm`:
 
 - `PlayCry` checks sampled cry lookup before `PokemonCries`.
-- `PlayLoadedSampledCry` switches to the sampled player bank and starts async
-  playback.
+- `PlayLoadedSampledCry` starts the ROM0 async player; compressed source data
+  and the pair-lookup decoder use their own ROMX banks during cache filling.
 - `UpdateSound` returns early while sampled playback is active so the normal
   audio engine does not stomp CH3 registers.
 - `WaitSFX` waits for sampled playback as well as normal SFX.
@@ -460,13 +470,14 @@ The major runtime stages are:
 
 `home/delay.asm`:
 
-- `DelayFrame` services sampled cry async playback when it is not waiting in
-  `halt`.
+- `DelayFrame` waits for VBlank and then services sampled cry playback once
+  before returning. It does not decode repeatedly while halted.
 
 `home/header.asm` and `home/mobile.asm`:
 
 - the timer interrupt vector jumps to `SampledCryTimer`
-- if no sampled cry is active, `SampledCryTimer` falls through to `MobileTimer`
+- if no sampled cry is active, `SampledCryTimer` restores `af` and returns
+  immediately; the old mobile timer implementation is stubbed
 - if sampled playback is active, it services one CH3 block and returns with
   `reti`
 
@@ -482,8 +493,9 @@ SECTION "timer", ROM0[$0050]
 `SampledCryTimer`:
 
 - checks `hSampledCryTimer`
-- if zero, jumps to `MobileTimer`
-- if nonzero, banks to `SampledCry_AsyncTimerTick`
+- if zero, restores `af` and returns with `reti`
+- if nonzero, calls the ROM0 `SampledCry_AsyncTimerTick`, which selects WRAMX 4
+  and restores the caller's WRAM bank before returning
 - streams the next decoded block
 - returns via `reti`
 
@@ -681,12 +693,13 @@ in ROMX bank `$a4`, not WRAM.
 
 Startup:
 
-1. `StartSampledCryAsync` saves audio/timer state.
-2. It switches `rSVBK` to bank 4.
+1. `StartSampledCryAsync` masks interrupts and prepares the selected sample.
+2. It switches `rSVBK` to bank 4, preserving the caller's bank.
 3. `SampledCry_InitRollingCache` copies compressed block count/address into
    WRAMX state.
 4. `SampledCry_FillRollingCache` synchronously decodes up to 32 blocks.
-5. The first decoded block is copied to CH3 wave RAM.
+5. Playback arming saves audio/timer state and copies the first decoded block
+   to CH3 wave RAM.
 6. CH3 and timer playback begin.
 
 Timer tick:
@@ -730,9 +743,76 @@ Known practical result:
 If a future cry underruns:
 
 1. Confirm `ServiceSampledCryAsync` is being called in the active code path.
-2. Increase `SAMPLED_CRY_CACHE_REFILL_BLOCKS` cautiously.
-3. Add a service call to the specific long-running foreground loop.
-4. Avoid heavy decode work inside the timer interrupt.
+2. Measure service gaps, batch duration and cache depth before changing quotas.
+3. Consider a bounded service opportunity in the responsible owner loop, and
+   measure its effect on visual deadlines and input latency.
+4. Preserve the current 32/8 targets unless a separately tested change is
+   approved; increasing a quota can itself make another deadline fail.
+5. Avoid heavy decode work inside the timer interrupt.
+
+## Selected Mon Scheduling And Validation
+
+The Selected Mon page does not rely solely on the ordinary `DelayFrame`
+cadence while it owns quiet Dex publication. Its local policy lives in
+`engine/pokedex/pokedex_animation_policy.asm`:
+
+- `Pokedex_BeginOwnerLoop` records the hardware display tick.
+- `Pokedex_EndOwnerLoop` services sampled playback when its audio-due flag is
+  set, then waits only if that owner iteration has not already crossed a
+  display boundary. The flag prevents a second bounded finishing pass in the
+  same owner iteration from manufacturing an extra audio turn.
+- Outside quiet ownership, the same routine uses ordinary `DelayFrame`.
+- `Pokedex_CheckAnimationAudioRunway` checks decoded cache depth before
+  admitting combined animation finishing work. The current table requires
+  14-17 blocks depending on the upload size, capped by the actual remaining
+  playback count near completion. It reads shared counters with interrupts
+  briefly masked and restores the WRAM bank.
+- Admission also checks timer settings, scanline and animation deadline. It
+  rejects unmodeled active sampled periods instead of assuming the normal
+  period-200 cost bound applies to all audio modes.
+
+This leaves the codec, timer consumer, 32-block startup and eight-block refill
+unchanged. It changes when the Dex owner returns to service/wait and which
+animation work can safely precede the next audio opportunity. Full details,
+resource ownership and timing bounds are in
+[the scheduler reference](pokedex_animation_scheduler.md).
+
+Validation is owner-specific. The final Selected Mon target-correction build
+passes 126 linked animation replays across 18 species and seven timer phases,
+including 112 natural sampled completions across 16 sampled species. The user
+also reports no animation/audio-miss breakpoint hits across the expanded cold
+entry/internal-paging suite. Warm entry was deliberately not tested. These
+results do not sign off New Dex Entry, Party Stats, battles or rapid outgoing
+cry cancellation. Keep the pending items in
+[the bug backlog](pokedex_selected_bug_backlog.md).
+
+The later [normal-input cold Listing suite](dex_cold_listing_results.md) boots
+an isolated save and tests all 373 New Dex species. All 122 sampled cries finish
+naturally with zero cache-empty hits while their full animations meet the linked
+timelines. The user's all-species internal-paging pass also has no uninterrupted
+animation/audio misses. These results do not cover rapid cancellation, other
+display owners, or subjective waveform quality. The suite's one static Drapion
+portrait failure is category-text overflow, not a sampled-cry failure.
+
+The New Dex Entry path still loads its animated dictionary up front, runs
+`ANIM_MON_MENU` through `SetUpPokeAnim`, and transfers the legacy tilemap in its
+own wait loop. It does not use Selected Mon's two-slot scheduler or telemetry.
+See [the next capture procedure](dex_new_entry_testing.md).
+
+For audio debugging, break specifically on the timer's **empty decoded cache
+with nonzero remaining playback** branch, not on the shared stop routine.
+Natural completion and intentional cancellation also call the stop routine.
+Capture the stack, eight bytes from `wSampledCryCacheCount` in WRAMX 4, and six
+bytes from `hSampledCryBank` in HRAM while stopped, before cleanup clears the
+active/remaining state. Current addresses and opcode checks are in the capture
+procedure; re-resolve them from the matching ROM/symbols after every relink.
+
+An empty-cache hit during hidden rapid paging is still a real exhaustion of
+the outgoing cry, not proof of intentional cancellation. It is tracked as
+`DEX-CRY-04`; distinguish that ownership issue from an uninterrupted incoming
+cry failing on the visible page. The old 16-byte audio timing probe at
+`$04:$dbe0` is no longer present: that address is part of the decoded audio
+buffer and must not be interpreted as instrumentation.
 
 ## Battle Behavior
 
@@ -816,16 +896,19 @@ The decoder depends on the table's 4 KiB alignment and uses `BANK(...)` when it
 switches away from the active sample bank. Sample payloads remain independently
 banked and can move without changing this lookup section.
 
-## Cleanup Before Production Content
+## Content And Build Checks
 
-Before this becomes final content:
+When adding or changing sampled content:
 
-1. Add only real species mappings to `SampledCryIndexByPokemon`.
-2. Add only real sampled cry labels to `SampledCryPointers`.
+1. Keep real species mappings in `SampledCryIndexByPokemon`.
+2. Keep the slot enumeration and real labels in `SampledCryPointers` consistent.
 3. Keep `tools/wav2pcm4.py`.
 4. Keep `audio/sampled_cries/mastering_profiles.json`.
 5. Build with `make crystal`.
 6. Check `pokecrystal.map` for ROM0, ROMX, HRAM, and WRAMX usage.
+7. Run `make verify-sampled-cries`: the host check exhausts all 65,536
+   header/selector-byte combinations and compares every linked cry against
+   the reference decoder. This proves decoded bytes, not in-game scheduling.
 
 If a sampled cry label remains `INCBIN`ed, it still costs ROM space even if no
 species points to it.
@@ -914,10 +997,8 @@ Sampled cry too quiet:
 
 Potential future improvements:
 
-- replace temporary 60-slot table entries with real species mappings
 - add a small generator for `audio/sampled_cries.asm`
-- group sampled cry data across multiple ROMX banks when the set grows
-- add build-time validation that every `.mm2` file length is a multiple of 9
+- retain/revisit payload bank packing as the real species set grows
 - add per-cry reports from `wav2pcm4.py` to review ROM space and quality
 - decide per move/path whether long sampled cries should block battle logic
 - tune mastering per final species instead of applying one universal profile

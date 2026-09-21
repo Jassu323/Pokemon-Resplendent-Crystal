@@ -1,0 +1,16 @@
+{
+  "provenance": "User-supplied first-miss captures from the 96-tail-tile compact micro-schedule trial. ROM SHA-256 was not recorded. These are regression observations, NOT build-bound calibration.",
+  "rom_sha256": null,
+  "captures": [
+    {
+      "species": "weavile",
+      "hex": "d7 06 14 e7 00 02 01 00 00 00 00 ff 1c 00 01 0e 03 80 80 80 c9 e7 e7 02 05 10 e9 44 94 01 01 00 e9 4a e9 4a e9 4a e9 4a e9 4a e7 4a e7 84 10 02 02 ea e9 44 e9 44 e9 44 e9 44 e9 44 e9 44 80 00 82 02 02 ea e9 49 e9 4a e9 4a e9 4a e9 4a e9 4a 80 00 81 01 01 e7 e6 56 e6 56 e6 56 e6 56 e6 56 e6 56 80 12 80 02 02 ea e7 4a e7 84 e7 84 e7 84 e7 84 e7 84 80 00 10 02 02 ea e7 89 e7 89 e7 89 e7 89 e7 89 e7 89 80 00 38 55 00",
+      "expected": {"frame": 2, "deadline": 234, "loaded": 128, "uploaded": 0, "missing_interval": true}
+    },
+    {
+      "species": "luxray",
+      "hex": "d7 06 13 93 00 07 06 01 01 01 00 00 2a 00 04 0f 01 86 86 86 a6 a9 a9 01 05 10 af 43 94 06 01 00 af 49 af 49 af 49 af 49 af 49 a9 4a a9 89 82 07 02 b0 af 48 af 49 af 49 af 49 af 49 af 49 86 00 10 07 02 b0 ac 40 ac 40 ac 40 ac 40 ac 40 ac 40 86 00 10 07 02 b0 ad 43 ad 43 ad 43 ad 43 ad 43 ad 43 86 00 10 07 02 b0 ae 41 ae 41 ae 41 ae 41 ae 41 ae 41 86 00 10 07 02 b0 af 43 af 43 af 43 af 43 af 43 af 43 86 00 58 4c 00",
+      "expected": {"frame": 2, "deadline": 176, "loaded": 134, "uploaded": 0, "idle_calls": 4}
+    }
+  ]
+}

@@ -47,8 +47,9 @@ PokedexSelectedMon_Update:
 	jp nz, PokedexSelectedMon_ActivateFooterView
 	call PokedexSelectedMon_FindNextSeen
 	jp c, PokedexSelectedMon_ChangeSpecies
+	call Pokedex_PrepareDescriptionAnimation
 	call Pokedex_ServiceAnimationProducer
-	jp Pokedex_UpdateDescriptionAnimation
+	jp Pokedex_CommitDescriptionAnimation
 
 PokedexSelectedMon_CommitFooterCursor:
 	xor a
@@ -98,6 +99,7 @@ PokedexSelectedMon_Unavailable:
 	ret
 
 PokedexSelectedMon_ToggleDescriptionPage:
+	call Pokedex_ReleaseQuietAnimationOwner
 	ld a, [wPokedexDescriptionPage]
 	xor 1
 	ld [wPokedexDescriptionPage], a

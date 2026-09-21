@@ -782,19 +782,15 @@ wPokedexSelectedBGPaletteDirty:: db
 wPokedexSelectedOBJPaletteDirty:: db
 wPokedexAnimOwner:: db
 wPokedexAnimFlags:: db
-wPokedexAnimProducerPhase:: db
 wPokedexAnimStageSlot:: db
 wPokedexAnimDisplaySlot:: db
 wPokedexAnimStageDuration:: db
-wPokedexAnimStagePrehold:: db
 wPokedexAnimStageTileCount:: db
 wPokedexAnimStageFrameID:: db
 wPokedexAnimResidentFrameIDs:: ds 2
 wPokedexAnimUploadOffset:: db
 wPokedexAnimPlaybackState:: db
-wPokedexAnimPlaybackTimer:: db
-wPokedexAnimHoldTimer:: db
-wPokedexAnimTrailingHold:: db
+wPokedexAnimDeadline:: db
 wPokedexAnimFrontpicDim:: db
 wPokedexAnimUnderflowCount:: dw
 wPokedexAnimDictionaryBank:: db
@@ -803,6 +799,8 @@ wPokedexAnimDictionaryDestination:: dw
 wPokedexAnimDictionaryTilesRemaining:: db
 wPokedexAnimDictionaryTileCount:: db
 wPokedexAnimStageRequiredTiles:: db
+wPokedexAnimDictionaryTarget:: db
+wPokedexAnimTimelineAddress:: dw
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -810,7 +808,66 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 143
+wPokedexAnimDebug::
+wPokedexAnimDebugMagic:: db
+wPokedexAnimDebugVersion:: db
+wPokedexAnimDebugOwner:: db
+wPokedexAnimDebugStartTick:: db
+wPokedexAnimDebugFinishTick:: db
+wPokedexAnimDebugEventReads:: db
+wPokedexAnimDebugMapPublishes:: db
+wPokedexAnimDebugLateCount:: db
+wPokedexAnimDebugMaxLate:: db
+wPokedexAnimDebugTotalLate:: dw
+wPokedexAnimDebugMinReadyLead:: db
+wPokedexAnimDebugProducerCalls:: dw
+wPokedexAnimDebugProducerCrossVBlank:: db
+wPokedexAnimDebugDictionaryServices:: db
+wPokedexAnimDebugUploadServices:: db
+wPokedexAnimDebugMaxDictionaryTarget:: db
+wPokedexAnimDebugMaxLoadedTiles:: db
+wPokedexAnimDebugStartLoadedTiles:: db
+wPokedexAnimDebugReadyTick:: db
+wPokedexAnimDebugLastDeadline:: db
+wPokedexAnimDebugLastPublishTick:: db
+
+; TEMPORARY DEX ANIMATION SCHEDULER TRACE
+; Circular records: action/event, event serial, frame, deadline, producer entry,
+; post-stage check, post-dictionary, post-gather, HDMA entry, HDMA exit,
+; loaded dictionary tiles, and upload offset. Each timestamp is tick then LY.
+wPokedexAnimTraceHead:: db
+wPokedexAnimTraceCount:: db
+wPokedexAnimTraceAction:: db
+wPokedexAnimTraceEntryTick:: db
+wPokedexAnimTraceEntryLY:: db
+wPokedexAnimTraceLastPublishLY:: db
+wPokedexAnimTraceLastPublishEvent:: db
+wPokedexAnimTraceLastPublishFrame:: db
+wPokedexAnimTraceLastPublishSlot:: db
+wPokedexAnimTraceStageCheckedTick:: db
+wPokedexAnimTraceStageCheckedLY:: db
+wPokedexAnimTraceDictionaryTick:: db
+wPokedexAnimTraceDictionaryLY:: db
+wPokedexAnimTraceGatherTick:: db
+wPokedexAnimTraceGatherLY:: db
+wPokedexAnimTraceHDMAEntryTick:: db
+wPokedexAnimTraceHDMAEntryLY:: db
+wPokedexAnimTraceHDMAExitTick:: db
+wPokedexAnimTraceHDMAExitLY:: db
+wPokedexAnimTraceStageEntryTick:: db
+wPokedexAnimTraceStageEntryLY:: db
+wPokedexAnimTraceStageExitTick:: db
+wPokedexAnimTraceStageExitLY:: db
+wPokedexAnimTraceRecords:: ds 5 * 18
+wPokedexAnimDebugEnd::
+
+; Production state, reusing the former three-byte compact schedule cursor.
+; Retain this extent independently when removing the diagnostic overlay.
+wPokedexAnimLoopTick:: db
+wPokedexAnimWorkTick:: db
+wPokedexAnimSchedulerControl:: db
+	ds 143 - (@ - wPokedexAnimDebug)
+ASSERT wPokedexAnimDebugEnd - wPokedexAnimDebug <= 143
 
 NEXTU
 ; pokegear

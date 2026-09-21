@@ -1,40 +1,87 @@
 # Pokedex Selected-Mon Bug Backlog
 
-This file preserves issues discovered while bringing animated frontpics online
-for the Selected-Mon section of the Pokedex. Except for `DEX-CRY-01`, these are
-deliberately deferred until frontpic animation and cry playback pass the full
-Selected-Mon stress suite.
+Updated 2026-09-21. This is the live issue/status list, not the chronological
+scheduler investigation. Settled Selected animation/audio acceptance has passed;
+the separate UI, input, transition and adjacent-owner items below remain deferred.
 
-Do not fold these items into animation fixes unless an item directly blocks
-animation or cry validation. Revisit them in the groups below after the
-animation/cry signoff so each underlying transaction can be fixed and tested as
-a unit.
+Keep each transaction fix independently scoped and tested. A passing animation
+counter does not close a palette, text, input or cancellation bug. Earlier
+measurements and superseded diagnoses are retained in the
+[backlog investigation history](archived/dex-scheduler/dex_backlog_investigation_history.md)
+and [scheduler archive](archived/dex-scheduler/README.md).
+
+## Current: Animation Timing
+
+### DEX-ANIM-01: Work scheduling falls behind authored publication deadlines
+
+Status: Settled cold-entry/internal-paging acceptance passed; cleanup regression pending
+
+The current scheduler uses the hardware display clock with independent work
+completion, bounded finishing, quiet publication ownership and owner-local
+audio/wait sequencing. Later timeline events permit bounded decoding to the
+dictionary's end, correcting the Groudon lookahead misses without increasing
+startup or allocating more RAM/VRAM.
+
+The recorded target-correction matrix passes 126 replays across 18 species.
+The subsequent normal-input cold suite checks all 373 New Dex species, every
+published portrait and exact full authored timing with no animation/audio misses.
+The user's complete internal-paging pass and representative visual controls also
+pass. Drapion's initial static portrait remains the separate text overflow
+`DEX-UI-02`, not an animated-frame failure.
+
+Warm entry, rapid cancellation, Description text toggles and all owner/exit
+transactions are not signed off. Revalidate after removing instrumentation or
+warming; their timing is part of this accepted checkpoint. See the
+[implementation](pokedex_animation_scheduler.md), [acceptance/test guide](dex_scheduler_validation.md)
+and [cold results](dex_cold_listing_results.md). Historical failures, hypotheses
+and progression remain in the archive rather than being repeated as current
+open scheduler diagnoses.
+
+### DEX-ANIM-02: Seviper's authored main animation repeats indefinitely
+
+Status: Script corrected; manual cold/internal and automated cold retests passed
+
+The 2026-09-20 all-asset audit found Seviper is the only generated timeline with
+a persistent loop marker. In `gfx/pokemon/seviper/anim.asm`, `dorepeat 6` jumps
+to zero-based command 6, `setrepeat 2`, resetting the repeat counter on every
+trip. The original animation interpreter uses that same command-index meaning.
+
+The original generator output contained 49 introductory intervals followed by a
+13-interval frame-4/frame-5 loop. Main `endanim`, base hold and idle script were
+unreachable with that script. This is a separate authored-script issue, not
+evidence that the new scheduler missed a deadline.
+
+The user confirmed the Selected Mon animation continued for over a minute
+without stopping. The approved correction changes only `dorepeat 6` to
+`dorepeat 7`, targeting `frame 4` instead of the counter reset. The existing
+two-pass limit now applies, making the main end, base hold and idle script
+reachable. The rebuilt timeline contains 21 events totaling 122 display
+intervals and ends without a loop. All 399 linked timelines pass structural
+validation and all 11 scheduler contract tests pass; no scheduler, cry or
+memory-allocation change was needed. The user confirms both cold entry and
+internal paging now finish. The normal-input core suite also verifies all 122
+intervals and the final base restoration without animation or audio misses.
+See the [completed Seviper investigation](archived/dex-scheduler/dex_seviper_new_entry_testing.md#seviper-verify-the-repeat-target-fix)
+and [current acceptance](dex_scheduler_validation.md#acceptance-and-limits).
 
 ## Current: Cry Integration
 
 ### DEX-CRY-01: Dusknoir's sampled cry underruns on the Selected page
 
-Status: Measuring
+Status: Uninterrupted cold-entry/internal-paging acceptance passed
 
-Cry playback has been restored. Baseline instrumentation confirmed that
-Dusknoir can exhaust its decoded cache while compressed blocks remain during
-concurrent frontpic production. The exact-resident animation-stage fast path is
-working as intended but is insufficient by itself:
+The integrated scheduler retains the 32-block prefill and eight-block refill.
+The target-correction matrix records 112 natural sampled completions across
+16 species and seven timer phases. The normal-input cold suite subsequently
+completed all 122 sampled cries naturally with zero cache-empty hits; the full
+manual internal-paging pass also had no uninterrupted-playback misses.
 
-- Cold Listing-to-Selected and internal Mewtwo-to-Dusknoir runs reduced stage
-  builds from 33 to 14 and increased audio production from 216 to 240 blocks,
-  but both still underrran with 126 of 366 blocks left compressed.
-- A warm Listing-to-Selected run reduced stage builds from 32 to 13 and
-  increased audio production from 312 to 344 blocks, but still underrran with
-  22 of 366 blocks left compressed.
-- Reveal and playback timing did not regress, and none of these runs recorded
-  an animation underrun.
-
-Metagross is a useful pre-fast-path baseline control: a cold
-Listing-to-Selected run completed with no audio or animation underrun, zero
-compressed blocks remaining, and a minimum decoded-cache depth of five blocks.
-A post-fast-path repeat remained clean, reduced stage builds from 21 to 15,
-and increased its minimum decoded-cache depth from five to ten blocks.
+The earlier partial improvements and failed cache measurements are preserved
+in the [historical entry](archived/dex-scheduler/dex_backlog_investigation_history.md#dex-cry-01-dusknoirs-sampled-cry-underruns-on-the-selected-page).
+They describe older builds, not remaining settled-playback failures in this
+checkpoint. This acceptance does not close `DEX-CRY-02`, `DEX-CRY-03` or
+transition-only `DEX-CRY-04`. Warm entry remains untested, and instrumentation
+removal requires a fresh timed regression.
 
 ### DEX-CRY-02: A synthesized cry resumes after sampled playback ends
 
@@ -57,6 +104,65 @@ that the failure is not exclusive to the new Pokedex animation producer. The
 Dex still has its own concurrent-workload pressure, but any eventual audio
 solution should account for this shared failure mode rather than assuming the
 Selected-Mon controller is its sole cause.
+
+### DEX-CRY-04: Outgoing sampled cry can exhaust during species preparation
+
+Status: Confirmed transition-only issue; deferred, low observed impact
+
+Reproduction on the 2026-09-20 scheduler build: start on Weavile, let playback
+finish, then hold Up. Garchomp becomes visible and starts its animation/cry.
+Continuing to hold Up selects Bastiodon; `$00:$3cb3` triggers during the black
+transition, before Bastiodon's reveal. After continuing and releasing the pad,
+Bastiodon's cry finishes normally without another hit. The user reports no
+noticeable unwanted outgoing audio during the transition.
+
+The captured state establishes which cry and path are involved:
+
+- `hSampledCryBank=$9f` and compressed cursor `$478a` identify Garchomp's sample
+  (`$9f:$4622-$50e3`); Bastiodon's sample is in bank `$92`.
+- `wSampledCryCacheCount=0`, while both remaining playback and compressed counts
+  are `$010a` (266 blocks). `hSampledCryTimer=1` is still active at the breakpoint.
+- `wPokedexSelectedState=$02` is `DEXSELECT_STATE_SWITCHING_SPECIES`, and
+  `wPokedexAnimPlaybackState=0`; the incoming animation has not begun playback.
+- The interrupted mainline is `PokedexSelectedMon_ChangeSpecies` ->
+  `PokedexSelectedMon_StageDescription` -> `Pokedex_PrimeDescriptionAnimation` ->
+  `Pokedex_ServiceAnimationProducer` -> dictionary chunk -> `FarDecompress`.
+
+The species-change path cancels animation production but does not explicitly
+cancel outgoing audio before synchronous preparation. The timer can continue
+consuming Garchomp's cache while Bastiodon's startup work runs. This is a real
+cache-empty stop, not the normal cancellation branch, but it is not an underrun
+of Bastiodon's subsequently started cry or of settled playback.
+
+Fix direction, not implemented: stop the outgoing cry at the accepted species
+handoff before preparing the next entry. Coordinate sampled and synthesized
+cry ownership with `DEX-CRY-02`; do not infer that one implementation necessarily
+fixes both without auditing the sound-engine cleanup. No increase to startup
+prefill or change to the settled animation scheduler is indicated by this capture.
+
+## Description Paging
+
+### DEX-DESC-01: Toggling description pages can corrupt the upper screen
+
+Status: Open; historical diagnosis superseded, current-link retest required
+
+Pressing A to switch an entry's Description text pages was observed corrupting
+the frontpic, header and other upper tile rows. This is a separate transaction
+from uninterrupted animation playback, which does not exercise A-page toggles.
+
+The old explanation relied on the portrait publisher lacking an `rLY >= 144`
+check. That explanation is no longer valid: the current
+`Pokedex_VBlankAnimationFrontpicMap` in [pokedex_3.asm](../engine/pokedex/pokedex_3.asm)
+checks `LY_VBLANK` as a lower bound before applying its upper cutoff. The
+[superseded diagnostic](archived/dex-scheduler/dex_backlog_investigation_history.md#dex-desc-01-toggling-description-pages-can-corrupt-the-upper-screen)
+is retained only as historical evidence.
+
+Retest A during and after animation on the current link before choosing a fix.
+Audit the full backing-map transfer through
+`CopyTilemapAtOnce` in [tilemap.asm](../home/tilemap.asm), pending portrait
+publication, quiet-owner release/reacquisition and text redraw as one
+transaction. A race remains an investigation direction, not a proven current
+cause. Do not mark this fixed solely because the lower-bound check now exists.
 
 ## Selected-Mon Internal Paging
 
@@ -96,6 +202,23 @@ Selected-Mon internal paging stops at the beginning and end of the Pokedex
 instead of wrapping between Chikorita and the final available entry in the
 opposite direction. This should match the full-list wrap behavior already used
 by the Listing page.
+
+### DEX-NAV-02: A rapid axis change repeats the previous vertical input
+
+Status: Reported; deferred investigation
+
+2026-09-21: During Dex testing, quickly pressing Up followed by Left or Right
+is processed as two Up inputs. Quickly pressing Down followed by Left or Right
+is likewise processed as two Down inputs. The reverse order, Left or Right
+followed by Up or Down, processes both directions correctly.
+
+Expected behavior: each accepted press uses its actual direction, without
+replaying the preceding vertical direction. Record the exact Listing/Selected
+owner, whether the first key was released, and the interval between presses
+when reproducing; those details have not yet been captured. Inspect newly
+pressed, held and auto-repeat input state together with any queued navigation
+direction. Do not assume a scheduler or input-buffer cause until that state is
+observed. No fix has been attempted.
 
 ## Return To Listing
 
@@ -142,6 +265,10 @@ Status: Open
 Listing minisprites can receive the wrong palette, especially after ownership
 transitions. This may share its root cause with `DEX-RETURN-03`.
 
+2026-09-21: The user reconfirms intermittent palette errors when B-returning
+from Selected to Listing. The automated logical-return checks do not validate
+palette restoration and do not close this issue.
+
 ### DEX-GRID-02: Caught Poke Ball can receive the wrong OBJ palette
 
 Status: Open
@@ -158,6 +285,37 @@ Status: Deferred
 
 Footprint graphics use a pure-black background instead of the Pokedex dark
 grey.
+
+### DEX-UI-02: Pokemon category text is cut off for some species
+
+Status: Deferred; Drapion overflow confirmed by cold-entry audit, Mew unresolved
+
+The user reports truncated category text in the Dex for Drapion and Mew.
+Drapion exceeds the available character width. Mew's category is expected to
+fit, so do not assume both cases are explained by string length or share the
+same cause.
+
+The all-species cold Listing automation confirms a related Drapion portrait
+artifact before animation. `DisplayDexEntry` in `engine/pokedex/pokedex_2.asm`
+prints its 13-character `Ogre Scorpion` at `(9,4)` without a field-width limit.
+The last `o` and `n` overflow the 20-column WRAM row to `(0,5)` and `(1,5)`.
+At initial Selected-page reveal, portrait cell 28 contains font tile `$ad`
+(`n`) instead of base tile `$04`, with the correct bank attribute. This matches
+VRAM map cell `$00:$98a1`. Every subsequent animation publication has the
+correct map and tile pixels; the first publication repairs the visible portrait.
+There are no animation or cry misses. This is page text construction, not the
+streaming scheduler. The runner deliberately reports `static_reveal_tiles`
+instead of treating the known issue as a passing case. See
+[cold Listing evidence](dex_cold_listing_results.md).
+
+2026-09-21: The user visually confirms Drapion's overflow in the current build.
+It remains deferred; the animation publications themselves still look correct.
+
+Expected behavior: the complete category is readable for each species.
+During investigation, compare source strings with the rendered text, check
+field bounds and string termination, and determine whether later drawing
+overwrites any characters. Record the missing text and entry path for each
+case before choosing a fix. No runtime changes have been made for this report.
 
 ### DEX-AREA-01: Area transitions expose temporary corruption
 
@@ -199,16 +357,25 @@ battle text says `Dusknoir's Attack fell!` instead of reporting a Speed drop.
 Determine whether String Shot is actually modifying Attack or whether only the
 stat-down message is selecting the wrong stat before implementing a fix.
 
-### BATTLE-CATCH-01: Caught indicator remains during EXP award
+### BATTLE-CATCH-01: Capture ball disappears during EXP award
 
-Status: Deferred
+Status: Deferred presentation request; original report clarified
 
-After a successful capture, the battle HUD's caught-Pokemon indicator remains
-visible while experience is awarded.
+After a successful capture, the capture-ball graphic disappears while
+experience is awarded. The user requested reviewing that presentation even
+though it was not a regression. This is about the capture animation's ball,
+not the small HUD caught indicator or trainer party-ball palette; the earlier
+backlog wording incorrectly described a caught indicator remaining visible.
 
 ### QA-CLEANUP-01: Remove temporary encounter edits
 
-Status: Completed
+Status: Completed for the current scheduler test setup
 
-The Route 29/30 stress-test encounters were restored to their normal tables
-before committing the Selected-Mon animation/cry work.
+Earlier Route 29/30 stress-test encounters were restored before the previous
+Selected-Mon animation/cry commit. The current scheduler investigation added
+new explicitly temporary overrides: Spheal/Sealeo/Snorlax on Route 29, and
+Groudon/Drapion/Yanmega/Rhyperior/Milotic on Route 30. Both blocks are now
+restored exactly to the branch baseline, with no remaining diff in
+`data/wild/johto_grass.asm`. Trainer parties and `engine/overworld/wildmons.asm`
+also have no uncommitted edits. Scheduler instrumentation is deliberately
+retained for the user's next checkpoint; its cleanup will happen later.

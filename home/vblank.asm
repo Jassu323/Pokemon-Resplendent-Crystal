@@ -96,6 +96,9 @@ VBlank_Normal::
 	ldh a, [hROMBank]
 	ldh [hROMBankBackup], a
 
+	ldh a, [hVBlank]
+	bit VBLANK_DEX_QUIET_F, a
+	jr nz, .viewport_owned
 	ldh a, [hSCX]
 	ldh [rSCX], a
 	ldh a, [hSCY]
@@ -104,6 +107,7 @@ VBlank_Normal::
 	ldh [rWY], a
 	ldh a, [hWX]
 	ldh [rWX], a
+.viewport_owned
 
 	; There's only time to call one of these in one vblank.
 	; Calls are in order of priority.

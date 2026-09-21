@@ -101,25 +101,48 @@ DEF POKEDEX_ANIM_BUFFER_A_TILE EQU $80
 DEF POKEDEX_ANIM_BUFFER_B_TILE EQU $33
 
 DEF POKEDEX_ANIM_ACTIVE_F       EQU 0
-DEF POKEDEX_ANIM_PARSER_READY_F EQU 1
+DEF POKEDEX_ANIM_TIMELINE_READY_F EQU 1
 DEF POKEDEX_ANIM_STAGE_VALID_F  EQU 2
 DEF POKEDEX_ANIM_STAGE_READY_F  EQU 3
 DEF POKEDEX_ANIM_ENDED_F        EQU 4
 DEF POKEDEX_ANIM_MAP_PENDING_F  EQU 5
+DEF POKEDEX_ANIM_MAP_PUBLISHED_F EQU 6
 
 DEF POKEDEX_ANIM_UPLOAD_CHUNK_TILES EQU 20
-DEF POKEDEX_ANIM_STARTUP_STREAMS     EQU 8
+DEF POKEDEX_ANIM_STARTUP_STREAMS     EQU 16
 DEF POKEDEX_ANIM_STARTUP_TILES EQU POKEDEX_ANIM_STARTUP_STREAMS * FRONTPIC_ANIM_DICTIONARY_CHUNK_TILES
-
-DEF POKEDEX_ANIM_PHASE_MAIN EQU 0
-DEF POKEDEX_ANIM_PHASE_IDLE EQU 1
 
 DEF POKEDEX_ANIM_PLAYBACK_INACTIVE EQU 0
 DEF POKEDEX_ANIM_PLAYBACK_WAITING  EQU 1
 DEF POKEDEX_ANIM_PLAYBACK_PLAYING  EQU 2
-DEF POKEDEX_ANIM_PLAYBACK_MAIN_HOLD EQU 3
-DEF POKEDEX_ANIM_PLAYBACK_PREHOLD  EQU 4
-DEF POKEDEX_ANIM_PLAYBACK_DONE     EQU 5
+DEF POKEDEX_ANIM_PLAYBACK_DONE     EQU 3
+
+DEF POKEDEX_ANIM_TIMELINE_FINISH EQU $f0
+DEF POKEDEX_ANIM_TIMELINE_LOOP   EQU $f1
+
+DEF POKEDEX_ANIM_WORK_DECODE EQU $40
+DEF POKEDEX_ANIM_WORK_UPLOAD EQU $c0
+DEF POKEDEX_ANIM_AUDIO_DUE_F EQU 0
+DEF POKEDEX_ANIM_FINISH_USED_F EQU 1
+DEF POKEDEX_ANIM_STAGE_WORK_MASK EQU $7c
+
+DEF POKEDEX_ANIM_DEBUG_MAGIC   EQU $d7
+DEF POKEDEX_ANIM_DEBUG_VERSION EQU 6
+
+; TEMPORARY DEX ANIMATION SCHEDULER TRACE
+; Producer records use bits 0-6. Values $80 and above are discrete events.
+DEF POKEDEX_ANIM_TRACE_DICTIONARY_F         EQU 0
+DEF POKEDEX_ANIM_TRACE_UPLOAD_F             EQU 1
+DEF POKEDEX_ANIM_TRACE_READY_F              EQU 2
+DEF POKEDEX_ANIM_TRACE_CROSSED_VBLANK_F     EQU 3
+DEF POKEDEX_ANIM_TRACE_STAGE_VALID_ENTRY_F  EQU 4
+DEF POKEDEX_ANIM_TRACE_MAP_PENDING_ENTRY_F  EQU 5
+DEF POKEDEX_ANIM_TRACE_MAP_PUBLISHED_ENTRY_F EQU 6
+DEF POKEDEX_ANIM_TRACE_STAGE_PREPARED       EQU $80
+DEF POKEDEX_ANIM_TRACE_MAP_QUEUED           EQU $81
+DEF POKEDEX_ANIM_TRACE_UNDERFLOW             EQU $82
+DEF POKEDEX_ANIM_TRACE_RECORD_SIZE           EQU 18
+DEF POKEDEX_ANIM_TRACE_CAPACITY              EQU 5
 
 Pokedex:
 	ldh a, [hWX]
@@ -148,12 +171,12 @@ Pokedex:
 	call DelayFrame
 
 .main
-	call JoyTextDelay
+	farcall Pokedex_BeginOwnerLoop
 	ld a, [wJumptableIndex]
 	bit JUMPTABLE_EXIT_F, a
 	jr nz, .exit
 	call Pokedex_RunJumptable
-	call DelayFrame
+	farcall Pokedex_EndOwnerLoop
 	jr .main
 
 .exit
@@ -1597,8 +1620,7 @@ Pokedex_DrawMainScreenBG:
 	jr nz, .scrollbar_middle
 	ld a, POKEDEX_SCROLLBAR_TILE + 4
 	call .PlaceScrollbarRow
-	call Pokedex_PlaceSelectedFrontpicTopLeftCorner
-	ret
+	jp Pokedex_PlaceSelectedFrontpicTopLeftCorner
 
 .PlaceScrollbarRow:
 	ld [hli], a
@@ -1647,8 +1669,7 @@ Pokedex_DrawDexEntryScreenBG:
 	hlcoord 0, 17
 	ld de, .MenuItems
 	call Pokedex_PlaceString
-	call Pokedex_PlaceFrontpicTopLeftCorner
-	ret
+	jp Pokedex_PlaceFrontpicTopLeftCorner
 
 .Number: ; unreferenced
 	db $5c, $5d, -1 ; No.
@@ -3052,8 +3073,7 @@ Pokedex_ApplyUsualPals:
 	ld a, $e4
 	call DmgToCgbBGPals
 	ld a, $e0
-	call DmgToCgbObjPal0
-	ret
+	jp DmgToCgbObjPal0
 
 Pokedex_LoadPointer:
 	ld e, a
@@ -3094,8 +3114,7 @@ Pokedex_LoadSelectedMonTiles:
 	ldh a, [hROMBank]
 	ld b, a
 	call Get2bpp
-	call CloseSRAM
-	ret
+	jp CloseSRAM
 
 Pokedex_PrepareSelectedMonTiles:
 ; Build one complete 7x7 selection image in Dex-only WRAM0. The currently
@@ -3118,8 +3137,7 @@ Pokedex_PrepareSelectedMonTiles:
 	call CloseSRAM
 	ld a, [wCurPartySpecies]
 	ld [wTempSpecies], a
-	call Pokedex_PrepareCurrentFootprint
-	ret
+	jp Pokedex_PrepareCurrentFootprint
 
 .question_mark
 	ld a, -1
@@ -3131,8 +3149,7 @@ Pokedex_PrepareSelectedMonTiles:
 	ld de, wPokedexWRAM0Scratch
 	ld bc, 7 * 7 tiles
 	call CopyBytes
-	call CloseSRAM
-	ret
+	jp CloseSRAM
 
 Pokedex_LoadCurrentFootprint:
 	call Pokedex_GetSelectedMon

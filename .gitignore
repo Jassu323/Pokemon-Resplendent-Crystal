@@ -9,6 +9,8 @@
 *.dimensions
 *.animated.tilemap
 *.dexanim
+*.dextimeline
+*.dexschedule
 *.sgb.tilemap
 gfx/pokemon/*/bitmask.asm
 gfx/pokemon/*/frames.asm
@@ -30,6 +32,9 @@ gfx/pokemon/*/frames.asm
 # precompiled python
 *.pyc
 *$py.class
+
+# local build outputs, test reports, and emulator artifacts
+/build/
 
 # save game files
 *.sgm

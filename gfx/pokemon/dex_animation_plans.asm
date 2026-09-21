@@ -1,8 +1,8 @@
-; Generated Dex-only frame plans. Each record stores an explicit
-; tilemap position and dictionary source for every changed tile.
+; Generated Dex-only frame plans. Each record stores its changed-tile count,
+; dictionary high-water mark, and explicit tilemap position/source pairs.
 
 SECTION "Dex Animation Plans 1", ROMX
-; Generated payload: 15152 bytes.
+; Generated payload: 15730 bytes.
 
 AbomasnowDexAnimationPlan: INCBIN "gfx/pokemon/abomasnow/front.dexanim"
 AbraDexAnimationPlan: INCBIN "gfx/pokemon/abra/front.dexanim"
@@ -139,7 +139,7 @@ WooperDexAnimationPlan: INCBIN "gfx/pokemon/wooper/front.dexanim"
 ZapdosDexAnimationPlan: INCBIN "gfx/pokemon/zapdos/front.dexanim"
 
 SECTION "Dex Animation Plans 2", ROMX
-; Generated payload: 15158 bytes.
+; Generated payload: 15728 bytes.
 
 AbsolDexAnimationPlan: INCBIN "gfx/pokemon/absol/front.dexanim"
 AerodactylDexAnimationPlan: INCBIN "gfx/pokemon/aerodactyl/front.dexanim"
@@ -276,7 +276,7 @@ ZangooseDexAnimationPlan: INCBIN "gfx/pokemon/zangoose/front.dexanim"
 ZubatDexAnimationPlan: INCBIN "gfx/pokemon/zubat/front.dexanim"
 
 SECTION "Dex Animation Plans 3", ROMX
-; Generated payload: 15154 bytes.
+; Generated payload: 15728 bytes.
 
 AltariaDexAnimationPlan: INCBIN "gfx/pokemon/altaria/front.dexanim"
 AmbipomDexAnimationPlan: INCBIN "gfx/pokemon/ambipom/front.dexanim"

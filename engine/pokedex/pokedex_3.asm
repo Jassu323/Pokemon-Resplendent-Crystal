@@ -954,6 +954,9 @@ Pokedex_CommitStagedSelectionName:
 
 Pokedex_CommitAnimationFrontpicMap::
 ; de = packed 7x7 tilemap immediately followed by packed attributes.
+	ld a, [wPokedexAnimFlags]
+	and (1 << POKEDEX_ANIM_MAP_PENDING_F) | (1 << POKEDEX_ANIM_MAP_PUBLISHED_F)
+	ret nz
 	call Pokedex_StageAnimationFrontpicMap
 	jr Pokedex_CommitCurrentFrontpicMap
 
@@ -980,7 +983,9 @@ Pokedex_CommitCurrentFrontpicMap::
 	call Pokedex_StageCurrentFrontpicOwnerMaps
 	ld hl, wPokedexAnimFlags
 	set POKEDEX_ANIM_MAP_PENDING_F, [hl]
-	ld a, VBLANK_POKEDEX
+	ldh a, [hVBlank]
+	and 1 << VBLANK_DEX_QUIET_F
+	or VBLANK_POKEDEX
 	ldh [hVBlank], a
 	ret
 
@@ -1002,13 +1007,12 @@ Pokedex_StageCurrentFrontpicOwnerMaps:
 .CopyMap:
 	ld b, 7
 .row
-	ld c, 7
-.col
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .col
+	rept 7
+		ld a, [hli]
+		ld [de], a
+		inc de
+	endr
+	ld c, 0
 	push bc
 	ld bc, SCREEN_WIDTH - 7
 	add hl, bc
@@ -1026,13 +1030,12 @@ Pokedex_StageCurrentFrontpicOwnerMaps:
 Pokedex_CopyPackedFrontpicMapToBacking:
 	ld b, 7
 .backing_row
-	ld c, 7
-.backing_col
-	ld a, [hli]
-	ld [de], a
-	inc de
-	dec c
-	jr nz, .backing_col
+	rept 7
+		ld a, [hli]
+		ld [de], a
+		inc de
+	endr
+	ld c, 0
 	ld a, e
 	add SCREEN_WIDTH - 7
 	ld e, a
@@ -1315,13 +1318,30 @@ Pokedex_VBlankAnimationFrontpicMap:
 .pending
 	ldh a, [hBGMapUpdate]
 	and a
-	jr nz, .defer
+	jp nz, .defer
 	ldh a, [hDMATransfer]
 	and a
-	jr nz, .defer
+	jp nz, .defer
+	ldh a, [hVBlank]
+	bit VBLANK_DEX_QUIET_F, a
+	ld b, LY_VBLANK + 2
+	jr z, .have_cutoff
+	ld b, LY_VBLANK + 5
+.have_cutoff
 	ldh a, [rLY]
-	cp LY_VBLANK + 2
-	jr nc, .defer
+	cp LY_VBLANK
+	jp c, .defer
+	cp b
+	jp nc, .defer
+	ldh a, [hVBlankCounter]
+	inc a
+	ld b, a
+	ld a, [wPokedexAnimDeadline]
+	sub b
+	jr z, .deadline_reached
+	bit 7, a
+	jp z, .defer
+.deadline_reached
 
 	ldh a, [rSVBK]
 	push af
@@ -1345,7 +1365,64 @@ Pokedex_VBlankAnimationFrontpicMap:
 	ldh [rSVBK], a
 	ld hl, wPokedexAnimFlags
 	res POKEDEX_ANIM_MAP_PENDING_F, [hl]
-	xor a
+	set POKEDEX_ANIM_MAP_PUBLISHED_F, [hl]
+	ld a, [wPokedexAnimStageFrameID]
+	and a
+	ld a, -1
+	jr z, .display_recorded
+	ld a, [wPokedexAnimStageSlot]
+	.display_recorded
+	ld [wPokedexAnimDisplaySlot], a
+	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
+	ld [wPokedexAnimTraceLastPublishSlot], a
+	ldh a, [rLY]
+	ld [wPokedexAnimTraceLastPublishLY], a
+	ld a, [wPokedexAnimDebugEventReads]
+	ld [wPokedexAnimTraceLastPublishEvent], a
+	ld a, [wPokedexAnimStageFrameID]
+	ld [wPokedexAnimTraceLastPublishFrame], a
+
+	ld hl, wPokedexAnimDebugMapPublishes
+	ld a, [hl]
+	and a
+	jr nz, .start_recorded
+	ldh a, [hVBlankCounter]
+	inc a
+	ld [wPokedexAnimDebugStartTick], a
+.start_recorded
+	inc [hl]
+	ld a, [wPokedexAnimDeadline]
+	ld [wPokedexAnimDebugLastDeadline], a
+	ld b, a
+	ldh a, [hVBlankCounter]
+	inc a
+	ld [wPokedexAnimDebugLastPublishTick], a
+	sub b
+	jr z, .timing_recorded
+	ld c, a
+	ld hl, wPokedexAnimDebugLateCount
+	inc [hl]
+	ld hl, wPokedexAnimDebugTotalLate
+	ld a, [hl]
+	add c
+	ld [hli], a
+	jr nc, .no_late_carry
+	inc [hl]
+.no_late_carry
+	ld a, [wPokedexAnimDebugMaxLate]
+	cp c
+	jr nc, .timing_recorded
+	ld a, c
+	ld [wPokedexAnimDebugMaxLate], a
+.timing_recorded
+	ld a, [wPokedexAnimDebugMapPublishes]
+	cp 1
+	jr nz, .deadline_anchored
+	ld a, [wPokedexAnimDebugLastPublishTick]
+	ld [wPokedexAnimDeadline], a
+.deadline_anchored
+	ldh a, [hVBlank]
+	and 1 << VBLANK_DEX_QUIET_F
 	ldh [hVBlank], a
 .defer
 	scf

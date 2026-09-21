@@ -382,6 +382,10 @@ DEF NUM_UNLOCKED_UNOWN_SETS EQU const_value
 	const VBLANK_DMA_TRANSFER ; 6
 	const VBLANK_POKEDEX      ; 7
 DEF NUM_VBLANK_HANDLERS EQU const_value
+; High bit is an explicit Selected-Dex quiet-viewport ownership tag.
+; Handler dispatch still uses only the low three bits.
+DEF VBLANK_DEX_QUIET_F EQU 7
+ASSERT NUM_VBLANK_HANDLERS == 8
 
 ; rRAMB::
 DEF NUM_SRAM_BANKS EQU 4
