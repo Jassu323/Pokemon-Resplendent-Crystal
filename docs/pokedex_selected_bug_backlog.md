@@ -348,6 +348,106 @@ unknown height/weight values.
 
 ## Adjacent Deferred Work
 
+### NEWDEX-ANIM-01: Restored Master Ball opening exposes a late first publication
+
+Status: Fixed; automated animation/audio regression and manual confirmation passed
+
+After restoring the original Master Ball animation on 2026-09-21, Dusknoir's
+authentic catch replay reaches New Dex Entry but misses its first animation
+publication. Reason 3 fires at LY 149 after the cutoff reads LY 148; first map
+plus attrs requires LY < 148.
+The ready map publishes one interval late, shortening its first hold by one
+interval. Its sampled cry finishes normally. Seven other catch fixtures pass.
+This is separate from `BATTLE-CRY-01`, not a New Entry cry underrun. The earlier
+8,570-case acceptance used entry states derived with the standard-ball override.
+See the [restoration evidence](new_dex_entry_regression_results.md#master-ball-restoration-follow-up).
+Only the ball-animation override was removed; no scheduler fix was attempted.
+
+The user then tested all four Route 30 targets with no New Dex Entry misses;
+only Dusknoir's battle cry hit a breakpoint. The installed ROM matches the
+restored build hash. A repeat replay of the saved Dusknoir registration state
+still reproduces the same first-publication miss, so the manual passes do not
+close this timing case. Instruction-level replay confirms the sampled-cry timer
+ISR overlaps VBlank and delays the cutoff from the passing fixture's LY 145 to
+LY 148. The map was ready; no decoding/refilling takes place in the blocking ISR.
+
+The fixed-rectangle copy optimization is now integrated. It reduces first/final
+last-write cost by 732 T, permits a cost-checked LY < 150 gate, and adds **148
+ROMX bytes**, with no RAM/ROM0 allocation. Dusknoir now meets its first deadline
+and completes the exact 174-interval sequence. All 8,570 input cases pass
+animation/picture/audio checks, and all 3,600 synthetic timer-phase cases pass.
+That historical run retained eleven text-refresh failures; the later acknowledged
+description publisher resolves them. See [current results](new_dex_entry_regression_results.md#acknowledged-description-publication).
+
+After that correction, the user repeated the focused targets several times with
+varied input permutations and reported no New Dex Entry animation or sampled-cry
+misses. Manual confirmation is complete. Encounter cleanup changes no executable
+code or breakpoint addresses; it does not affect this acceptance result.
+
+### NEWDEX-UI-01: Mewtwo page-2 text refresh lags during short animation holds
+
+Status: Closed with accepted presentation caveat; automated regression passes
+
+The restored-Master-Ball input sweep finds this on Mewtwo when A is pressed at
+offsets 32-41 or 43 from first publication. Fourteen UI cells, including the page
+number and upper text, still differ from the software backing map at the page-2
+snapshot. The page number is `$57` in VRAM and `$58` in backing memory. The
+remaining cells refresh one to three intervals after that snapshot. The picture
+and exact 111-interval animation timeline are correct throughout; no audio miss
+or lock occurs.
+
+All eleven cases were replayed on the previous restored-Master-Ball ROM with
+its matching entry state. The failing displays and mismatch counts are identical,
+so this is **not introduced by the faster copies**. The earlier wholly passing
+input sweep used entry phases derived with the standard-ball opening override.
+
+`WaitBGMap` waits four intervals without checking completed map thirds. Due
+animation publications and the ACK barrier legitimately defer ordinary BG
+updates; Mewtwo's short 1/2-interval holds can delay the middle-third text update
+after the lower text has changed. This was not fixed by the picture-copy change.
+
+The subsequent targeted correction queues the complete five-row description
+and page number, publishes all 91 cells in one admitted VBlank, and acknowledges
+the actual final store. Animation keeps priority and its exact deadlines;
+ordinary BG thirds no longer determine description completion. No new RAM or
+ROM0 allocation is needed. The eleven paired cases improve from 9-11 intervals
+after A to 3, with no mixed old/new text frames. The full 8,570-case input matrix
+passes. Per-display pixel/map checks and input-anchored latency ensure this is
+not a later snapshot hiding the previous failure.
+
+Manual acceptance (2026-09-21): the user perceives the description text updating
+slightly before the page number, approximately one or two frames, and accepts
+the result. That offset is unmeasured and was not reproduced by the automated
+fixtures. Preserve it as an accepted caveat; no further fix is requested here.
+The battle cry issue is separate and remains open.
+
+Evidence: [comparison and traces](new_dex_entry_regression_results.md#remaining-mewtwo-text-refresh),
+`build/new-dex-entry-copy-integration/mewtwo-ui-comparison/report.json`.
+Fix and paired before/after evidence:
+[acknowledged description publication](new_dex_entry_regression_results.md#acknowledged-description-publication),
+`build/new-dex-entry-text-publication/mewtwo-comparison/report.json`.
+
+### BATTLE-CRY-01: Dusknoir's sampled cry underruns in battle
+
+Status: User-reported regression; investigation and fix explicitly deferred
+
+Reported 2026-09-21 during New Dex Entry testing: Dusknoir's sampled cry
+underruns **in battle, not on the New Dex Entry page**. The user reports that
+earlier battle playback worked. The introducing change and underlying cause
+have not been established; do not attribute this to the page-2/ACK correction
+without a matching-build comparison.
+
+The user reported another battle-cry breakpoint hit on Dusknoir while testing
+Route 30 after restoring the Master Ball opening. No New Dex Entry miss was
+reported in that manual pass. This battle issue remains explicitly deferred.
+
+When revisited, record the ROM/symbol identity and whether the failure occurs
+on wild encounter, trainer/player send-out, or fainting, then capture the
+battle stack and sampled cache/remaining-block state at the underrun. The
+specific battle trigger has not yet been recorded. Keep this separate from
+the Stats Screen issue (`DEX-CRY-03`) and Selected paging cancellation
+(`DEX-CRY-04`); passing New Dex Entry tests does not close it.
+
 ### BATTLE-MOVE-01: String Shot reports or applies an Attack drop
 
 Status: Deferred investigation
@@ -369,13 +469,20 @@ backlog wording incorrectly described a caught indicator remaining visible.
 
 ### QA-CLEANUP-01: Remove temporary encounter edits
 
-Status: Completed for the current scheduler test setup
+Status: Complete for Selected and New Entry; instrumentation intentionally retained
 
 Earlier Route 29/30 stress-test encounters were restored before the previous
-Selected-Mon animation/cry commit. The current scheduler investigation added
-new explicitly temporary overrides: Spheal/Sealeo/Snorlax on Route 29, and
-Groudon/Drapion/Yanmega/Rhyperior/Milotic on Route 30. Both blocks are now
-restored exactly to the branch baseline, with no remaining diff in
-`data/wild/johto_grass.asm`. Trainer parties and `engine/overworld/wildmons.asm`
-also have no uncommitted edits. Scheduler instrumentation is deliberately
-retained for the user's next checkpoint; its cleanup will happen later.
+Selected-Mon animation/cry commit. The Selected scheduler investigation's
+temporary overrides were Spheal/Sealeo/Snorlax on Route 29, and
+Groudon/Drapion/Yanmega/Rhyperior/Milotic on Route 30. Both blocks were restored
+to the branch baseline before that commit, along with trainer/encounter-table
+testing edits. Scheduler instrumentation was deliberately retained.
+
+The subsequent New Entry investigation added a new marked test set: Mewtwo,
+Vibrava, Exeggcute and Garchomp on Route 29, and Dusknoir, Metagross, Luxray and
+Caterpie on Route 30. Following automated and manual New Entry acceptance, both
+blocks have now been restored exactly to the committed branch baseline. Trainer
+parties and the original Master Ball animation also match that baseline. The
+superseded host-only page-2 patch prototype was removed. Current instrumentation,
+auditing and reusable regression runners are intentionally retained for later
+cleanup. Generated outputs remain under ignored `build/`.

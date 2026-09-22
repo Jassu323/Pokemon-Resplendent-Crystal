@@ -317,6 +317,8 @@ INCLUDE "gfx/pokemon/dex_animation_plan_pointers.asm"
 INCLUDE "gfx/pokemon/dex_animation_plans.asm"
 INCLUDE "gfx/pokemon/dex_animation_timelines.asm"
 INCLUDE "engine/pokedex/pokedex_animation_timeline.asm"
+INCLUDE "engine/pokedex/new_dex_entry_animation.asm"
+INCLUDE "engine/gfx/new_dex_entry_pics.asm"
 
 
 SECTION "bank11", ROMX

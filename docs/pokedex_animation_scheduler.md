@@ -12,6 +12,7 @@ Companion documents:
 - [Validation and emulator test procedure](dex_scheduler_validation.md)
 - [All-species normal-input cold Listing results](dex_cold_listing_results.md)
 - [VRAM and scratch allocation](pokedex_vram.md)
+- [New Dex Entry resident scheduler](new_dex_entry_animation_scheduler.md)
 - [Outstanding bugs](pokedex_selected_bug_backlog.md)
 - [Historical implementation pre-flight](archived/dex-scheduler/dex_scheduler_implementation_preflight.md)
 - [Investigation record](archived/dex-scheduler/dex_scheduler_investigation.md)
@@ -19,8 +20,9 @@ Companion documents:
 ## Scope And Guarantees
 
 The owner is the Start-menu Pokedex's Selected Description screen on CGB. This
-change does not migrate Party Stats, New Dex Entry, or battle animation owners.
-Those remain independent even though they share frontpic assets and audio code.
+change does not migrate Party Stats or battle animation owners. New Dex Entry
+now has a separate resident scheduler (linked above), not this two-slot owner.
+They share frontpic metadata, exact timelines and audio code, not VRAM ownership.
 
 Goals, in order:
 

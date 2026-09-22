@@ -97,8 +97,8 @@ VBlank_Normal::
 	ldh [hROMBankBackup], a
 
 	ldh a, [hVBlank]
-	bit VBLANK_DEX_QUIET_F, a
-	jr nz, .viewport_owned
+	add a ; owner bit 7 into carry; keep ordinary graphics on the short path
+	jp c, NewDexEntry_VBlankDispatch
 	ldh a, [hSCX]
 	ldh [rSCX], a
 	ldh a, [hSCY]

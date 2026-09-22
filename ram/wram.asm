@@ -3498,17 +3498,21 @@ wGameDataEnd::
 
 SECTION "Pic Animations", WRAMX
 
+wNewDexEntryAnimPairs:: ; registration owns the first 98 bytes
 wTempTilemap::
 ; 20x18 grid of 8x8 tiles
 	ds SCREEN_AREA
 
 ; PokeAnim data
 wPokeAnimStruct::
+wNewDexEntryAnimFlags::
 wPokeAnimSceneIndex:: db
+wNewDexEntryAnimTimeline::
 wPokeAnimPointer:: dw
 wPokeAnimSpecies:: db
 wPokeAnimUnownLetter:: db
 wPokeAnimSpeciesOrUnown:: db
+wNewDexEntryAnimBaseCount::
 wPokeAnimGraphicStartTile:: db
 wPokeAnimCoord:: dw
 wPokeAnimFrontpicHeight:: db
@@ -3520,20 +3524,29 @@ wPokeAnimFramesBank:: db
 wPokeAnimFramesAddr:: dw
 wPokeAnimBitmaskBank:: db
 wPokeAnimBitmaskAddr:: dw
+wNewDexEntryAnimPublications::
 wPokeAnimFrame:: db
+wNewDexEntryAnimMisses:: ; instrumentation, same legacy storage
 wPokeAnimJumptableIndex:: db
+wNewDexEntryAnimSavedVBlank::
 wPokeAnimRepeatTimer:: db
+wNewDexEntryAnimSavedOAM::
 wPokeAnimCurBitmask:: db
+wNewDexEntryAnimDeadline::
 wPokeAnimWaitCounter:: db
+wNewDexEntryAnimFrameID::
 wPokeAnimCommand:: db
+wNewDexEntryAnimDuration::
 wPokeAnimParameter:: db
 wPokeAnimDexPlanBank:: db
+wNewDexEntryAnimMissReason:: ; instrumentation, same legacy storage
 wPokeAnimBitmaskCurCol:: db
 wPokeAnimBitmaskCurRow:: db
 wPokeAnimBitmaskCurBit:: db
 wPokeAnimBitmaskBuffer:: ds 7
 wPokeAnimDexPlanAddr:: dw
 wPokeAnimStructEnd::
+wNewDexEntryAnimMap::
 wPokeAnimFrameTiles:: ds 7 * 7
 
 

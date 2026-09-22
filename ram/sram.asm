@@ -7,6 +7,11 @@ NEXTU
 sEnemyFrontPicTileCount:: db
 sPaddedEnemyFrontPic:: ds 7 * 7 tiles
 
+NEXTU
+; Registration-only aligned staging, beyond the padded base. No union growth.
+	ds $320
+sNewDexEntryUploadBuffer:: ds 32 tiles
+
 ENDU
 
 SECTION "SRAM Bank 0", SRAM

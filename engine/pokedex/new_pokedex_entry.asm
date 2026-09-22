@@ -19,11 +19,9 @@ NewPokedexEntry:
 	call .WaitPressAorB_AnimateFrontpic
 	ld a, 1 ; page 2
 	ld [wPokedexStatus], a
-	farcall DisplayDexEntry
-	call WaitBGMap
+	farcall NewDexEntry_DisplayPage2
 	call .WaitPressAorB_AnimateFrontpic
-	xor a
-	ld [wFrameCounter], a
+	farcall NewDexEntry_CancelAnimation
 	pop af
 	ld [wPokedexStatus], a
 	call MaxVolume
@@ -89,14 +87,5 @@ NewPokedexEntry:
 	ret
 
 .AnimateFrontpicFrame:
-	ld a, [wFrameCounter]
-	and a
-	ret z
-	farcall SetUpPokeAnim
-	jr nc, .transfer
-	xor a
-	ld [wFrameCounter], a
-
-.transfer
-	farcall HDMATransferTilemapToWRAMBank3
-	ret
+	farcall NewDexEntry_AnimationStep
+	jp DelayFrame

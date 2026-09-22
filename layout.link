@@ -96,6 +96,7 @@ ROMX $13
 	"bank13_2"
 ROMX $14
 	"bank14"
+	"New Dex Entry Pics"
 ROMX $15
 	"Map Scripts 1"
 ROMX $16
@@ -508,6 +509,9 @@ ROMX $a3
 ROMX $a4
 	"Sampled Cry Pair Lookup"
 ROMX $a5
+	"Dex Animation Timelines"
+	"Dex Animation Timeline Reader"
+	"New Dex Entry Animation"
 ROMX $a6
 ROMX $a7
 ROMX $a8

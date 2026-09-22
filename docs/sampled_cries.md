@@ -794,10 +794,15 @@ animation/audio misses. These results do not cover rapid cancellation, other
 display owners, or subjective waveform quality. The suite's one static Drapion
 portrait failure is category-text overflow, not a sampled-cry failure.
 
-The New Dex Entry path still loads its animated dictionary up front, runs
-`ANIM_MON_MENU` through `SetUpPokeAnim`, and transfers the legacy tilemap in its
-own wait loop. It does not use Selected Mon's two-slot scheduler or telemetry.
-See [the next capture procedure](dex_new_entry_testing.md).
+New Dex Entry now uses a separate [resident scheduler](new_dex_entry_animation_scheduler.md).
+It loads the full dictionary up front with screen-local 32-tile upload batches,
+then prepares/maps frames against the shared exact timelines. Its DelayFrame
+hook services sampled audio before frame-map work, including nested description
+refresh waits. It does not change the global 32-block startup, eight-block refill,
+codec or timer playback. The eight-species catch suite passes all five sampled
+cries naturally, including A-page changes and early page exit. This is separate
+owner-specific evidence, not certification of every registration species or
+Stats/battle timing. See [current capture instructions](dex_new_entry_testing.md#current-implementation-test).
 
 For audio debugging, break specifically on the timer's **empty decoded cache
 with nonzero remaining playback** branch, not on the shared stop routine.

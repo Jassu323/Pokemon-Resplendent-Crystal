@@ -3459,8 +3459,7 @@ _NewPokedexEntry:
 	call EnableLCD
 	call WaitBGMap
 	call GetBaseData
-	ld de, vTiles2
-	predef GetAnimatedFrontpic
+	farcall NewDexEntry_LoadAnimatedFrontpic
 	hlcoord 1, 1
 	ld d, $0
 	ld e, ANIM_MON_MENU

@@ -14,6 +14,10 @@ retains the original measurements, calibration progression and old commands.
 | `dex_timing.finish_bounds` | Check conservative admission inequalities against current tables | Current link; checks bounds, not an end-to-end animation |
 | `tools/test_dex_cold_listing.py`, `tools/test_dex_target_regression.py` | Host audit/parser negative controls | Maintained host source; not game playback tests |
 | `dex_timing.cold_listing` | Boot the real SameBoy core, navigate with normal inputs and audit cold entry through completion | SameBoy source, boot ROM, C compiler, matching game assets and prepared battery save |
+| `tools/test_new_dex_entry.py` | Current-link resident mappings, publication bounds, diagnostics and owner/register contracts | Current ROM/symbols; frozen-register unit fixtures, not a hardware emulator |
+| `dex_timing.new_entry` | SameBoy catch-through-registration, exact events, VRAM/pixels, description changes and early exit | Compatible frozen pre-catch fixtures with manifests; local SameBoy source and C compiler |
+| `dex_timing.new_entry_sweep` | Twenty-species display-interval input matrix with real A/B events | Current-link authentic registration checkpoints and explicitly generated extra-species fixtures |
+| `dex_timing.new_entry_phase_sweep` | Synthetic timer/VBlank phase stress, separate from real-input acceptance | Same checkpoints; changes only the first TIMA write in the headless core, not ROM or producer state |
 | `OwnerReplay` / `IntegratedReplay` | Instruction-level continuation and component timing from a specified initial state | Matching ROM/symbols/assets and captured or explicitly constructed state; scope depends on that fixture |
 | `full_replay`, policy/queue/finishing experiments | Reproduce the earlier failure chain and counterfactual controls | Frozen historical link and named local fixtures; not alternative game schedulers |
 | `verify_dex_timing.py audit` / `model.py` | Original aggregate cost/scheduling explorer | Historical service-call scheduling assumptions; deliberately uncalibrated, not a current runtime acceptance gate |
@@ -51,6 +55,63 @@ It copies inputs into its output directory, uses real D-pad/A/B events and does
 not inject producer RAM or alter the source save. The all-species run intentionally
 fails Drapion's static-reveal check while its animation/audio checks pass.
 Preserve that distinction in reports.
+
+New Dex Entry uses its own adapter rather than a second bespoke hardware model.
+The linked instruction counter checks publication costs/fault fixtures; the
+real SameBoy core checks full owner execution, PPU timing and audio. Commands,
+fixtures and miss breakpoints are in [the registration test guide](dex_new_entry_testing.md#current-implementation-test).
+Its ordinary probes do not replace runtime production with a host policy or inject
+owner state. Original fixture saves remain read-only; generated reports and
+screenshots are ignored build products.
+
+For a bounded registration instruction trace, set both
+`REGISTRATION_INSTRUCTION_FROM_T` and `REGISTRATION_INSTRUCTION_TO_T` when
+running the compiled `new-entry-trace` probe. Values are decimal T-cycles from
+the loaded entry state; the start is inclusive and end exclusive. For example,
+4,084,000 through 4,092,000 captures the restored Master Ball Dusknoir collision.
+The optional `instruction` records include PC/bank/opcode, registers, IME,
+IE/IF, LY/STAT, DIV/TIMA/TMA/TAC, owner, flags and audio counts. This is strictly
+host instrumentation: physical-memory observations do not advance the emulated
+clock or change game state. Leave both variables unset for ordinary runs.
+See the [timer collision diagnosis](new_dex_entry_regression_results.md#timer-collision-diagnosis)
+for a verified trace-on/trace-off comparison and why fixed entry-state input
+sweeps do not exhaust possible interrupt phases.
+
+The separate phase sweep requests `REGISTRATION_TIMER_FIRST_CLOCKS=1..200` on
+the compiled trace probe. At audio startup it replaces only the first TIMA write
+while TAC is disabled; it validates the expected TMA reload and leaves subsequent
+timer periods untouched. This is explicitly synthetic input to the hardware core,
+not read-only instrumentation and not an actual captured phase. The 200-clock
+no-op reproduces the ordinary trace, excluding its one injection record. The
+64-T grid does not exhaust 4-T instruction phases or all entry CPU/PPU states.
+Leave that variable unset for ordinary replays. The driver records the ROM,
+source/core, checkpoint and injection identities separately from the input suite.
+`--all-input-modes` additionally tests description advance and early exit for
+every sampled species, rather than only Dusknoir (9,600 rather than 3,600 runs
+for the current sixteen sampled fixtures).
+
+Publication auditing accepts LY=0 only when STAT still reports VBlank mode 1:
+SameBoy models the LY reset during physical line 153. It rejects modes 0/2/3 at
+LY=0. Frozen-LY bounds separately check every VRAM destination and last-store
+cost, while full-core pixel/map checks verify the actual displayed result.
+
+New Entry's description audit snapshots the old VRAM rectangle and complete
+new backing rectangle without bus reads, then compares all 91 cells and their
+rendered pixels on every display. Only wholly old or wholly new is accepted;
+partial presentation and later reversion fail. Latency is anchored to the A
+input, not return from the rendering/wait routine. Historical ROMs without the
+new ready label use the instruction immediately after the page-render farcall
+as that observation point. No game code is patched by the observer.
+
+Display events retain raw CPU callback time in `t` and record exact PPU boundary
+time in `ppu_t`. SameBoy's `GB_advance_cycles` advances the CPU clock through a
+whole batch before its display state machine consumes it. At the normal-frame
+callback, `display_cycles` is the remainder in 8 MHz units; subtracting it from
+the callback clock gives the actual boundary. The current audit requires exact
+70,224-T spacing on that field, not a widened CPU-clock jitter tolerance.
+Two Yanmega synthetic phase-182 description cases exposed a six-T callback
+variation; all previous execution events remain identical after adding the
+read-only PPU observation. See the current New Entry regression report.
 
 ## What The Models Measure
 
