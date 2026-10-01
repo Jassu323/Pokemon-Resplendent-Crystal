@@ -9,6 +9,7 @@ whenever the runtime, asset format, ownership contract or measured costs change.
 
 Companion documents:
 
+- [Instrumentation cleanup and current results](dex_instrumentation_cleanup.md)
 - [Validation and emulator test procedure](dex_scheduler_validation.md)
 - [All-species normal-input cold Listing results](dex_cold_listing_results.md)
 - [VRAM and scratch allocation](pokedex_vram.md)
@@ -327,9 +328,9 @@ reopens interrupts before the final LY gate. The measured longest masked span
 is 160 raw T, including the delayed-EI boundary. Callers must enter with IME
 enabled; this helper is not an interrupt-safe API for arbitrary callers.
 
-The current linked twenty-tile prefix is 14,916 raw T before the interrupt
-envelope; the conservative active-audio complete chain reaches 55,892 T.
-Queue construction is 9,624 raw T including the new ownership/queue guards.
+After instrumentation removal, the linked twenty-tile prefix is 14,740 raw T
+before the interrupt envelope; the conservative active-audio complete chain
+reaches 53,516 T. Queue construction is 8,100 raw T, including ownership guards.
 These raw counts and response bounds are different quantities.
 
 The two fixed-size copy optimizations save CPU work:
@@ -338,10 +339,11 @@ The two fixed-size copy optimizations save CPU work:
 - Unroll seven-byte map rows while retaining all four required copies.
 
 Regenerate/check thresholds whenever those paths, wrappers, audio ISR, LCD ISR,
-queue code or instrumentation change. A passing table-equivalence test proves
+queue code or instrumentation change. A passing conservative-table check proves
 the compiled inequalities, not complete animation feasibility by itself.
-`finish_bounds` reports the expected rows and fails if the linked 80 bytes differ;
-it does not silently edit the ASM. Update the constants, rebuild and rerun both
+`finish_bounds` reports recomputed and shipped rows, failing if shipped gates
+are more permissive than their bounds. Diagnostic removal retains the older,
+more conservative gates. The tool never silently edits the ASM. Update the constants, rebuild and rerun both
 the bounds check and complete linked replays before accepting a changed table.
 
 ## Atomic Publication And Quiet Ownership
@@ -431,16 +433,20 @@ prove that cancellation behavior correct.
 
 The existing 26-byte block beginning at `wPokedexAnimOwner` retains owner,
 flags, slot identities, deadline, counters and dictionary/timeline pointers.
-Three former compact-schedule bytes are reused without changing the union size:
+The retired two-byte miss count remains reserved to preserve the pointer
+layout. Three production bytes follow the name buffer, outside the cleared
+owner extent:
 
 | Current address | Field | Lifetime |
 | --- | --- | --- |
-| `$c7e0` | `wPokedexAnimLoopTick` | Beginning to end of one outer iteration; preserve during cancellation |
-| `$c7e1` | `wPokedexAnimWorkTick` | Last regular work-start counter; initialized before playback |
-| `$c7e2` | `wPokedexAnimSchedulerControl` | Deferred audio bit 0; finish-used bit 1 |
+| `$c758` | `wPokedexAnimLoopTick` | Beginning to end of one outer iteration; preserve during cancellation |
+| `$c759` | `wPokedexAnimWorkTick` | Last regular work-start counter; initialized before playback |
+| `$c75a` | `wPokedexAnimSchedulerControl` | Deferred audio bit 0; finish-used bit 1 |
 
-These are production bytes following the temporary debug block, not removable
-instrumentation. Keep their allocation when diagnostics are removed. No new
+These production bytes remain after removal of the diagnostic block. Bit 7 of
+`wPokedexAnimFlags` now marks the first publication: queueing sets it, actual
+publication anchors the first deadline and clears it. No later event is
+re-anchored. The diagnostic publication count is no longer consulted. No new
 WRAM0/WRAMX/HRAM/VRAM/SRAM is allocated; `wBattleEnd` and other union ownership
 boundaries are unchanged. `hVBlank` uses one existing bit, not HRAM padding.
 

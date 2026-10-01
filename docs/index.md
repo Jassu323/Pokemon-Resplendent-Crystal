@@ -14,6 +14,7 @@ addresses and proposed fixes are not mistaken for current instructions.
 
 ## Testing And Open Work
 
+- [Dex instrumentation cleanup](dex_instrumentation_cleanup.md): runtime removal, host-only observers, clean-link regression results and current breakpoints.
 - [Selected scheduler validation](dex_scheduler_validation.md): accepted ROM identity, miss breakpoints, regression suite and deferred cleanup.
 - [All-species cold Listing acceptance](dex_cold_listing_results.md): normal-input SameBoy methodology, reproducible setup, results and the known Drapion failure.
 - [Host timing tools](dex_timing_model.md): current checks versus historical models, fixtures and limits.

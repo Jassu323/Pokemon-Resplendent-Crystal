@@ -1373,52 +1373,13 @@ Pokedex_VBlankAnimationFrontpicMap:
 	ld a, [wPokedexAnimStageSlot]
 	.display_recorded
 	ld [wPokedexAnimDisplaySlot], a
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	ld [wPokedexAnimTraceLastPublishSlot], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceLastPublishLY], a
-	ld a, [wPokedexAnimDebugEventReads]
-	ld [wPokedexAnimTraceLastPublishEvent], a
-	ld a, [wPokedexAnimStageFrameID]
-	ld [wPokedexAnimTraceLastPublishFrame], a
-
-	ld hl, wPokedexAnimDebugMapPublishes
-	ld a, [hl]
-	and a
-	jr nz, .start_recorded
+	; Anchor once to the actual first display, independently of host telemetry.
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_FIRST_PUBLICATION_F, [hl]
+	jr z, .deadline_anchored
+	res POKEDEX_ANIM_FIRST_PUBLICATION_F, [hl]
 	ldh a, [hVBlankCounter]
 	inc a
-	ld [wPokedexAnimDebugStartTick], a
-.start_recorded
-	inc [hl]
-	ld a, [wPokedexAnimDeadline]
-	ld [wPokedexAnimDebugLastDeadline], a
-	ld b, a
-	ldh a, [hVBlankCounter]
-	inc a
-	ld [wPokedexAnimDebugLastPublishTick], a
-	sub b
-	jr z, .timing_recorded
-	ld c, a
-	ld hl, wPokedexAnimDebugLateCount
-	inc [hl]
-	ld hl, wPokedexAnimDebugTotalLate
-	ld a, [hl]
-	add c
-	ld [hli], a
-	jr nc, .no_late_carry
-	inc [hl]
-.no_late_carry
-	ld a, [wPokedexAnimDebugMaxLate]
-	cp c
-	jr nc, .timing_recorded
-	ld a, c
-	ld [wPokedexAnimDebugMaxLate], a
-.timing_recorded
-	ld a, [wPokedexAnimDebugMapPublishes]
-	cp 1
-	jr nz, .deadline_anchored
-	ld a, [wPokedexAnimDebugLastPublishTick]
 	ld [wPokedexAnimDeadline], a
 .deadline_anchored
 	ldh a, [hVBlank]

@@ -5,12 +5,7 @@ DEF NEW_DEX_ANIM_READY_F  EQU 1
 DEF NEW_DEX_ANIM_FINISH_F EQU 2
 DEF NEW_DEX_ANIM_FIRST_F  EQU 3
 DEF NEW_DEX_ANIM_ACK_F    EQU 4
-DEF NEW_DEX_ANIM_MISSED_F EQU 5 ; instrumentation: one report per deadline
 DEF NEW_DEX_ANIM_TEXT_F   EQU 6 ; complete description waiting for publication
-
-DEF NEW_DEX_ANIM_NOT_READY EQU 1
-DEF NEW_DEX_ANIM_LATE      EQU 2
-DEF NEW_DEX_ANIM_WINDOW    EQU 3
 
 DEF NEW_DEX_ENTRY_PICTURE_MAP_OFFSET EQU TILEMAP_WIDTH + 1
 ASSERT HIGH(vBGMap0 + NEW_DEX_ENTRY_PICTURE_MAP_OFFSET) == HIGH(vBGMap0 + NEW_DEX_ENTRY_PICTURE_MAP_OFFSET + 6 * TILEMAP_WIDTH + 6)
@@ -266,17 +261,14 @@ NewDexEntry_PublishAnimation::
 	ld b, a
 	ld a, [wNewDexEntryAnimDeadline]
 	sub b
+.deadline_checked ; zero-cost host observation before the deadline branches
 	jr z, .due
 	bit 7, a
 	jp z, NewDexEntry_NoAnimationPublication
-	ld a, NEW_DEX_ANIM_LATE
-	call NewDexEntry_RecordAnimationMiss
 .due
 	ld a, [wNewDexEntryAnimFlags]
 	bit NEW_DEX_ANIM_READY_F, a
 	jr nz, .ready
-	ld a, NEW_DEX_ANIM_NOT_READY
-	call NewDexEntry_RecordAnimationMiss
 	jp NewDexEntry_NoAnimationPublication
 .ready
 ; Fully unrolled first/final copies finish their VRAM writes within 1,708 T
@@ -289,8 +281,6 @@ NewDexEntry_PublishAnimation::
 	cp b
 	jr c, .copy
 .late_window
-	ld a, NEW_DEX_ANIM_WINDOW
-	call NewDexEntry_RecordAnimationMiss
 	jp NewDexEntry_NoAnimationPublication
 .copy
 	xor a
@@ -318,11 +308,8 @@ NewDexEntry_PublishAnimation::
 	ld hl, wNewDexEntryAnimDeadline
 	add [hl]
 	ld [hl], a
-	ld hl, wNewDexEntryAnimPublications
-	inc [hl]
 	ld hl, wNewDexEntryAnimFlags
 	res NEW_DEX_ANIM_READY_F, [hl]
-	res NEW_DEX_ANIM_MISSED_F, [hl]
 	set NEW_DEX_ANIM_ACK_F, [hl]
 NewDexEntry_AnimationPublished::
 	call NewDexEntry_TryPublishDescription
@@ -348,24 +335,6 @@ NewDexEntry_NoAnimationPublication:
 	pop af
 	ldh [rSVBK], a
 	ld a, b
-	ret
-
-NewDexEntry_RecordAnimationMiss:
-; INSTRUMENTATION: latched once per missed deadline. No padding allocation.
-; a = 1 not ready, 2 late deadline, 3 unsafe VBlank window.
-	push hl
-	ld hl, wNewDexEntryAnimFlags
-	bit NEW_DEX_ANIM_MISSED_F, [hl]
-	jr nz, .done
-	set NEW_DEX_ANIM_MISSED_F, [hl]
-	ld [wNewDexEntryAnimMissReason], a
-	ld hl, wNewDexEntryAnimMisses
-NewDexEntryAnimationMiss::
-	inc [hl]
-	pop hl
-	ret
-NewDexEntry_RecordAnimationMiss.done:
-	pop hl
 	ret
 
 MACRO new_dex_entry_copy_rows

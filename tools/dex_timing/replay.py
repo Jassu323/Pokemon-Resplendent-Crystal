@@ -465,7 +465,10 @@ class OwnerReplay:
                 "irq_count": {k: len(v) for k, v in self.irq_cycles.items()},
                 "irq_total_t": {k: sum(v) for k, v in self.irq_cycles.items()},
                 "anim": list(cpu.data(cpu.symbols["wPokedexAnimOwner"][1], 27)),
-                "trace": list(cpu.data(cpu.symbols["wPokedexAnimDebug"][1], 139))}
+                "event_serial": (field("wPokedexAnimDebugEventReads")
+                    if "wPokedexAnimDebugEventReads" in cpu.symbols else getattr(self, 'event_serial', 1)),
+                "trace": (list(cpu.data(cpu.symbols["wPokedexAnimDebug"][1], 139))
+                    if "wPokedexAnimDebug" in cpu.symbols else [])}
 
     def observe(self):
         cpu = self.cpu
@@ -473,6 +476,9 @@ class OwnerReplay:
                   "HDMATransfer_Exact_NoDI_Arbitrary", "HDMATransfer_Exact_NoDI_Arbitrary.wait",
                   "DelayFrame.halt")
         key = (cpu.bank if cpu.pc >= 0x4000 else 0, cpu.pc)
+        if ('wPokedexAnimDebug' not in self.repo.symbols and
+                key == self.repo.symbols.get('Pokedex_ReadNextAnimationEvent')):
+            self.event_serial = getattr(self, 'event_serial', 1) + 1
         if self.track_synth and key == self.repo.symbols['_UpdateSound']:
             self.sound_updates.append(dict(t=self.clock.t,flags=self.synth_flags()))
         if self.full:
@@ -493,17 +499,17 @@ class OwnerReplay:
                     'irq_t':sum(sum(v) for v in self.irq_cycles.values()),
                     'irq_count':sum(len(v) for v in self.irq_cycles.values()),
                     'return_pc':cpu.read(cpu.sp) | cpu.read(cpu.sp+1)<<8,'return_sp':cpu.sp+2})
-            hooks = ("Pokedex_CountAnimationUnderflow", "Pokedex_QueueReadyAnimationStage",
+            hooks = ("Pokedex_CountAnimationUnderflow", "Pokedex_AnimationMiss", "Pokedex_QueueReadyAnimationStage",
                      "Pokedex_VBlankAnimationFrontpicMap.deadline_reached",
                      "Pokedex_VBlankAnimationFrontpicMap.display_recorded",
                      "Pokedex_LoadAnimationDictionaryChunk", "Pokedex_GatherReadyAnimationTiles",
                      "Pokedex_FinalizePublishedAnimationStage.finished",
                      "StopSampledCryAsync_NoInterruptControl")
             for name in hooks:
-                if key == self.repo.symbols[name]:
+                if key == self.repo.symbols.get(name):
                     self.lifecycle.append(dict(self.snapshot(name), kind=name))
         for name in labels:
-            if key != self.repo.symbols[name]:
+            if key != self.repo.symbols.get(name):
                 continue
             if name.endswith(".wait") and self.observations and self.observations[-1]["kind"] == name:
                 return
@@ -518,7 +524,7 @@ class OwnerReplay:
     def run(self, full=False, max_frames=1024):
         self.full = full
         names = ("Pokedex_PrepareNextAnimationStage", "Pokedex_ServiceAnimationProducer",
-                 "DelayFrame.halt", "Pokedex_CountAnimationUnderflow")
+                 "DelayFrame.halt", "Pokedex_AnimationMiss" if 'Pokedex_AnimationMiss' in self.repo.symbols else "Pokedex_CountAnimationUnderflow")
         targets = [self.repo.symbols[n] for n in names]
         while True:
             cpu, clock = self.cpu, self.clock

@@ -6,6 +6,26 @@ build hashes/results are in the [validation guide](dex_scheduler_validation.md).
 The [pre-consolidation model history](archived/dex-scheduler/dex_timing_model_history.md)
 retains the original measurements, calibration progression and old commands.
 
+## Instrumentation-Free Link
+
+Runtime trace buffers and counters are no longer required by current acceptance
+runners. The Selected core counts animation-specific executed boundaries; New
+Entry derives failure events from production deadline/readiness/window branches.
+Both continue auditing maps, pixels, timing and natural audio completion.
+See [cleanup and current results](dex_instrumentation_cleanup.md).
+
+The cold runner now also supports `--paging`: each target is reached from a
+settled predecessor through actual directional input. It checks the selected
+index, initial reveal, every publication and B-return. Use a separate output
+directory for cold and paging reports. `--rom` plus `--sym` supports a matched
+pre-cleanup baseline control; mismatched links are not valid.
+
+Historical instruction replays retain strict fixture/asset identity guards.
+A rejected old target-policy fixture is not a failed current scheduler test and
+must not be made to pass by ignoring changed assets. The shared replay observers
+support absent diagnostic symbols, but new current-link full model evidence
+still requires a matching initial-state fixture.
+
 ## Choose The Right Tool
 
 | Tool | Purpose | Required inputs / limits |

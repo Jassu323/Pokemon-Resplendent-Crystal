@@ -18,6 +18,8 @@ static bool returned;
 static const char *screen_prefix;
 static unsigned screens;
 static unsigned bad_pictures;
+static unsigned host_misses, host_miss_reason;
+static bool host_miss_latched;
 static unsigned waits, second_wait_display;
 /* HOST-ONLY presentation audit: check every displayed old/new text rectangle,
  * not just a snapshot scheduled relative to the return of the page routine. */
@@ -62,6 +64,11 @@ static unsigned bank_for(unsigned pc) { return pc < 0x4000 ? 0 : gb.mbc_rom_bank
 
 static void event(const char *name, uint64_t t, unsigned pc)
 {
+#ifdef HOST_NEW_ENTRY_MISSES
+    unsigned misses=host_misses, reason=host_miss_reason;
+#else
+    unsigned misses=ram(2,S_wPokeAnimJumptableIndex), reason=ram(2,S_wNewDexEntryAnimMissReason);
+#endif
     printf("{\"event\":\"%s\",\"t\":%" PRIu64 ",\"pc\":%u,\"bank\":%u,"
            "\"display\":%u,\"serial\":%u,\"phase\":%u,\"scene\":%u,\"idle\":%u,"
            "\"command\":%u,\"duration\":%u,\"wait\":%u,\"ly\":%u,\"mode\":%u,"
@@ -73,9 +80,9 @@ static void event(const char *name, uint64_t t, unsigned pc)
            ram(2,S_wPokeAnimSceneIndex),ram(2,S_wPokeAnimIdleFlag),
            ram(2,S_wPokeAnimCommand),ram(2,S_wPokeAnimParameter),ram(2,S_wPokeAnimWaitCounter),
            byte(0xff44),byte(0xff41)&3,cache(),remain(),byte(S_hSampledCryTimer),idle_ticks/2,
-           byte(S_hVBlank),byte(S_wFrameCounter),byte(S_wPokedexStatus),ram(2,S_wPokeAnimJumptableIndex),
+           byte(S_hVBlank),byte(S_wFrameCounter),byte(S_wPokedexStatus),misses,
            byte(S_hJoyDown),byte(S_hJoyLast),byte(S_hJoypadDown),
-           byte(S_hOAMUpdate),byte(S_hMapAnims),byte(S_hSCX),ram(2,S_wNewDexEntryAnimMissReason));
+           byte(S_hOAMUpdate),byte(S_hMapAnims),byte(S_hSCX),reason);
 }
 
 static unsigned map_match(void)
@@ -249,6 +256,19 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     executed=true;
     uint64_t t=now();
     unsigned bank=bank_for(pc);
+#ifdef HOST_NEW_ENTRY_MISSES
+    unsigned reason=0;
+    if (bank==B_MISS_DEADLINE && pc==P_MISS_DEADLINE) {
+        unsigned delta=gb.af>>8;
+        if (delta&128) reason=2;
+        else if (!delta && !(ram(2,S_wPokeAnimSceneIndex)&2)) reason=1;
+    }
+    if (bank==B_MISS_WINDOW && pc==P_MISS_WINDOW) reason=3;
+    if (reason && !host_miss_latched) {
+        host_miss_latched=true;host_miss_reason=reason;host_misses++;
+        event("animation_miss",t,pc);
+    }
+#endif
     /* HOST-ONLY optional instruction trace. Physical reads do not advance the core. */
     if (instruction_to && t/2>=instruction_from && t/2<instruction_to) {
         printf("{\"event\":\"instruction\",\"t\":%" PRIu64 ",\"pc\":%u,\"bank\":%u,"
@@ -297,6 +317,7 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
         }
         if (events[i].kind==E_FRAME || events[i].kind==E_END) serial++;
         if (events[i].kind==E_PUBLISH) {
+            host_miss_latched=false;
             displayed_serial=serial;
             if (!first_publication) first_publication=frame_number;
         }

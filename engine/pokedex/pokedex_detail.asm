@@ -134,6 +134,7 @@ PokedexSelectedMon_ChangeSpecies:
 	ld [wPokedexStatus], a
 	call PokedexSelectedMon_StageDescription
 	call PokedexSelectedMon_Reveal
+.revealed
 	call Pokedex_BeginDescriptionAnimation
 	ld a, DEXSELECT_STATE_ACTIVE
 	ld [wPokedexSelectedState], a

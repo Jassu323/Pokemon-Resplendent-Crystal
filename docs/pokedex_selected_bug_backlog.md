@@ -308,6 +308,11 @@ streaming scheduler. The runner deliberately reports `static_reveal_tiles`
 instead of treating the known issue as a passing case. See
 [cold Listing evidence](dex_cold_listing_results.md).
 
+2026-09-21 cleanup regression: both all-species cold entry and settled internal
+paging still report only Drapion's static-reveal defect. A pre-cleanup control
+produces byte-identical static tilemap and tile pixels. Animation timing and cry
+completion pass in both links; the failure is deliberately not suppressed.
+
 2026-09-21: The user visually confirms Drapion's overflow in the current build.
 It remains deferred; the animation publications themselves still look correct.
 

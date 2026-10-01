@@ -199,8 +199,6 @@ Pokedex_PrepareFrontpicBase::
 	; Preparing another species must not reset the enclosing owner's loop clock.
 	ld [wPokedexAnimWorkTick], a
 	ld [wPokedexAnimSchedulerControl], a
-	ld [wPokedexAnimUnderflowCount], a
-	ld [wPokedexAnimUnderflowCount + 1], a
 	ld a, -1
 	ld [wPokedexAnimDisplaySlot], a
 	ld [wPokedexAnimStageFrameID], a
@@ -210,25 +208,6 @@ Pokedex_PrepareFrontpicBase::
 	pop bc
 	pop af
 	ld [wPokedexAnimOwner], a
-	push bc
-	ld hl, wPokedexAnimDebug
-	ld bc, wPokedexAnimDebugEnd - wPokedexAnimDebug
-	xor a
-	call ByteFill
-	ld a, POKEDEX_ANIM_DEBUG_MAGIC
-	ld [wPokedexAnimDebugMagic], a
-	ld a, POKEDEX_ANIM_DEBUG_VERSION
-	ld [wPokedexAnimDebugVersion], a
-	ld a, [wPokedexAnimOwner]
-	ld [wPokedexAnimDebugOwner], a
-	ld a, -1
-	ld [wPokedexAnimDebugMinReadyLead], a
-	ld a, [wPokedexAnimDictionaryTilesRemaining]
-	ld b, a
-	ld a, [wPokedexAnimDictionaryTileCount]
-	sub b
-	ld [wPokedexAnimDebugMaxLoadedTiles], a
-	pop bc
 	ld hl, wPokedexWRAM0Scratch
 	ld de, wDecompressScratch
 	jp PadFrontpic

@@ -35,8 +35,6 @@ Pokedex_ReadNextAnimationEvent::
 	ld [wPokedexAnimStageFrameID], a
 	ld a, d
 	ld [wPokedexAnimDictionaryTarget], a
-	ld hl, wPokedexAnimDebugEventReads
-	inc [hl]
 	ret
 
 .loop
@@ -63,6 +61,4 @@ Pokedex_ReadNextAnimationEvent::
 	ld [wPokedexAnimDictionaryTarget], a
 	ld hl, wPokedexAnimFlags
 	set POKEDEX_ANIM_ENDED_F, [hl]
-	ld hl, wPokedexAnimDebugEventReads
-	inc [hl]
 	ret

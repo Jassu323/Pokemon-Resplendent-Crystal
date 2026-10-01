@@ -31,7 +31,7 @@ def summarize(run, asset):
     origin = run['points'][0]['t']
     events = run['lifecycle']
     publications = [p for p in events if p['kind'].endswith('.display_recorded')]
-    misses = [p for p in events if p['kind'] == 'Pokedex_CountAnimationUnderflow']
+    misses = [p for p in events if p['kind'] in ('Pokedex_CountAnimationUnderflow', 'Pokedex_AnimationMiss')]
     audio = [p for p in events if p['kind'] == 'StopSampledCryAsync_NoInterruptControl']
     deadlines, due = [], 0
     for event in asset.events:
@@ -42,7 +42,7 @@ def summarize(run, asset):
     for index,p in enumerate(publications):
         interval = p['t']//FRAME-origin//FRAME
         publication_rows.append({'t':p['t']-origin,'interval':interval,
-            'event':p['trace'][5], 'frame':p['anim'][6], 'deadline':p['anim'][11],
+            'event':p['event_serial'] if 'event_serial' in p else p['trace'][5], 'frame':p['anim'][6], 'deadline':p['anim'][11],
             'expected_interval':deadlines[index], 'late_intervals':interval-deadlines[index]})
     operations = {}
     for operation in run['operations']:
@@ -61,7 +61,7 @@ def summarize(run, asset):
             'completion_t':run['points'][-1]['t']-origin,
             'completion_seconds':(run['points'][-1]['t']-origin)/CPU_HZ,
             'publications':publication_rows,
-            'misses':[{'t':p['t']-origin,'event':p['trace'][5], 'frame':p['anim'][6],
+            'misses':[{'t':p['t']-origin,'event':p['event_serial'] if 'event_serial' in p else p['trace'][5], 'frame':p['anim'][6],
                        'uploaded':p['anim'][9], 'needed':p['anim'][5], 'cache':p['cache'],
                        'remaining_dictionary':p['dictionary_remaining']} for p in misses],
             'audio_stops':[{'t':p['t']-origin,'remaining':p['remaining'],'cache':p['cache'],

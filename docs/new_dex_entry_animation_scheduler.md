@@ -80,6 +80,9 @@ existing 18-interval transition hold, idle animation, and final base restore.
 Dusknoir's main portion is 107 intervals; its complete menu sequence is **174**.
 Do not compare the full sequence against the main-only number.
 
+See [instrumentation cleanup](dex_instrumentation_cleanup.md) for the current
+clean-link hashes, results, resource recovery and breakpoints.
+
 ## State And Ownership
 
 All state below reuses the legacy animation owner in WRAMX 2. These aliases are
@@ -92,18 +95,14 @@ not globally safe while another screen owns the same union.
 | `$d169-$d16a` | Next timeline pointer |
 | `$d16b` | Existing `wPokeAnimSpecies` |
 | `$d16e` | Native base-tile count: 25, 36 or 49 |
-| `$d17d` | Publication count |
-| `$d17e` | Miss count, instrumentation |
 | `$d17f-$d180` | Saved VBlank owner and OAM lock |
 | `$d181-$d183` | Deadline, prepared frame ID, duration |
 | `$d184` | Existing frame-plan bank |
-| `$d185` | Miss reason, instrumentation |
 | `$d18f-$d190` | Existing frame-plan address |
 | `$d191-$d1c1` | Complete 49-cell map, alias of `wPokeAnimFrameTiles` |
 
 Flags: bit 0 `ACTIVE`, 1 `READY`, 2 `FINISH`, 3 `FIRST`, 4 `ACK`,
-5 `MISSED` (instrumentation latch, once per missed deadline),
-6 `TEXT` (complete description waiting for VRAM publication).
+5 unused after instrumentation removal, 6 `TEXT` (complete description waiting for VRAM publication).
 
 `READY` is written only after all 49 cells are valid. VBlank does not read a
 partly built map. `ACK` means the hardware map has been published but foreground
@@ -277,7 +276,7 @@ that hardware behavior; it does not accept visible-line-zero modes 0/2/3.
 
 A missed deadline is diagnostic, not an invitation to silently stretch the
 timeline. Last complete graphics remain visible; recovery can publish a ready
-late event, but the miss remains recorded. Break at the miss before interpreting
+late event, but the host still records the miss. Break at the failure branch before interpreting
 the later visual recovery as success.
 
 ## Resident VRAM And Startup Upload
@@ -441,11 +440,12 @@ boot, nine Selected cold entries, and 27 settled page-2 pixel comparisons were
 also recorded on that earlier integration. Passing registration does not close
 the separate deferred battle cry issue.
 
-`NewDexEntryAnimationMiss` increments a latched diagnostic count. Reasons:
-1 = map not ready at deadline; 2 = deadline already passed; 3 = unsafe live
-publication window. The count/reason/latch use existing owner bytes and are
-explicitly instrumentation. They can be removed later without allocating or
-moving RAM; remeasure code and update breakpoints after removal.
+The game no longer writes diagnostic counters. Host observers inspect
+`NewDexEntry_PublishAnimation.deadline_checked` and `.late_window`, recording
+1 = map not ready at deadline, 2 = deadline passed, or 3 = unsafe publication
+window. The host latches once per deadline; the runtime has no diagnostic latch.
+The removed aliases do not free global RAM because legacy animation owners
+still use those bytes. Readiness/window rejection and ACK handling are intact.
 
 See [the current manual suite](dex_new_entry_testing.md#current-implementation-test)
 for exact build-bound breakpoint commands, capture fields and test order.

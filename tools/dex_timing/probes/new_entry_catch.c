@@ -64,6 +64,12 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     (void)g; (void)opcode;
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
+#ifdef HOST_NEW_ENTRY_MISSES
+    if (entered && ((bank==B_MISS_DEADLINE && pc==P_MISS_DEADLINE &&
+                     ((gb.af>>8)&128 || (!(gb.af>>8) && !(ram(2,S_wPokeAnimSceneIndex)&2)))) ||
+                    (bank==B_MISS_WINDOW && pc==P_MISS_WINDOW)))
+        record("animation_miss", now, pc);
+#endif
     for (unsigned i = 0; i < sizeof(points) / sizeof(*points); i++) {
         if (points[i].pc != pc || points[i].bank != bank) continue;
         if (!strcmp(points[i].name, "entry")) entered = true;

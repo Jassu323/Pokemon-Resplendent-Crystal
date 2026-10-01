@@ -10,7 +10,7 @@ import unittest
 
 from dex_timing.assets import Repository, offset
 from dex_timing.costs import machine, run_to
-from dex_timing.finish_bounds import check
+from dex_timing.finish_bounds import check, conservative_tables
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -51,6 +51,31 @@ class SchedulerContracts(unittest.TestCase):
         self.assertTrue(self.bounds['matches'])
         self.assertEqual(self.bounds['inequality_cases'], 216000)
 
+    def test_cost_reduction_cannot_relax_gates_unchecked(self):
+        wanted = bytes([80] * 60 + [10] * 20)
+        self.assertTrue(conservative_tables(bytes([79] * 60 + [11] * 20), wanted))
+        self.assertFalse(conservative_tables(wanted[:-1], wanted))
+        for at, value in ((0, 81), (59, 81), (60, 9), (79, 9)):
+            actual = bytearray(wanted)
+            actual[at] = value
+            self.assertFalse(conservative_tables(actual, wanted))
+
+    def test_first_publication_anchor_uses_production_flag_once(self):
+        for tick in (0, 127, 254, 255):
+            cpu = self.cpu()
+            cpu.ram[0xff44] = 144
+            cpu.field('hVBlank', 0x87)
+            cpu.field('hVBlankCounter', tick)
+            cpu.field('wPokedexAnimFlags', 0xa3)
+            cpu.field('wPokedexAnimDeadline', tick)
+            cpu.run('Pokedex_VBlankAnimationFrontpicMap')
+            self.assertEqual(self.value(cpu, 'wPokedexAnimDeadline'), (tick + 1) & 255)
+            self.assertFalse(self.value(cpu, 'wPokedexAnimFlags') & 0x80)
+            cpu.field('wPokedexAnimFlags', 0x23)
+            cpu.field('hVBlankCounter', (tick + 2) & 255)
+            cpu.run('Pokedex_VBlankAnimationFrontpicMap')
+            self.assertEqual(self.value(cpu, 'wPokedexAnimDeadline'), (tick + 1) & 255)
+
     def test_timeline_preserves_startup_and_allows_full_post_start_decode(self):
         for asset in self.repo.load():
             with self.subTest(species=asset.name):
@@ -68,7 +93,7 @@ class SchedulerContracts(unittest.TestCase):
                 self.assertTrue(all(e.target == asset.total for e in asset.events[1:]))
 
     def test_regular_work_readiness_and_once_per_display_tick(self):
-        for flags, already, ready, below in product(range(128), (False, True),
+        for flags, already, ready, below in product(range(256), (False, True),
                                                     (False, True), (False, True)):
             cpu = self.cpu()
             for name, value in (
@@ -270,16 +295,14 @@ class SchedulerContracts(unittest.TestCase):
             self.assertEqual(bool(self.value(cpu, 'wPokedexAnimFlags') & 0x40),
                              144 <= ly < (149 if quiet else 146))
         maximum = 0
-        for frame, published, late, carry, max_late in product(
-                (0, 1), (0, 1, 255), (0, 1, 127), (0, 255), (0, 255)):
+        for frame, first, late in product((0, 1), (False, True), (0, 1, 127)):
             cpu = self.cpu()
             for name, value in (
                 ('hSampledCryTimer', 1), ('wGameTimerPaused', 1),
                 ('wPokedexSelectedState', 1), ('hVBlank', 0x87),
-                ('wPokedexAnimFlags', 0x23), ('wPokedexAnimDeadline', (1-late) & 255),
+                ('wPokedexAnimFlags', 0x23 | (0x80 if first else 0)),
+                ('wPokedexAnimDeadline', (1-late) & 255),
                 ('hOAMUpdate', 1), ('wPokedexAnimStageFrameID', frame),
-                ('wPokedexAnimDebugMapPublishes', published),
-                ('wPokedexAnimDebugTotalLate', carry), ('wPokedexAnimDebugMaxLate', max_late),
             ):
                 cpu.field(name, value)
             cpu.ram[0xff44] = 144

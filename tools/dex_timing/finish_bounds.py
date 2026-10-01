@@ -50,14 +50,26 @@ def verify_tables(costs, limits, audio):
     return cases
 
 
+def conservative_tables(actual, wanted):
+    return (len(actual) == len(wanted) == 80 and
+            all(a <= b for a, b in zip(actual[:60], wanted[:60])) and
+            all(a >= b for a, b in zip(actual[60:], wanted[60:])))
+
+
 def check(repo):
     costs = finishing_costs(repo)
     limits, audio = finish_tables(costs)
     wanted = bytes(sum(limits, []) + audio)
     at = offset(repo.symbols['Pokedex_AnimationFinishLatestLY'])
     actual = repo.rom[at:at + 80]
-    return dict(costs=costs, latest_ly_exclusive=limits, audio_minimum=audio,
-                matches=actual == wanted, expected_hex=wanted.hex(),
+    shipped_limits = [list(actual[i:i+20]) for i in (0, 20, 40)]
+    shipped_audio = list(actual[60:])
+    # Diagnostic removal can lower costs. Do not spend that margin by silently
+    # relaxing the shipped admission gates; accept only equally/less permissive ones.
+    conservative = conservative_tables(actual, wanted)
+    return dict(costs=costs, latest_ly_exclusive=shipped_limits, audio_minimum=shipped_audio,
+                matches=conservative, exact_matches=actual == wanted,
+                recomputed_limits=limits, recomputed_audio=audio, expected_hex=wanted.hex(),
                 inequality_cases=verify_tables(costs, limits, audio), **repo.hashes)
 
 

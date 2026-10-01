@@ -352,7 +352,7 @@ def candidate_summary(run, asset):
     seen, duplicates = set(), []
     unique = []
     for p in pubs:
-        event = p['trace'][5]
+        event = p['event_serial'] if 'event_serial' in p else p['trace'][5]
         if not 1 <= event <= len(expected):
             raise ModelError('Publication references an invalid timeline event')
         if event in seen:
@@ -360,7 +360,7 @@ def candidate_summary(run, asset):
         else:
             unique.append(p)
             seen.add(event)
-    if [p['trace'][5] for p in unique] != list(range(1,len(expected)+1)):
+    if [p['event_serial'] if 'event_serial' in p else p['trace'][5] for p in unique] != list(range(1,len(expected)+1)):
         raise ModelError('Counterfactual skipped or reordered timeline events')
     filtered = dict(run,lifecycle=[p for p in run['lifecycle'] if not p['kind'].endswith('.display_recorded')]+unique)
     summary = summarize(filtered,asset)

@@ -6,22 +6,24 @@ Updated 2026-09-21. The resident scheduler and registration-local batch uploader
 are now implemented. See [the system reference](new_dex_entry_animation_scheduler.md)
 for the exact ownership, memory, timing and cleanup contract. Stats Screen is
 unchanged. The earlier preflight/capture records below are historical, not the
-current runtime procedure.
+current runtime procedure. Runtime instrumentation has now been removed;
+see [the cleanup report](dex_instrumentation_cleanup.md) for final-link evidence.
 
 Current build identities:
 
 ```text
-ROM d736de2d8215c8365dd8ec8a5d2f01ff7e3cefdf387ed8f4b510015d3f018675
-SYM 4c26771293d8a3d119f7da55b0ae66b33f4fe8e0214b34e00510fa9675cd4a86
-MAP 691de7b2c15ec1b74516b8324f4ca8b10aa153b1f4048e4451c0b66c98be6e7e
+ROM 18ec28c84656ee26e6f705b81982b12bd1fdc62a5efa7ba994ef7b1de77965ea
+SYM e8e29d612bb180daba45b2e5c3b310829ff119814cb2d55f7f6bab0413771fc2
+MAP b1884c4ed70433336524a1b9900fe77c880b8438aa53c44022ec50388cc5e0af
 ```
 
 This build adds the acknowledged, single-VBlank description update. It retains
 the faster picture copies and their LY < 150 cutoff; the disjoint 91-cell text
 copy has its own LY < 149 cutoff. Audio, prefill, authored animation deadlines
 and startup loading are unchanged. The original Master Ball, ordinary Route
-29/30 encounters and instrumentation remain. The animation-miss address is now
-**$a5:$775e**; entry, RAM and audio-miss addresses are unchanged.
+29/30 encounters remain. Runtime miss counters and their recorder are removed;
+the conditional production checkpoints below replace them. Entry, production
+WRAMX state and audio-miss addresses are unchanged.
 
 All eight catches / 24 basic variants and **8,570 input cases** pass, including
 all eleven previously failing Mewtwo text timings. They now show complete page-2
@@ -104,28 +106,25 @@ continue
 ```
 
 This is `NewPokedexEntry`, starting `LDH a, [$de]`, `PUSH af`. Once stopped,
-replace it with the two failure breakpoints:
+replace it with the failure checkpoints:
 
 ```text
 delete
-breakpoint $a5:$775e
+breakpoint $a5:$76bc if (a & $80) || ((a == 0) && (([$d168] & 2) == 0))
+breakpoint $a5:$76d8
 breakpoint $0:$3cb3
 continue
 ```
 
-- `$a5:$775e` = `NewDexEntryAnimationMiss`, first instruction `INC [hl]`.
-  It has already stored the miss reason but has not yet incremented its count.
-- `$00:$3cb3` = sampled timer's empty-cache/nonzero-remaining path, starting
-  `POP af; LDH [$70], a; JP $0063`. **Not** the normal completion path.
+- `$a5:$76bc` = deadline subtraction completed. A's high bit indicates a late
+  deadline; zero with READY clear indicates missing work at the deadline.
+  WRAMX 2 is already selected, so `[$d168]` reads the correct flags.
+- `$a5:$76d8` = rejected live publication window.
+- `$00:$3cb3` = sampled timer's empty-cache/nonzero-remaining branch, starting
+  `POP af; LDH [$70], a; JP $0063`. This is not normal completion.
 
-Verify linked bytes if in doubt:
-
-```text
-x/6 $a5:$775e
-x/6 $0:$3cb3
-```
-
-Expected: `34 e1 c9 e1 c9 06` and `f1 e0 70 c3 63 00` respectively.
+These are zero-cost observation labels, not diagnostic recorder calls. A
+persistent fault may stop more than once. Re-resolve after future relinks.
 The acceptance target is neither failure breakpoint triggering during
 registration, including advancing to page 2 while animation and cry are active.
 The restored Master Ball Dusknoir replay no longer hits either breakpoint.
@@ -160,9 +159,9 @@ print/x [$ffff]
 ```
 
 Save a separate failure state without overwriting the eight starting states.
-The new flags/count/reason are in **WRAMX 2**, not Selected's WRAM0 telemetry.
-`$d17e` is the miss count; `$d185` is reason 1 (not ready), 2 (late deadline),
-or 3 (unsafe publication window). `$d181` is the due display-counter value.
+The production flags are in **WRAMX 2**. `$d17d`, `$d17e` and `$d185` are no
+longer diagnostic fields. `$d181` is the due display-counter value. Host reports
+still classify not-ready, late and window failures without writing game RAM.
 Bit 6 of `$d168` means a complete description is waiting for publication; it
 must clear after the copy. For a text-only fault, additionally capture
 `x/118 $0:$c556` (page number through description backing cells) and a failure
@@ -176,6 +175,10 @@ the owner flags and `wFrameCounter` should be zero and the previous VBlank owner
 restored; after the cry also ends, HRAM active/remaining should be zero.
 
 ### Automated Results And Reproduction
+
+The clean-link rerun is recorded in [instrumentation cleanup](dex_instrumentation_cleanup.md).
+The following counts and historical records describe the acknowledged-description
+implementation before cleanup unless explicitly identified as a clean-link run.
 
 These results cover the current acknowledged-description build, with the
 original Master Ball opening and ordinary Route 29/30 encounters. They are not

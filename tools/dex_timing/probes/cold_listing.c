@@ -11,6 +11,8 @@ static uint32_t pixels[160 * 144];
 static uint64_t ticks;
 static unsigned step_origin;
 static bool auditing;
+/* Observer-owned counters: no writes to the game's former trace storage. */
+static unsigned dictionary_services, upload_services, publications;
 
 static uint32_t rgb(GB_gameboy_t *g, uint8_t r, uint8_t v, uint8_t b)
 {
@@ -21,7 +23,11 @@ static uint32_t rgb(GB_gameboy_t *g, uint8_t r, uint8_t v, uint8_t b)
 static unsigned byte(unsigned address)
 {
     if (address >= 0xc000 && address < 0xd000) return gb.ram[address - 0xc000];
-    return GB_read_memory(&gb, address);
+    if (address >= 0xff80 && address < 0xffff) return gb.hram[address - 0xff80];
+    if (address >= 0xff00 && address < 0xff80) return gb.io_registers[address - 0xff00];
+    if (address >= 0xd000 && address < 0xe000)
+        return gb.ram[gb.cgb_ram_bank * 4096 + (address & 4095)];
+    fprintf(stderr,"Unsupported observation address: %04x\n",address);exit(11);
 }
 
 static unsigned word(unsigned address)
@@ -52,28 +58,33 @@ static void snapshot(int hit)
            "\"menu\":%u,\"jumptable\":%u,\"state\":%u,\"owner\":%u,\"loaded\":%u,"
            "\"upload\":%u,\"dictionary_services\":%u,\"upload_services\":%u,"
            "\"playback\":%u,\"audio\":%u,\"remaining\":%u,\"sfx\":%u,"
-           "\"tick\":%u,\"joy\":%u,\"ly\":%u,\"ime\":%u,\"sp\":%u,\"double_speed\":%u,\"debug\":",
+           "\"tick\":%u,\"joy\":%u,\"ly\":%u,\"ime\":%u,\"sp\":%u,\"double_speed\":%u",
            hit, ticks / 2, gb.pc, gb.mbc_rom_bank, index,
            word(S_wDexListingScrollOffset), byte(S_wDexListingCursor), word(S_wDexListingEnd),
            byte(S_wCurDexMode), byte(S_wMenuCursorPosition), byte(S_wJumptableIndex),
            byte(S_wPokedexSelectedState), byte(S_wPokedexAnimOwner), loaded,
-           byte(S_wPokedexAnimUploadOffset), byte(S_wPokedexAnimDebugDictionaryServices),
-           byte(S_wPokedexAnimDebugUploadServices), byte(S_wPokedexAnimPlaybackState),
+           byte(S_wPokedexAnimUploadOffset), dictionary_services,
+           upload_services, byte(S_wPokedexAnimPlaybackState),
            byte(S_hSampledCryTimer), word(S_hSampledCryBlocks), sfx & 1,
            byte(S_hVBlankCounter), byte(S_hJoyDown), byte(0xff44), gb.ime, gb.sp, gb.cgb_double_speed);
-    hex(gb.ram + S_wPokedexAnimDebug - 0xc000, S_wPokedexAnimDebugEnd - S_wPokedexAnimDebug);
-    puts("}");
+    printf(",\"selected_index\":%u}\n", word(S_wPokedexSelectedIndex));
 }
 
 static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
 {
     (void)g; (void)opcode;
-    if (!auditing || gb.halted) return;
+    if (gb.halted) return;
     /* Execution callbacks exclude IRQ dispatch that leaves the same PC pending.
      * Polling PC before GB_cpu_run would count that instruction twice. */
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
-    bool reveal = bank == B_REVEAL && pc == P_REVEAL;
+    if (bank==B_INIT && pc==P_INIT) dictionary_services=upload_services=publications=0;
+    if (bank==B_DECODE && pc==P_DECODE) dictionary_services++;
+    if (bank==B_UPLOAD && pc==P_UPLOAD) upload_services++;
+    if (bank==B_BEGIN && pc==P_BEGIN) publications=0;
+    if (!auditing) return;
+    bool reveal = (bank == B_REVEAL && pc == P_REVEAL) ||
+        (bank == B_PAGE_REVEAL && pc == P_PAGE_REVEAL);
     if (reveal || (bank == B_PUBLISH && pc == P_PUBLISH)) {
         uint8_t map[98], picture[49 * 16];
         for (unsigned y = 0; y < 7; y++) for (unsigned x = 0; x < 7; x++) {
@@ -94,7 +105,7 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
         printf("{\"event\":\"%s\",\"t\":%" PRIu64 ",\"tick\":%u,\"frame\":%u,"
                "\"slot\":%u,\"ordinal\":%u,\"ly\":%u,\"map\":", reveal ? "reveal" : "publish", now / 2,
                (byte(S_hVBlankCounter) + 1) & 255, byte(S_wPokedexAnimStageFrameID),
-               byte(S_wPokedexAnimStageSlot), byte(S_wPokedexAnimDebugEventReads), byte(0xff44));
+               byte(S_wPokedexAnimStageSlot), reveal ? 0 : ++publications, byte(0xff44));
         hex(map, sizeof(map)); printf(",\"picture\":"); hex(picture, sizeof(picture)); puts("}");
     }
     if (bank == B_ANIMATION_MISS && pc == P_ANIMATION_MISS) {
@@ -147,7 +158,7 @@ int main(int argc, char **argv)
             line[strcspn(line, "\r\n")] = 0;
             bool save = line[0] == 's';
             int result = save ? GB_save_state(&gb, line + 5) : GB_load_state(&gb, line + 5);
-            if (!save) ticks = 0;
+            if (!save) { ticks = 0; dictionary_services=upload_services=publications=0; }
             printf("{\"event\":\"ok\",\"error\":%d}\n", result);
         } else if (!strncmp(line, "image ", 6)) {
             line[strcspn(line, "\r\n")] = 0;

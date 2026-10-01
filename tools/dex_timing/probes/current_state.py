@@ -53,7 +53,7 @@ class CurrentStateReplay(IntegratedReplay):
 
     def work_state(self):
         fields = {
-            'event': 'wPokedexAnimDebugEventReads', 'frame': 'wPokedexAnimStageFrameID',
+            'frame': 'wPokedexAnimStageFrameID',
             'flags': 'wPokedexAnimFlags', 'needed': 'wPokedexAnimStageTileCount',
             'uploaded': 'wPokedexAnimUploadOffset', 'target': 'wPokedexAnimDictionaryTarget',
             'remaining': 'wPokedexAnimDictionaryTilesRemaining',
@@ -61,7 +61,7 @@ class CurrentStateReplay(IntegratedReplay):
             'work_tick': 'wPokedexAnimWorkTick', 'control': 'wPokedexAnimSchedulerControl',
         }
         result = {k: self.cpu.ram[self.repo.symbols[v][1]] for k, v in fields.items()}
-        return dict(result, t=self.clock.t, ly=self.clock.ly, dot=self.clock.dot,
+        return dict(result, event=self.snapshot('ledger')['event_serial'], t=self.clock.t, ly=self.clock.ly, dot=self.clock.dot,
                     loaded=self.asset.total-result['remaining'], a=self.cpu.r[7], f=self.cpu.f,
                     cache=self.cpu.wram[4][0xff4])
 

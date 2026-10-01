@@ -25,8 +25,7 @@ FIELDS = '''wPokeAnimSceneIndex wPokeAnimIdleFlag wPokeAnimCommand wPokeAnimPara
     wPokemonIndexTableEntries wCurItem wTempEnemyMonSpecies wEnemyMonSpecies
     wPartyCount wPokedexSeen wPokedexCaught wPartySpecies sBoxCount sBoxSpecies
     hMapAnims hSCX hOAMUpdate wCurSpecies wCurPartySpecies wTempSpecies
-    wNamedObjectIndex wEnemyMonDVs wUnownLetter hJoyDown hJoyLast hJoypadDown
-    wNewDexEntryAnimMissReason'''.split()
+    wNamedObjectIndex wEnemyMonDVs wUnownLetter hJoyDown hJoyLast hJoypadDown'''.split()
 
 
 def audio_empty(repo):
@@ -42,6 +41,15 @@ def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
     symbols = {**repo.symbols, '@audio_empty': audio_empty(repo)}
     lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS]
     lines += [f'#define B_{name} {symbols[name][0]}' for name in FIELDS]
+    external_misses = 'NewDexEntryAnimationMiss' not in symbols
+    if external_misses:
+        for name, label in [('DEADLINE', 'NewDexEntry_PublishAnimation.deadline_checked'),
+                            ('WINDOW', 'NewDexEntry_PublishAnimation.late_window')]:
+            bank, pc = symbols[label]
+            lines += [f'#define B_MISS_{name} {bank}', f'#define P_MISS_{name} {pc}']
+        lines += ['#define HOST_NEW_ENTRY_MISSES 1']
+    else:
+        lines += [f'#define S_wNewDexEntryAnimMissReason {symbols["wNewDexEntryAnimMissReason"][1]}']
     bank, pc = symbols['NewPokedexEntry']
     lines += [f'#define B_ENTRY {bank}', f'#define P_ENTRY 0x{pc:04x}']
     if kind == 'fixture':
@@ -54,11 +62,13 @@ def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
             'experience': 'ApplyExperienceAfterEnemyCaught',
             'level_up': 'LevelUpHappinessMod', 'entry': 'NewPokedexEntry',
             'animation_finished': 'NewDexEntry_AnimationCompleted',
-            'animation_miss': 'NewDexEntryAnimationMiss', 'audio_empty': '@audio_empty',
+            'audio_empty': '@audio_empty',
             'registration_return': 'PokeBallEffect.skip_pokedex',
             'send_to_pc': 'PokeBallEffect.SendToPC',
             'catch_return': 'PokeBallEffect.return_from_capture',
         }
+        if not external_misses:
+            points['animation_miss'] = 'NewDexEntryAnimationMiss'
         lines += ['#define FOLLOW_THROUGH_AUDIT 1',
                   f'#define B_START {start[0]}', f'#define P_START 0x{start[1]:04x}',
                   f'#define B_sBoxCount {symbols["sBoxCount"][0]}',
@@ -82,12 +92,13 @@ def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
             'published': ('NewDexEntry_AnimationPublished', 5),
             'cancel_begin': ('NewDexEntry_CancelAnimation', 6),
             'description': ('DisplayDexEntry', 0),
-            'animation_miss': ('NewDexEntryAnimationMiss', 0),
             'audio_start': ('SampledCry_ArmCachedPlayback', 7),
             'audio_stop': ('StopSampledCryAsync_NoInterruptControl', 0),
             'audio_empty': ('@audio_empty', 0),
             'input_poll': ('@registration_poll', 0),
         }
+        if not external_misses:
+            events['animation_miss'] = ('NewDexEntryAnimationMiss', 0)
         functions = '''NewDexEntry_InitializeAnimation NewDexEntry_BuildAnimationMap
             NewDexEntry_ServiceAnimation NewDexEntry_PublishAnimation
             NewDexEntry_CopyBackingMap NewDexEntry_CopyVRAMMap
@@ -146,13 +157,22 @@ def validate_fixture(repo, directory, fixture):
     state = directory / f'{fixture["species"].lower()}-catch.s{fixture["slot"]}'
     assert sha256(state.read_bytes()) == fixture['state_sha256']
     for name, location in prior.symbols.items():
-        if name in repo.symbols and (location[0] == 0 or location[1] >= 0x8000):
+        # These three Selected-only bytes are initialized on Dex ownership;
+        # they are not live in pre-catch states. All other RAM must still agree.
+        inactive_selected = {'wPokedexAnimLoopTick', 'wPokedexAnimWorkTick',
+                             'wPokedexAnimSchedulerControl'}
+        if name in repo.symbols and name not in inactive_selected and (location[0] == 0 or location[1] >= 0x8000):
             assert repo.symbols[name] == location, ('Fixture address moved', name)
     # Captured catch call chains and sound/animation pointers are still live.
     # Bank $10/$3e registration code is entered afresh, not on the old stack.
     relocations = {(at, repo.symbols[name][1]) for name, (bank, at) in prior.symbols.items()
                    if 0x4000 <= at < 0x8000 and name in repo.symbols
                    and repo.symbols[name][0] == bank and repo.symbols[name][1] != at}
+    # GetMonDexAnimationPlanPointer uses table - 3 for its one-based IDs.
+    # The table moves with Selected code; it is resolved afresh after capture.
+    for name in ('DexAnimationPlanPointers', 'UnownDexAnimationPlanPointers'):
+        assert prior.symbols[name][0] == repo.symbols[name][0]
+        relocations.add((prior.symbols[name][1] - 3, repo.symbols[name][1] - 3))
     for bank in (1, 3, 9, 0x0f, 0x11, 0x12, 0x13, 0x25, 0x34):
         begin, end = bank * 0x4000, (bank + 1) * 0x4000
         for name, location in prior.symbols.items():
@@ -304,6 +324,23 @@ def audit_publication(repo):
         bank, at = repo.symbols['wNewDexEntryAnimMap']
         cpu.wram[bank][at & 4095:(at & 4095) + 49] = bytes(range(1, 50))
         cpu.record_writes = True
+        cpu.host_miss_reasons = []
+        if 'NewDexEntry_PublishAnimation.deadline_checked' in repo.symbols:
+            original_step = cpu.step
+            def observed_step():
+                key = (cpu.bank, cpu.pc)
+                reason = 0
+                if key == repo.symbols['NewDexEntry_PublishAnimation.deadline_checked']:
+                    delta = cpu.r[7]
+                    flags_bank, flags_at = repo.symbols['wNewDexEntryAnimFlags']
+                    flags_now = cpu.wram[flags_bank][flags_at & 4095]
+                    reason = 2 if delta & 128 else 1 if not delta and not flags_now & 2 else 0
+                elif key == repo.symbols['NewDexEntry_PublishAnimation.late_window']:
+                    reason = 3
+                if reason and not cpu.host_miss_reasons:
+                    cpu.host_miss_reasons.append(reason)
+                original_step()
+            cpu.step = observed_step
         cpu.run('NewDexEntry_PublishAnimation')
         assert (cpu.ram[0xff70], cpu.ram[0xff4f]) == (6, 1)
         return cpu
@@ -317,6 +354,7 @@ def audit_publication(repo):
     for name, flags, line, cells in [('map', 3, 149, 49), ('first', 11, 149, 98),
                                     ('finish', 7, 149, 98)]:
         cpu = fixture(flags, line)
+        assert not cpu.host_miss_reasons
         sample = [t for t, at, _ in cpu.io_reads if at == 0xff44][-1]
         stores = [(t, at, value) for t, at, value in cpu.writes if 0x8000 <= at < 0xa000]
         assert [(at, value) for _, at, value in stores[:1]] == [(0x9a32, 0)]  # menu arrow
@@ -327,7 +365,7 @@ def audit_publication(repo):
             assert [value for _, _, value in stores[49:]] == [9 if name == 'first' else 1] * 49
         writes = [t for t, _, _ in stores]
         assert len(writes) == cells
-        assert state(cpu, 'wNewDexEntryAnimMisses') == 0
+        assert state(cpu, 'wNewDexEntryAnimFlags') & 16
         assert state(cpu, 'wNewDexEntryAnimDeadline') == 3  # eight-bit wrap
         # Recorder stamps the instruction start; the store finishes 8 T later.
         last_write = writes[-1] + 8 - sample
@@ -341,15 +379,17 @@ def audit_publication(repo):
                                          (3, 150, 0xfe, 3),
                                          (3, 143, 0xfe, 3)]:
         cpu = fixture(flags, line, deadline)
-        assert state(cpu, 'wNewDexEntryAnimMisses') == 1
-        assert state(cpu, 'wNewDexEntryAnimMissReason') == reason
+        if 'NewDexEntryAnimationMiss' not in repo.symbols:
+            assert cpu.host_miss_reasons == [reason]
         assert not any(0x9821 <= a < 0x9900 for _, a, _ in cpu.writes)
+        assert state(cpu, 'wNewDexEntryAnimDeadline') == deadline
+        assert not state(cpu, 'wNewDexEntryAnimFlags') & 16
         cpu.run('NewDexEntry_PublishAnimation')
-        assert state(cpu, 'wNewDexEntryAnimMisses') == 1  # latched, not per poll
+        assert state(cpu, 'wNewDexEntryAnimDeadline') == deadline
     for flags, owned in [(17, True), (3, False), (21, True)]:
         cpu = fixture(flags, 145, 0xff)
         assert bool(cpu.r[7]) == owned  # block stale background while ACK is set
-        assert state(cpu, 'wNewDexEntryAnimMisses') == 0
+        assert state(cpu, 'wNewDexEntryAnimDeadline') == 0xff
     return costs
 
 

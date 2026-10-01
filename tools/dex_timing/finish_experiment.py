@@ -90,9 +90,11 @@ def finishing_costs(repo, queue_rom=None, upload_rom=None):
                             ('wPokedexAnimStageFrameID',1),('wPokedexAnimStageSlot',slot),
                             ('wPokedexAnimDebugMapPublishes',publishes),
                             ('wPokedexAnimDebugMinReadyLead',lead)):
-                        cpu.field(name,value)
+                        if name in repo.symbols:
+                            cpu.field(name,value)
                     # Trace index is bounded by the linked record writer.
-                    cpu.field('wPokedexAnimTraceHead',ring)
+                    if 'wPokedexAnimTraceHead' in repo.symbols:
+                        cpu.field('wPokedexAnimTraceHead',ring)
                     queue = max(queue,cpu.run('Pokedex_CommitDescriptionAnimation'))
     cpu = machine(repo)
     cpu.field('hSampledCryTimer',0)

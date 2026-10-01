@@ -1,5 +1,8 @@
 # New Dex Entry Input-Timing Regression
 
+Current instrumentation-free rerun: see [Dex instrumentation cleanup](dex_instrumentation_cleanup.md).
+The investigation and instrumented-build results below remain historical evidence.
+
 Updated 2026-09-21. The acknowledged description publisher is integrated on top
 of the fixed-rectangle picture-publication correction. It resolves all eleven
 Mewtwo text-refresh reproductions without stretching animation holds or changing

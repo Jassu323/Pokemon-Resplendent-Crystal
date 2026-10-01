@@ -1,6 +1,6 @@
 # Selected Scheduler Validation And Test Guide
 
-Updated 2026-09-21. This is the current instrumented-checkpoint guide.
+Updated 2026-09-21. This is the current instrumentation-free guide.
 See the [implementation reference](pokedex_animation_scheduler.md) for the
 runtime contract and the [historical validation record](archived/dex-scheduler/dex_scheduler_validation_history.md)
 for earlier ROM hashes, experiments and acceptance stages. Statements about
@@ -11,9 +11,9 @@ older temporary encounters or unimplemented candidates belong to that archive.
 Test the normal root `pokecrystal.gbc`, not an earlier A/B cartridge.
 
 ```text
-ROM SHA-256: 412527bdecc0c55c90a63b1d268ee7f7812788649e6936035dfd86a437e9dff7
-SYM SHA-256: 95a72958f693330d4c472a4e2c65196072879f63ee843829510b9c7bdcba905f
-MAP SHA-256: 1705e9f80d1aeef2778bf0093f7512be68670a8156f49ad44c4a2396fdbd54ed
+ROM SHA-256: 18ec28c84656ee26e6f705b81982b12bd1fdc62a5efa7ba994ef7b1de77965ea
+SYM SHA-256: e8e29d612bb180daba45b2e5c3b310829ff119814cb2d55f7f6bab0413771fc2
+MAP SHA-256: b1884c4ed70433336524a1b9900fe77c880b8438aa53c44022ec50388cc5e0af
 RGBDS: v1.0.1
 SameBoy core: 213a12ce93d66b105a113debd9396306066a7cfc
 Hardware: CGB-E, normal CPU speed
@@ -21,9 +21,9 @@ Hardware: CGB-E, normal CPU speed
 
 This link includes the later-event full-dictionary targets, restored Route 29/30
 encounters and Seviper's finite repeat correction. Startup remains 96 animation
-tail tiles and 32 sampled-cry blocks. Listing warming and marked instrumentation
-remain deliberately retained. The dormant A/B branches have been removed;
-that cleanup rebuilt byte-for-byte identically to this accepted ROM.
+tail tiles and 32 sampled-cry blocks. Listing warming remains. Runtime telemetry is removed; the clean-link
+[cleanup report](dex_instrumentation_cleanup.md) records the cost remeasurement,
+all-species cold/paging passes, New Entry sweeps and unchanged known failures.
 
 Boot through normal Continue using a battery save, not an older emulator state.
 Old states can retain incompatible return addresses or prepared work even when
@@ -140,26 +140,18 @@ transition. Known bugs remain deferred, not implicitly fixed by this suite.
 
 ## SameBoy Debugging
 
-Addresses below apply to the accepted `412527bd...` ROM above. Verify the cartridge before
+Addresses below apply to the clean `18ec28c8...` ROM above. Verify the cartridge before
 using them. For a fresh link, resolve the labels in `pokecrystal.sym` again.
 
 ### Animation Miss
 
 ```text
-breakpoint $a0:$6805
+breakpoint $a0:$666a
 ```
 
-This is `Pokedex_CountAnimationUnderflow`. Expected bytes:
-
-```text
-x/8 $a0:$6805
-21 3b c7 34 c0 23 34 c9
-```
-
-The first instruction is `LD hl, $c73b`; the underflow count has not yet been
-incremented at this breakpoint. It should not fire during uninterrupted settled
-playback in the target cases. Do not infer that it proves visual corruption has
-already appeared on the current scanline.
+This is `Pokedex_AnimationMiss`, starting with the call to the existing visible
+underflow fallback. There is no runtime counter now. It should not fire during
+uninterrupted settled playback; the host also checks exact publication timing.
 
 At any hit, capture:
 
@@ -169,7 +161,7 @@ backtrace
 ticks keep
 lcd
 x/27 $0:$c72e
-x/139 $0:$c758
+x/3 $0:$c758
 x/49 $0:$cb9c
 x/49 $0:$cbfe
 x/49 $0:$cc60
@@ -188,18 +180,13 @@ x/1 $0:$ffc6
 
 Record species, route, whether the cursor had warmed it, buttons pressed during
 playback, and hit number. Preserve a new-build save state at a reproducible hit.
-After continuing to completion, gather the state/debug/audio dumps again.
+After continuing to completion, gather the state/audio dumps again.
 
-`x/139 $0:$c758` still spans the existing diagnostic region plus the three
-production scheduler bytes. **The final three bytes no longer represent a
-compact-schedule pointer/run:** they are loop tick, last work tick and control.
-Read them separately with `x/3 $0:$c7e0` when useful. Control bit 0 means deferred
-audio is due; bit 1 means an optional finish was used in the current iteration.
-
-Successful uninterrupted playback should leave `x/2 $0:$c73b` as `00 00`.
-For a representative successful case, break manually after animation and cry
-completion and capture the first two dumps plus audio state; no full backtrace
-is needed unless something looks wrong.
+`$c758-$c75a` are loop tick, last work tick and scheduler control. Control
+bit 0 means deferred audio is due; bit 1 means a finish was used this iteration.
+The retired `$c73b-$c73c` storage is reserved, not a miss counter. There is no
+trace-ring dump. Successful completion is judged by production state and host
+publication/audio auditing, not a zero diagnostic count.
 
 ### First Publication / New Replay State
 
@@ -236,7 +223,7 @@ breakpoint $0:$0063 if [$fff2] + [$fff3]
 ```
 
 Capture registers/backtrace, `x/8 $4:$dff4`, `x/6 $0:$ffee`, `ticks keep`, `lcd`
-and the animation state/debug dumps. A deliberate species/page/cancel operation
+and the animation state dumps. A deliberate species/page/cancel operation
 can also stop a cry early, so that context is essential. Normal sampled
 completion has zero remaining blocks. Earlier `$3d1a`/`$3d36` instrumentation
 addresses do not apply to this build.
@@ -275,42 +262,17 @@ remain in the archive; do not commit copied ROMs/saves to make it portable.
 See the [host tool guide](dex_timing_model.md) for current versus historical
 entry points. Raw reports and traces belong under the ignored root `build/`.
 
-## Commit Preparation
+## Cleanup Status
 
-### Current Instrumented Checkpoint
+The accepted instrumentation checkpoint has now been cleaned. Runtime logging,
+trace buffers and miss/publication counters are removed; production scheduler
+state and visible failure paths remain. The [cleanup report](dex_instrumentation_cleanup.md)
+contains exact changes, resource totals, tests and current New Entry breakpoints.
 
-The user chose to commit the instrumented scheduler first, retaining telemetry
-until after the New Dex Entry audit. That is a deliberate checkpoint, not a
-claim that instrumentation cleanup or all Dex transactions are complete.
+Route 29/30 encounters, Joey's party and Master Ball behavior remain ordinary.
+The 96-tail startup, 32-block cry prefill and Listing warming remain unchanged.
+Root build output stays ignored. Reusable host observers and historical evidence
+remain, with frozen-input requirements explicit.
 
-Completed cleanup:
-
-- Route 29/30 stress encounters restored to baseline; normal encounter rates.
-- Joey's first party remains one level-4 Rattata; no trainer/wild-selection test override.
-- Dormant `DEX_AB_FULL_DICTIONARY` and `DEX_AB_DISABLE_LIST_WARMING` branches removed.
-- Root `build/` ignored in full, with no tracked files there and no local evidence deleted.
-- Historical documentation separated from current instructions.
-
-Retain the production 96-tail startup, 32-block cry prefill, active warming,
-marked instrumentation, reusable host tools/tests and maintained documentation.
-Save unlocks/Unown form correction are external test setup, not source edits.
-See the [New Dex Entry procedure](dex_new_entry_testing.md) for the next owner.
-Staging and committing remain the user's separate action.
-
-### Deferred Release Cleanup
-
-These are later behavior/timing changes, not prerequisites for the instrumented
-checkpoint:
-
-- Preserve the accepted ROM, symbols, map and matching sources locally before relinking.
-- Remove temporary telemetry calls/counters/buffers, but preserve production state mixed into diagnostics: first-publication anchoring currently uses `wPokedexAnimDebugMapPublishes` and `wPokedexAnimDebugLastPublishTick`. Replace that dependence explicitly.
-- Keep `wPokedexAnimLoopTick`, `wPokedexAnimWorkTick` and `wPokedexAnimSchedulerControl`; they are not disposable trace padding.
-- Keep named miss paths and visible failure behavior. Do not mask failures to make tests pass.
-- Treat Listing warming removal and unrelated backlog fixes as separately reviewed changes.
-- Rebuild, rerun structural/contracts/admission checks and timed playback against the cleaned link. Removed instructions alter timing and interrupt phase.
-- Refresh all debugger addresses and run a cleaned-build live smoke test on Groudon, Dusknoir, Luxray, Spheal, a synthesized control, cold/internal entry, B-return and Dex re-entry.
-- Review the staged diff, resource totals and backlog status. Do not stage raw captures, emulator saves/states or generated binaries.
-
-No instrumentation cleanup or warming removal has been performed. Current
-Selected telemetry is not meaningful in New Dex Entry's reused RAM; its
-baseline audit uses the legacy owner and shared audio state instead.
+Listing warming removal, other owners and backlog fixes remain separate work.
+Staging, committing and pushing remain the user's action.

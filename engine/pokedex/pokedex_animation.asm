@@ -6,9 +6,6 @@ ASSERT POKEDEX_ANIM_SOURCE_TILES + 7 * 7 <= wPokedexWRAM0ScratchEnd
 ASSERT POKEDEX_ANIM_PLAN_BUFFER + 2 * 7 * 7 <= POKEDEX_ANIM_SLOT_A_MAP
 ASSERT POKEDEX_ANIM_PAYLOAD + POKEDEX_ANIM_UPLOAD_CHUNK_TILES * TILE_SIZE <= POKEDEX_ANIM_PLAN_BUFFER
 
-; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-ASSERT wPokedexAnimTraceRecords + POKEDEX_ANIM_TRACE_CAPACITY * POKEDEX_ANIM_TRACE_RECORD_SIZE == wPokedexAnimDebugEnd
-
 DEF POKEDEX_WRAP_MAP_STAGING EQUS "POKEDEX_GRID_CENTER_GFX"
 DEF POKEDEX_WRAP_MAP_BLOCKS EQU 13
 ASSERT LOW(POKEDEX_WRAP_MAP_STAGING) & $f == 0
@@ -716,11 +713,6 @@ Pokedex_BeginDescriptionAnimation:
 	cp POKEDEX_ANIM_PLAYBACK_WAITING
 	ret nz
 
-	ld a, [wPokedexAnimDictionaryTilesRemaining]
-	ld b, a
-	ld a, [wPokedexAnimDictionaryTileCount]
-	sub b
-	ld [wPokedexAnimDebugStartLoadedTiles], a
 	ld a, [wPokedexAnimOwner]
 	call PlayMonCry2
 	call Pokedex_AcquireQuietAnimationOwner
@@ -729,6 +721,8 @@ Pokedex_BeginDescriptionAnimation:
 	ld [wPokedexAnimDeadline], a
 	ld a, POKEDEX_ANIM_PLAYBACK_PLAYING
 	ld [wPokedexAnimPlaybackState], a
+	ld hl, wPokedexAnimFlags
+	set POKEDEX_ANIM_FIRST_PUBLICATION_F, [hl]
 	jp Pokedex_QueueReadyAnimationStage
 
 Pokedex_ServiceAnimationProducer:
@@ -738,75 +732,11 @@ Pokedex_ServiceAnimationProducer:
 	ld a, [wPokedexAnimFlags]
 	bit POKEDEX_ANIM_ACTIVE_F, a
 	ret z
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	xor a
-	ld [wPokedexAnimTraceAction], a
-	ld a, [wPokedexAnimFlags]
-	bit POKEDEX_ANIM_STAGE_VALID_F, a
-	jr z, .trace_stage_checked
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_STAGE_VALID_ENTRY_F, [hl]
-.trace_stage_checked
-	bit POKEDEX_ANIM_MAP_PENDING_F, a
-	jr z, .trace_pending_checked
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_MAP_PENDING_ENTRY_F, [hl]
-.trace_pending_checked
-	bit POKEDEX_ANIM_MAP_PUBLISHED_F, a
-	jr z, .trace_published_checked
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_MAP_PUBLISHED_ENTRY_F, [hl]
-.trace_published_checked
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceEntryTick], a
-	ld [wPokedexAnimTraceStageCheckedTick], a
-	ld [wPokedexAnimTraceDictionaryTick], a
-	ld [wPokedexAnimTraceGatherTick], a
-	ld [wPokedexAnimTraceHDMAEntryTick], a
-	ld [wPokedexAnimTraceHDMAExitTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceEntryLY], a
-	ld [wPokedexAnimTraceStageCheckedLY], a
-	ld [wPokedexAnimTraceDictionaryLY], a
-	ld [wPokedexAnimTraceGatherLY], a
-	ld [wPokedexAnimTraceHDMAEntryLY], a
-	ld [wPokedexAnimTraceHDMAExitLY], a
-	ld hl, wPokedexAnimDebugProducerCalls
-	inc [hl]
-	jr nz, .producer_call_recorded
-	inc hl
-	inc [hl]
-.producer_call_recorded
-	call .Run
-	ld a, [wPokedexAnimFlags]
-	bit POKEDEX_ANIM_STAGE_READY_F, a
-	jr z, .trace_ready_checked
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_READY_F, [hl]
-.trace_ready_checked
-	ldh a, [hVBlankCounter]
-	ld b, a
-	ld a, [wPokedexAnimTraceEntryTick]
-	cp b
-	jr z, .record_trace
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_CROSSED_VBLANK_F, [hl]
-	ld hl, wPokedexAnimDebugProducerCrossVBlank
-	inc [hl]
 
-.record_trace
-	call Pokedex_RecordAnimationTrace
-	ret
-
-.Run:
 	ld a, [wPokedexAnimPlaybackState]
 	cp POKEDEX_ANIM_PLAYBACK_PLAYING
 	jr z, .scheduled
 	call Pokedex_EnsureAnimationStage
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceStageCheckedTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceStageCheckedLY], a
 	call Pokedex_AnimationDictionaryBelowTarget
 	jr nc, .dictionary_done
 	call Pokedex_ServiceAnimationDictionaryChunk
@@ -832,7 +762,6 @@ Pokedex_ServiceAnimationProducer:
 
 .record_dictionary
 	call Pokedex_TryFinishAnimationStage
-	call Pokedex_RecordAnimationDictionaryDebug
 	ret
 
 Pokedex_ServiceAnimationDictionaryChunk:
@@ -846,14 +775,6 @@ Pokedex_ServiceAnimationDictionaryChunk:
 	call Pokedex_LoadAnimationDictionaryChunk
 	pop af
 	ldh [rWBK], a
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_DICTIONARY_F, [hl]
-	ld hl, wPokedexAnimDebugDictionaryServices
-	inc [hl]
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceDictionaryTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceDictionaryLY], a
 	ret
 
 Pokedex_ServiceAnimationUploadChunk:
@@ -864,14 +785,6 @@ Pokedex_ServiceAnimationUploadChunk:
 	call Pokedex_GatherReadyAnimationTiles
 	pop af
 	ldh [rWBK], a
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceGatherTick], a
-	ld [wPokedexAnimTraceHDMAEntryTick], a
-	ld [wPokedexAnimTraceHDMAExitTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceGatherLY], a
-	ld [wPokedexAnimTraceHDMAEntryLY], a
-	ld [wPokedexAnimTraceHDMAExitLY], a
 	ld a, c
 	and a
 	ret z
@@ -886,10 +799,7 @@ Pokedex_ServiceAnimationUploadChunk:
 	ldh a, [rLCDC]
 	bit B_LCDC_ENABLE, a
 	jr z, .copy_lcd_off
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceHDMAEntryTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceHDMAEntryLY], a
+.transfer
 	call Pokedex_HDMATransferAnimationGFX
 	jr .transfer_done
 
@@ -903,22 +813,10 @@ Pokedex_ServiceAnimationUploadChunk:
 	ld a, c
 	and $f0
 	ld c, a
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceHDMAEntryTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceHDMAEntryLY], a
 	call CopyBytes
 .transfer_done
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceHDMAExitTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceHDMAExitLY], a
 	pop af
 	ldh [rVBK], a
-	ld hl, wPokedexAnimTraceAction
-	set POKEDEX_ANIM_TRACE_UPLOAD_F, [hl]
-	ld hl, wPokedexAnimDebugUploadServices
-	inc [hl]
 
 	ld a, [wDexTempCounter]
 	ld hl, wPokedexAnimUploadOffset
@@ -943,27 +841,6 @@ Pokedex_AnimationDictionaryBelowTarget:
 	ret z
 	; Return carry only while loaded tiles remain below the target.
 	ccf
-	ret
-
-Pokedex_RecordAnimationDictionaryDebug:
-	ld a, [wPokedexAnimDictionaryTarget]
-	ld b, a
-	ld a, [wPokedexAnimDebugMaxDictionaryTarget]
-	cp b
-	jr nc, .target_recorded
-	ld a, b
-	ld [wPokedexAnimDebugMaxDictionaryTarget], a
-.target_recorded
-	ld a, [wPokedexAnimDictionaryTilesRemaining]
-	ld b, a
-	ld a, [wPokedexAnimDictionaryTileCount]
-	sub b
-	ld b, a
-	ld a, [wPokedexAnimDebugMaxLoadedTiles]
-	cp b
-	ret nc
-	ld a, b
-	ld [wPokedexAnimDebugMaxLoadedTiles], a
 	ret
 
 Pokedex_EnsureAnimationStage:
@@ -1008,11 +885,6 @@ Pokedex_PrepareNextAnimationStage:
 	ret nz
 	bit POKEDEX_ANIM_ENDED_F, [hl]
 	ret nz
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceStageEntryTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceStageEntryLY], a
 
 	farcall Pokedex_ReadNextAnimationEvent
 	xor a
@@ -1041,9 +913,9 @@ Pokedex_PrepareNextAnimationStage:
 	call Pokedex_BuildAnimationStage
 	ld a, [wPokedexAnimStageTileCount]
 	and a
-	jr nz, .trace_prepared
+	jr nz, .prepared
 	call Pokedex_FinishAnimationStage
-	jr .trace_prepared
+	jr .prepared
 
 .resident_a
 	xor a
@@ -1055,16 +927,14 @@ Pokedex_PrepareNextAnimationStage:
 	xor a
 	ld [wPokedexAnimStageTileCount], a
 	call Pokedex_FinishAnimationStage
-	jr .trace_prepared
+	jr .prepared
 
 .base_frame
 	call Pokedex_InitializeAnimationStageMap
 	call Pokedex_FinishAnimationStage
 
-.trace_prepared
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	ld a, POKEDEX_ANIM_TRACE_STAGE_PREPARED
-	jp Pokedex_RecordAnimationStageTrace
+.prepared
+	ret
 
 Pokedex_LoadAnimationDictionaryChunk:
 ; rWBK is already set to the graphics scratch bank. Each stream expands to at
@@ -1342,8 +1212,6 @@ Pokedex_FinishAnimationStage:
 .ready
 	ld hl, wPokedexAnimFlags
 	set POKEDEX_ANIM_STAGE_READY_F, [hl]
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimDebugReadyTick], a
 	ret
 
 Pokedex_PrimeDescriptionAnimation:
@@ -1451,23 +1319,16 @@ Pokedex_CommitDescriptionAnimation:
 	jr nz, Pokedex_QueueReadyAnimationStage
 	call Pokedex_AnimationDeadlineDue
 	ret nc
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	ld a, POKEDEX_ANIM_TRACE_UNDERFLOW
-	call Pokedex_RecordAnimationTraceSpecial
-	call Pokedex_CountAnimationUnderflow
+	; Preserve the existing failure fallback; the host observes this boundary.
+Pokedex_AnimationMiss::
 	call Pokedex_BuildAnimationUnderflowMap
 
 Pokedex_QueueReadyAnimationStage:
-	ld a, [wPokedexAnimDebugMapPublishes]
-	and a
-	call nz, Pokedex_RecordAnimationReadyLead
 	call Pokedex_GetAnimationStageMap
 	ld d, h
 	ld e, l
 	farcall Pokedex_CommitAnimationFrontpicMap
-	; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-	ld a, POKEDEX_ANIM_TRACE_MAP_QUEUED
-	jp Pokedex_RecordAnimationTraceSpecial
+	ret
 
 Pokedex_AnimationDeadlineDue:
 	ldh a, [hVBlankCounter]
@@ -1482,25 +1343,6 @@ Pokedex_AnimationDeadlineDue:
 	ret
 .due
 	scf
-	ret
-
-Pokedex_RecordAnimationReadyLead:
-	ldh a, [hVBlankCounter]
-	inc a
-	ld b, a
-	ld a, [wPokedexAnimDeadline]
-	sub b
-	bit 7, a
-	jr z, .got_lead
-	xor a
-.got_lead
-	ld b, a
-	ld a, [wPokedexAnimDebugMinReadyLead]
-	cp b
-	ret c
-	ret z
-	ld a, b
-	ld [wPokedexAnimDebugMinReadyLead], a
 	ret
 
 Pokedex_FinalizePublishedAnimationStage:
@@ -1534,161 +1376,6 @@ Pokedex_FinalizePublishedAnimationStage:
 	res POKEDEX_ANIM_ACTIVE_F, [hl]
 	ld a, POKEDEX_ANIM_PLAYBACK_DONE
 	ld [wPokedexAnimPlaybackState], a
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimDebugFinishTick], a
-	ret
-
-Pokedex_CountAnimationUnderflow:
-	ld hl, wPokedexAnimUnderflowCount
-	inc [hl]
-	ret nz
-	inc hl
-	inc [hl]
-	ret
-
-; TEMPORARY DEX ANIMATION SCHEDULER TRACE
-; Keep the most recent producer and turnover events in the existing Pokedex
-; debug reservation. This intentionally allocates no new WRAM or HRAM.
-Pokedex_RecordAnimationStageTrace:
-	push af
-	push bc
-	ld b, a
-	ld a, [wPokedexAnimTraceAction]
-	push af
-	ld a, [wPokedexAnimTraceEntryTick]
-	push af
-	ld a, [wPokedexAnimTraceEntryLY]
-	push af
-	ld a, b
-	ld [wPokedexAnimTraceAction], a
-	ld a, [wPokedexAnimTraceStageEntryTick]
-	ld [wPokedexAnimTraceEntryTick], a
-	ld a, [wPokedexAnimTraceStageEntryLY]
-	ld [wPokedexAnimTraceEntryLY], a
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceStageExitTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceStageExitLY], a
-	jr Pokedex_RecordAnimationTraceSpecial.end_timestamp
-
-Pokedex_RecordAnimationTraceSpecial:
-	push af
-	push bc
-	ld b, a
-	ld a, [wPokedexAnimTraceAction]
-	push af
-	ld a, [wPokedexAnimTraceEntryTick]
-	push af
-	ld a, [wPokedexAnimTraceEntryLY]
-	push af
-	ld a, b
-	ld [wPokedexAnimTraceAction], a
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceEntryTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceEntryLY], a
-.end_timestamp
-	ldh a, [hVBlankCounter]
-	ld [wPokedexAnimTraceStageCheckedTick], a
-	ld [wPokedexAnimTraceDictionaryTick], a
-	ld [wPokedexAnimTraceGatherTick], a
-	ld [wPokedexAnimTraceHDMAEntryTick], a
-	ld [wPokedexAnimTraceHDMAExitTick], a
-	ldh a, [rLY]
-	ld [wPokedexAnimTraceStageCheckedLY], a
-	ld [wPokedexAnimTraceDictionaryLY], a
-	ld [wPokedexAnimTraceGatherLY], a
-	ld [wPokedexAnimTraceHDMAEntryLY], a
-	ld [wPokedexAnimTraceHDMAExitLY], a
-	call Pokedex_RecordAnimationTrace
-	pop af
-	ld [wPokedexAnimTraceEntryLY], a
-	pop af
-	ld [wPokedexAnimTraceEntryTick], a
-	pop af
-	ld [wPokedexAnimTraceAction], a
-	pop bc
-	pop af
-	ret
-
-Pokedex_RecordAnimationTrace:
-	push af
-	push bc
-	push de
-	push hl
-
-	ld a, [wPokedexAnimTraceHead]
-	ld e, a
-	ld d, 0
-	ld l, e
-	ld h, d
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	add hl, de
-	add hl, de
-	ld de, wPokedexAnimTraceRecords
-	add hl, de
-
-	ld a, [wPokedexAnimTraceAction]
-	ld [hli], a
-	ld a, [wPokedexAnimDebugEventReads]
-	ld [hli], a
-	ld a, [wPokedexAnimStageFrameID]
-	ld [hli], a
-	ld a, [wPokedexAnimDeadline]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceEntryTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceEntryLY]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceStageCheckedTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceStageCheckedLY]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceDictionaryTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceDictionaryLY]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceGatherTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceGatherLY]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceHDMAEntryTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceHDMAEntryLY]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceHDMAExitTick]
-	ld [hli], a
-	ld a, [wPokedexAnimTraceHDMAExitLY]
-	ld [hli], a
-	ld a, [wPokedexAnimDictionaryTilesRemaining]
-	ld b, a
-	ld a, [wPokedexAnimDictionaryTileCount]
-	sub b
-	ld [hli], a
-	ld a, [wPokedexAnimUploadOffset]
-	ld [hl], a
-
-	ld hl, wPokedexAnimTraceHead
-	inc [hl]
-	ld a, [hl]
-	cp POKEDEX_ANIM_TRACE_CAPACITY
-	jr c, .record_count
-	xor a
-	ld [hl], a
-.record_count
-	ld hl, wPokedexAnimTraceCount
-	ld a, [hl]
-	cp POKEDEX_ANIM_TRACE_CAPACITY
-	jr nc, .done
-	inc [hl]
-.done
-	pop hl
-	pop de
-	pop bc
-	pop af
 	ret
 
 Pokedex_BuildAnimationUnderflowMap:

@@ -45,6 +45,8 @@ class IntegratedReplay(OwnerReplay):
         # Only production aliases change in the Dex union. All other recorded
         # RAM addresses and sound/data banks used by this continuation must agree.
         for name, symbol in old.symbols.items():
+            if name in ('wPokedexAnimLoopTick', 'wPokedexAnimWorkTick', 'wPokedexAnimSchedulerControl'):
+                continue  # Explicitly initialized below, never copied by address.
             if symbol[1] >= 0xc000 and name in repo.symbols and symbol != repo.symbols[name]:
                 raise ModelError(f'RAM moved: {name}; explicit migration required')
         for kind in ('front', 'plan', 'timeline', 'sample'):
@@ -76,6 +78,8 @@ class IntegratedReplay(OwnerReplay):
         fresh.field('wPokedexAnimWorkTick', (tick - 1) & 255)
         fresh.field('wPokedexAnimSchedulerControl', 0)
         fresh.ram[0xff44] = 145
+        if 'wPokedexAnimDebug' not in repo.symbols:
+            fresh.field('wPokedexAnimFlags', fresh.ram[repo.symbols['wPokedexAnimFlags'][1]] | 0x80)
         fresh.ram[0xff4d] = 0
         saved_return = fresh.sp - 2
         run_to(fresh, 'VBlank', 'Pokedex_VBlankAnimationFrontpicMap.deadline_reached')
@@ -87,6 +91,7 @@ class IntegratedReplay(OwnerReplay):
         begin, end = (offset(repo.symbols[n]) for n in ('OAMDMACode', 'OAMDMACode.End'))
         fresh.block(repo.symbols['hTransferShadowOAM'][1], repo.rom[begin:end])
         self.repo, self.asset, self.cpu = repo, asset, fresh
+        self.event_serial = 1
         fresh.replay = self
         self.start_steps = fresh.steps
         self.operation_hooks = {repo.symbols[name]: name for name in self.operation_hooks.values()
@@ -234,7 +239,7 @@ def main():
         header = a.output/'linked-symbols.h'
         symbols = dict(DEX_PUBLICATION_PC='Pokedex_VBlankAnimationFrontpicMap.deadline_reached',
             DEX_STAGE_PC='Pokedex_PrepareNextAnimationStage', DEX_PRODUCER_PC='Pokedex_ServiceAnimationProducer',
-            DEX_WAIT_PC='Pokedex_EndOwnerLoop.wait', DEX_MISS_PC='Pokedex_CountAnimationUnderflow',
+            DEX_WAIT_PC='Pokedex_EndOwnerLoop.wait', DEX_MISS_PC='Pokedex_AnimationMiss' if 'Pokedex_AnimationMiss' in repo.symbols else 'Pokedex_CountAnimationUnderflow',
             DEX_STOP_PC='StopSampledCryAsync_NoInterruptControl')
         header.write_text(''.join(f'#define {k} 0x{repo.symbols[v][1]:04x}\n' for k,v in symbols.items())+
                           '#define DEX_WAIT_BANK 0xa0\n')

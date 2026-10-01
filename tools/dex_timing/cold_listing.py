@@ -23,24 +23,42 @@ POINTS = {
     'start_menu': 'StartMenu.loop', 'listing': 'Pokedex_UpdateMainScreen',
     'accept': 'Pokedex_UpdateMainScreen.a', 'selected': 'PokedexSelectedMon_Update',
     'end_loop': 'Pokedex_EndOwnerLoop', 'leave': 'PokedexSelectedMon_Leave',
-    'animation_miss': 'Pokedex_CountAnimationUnderflow',
+    'change_species': 'PokedexSelectedMon_ChangeSpecies',
+    'animation_miss': 'Pokedex_AnimationMiss',
     'audio_miss': '@audio_empty',
 }
 FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
-    wMenuCursorPosition wJumptableIndex wPokedexSelectedState wPokedexAnimOwner
+    wMenuCursorPosition wJumptableIndex wPokedexSelectedState wPokedexSelectedIndex wPokedexAnimOwner
     wPokedexAnimDictionaryDestination wPokedexAnimUploadOffset
-    wPokedexAnimDebugDictionaryServices wPokedexAnimDebugUploadServices
     wPokedexAnimPlaybackState hSampledCryTimer hSampledCryBlocks hVBlankCounter
-    hJoyDown wPokedexAnimDebug wPokedexAnimDebugEnd wPokedexAnimStageFrameID
-    wPokedexAnimStageSlot wPokedexAnimDebugEventReads
+    hJoyDown wPokedexAnimStageFrameID wPokedexAnimStageSlot
     wChannel5Flags1 wChannel6Flags1 wChannel7Flags1 wChannel8Flags1'''.split()
 
 
 def build_core(repo, source, output):
     symbols = repo.symbols
+    miss = 'Pokedex_AnimationMiss' if 'Pokedex_AnimationMiss' in symbols else 'Pokedex_CountAnimationUnderflow'
+    def call_site(start, end, target):
+        bank, address = symbols[start]
+        code = repo.rom[offset(symbols[start]):offset(symbols[end])]
+        destination = symbols[target][1]
+        instruction = bytes((0xcd, destination & 255, destination >> 8))
+        if code.count(instruction) != 1:
+            raise ValueError(f'Expected one linked {target} call in {start}')
+        return bank, address + code.index(instruction)
+    page_reveal = symbols.get('PokedexSelectedMon_ChangeSpecies.revealed') or call_site(
+        'PokedexSelectedMon_ChangeSpecies', 'PokedexSelectedMon_Leave', 'Pokedex_BeginDescriptionAnimation')
+    upload = symbols.get('Pokedex_ServiceAnimationUploadChunk.transfer') or call_site(
+        'Pokedex_ServiceAnimationUploadChunk', 'Pokedex_ServiceAnimationUploadChunk.copy_lcd_off',
+        'Pokedex_HDMATransferAnimationGFX')
     pairs = dict(PUBLISH=symbols['Pokedex_VBlankAnimationFrontpicMap.display_recorded'],
                  REVEAL=symbols['PokedexSelectedMon_Enter.revealed'],
-                 ANIMATION_MISS=symbols['Pokedex_CountAnimationUnderflow'],
+                 PAGE_REVEAL=page_reveal,
+                 ANIMATION_MISS=symbols[miss],
+                 INIT=symbols['Pokedex_PrepareFrontpicBase'],
+                 DECODE=symbols['Pokedex_LoadAnimationDictionaryChunk'],
+                 UPLOAD=upload,
+                 BEGIN=symbols['Pokedex_BeginDescriptionAnimation'],
                  AUDIO_STOP=symbols['StopSampledCryAsync_NoInterruptControl'])
     # Derive the cache-empty branch from the linked labels and verify its bytes.
     bank, decoded = symbols['SampledCry_AsyncTimerTick.has_decoded_block']
@@ -54,7 +72,7 @@ def build_core(repo, source, output):
         lines += [f'#define B_{name} {bank}', f'#define P_{name} 0x{pc:04x}']
     lines += ['static const struct { unsigned bank, pc; } points[] = {']
     for name in POINTS.values():
-        bank, pc = pairs['AUDIO_EMPTY'] if name == '@audio_empty' else symbols[name]
+        bank, pc = pairs['AUDIO_EMPTY'] if name == '@audio_empty' else symbols[miss if name == 'Pokedex_AnimationMiss' else name]
         lines.append(f'{{{bank}, 0x{pc:04x}}},')
     lines += ['};']
     header = output / 'linked-symbols.h'
@@ -216,9 +234,9 @@ def expected_picture(asset, frame):
     return b''.join(result)
 
 
-def audit(asset, accepted, events, final):
+def audit(asset, accepted, events, final, cold=True):
     issues = []
-    if (accepted['loaded'] != asset.width ** 2 or accepted['dictionary_services']
+    if cold and (accepted['loaded'] != asset.width ** 2 or accepted['dictionary_services']
             or accepted['upload_services'] or accepted.get('upload', 0)):
         issues.append('not_cold')
     if accepted.get('double_speed') or final.get('double_speed'):
@@ -273,12 +291,26 @@ def run_case(job):
     driver = Driver(config['core'], config['rom'], config['boot'], config['battery'], f'{prefix}.log')
     row = dict(index=index, species=asset.name, status='error')
     try:
-        prior, direction = predecessor(index)
+        paging = config.get('paging', False)
+        prior, direction = (max(0, index - 1) if index else 1, 'down' if index else 'up') if paging else predecessor(index)
         driver.command(f'load {output / "listing-states" / f"listing-{prior:03}.s0"}')
-        moved = move(driver, direction, index)
+        if paging:
+            driver.run(('accept',), frames=120, key='a')
+            for _ in range(2400):
+                settled = driver.run(('selected',), frames=120)
+                if settled['hit'] != 'selected':
+                    raise RuntimeError('Paging predecessor did not reach Selected')
+                if settled['playback'] == 3 and not settled['audio'] and not settled['sfx']:
+                    break
+            else:
+                raise RuntimeError('Paging predecessor failed to finish')
+            moved = settled
+        else:
+            moved = move(driver, direction, index)
+        driver.events.clear()
         driver.command('audit 1')
-        accepted = driver.run(('accept',), frames=120, key='a')
-        if accepted['hit'] != 'accept' or accepted['index'] != index:
+        accepted = driver.run(('change_species' if paging else 'accept',), frames=120, key=direction if paging else 'a')
+        if accepted['hit'] != ('change_species' if paging else 'accept') or (not paging and accepted['index'] != index):
             raise RuntimeError('A was not accepted on the intended new selection')
         # No further input until both animation and cry have fully ended.
         first = None
@@ -292,7 +324,12 @@ def run_case(job):
                 break
         else:
             raise RuntimeError('Animation or cry did not finish within the bounded test')
-        result = audit(asset, accepted, driver.events, final)
+        result = audit(asset, accepted, driver.events, final, cold=not paging)
+        if paging and final['selected_index'] != index:
+            result['issues'].append('wrong_paging_destination')
+        result['path'] = 'internal_paging' if paging else 'cold_listing'
+        if paging:
+            result['cold'] = None
         row.update(result, status='fail' if result['issues'] else 'pass',
                    moved=moved, accepted=accepted, final=final, first_miss=first)
         if result['issues']:
@@ -321,18 +358,20 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=ROOT)
     parser.add_argument('--rom', type=Path, help='Defaults to ROOT/pokecrystal.gbc; must match ROOT/pokecrystal.sym and assets')
+    parser.add_argument('--sym', type=Path, help='Matching symbols for an explicit baseline ROM')
     parser.add_argument('--sameboy-source', type=Path, default=Path.home() / 'Documents/GitHub/SameBoy')
     parser.add_argument('--battery', type=Path, required=True)
     parser.add_argument('--boot', type=Path, default=Path('/Applications/SameBoy/SameBoy.app/Contents/Resources/cgb_boot.bin'))
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--species', nargs='+', help='Optional smoke-test subset; default is every New Dex entry')
     parser.add_argument('--jobs', type=int, default=8)
+    parser.add_argument('--paging', action='store_true', help='Settle a real predecessor entry, then page to each target')
     parser.add_argument('--reuse-listing-states', action='store_true', help='Requires matching ROM/save/source provenance')
     args = parser.parse_args()
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     args.rom = args.rom or args.root / 'pokecrystal.gbc'
-    repo = Repository(args.root, args.rom, args.root / 'pokecrystal.sym')
+    repo = Repository(args.root, args.rom, args.sym or args.root / 'pokecrystal.sym')
     assets = {a.name: a for a in repo.load()}
     names = re.findall(r'^\s*dw (\w+)\s*$', (args.root / 'data/pokemon/dex_order_new.asm').read_text(), re.M)
     aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
@@ -380,7 +419,7 @@ def main():
             raise
         finally:
             driver.close()
-    config = dict(output=str(args.output), core=str(core), rom=str(rom), boot=str(args.boot), battery=str(battery))
+    config = dict(output=str(args.output), core=str(core), rom=str(rom), boot=str(args.boot), battery=str(battery), paging=args.paging)
     selected = set(args.species or names)
     if selected - set(names):
         raise ValueError(f'Unknown test species: {selected - set(names)}')
