@@ -22,6 +22,7 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [New Dex Entry input-timing regression](new_dex_entry_regression_results.md): 20-species acceptance, timer-phase stress, the acknowledged Mewtwo text-refresh fix and historical failure evidence.
 - [Live Dex and adjacent bug backlog](pokedex_selected_bug_backlog.md): current status, reproductions and deferred investigations.
 - [Listing restoration investigation](pokedex_listing_restoration_investigation.md): normal-input reproductions, skipped/late palette commits, LCD-off cache flashes and scoped fix directions.
+- [Cry ownership investigation](pokedex_cry_ownership_investigation.md): Dex-local cancellation, synth resumption/outgoing exhaustion/header-race fixes, exact resource costs and all-species transition regressions.
 
 ## Historical Evidence
 

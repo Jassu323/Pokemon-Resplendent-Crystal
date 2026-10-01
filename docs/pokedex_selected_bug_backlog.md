@@ -99,14 +99,26 @@ entry and rapid cancellation remain separate, unaccepted cases.
 
 ### DEX-CRY-02: A synthesized cry resumes after sampled playback ends
 
-Status: Current
+Status: Solved 2026-10-01 for Selected Mon owner changes
 
-When internally paging from Mewtwo to Dusknoir, Mewtwo's synthesized cry is
-paused rather than canceled when Dusknoir's sampled cry takes ownership. After
-Dusknoir underruns and sampled playback shuts down, the normal sound engine
-resumes and plays the remaining tail of Mewtwo's cry while Dusknoir is still
-selected. The Selected-Mon owner change must terminate the outgoing cry state,
-not merely start the incoming cry.
+In the baseline, when internally paging from Mewtwo to Dusknoir, Mewtwo's
+synthesized cry was paused rather than canceled when Dusknoir's sampled cry
+took ownership. The
+2026-10-01 headless traces reproduce resumption even after Dusknoir finishes
+naturally: an underrun is not required. Channels 5/6/8 retain active cry flags
+and frozen script state, then resume when sampled playback releases the sound
+engine. Early B-return can also leave the outgoing synth playing on the Listing.
+All-seen Celebi-to-Treecko controls reproduce the same failure without modifying
+the visible paging neighbors.
+
+Implemented `PokedexSelectedMon_CancelCry` at accepted species-change,
+B-return and Area-entry boundaries, before staging or incoming lookup. It
+clears only active cry channels and restores their volume/priority bookkeeping;
+music and the decoder are unchanged. The integrated helper passes 78 focused
+cases and 1,492 active all-species handoffs, plus full 373-species cold/paging
+animation/audio regressions. This also closes `DEX-CRY-04` and the related
+metadata race `DEX-CRY-05` for this owner. See the
+[cry ownership investigation](pokedex_cry_ownership_investigation.md).
 
 ### DEX-CRY-03: Dusknoir also underruns on the party Stats Screen
 
@@ -121,7 +133,7 @@ Selected-Mon controller is its sole cause.
 
 ### DEX-CRY-04: Outgoing sampled cry can exhaust during species preparation
 
-Status: Confirmed transition-only issue; deferred, low observed impact
+Status: Solved 2026-10-01 for Selected Mon owner changes
 
 Reproduction on the 2026-09-20 scheduler build: start on Weavile, let playback
 finish, then hold Up. Garchomp becomes visible and starts its animation/cry.
@@ -142,24 +154,52 @@ The captured state establishes which cry and path are involved:
   `PokedexSelectedMon_StageDescription` -> `Pokedex_PrimeDescriptionAnimation` ->
   `Pokedex_ServiceAnimationProducer` -> dictionary chunk -> `FarDecompress`.
 
-The species-change path cancels animation production but does not explicitly
-cancel outgoing audio before synchronous preparation. The timer can continue
-consuming Garchomp's cache while Bastiodon's startup work runs. This is a real
+The baseline species-change path canceled animation production but did not
+explicitly cancel outgoing audio before synchronous preparation. The timer
+could continue consuming Garchomp's cache while Bastiodon's startup work ran.
+This is a real
 cache-empty stop, not the normal cancellation branch, but it is not an underrun
 of Bastiodon's subsequently started cry or of settled playback.
 
-Fix direction, not implemented: stop the outgoing cry at the accepted species
-handoff before preparing the next entry. Coordinate sampled and synthesized
-cry ownership with `DEX-CRY-02`; do not infer that one implementation necessarily
-fixes both without auditing the sound-engine cleanup. No increase to startup
-prefill or change to the settled animation scheduler is indicated by this capture.
+Implemented: stop outgoing sampled and synthesized cries together at the
+accepted owner boundary before preparing the next entry or restoring the
+Listing. The integrated all-species active handoff and B-return regressions
+have no empty-cache hits. Startup prefill, refill quota and the settled
+animation scheduler are unchanged.
 
 2026-10-01 Listing-restoration investigation: four normal-input early B-cancel
 cases (Dusknoir/Weavile at offsets 0/4) also exhaust the outgoing sampled cache
-while the Listing is prepared. This extends the same deferred cancellation
+while the Listing is prepared. This extended the same cancellation
 scope to B-return. It does not invalidate settled Selected playback or establish
 an incoming cry failure. See the
 [restoration investigation](pokedex_listing_restoration_investigation.md#unreproduced-and-adjacent-findings).
+
+The dedicated 2026-10-01 ownership investigation reproduces ten outgoing
+cache-empty cases in a 40-case baseline, including both species preparation
+and B-return. The incoming sampled cries finish naturally except for the
+separate header race below. Stopping the outgoing cry before synchronous work
+eliminates these cases in the integrated Dex-local helper without changing
+prefill, refill or animation timing. See the
+[current cause and fix costs](pokedex_cry_ownership_investigation.md).
+
+### DEX-CRY-05: Replacing an active sample can corrupt the incoming header
+
+Status: Solved 2026-10-01 for Selected Mon owner changes
+
+Active Metagross-to-Luxray paging can overwrite shared
+`hSampledCryBank/address` with Luxray metadata before the old Metagross timer
+stops. The timer then advances Luxray's header pointer from `$53a0` to `$53b0`.
+Startup captures that wrong pointer before its existing cancellation runs,
+reading 53,662 blocks from audio payload instead of Luxray's correct 508. The
+bounded headless test does not finish. This is a metadata ownership race, not
+insufficient decode throughput.
+
+The same early owner cancellation implemented for `DEX-CRY-02/04` prevents this
+race in the Dex and passes focused and all-species header/block-count audits.
+A future shared-loader
+audit should make its no-active-sample requirement explicit; this investigation
+does not establish that other screens reproduce the race. See the
+[instruction-level trace](pokedex_cry_ownership_investigation.md#incoming-header-race).
 
 ## Description Paging
 
@@ -537,6 +577,21 @@ Status: Deferred
 
 Description-to-Area and Area-to-Description transitions can reveal temporary
 tilemap corruption.
+
+2026-10-01 cry-ownership regression also reproduces an Area setup stall in
+both the unchanged category-fix baseline and the integrated cry fix. Open
+Dusknoir, move the footer cursor Right three times, and press A. The first
+nest-icon `Request2bpp` remains pending (one tile at `$87f0`), and the Area
+input loop is never reached, so B cannot return. In both builds, all six
+observed `Serve2bppRequest` calls arrive at LY 146 and reject the request:
+that service accepts only LY 144-145. The existing Dex VBlank fallback is too
+late for this request; this is not introduced by cry cancellation.
+
+Potential directions for a separate Area pass: select an appropriate ordinary
+VBlank handler before Area requests, or provide measured Area-local tile
+service, with entry/return graphics ownership audited. Area-entry cry cleanup
+passes, but Area navigation/rendering is not signed off. See the
+[deferred Area diagnostic](pokedex_cry_ownership_investigation.md#deferred-area-stall).
 
 ### DEX-SEARCH-01: Search-page Slowpoke has an all-black palette
 

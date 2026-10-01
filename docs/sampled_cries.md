@@ -819,6 +819,30 @@ cry failing on the visible page. The old 16-byte audio timing probe at
 `$04:$dbe0` is no longer present: that address is part of the decoded audio
 buffer and must not be interpreted as instrumentation.
 
+The 2026-10-01 [cry ownership investigation](pokedex_cry_ownership_investigation.md)
+also confirms that an old timer can advance the incoming header when metadata
+lookup overwrites the shared `hSampledCryBank/address` before cancellation.
+The current startup's stop is too late to repair a pointer already captured
+from those bytes. Owners replacing a live cry need to terminate the outgoing
+sample before incoming lookup, and cancel active synth scripts too if they
+must not resume after sampled playback. `PokedexSelectedMon_CancelCry` now does
+this at accepted species-change, B-return and Area-entry boundaries in the Dex
+ROMX bank. It first stops an active sampled timer under `DI`, then clears only
+active synthesized-cry channels and restores cry volume/priority bookkeeping.
+Callers must be mainline with interrupts enabled; AF/BC/DE/HL are preserved and
+IME is enabled on return. Same-owner A-description toggles do not cancel audio.
+
+All 373 species pass cold entry and settled paging with their exact animations;
+all 122 sampled species finish naturally. Another 1,492 normal-input active
+paging/B-return cases have no outgoing/incoming cache exhaustion or corrupted
+headers. No measured transition delay is added. The helper costs 127 ROMX bytes
+including its three calls, with no new ROM0/RAM/HRAM allocation. This is
+Dex-local ownership cleanup, separate from the decoder, global 32-block prefill
+and eight-block refill behavior described here; it does not sign off Stats or
+battle handoffs. The shared loader still needs owners to stop an active sample
+before replacing metadata. See the investigation for validation limits and the
+unrelated, pre-existing Area request stall.
+
 ## Battle Behavior
 
 Sampled cries are currently async. Battle logic can continue while a cry plays.

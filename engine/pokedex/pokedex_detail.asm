@@ -120,6 +120,7 @@ PokedexSelectedMon_ToggleDescriptionPage:
 PokedexSelectedMon_ChangeSpecies:
 	ld a, DEXSELECT_STATE_SWITCHING_SPECIES
 	ld [wPokedexSelectedState], a
+	call PokedexSelectedMon_CancelCry
 	ld hl, wPokedexSelectedGeneration
 	inc [hl]
 	call Pokedex_CancelAnimationPrefetch
@@ -143,6 +144,7 @@ PokedexSelectedMon_ChangeSpecies:
 PokedexSelectedMon_Leave:
 	ld a, DEXSELECT_STATE_LEAVING
 	ld [wPokedexSelectedState], a
+	call PokedexSelectedMon_CancelCry
 	call Pokedex_CancelAnimationPrefetch
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
@@ -176,6 +178,7 @@ PokedexSelectedMon_Leave:
 PokedexSelectedMon_Area:
 	ld a, DEXSELECT_STATE_SWITCHING_VIEW
 	ld [wPokedexSelectedState], a
+	call PokedexSelectedMon_CancelCry
 	ld a, DEXSELECT_VIEW_AREA
 	ld [wPokedexSelectedView], a
 	ld hl, wPokedexSelectedGeneration
@@ -511,3 +514,80 @@ PokedexSelectedMon_LoadPointer:
 	ld h, [hl]
 	ld l, a
 	ret
+
+PokedexSelectedMon_CancelCry:
+; Accepted Selected Mon ownership changes only; callers have IME enabled.
+	push af
+	push bc
+	push de
+	push hl
+	di
+	ldh a, [hSampledCryTimer]
+	and a
+	call nz, StopSampledCryAsync_NoInterruptControl
+; Stop the sample before muting synth channels, since sample stop restores audio.
+	ld b, 0
+	ld a, [wChannel5Flags1]
+	and (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	cp (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	jr nz, .channel6
+	inc b
+	xor a
+	ld [wChannel5Flags1], a
+	ld [wPitchSweep], a
+	ldh [rAUD1SWEEP], a
+	ldh [rAUD1ENV], a
+.channel6
+	ld a, [wChannel6Flags1]
+	and (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	cp (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	jr nz, .channel7
+	inc b
+	xor a
+	ld [wChannel6Flags1], a
+	ldh [rAUD2ENV], a
+.channel7
+	ld a, [wChannel7Flags1]
+	and (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	cp (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	jr nz, .channel8
+	inc b
+	xor a
+	ld [wChannel7Flags1], a
+	ldh [rAUD3ENA], a
+.channel8
+	ld a, [wChannel8Flags1]
+	and (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	cp (1 << SOUND_CHANNEL_ON) | (1 << SOUND_CRY)
+	jr nz, .restore
+	inc b
+	xor a
+	ld [wChannel8Flags1], a
+	ldh [rAUD4ENV], a
+.restore
+	ld a, b
+	and a
+	jr z, .done
+	ld a, [wLastVolume]
+	and a
+	jr z, .clear_priority
+	ld [wVolume], a
+.clear_priority
+	xor a
+	ld [wLastVolume], a
+	ld [wSFXPriority], a
+	ld hl, wChannel6PitchOffset
+	ld [hli], a
+	ld [hl], a
+	ld hl, wChannel8PitchOffset
+	ld [hli], a
+	ld [hl], a
+.done
+	pop hl
+	pop de
+	pop bc
+	pop af
+	ei
+.return
+	ret
+.end

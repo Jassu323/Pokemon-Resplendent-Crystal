@@ -50,6 +50,9 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef DEX_LISTING_RESTORE_TRACE
 #include "listing_restoration.c"
 #endif
+#ifdef DEX_CRY_OWNER_TRACE
+#include "cry_ownership.c"
+#endif
 
 static void snapshot(int hit)
 {
@@ -84,6 +87,9 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
 #ifdef DEX_LISTING_RESTORE_TRACE
     restoration_observe(bank, pc);
+#endif
+#ifdef DEX_CRY_OWNER_TRACE
+    cry_owner_observe(bank, pc);
 #endif
     if (bank==B_INIT && pc==P_INIT) dictionary_services=upload_services=publications=0;
     if (bank==B_DECODE && pc==P_DECODE) dictionary_services++;
@@ -167,6 +173,11 @@ int main(int argc, char **argv)
             /* Optional host-only diagnostic commands never change game memory. */
         }
 #endif
+#ifdef DEX_CRY_OWNER_TRACE
+        else if (cry_owner_command(line)) {
+            /* Read-only ownership snapshots in the diagnostic executable. */
+        }
+#endif
         else if (!strcmp(line, "peek\n")) {
             snapshot(-1);
         } else if (!strcmp(line, "ui\n")) {
@@ -211,6 +222,9 @@ int main(int argc, char **argv)
     }
 #ifdef DEX_LISTING_RESTORE_TRACE
     restoration_close();
+#endif
+#ifdef DEX_CRY_OWNER_TRACE
+    cry_owner_close();
 #endif
     GB_free(&gb);
     return 0;

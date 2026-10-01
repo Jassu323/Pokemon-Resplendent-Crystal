@@ -448,9 +448,16 @@ states fall through to the original delay behavior. Other owners do not use
 this pacing policy. This is not a new global audio-prefetch system and does not
 change the decoder, 32-block prefill or eight-block refill quota.
 
-The synthesized-cry ownership bug where a prior synth cry resumes after a
-sampled cry is still a separate backlog item. Passing underrun tests does not
-prove that cancellation behavior correct.
+Accepted species-change, B-return and Area-entry boundaries now call the
+Dex-local `PokedexSelectedMon_CancelCry` before synchronous staging or incoming
+cry lookup. It stops an active sampled timer first, then clears only active
+synthesized-cry channels and restores their volume/priority bookkeeping. This
+closes outgoing cache exhaustion, synth resumption and the incoming-header race
+without changing scheduling, prefill or refill. A-description text toggles keep
+the same audio owner and do not call the helper. It adds 127 bytes in the
+existing Dex ROMX bank, with no dedicated memory or ROM0 allocation. See the
+[ownership contract and regression results](pokedex_cry_ownership_investigation.md)
+for interrupt requirements, all-species coverage and timing comparisons.
 
 ## Memory And Bank Contracts
 
