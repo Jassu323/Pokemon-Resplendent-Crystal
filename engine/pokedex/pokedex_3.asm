@@ -34,7 +34,11 @@ Pokedex_CopyBackingToWindow:
 
 Pokedex_CopyBackingToBG:
 	ld hl, vBGMap0
-	; fallthrough
+	call Pokedex_CopyBackingToMap
+	farcall Pokedex_IsDescriptionLayout
+	ret nc
+	farcall Pokedex_CopyDescriptionRightEdge
+	ret
 
 Pokedex_CopyBackingToMap:
 ; Copy the complete backing tilemap and attrmap without borrowing the Pack
@@ -1083,6 +1087,10 @@ Pokedex_StageOwnerTransitionMaps::
 	ld hl, wPokedexOwnerTilemapBuffer
 	ld c, ' '
 	call .PadMap
+	farcall Pokedex_IsDescriptionLayout
+	jr nc, .maps_ready
+	farcall Pokedex_StageDescriptionRightEdge
+.maps_ready
 	pop af
 	ldh [hMapObjectIndex], a
 	pop af

@@ -313,6 +313,7 @@ SECTION "Pokedex Animation", ROMX
 INCLUDE "engine/pokedex/pokedex_animation.asm"
 INCLUDE "engine/pokedex/pokedex_animation_policy.asm"
 INCLUDE "engine/pokedex/pokedex_detail.asm"
+INCLUDE "engine/pokedex/pokedex_description.asm"
 INCLUDE "gfx/pokemon/dex_animation_plan_pointers.asm"
 INCLUDE "gfx/pokemon/dex_animation_plans.asm"
 INCLUDE "gfx/pokemon/dex_animation_timelines.asm"

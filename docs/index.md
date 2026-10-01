@@ -21,6 +21,7 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [New Dex Entry testing](dex_new_entry_testing.md): current miss breakpoints, focused manual checks, eight catch fixtures and headless validation.
 - [New Dex Entry input-timing regression](new_dex_entry_regression_results.md): 20-species acceptance, timer-phase stress, the acknowledged Mewtwo text-refresh fix and historical failure evidence.
 - [Live Dex and adjacent bug backlog](pokedex_selected_bug_backlog.md): current status, reproductions and deferred investigations.
+- [Listing restoration investigation](pokedex_listing_restoration_investigation.md): normal-input reproductions, skipped/late palette commits, LCD-off cache flashes and scoped fix directions.
 
 ## Historical Evidence
 

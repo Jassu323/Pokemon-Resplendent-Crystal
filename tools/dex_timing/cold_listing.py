@@ -32,10 +32,11 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexAnimDictionaryDestination wPokedexAnimUploadOffset
     wPokedexAnimPlaybackState hSampledCryTimer hSampledCryBlocks hVBlankCounter
     hJoyDown wPokedexAnimStageFrameID wPokedexAnimStageSlot
-    wChannel5Flags1 wChannel6Flags1 wChannel7Flags1 wChannel8Flags1'''.split()
+    wChannel5Flags1 wChannel6Flags1 wChannel7Flags1 wChannel8Flags1
+    wPokedexDescriptionPage wPokedexSelectedView wBaseType1 wBaseType2'''.split()
 
 
-def build_core(repo, source, output):
+def build_core(repo, source, output, extra_compile_flags=()):
     symbols = repo.symbols
     miss = 'Pokedex_AnimationMiss' if 'Pokedex_AnimationMiss' in symbols else 'Pokedex_CountAnimationUnderflow'
     def call_site(start, end, target):
@@ -83,7 +84,8 @@ def build_core(repo, source, output):
     subprocess.run(['clang', '-O2', '-std=c11', '-I' + str(source), '-DGB_INTERNAL',
         '-DGB_DISABLE_DEBUGGER', '-DGB_DISABLE_REWIND', '-DGB_DISABLE_CHEATS',
         '-DGB_DISABLE_CHEAT_SEARCH', '-DGB_DISABLE_TIMEKEEPING', '-DGB_VERSION="dex-cold-listing"',
-        '-include', str(header), str(ROOT / 'tools/dex_timing/probes/cold_listing.c'),
+        '-include', str(header), *extra_compile_flags,
+        str(ROOT / 'tools/dex_timing/probes/cold_listing.c'),
         *(str(source / 'Core' / f'{f}.c') for f in files), '-o', str(core)], check=True)
     return core
 

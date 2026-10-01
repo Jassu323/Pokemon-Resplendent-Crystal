@@ -2,7 +2,9 @@
 
 For the current execution/ownership contract and adaptation to other owners,
 see [Selected animation scheduler](pokedex_animation_scheduler.md). The resource
-allocation below remains unchanged by the 2026-09-20 scheduler integration.
+allocation below includes the Description border and type badges added on
+2026-09-30; the animation slots remain unchanged. See
+[Description UI](pokedex_description_ui.md) for layout and palette ownership.
 
 This document records the current Pokedex graphics ownership and the target
 permanent allocation for the listing, description, search, search-results,
@@ -74,6 +76,7 @@ dictionary up front.
 | `vTiles1 $46-$49` | Unseen grid icon | 4 | Replaces signed characters `$c6-$c9`. |
 | `vTiles2 $00-$30` | Selected static frontpic or unseen image | 49 | Area-map graphics temporarily overwrite `$00-$2f`. |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 | Loaded from `pokedex.2bpp`. |
+| `vTiles2 $71-$7a` | Description border and page badge | 10 | Loaded once with permanent Dex graphics; the other screens retain their existing shell. |
 | `vTiles2 $54` and `$5b` | DMG Listing joined border | 2 | CGB uses the resident bank-1 copies instead. |
 | `vTiles2 $62-$65` | Standalone-entry/DMG footprint | 4 | The normal CGB Dex uses the resident bank-1 footprint. |
 | `vTiles2 $40-$5a` | DMG Unown glyphs and cursor | 27 | CGB uses the resident bank-1 copies instead. |
@@ -95,6 +98,7 @@ comes from the same 64-tile source.
 | `vTiles5 $00-$27` | Left/right mini-sprite frame 0 | 40 | First frame for ten 2x2 BG icons across the five physical cache rows. |
 | `vTiles5 $32` | Unown cursor background | 1 | Bank-1 copy of the dark-gray background tile. |
 | `vTiles5 $33-$63` | Animation buffer B | 49 | Streams only changed tiles; tilemap entries use `$33-$63`. |
+| `vTiles5 $64-$6b` | Description type badges | 8 maximum | Four tiles per type; monotypes use only the first four. Loaded before priming animation. |
 
 ## Target permanent allocation
 
@@ -108,6 +112,7 @@ requirements without assigning VRAM for neighboring known frontpics.
 | `vTiles1 $00-$7f` | Inverted font plus the existing scrollbar/grid-icon substitutions | 128 |
 | `vTiles2 $00-$30` | Current known frontpic or unseen image | 49 |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 |
+| `vTiles2 $71-$7a` | Description border and page badge | 10 |
 | `vTiles3 $00-$27` | Both frames for five cached center-column mini-sprite rows | 40 |
 | `vTiles4 $00-$30` | Animation buffer A | 49 |
 | `vTiles4 $31-$34` | Preloaded selected footprint | 4 |
@@ -117,6 +122,7 @@ requirements without assigning VRAM for neighboring known frontpics.
 | `vTiles5 $00-$27` | Frame 0 for five cached left/right mini-sprite rows | 40 |
 | `vTiles5 $32` | Unown cursor background | 1 |
 | `vTiles5 $33-$63` | Animation buffer B | 49 |
+| `vTiles5 $64-$6b` | Description type badges | 8 |
 
 The `vTiles4` ranges above are physical offsets within the `$8800-$8fff`
 region. With signed BG tile addressing they appear in tilemaps as `$80-$b0`,
@@ -128,8 +134,9 @@ The Listing uses a five-row ring: the three visible rows plus one fully
 prepared row above and below. Each physical row retains both animation frames.
 A scroll consumes the already-resident incoming row, reveals the complete
 visible state, and then refills only the newly offscreen look-ahead/look-behind
-row before accepting more input. This leaves 132 tiles free in VRAM bank 1:
-88 in `vTiles3`, 6 in `vTiles4`, and 38 in `vTiles5`. The CGB
+row before accepting more input. This leaves 124 tiles free in VRAM bank 1:
+88 in `vTiles3`, 6 in `vTiles4`, and 30 in `vTiles5`. Bank 0 `vTiles2`
+has five unallocated tiles (`$7b-$7f`) after the Description additions. The CGB
 footprint, Unown overlays, joined border, and cursor-background tile are
 loaded into their permanent destinations when the Pokedex starts.
 
@@ -153,7 +160,9 @@ Search, search results, and options currently load no unique tile graphics;
 they use the shared font and Pokedex UI. The normal description path also
 reuses the listing frontpic. Its four-tile footprint is prepared and loaded
 while that known species is selected, so entering Description from Listing
-does not load species graphics.
+does not reload the base portrait or footprint. Description additionally copies
+one or two compact type badges into bank 1 using the existing WRAM0 payload
+workspace, before animation production starts.
 
 The area map remains an explicit temporary overlay. It loads 48 town-map
 tiles to `vTiles2 $00-$2f` and five OBJ tiles to `vTiles0 $78-$7b/$7f`.

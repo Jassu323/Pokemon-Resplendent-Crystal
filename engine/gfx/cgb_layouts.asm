@@ -460,8 +460,9 @@ CGB_PokedexBuildSelectedMonLayout:
 	jr z, .skip_footprint
 	hlcoord 18, 1, wAttrmap
 	lb bc, 2, 2
-	ld a, BG_BANK1
+	ld a, BG_BANK1 | POKEDEX_DESCRIPTION_FOOTPRINT_PAL
 	call FillBoxCGB
+	farcall Pokedex_SetDescriptionTypeAttrsAndPals
 .skip_footprint
 	call InitPartyMenuOBPals
 	ld hl, PokedexCursorPalette

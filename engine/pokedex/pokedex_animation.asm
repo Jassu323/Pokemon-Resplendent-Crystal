@@ -1475,6 +1475,7 @@ Pokedex_GetAnimationSlotVRAM:
 	ret
 
 Pokedex_LoadPermanentCGBGFX:
+	call Pokedex_LoadDescriptionGFX
 	ldh a, [hCGB]
 	and a
 	ret z

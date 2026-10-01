@@ -111,7 +111,7 @@ PokedexSelectedMon_ToggleDescriptionPage:
 	ld [wPrevDexEntry], a
 	ld a, h
 	ld [wPrevDexEntry + 1], a
-	farcall DisplayDexEntry
+	farcall Pokedex_DisplayDescriptionEntry
 	farcall Pokedex_CopyBackingToBG
 	xor a
 	ldh [hBGMapMode], a
@@ -212,7 +212,7 @@ PokedexSelectedMon_Area:
 PokedexSelectedMon_StageDescription:
 	xor a
 	ldh [hBGMapMode], a
-	farcall Pokedex_DrawDexEntryScreenBG
+	farcall Pokedex_DrawDescriptionScreenBG
 	farcall Pokedex_InitArrowCursor
 	farcall Pokedex_GetSelectedMon
 	ld a, [wTempSpecies]
@@ -224,7 +224,7 @@ PokedexSelectedMon_StageDescription:
 	ld [wPrevDexEntry + 1], a
 	ld a, [wPokedexDescriptionPage]
 	ld [wPokedexStatus], a
-	farcall DisplayDexEntry
+	farcall Pokedex_DisplayDescriptionEntry
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_ENTERING
 	jr nz, .load_selected_tiles
@@ -243,6 +243,7 @@ PokedexSelectedMon_StageDescription:
 	farcall Pokedex_LoadSelectedMonTiles
 .selected_tiles_ready
 	farcall Pokedex_DrawResidentFootprint
+	farcall Pokedex_LoadDescriptionTypeGFX
 	call Pokedex_StartAnimationPrefetch
 	call Pokedex_PrimeDescriptionAnimation
 	farcall Pokedex_GetSelectedMon

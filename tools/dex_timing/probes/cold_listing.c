@@ -47,6 +47,10 @@ static void hex(const uint8_t *p, unsigned length)
     putchar('"');
 }
 
+#ifdef DEX_LISTING_RESTORE_TRACE
+#include "listing_restoration.c"
+#endif
+
 static void snapshot(int hit)
 {
     unsigned index = word(S_wDexListingScrollOffset) + byte(S_wDexListingCursor);
@@ -78,6 +82,9 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
      * Polling PC before GB_cpu_run would count that instruction twice. */
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
+#ifdef DEX_LISTING_RESTORE_TRACE
+    restoration_observe(bank, pc);
+#endif
     if (bank==B_INIT && pc==P_INIT) dictionary_services=upload_services=publications=0;
     if (bank==B_DECODE && pc==P_DECODE) dictionary_services++;
     if (bank==B_UPLOAD && pc==P_UPLOAD) upload_services++;
@@ -129,6 +136,10 @@ int main(int argc, char **argv)
     GB_set_pixels_output(&gb, pixels);
     GB_set_rgb_encode_callback(&gb, rgb);
     GB_set_execution_callback(&gb, observe);
+#ifdef DEX_LISTING_RESTORE_TRACE
+    GB_set_vblank_callback(&gb, restoration_frame);
+    GB_set_write_memory_callback(&gb, restoration_write);
+#endif
     if (GB_load_rom(&gb, argv[1]) || GB_load_boot_rom(&gb, argv[2]) ||
         GB_load_battery(&gb, argv[3])) return 2;
     setvbuf(stdout, NULL, _IOLBF, 0);
@@ -149,8 +160,31 @@ int main(int argc, char **argv)
                 }
             } while (hit < 0 && ticks - start < budget * 2);
             snapshot(hit);
-        } else if (!strcmp(line, "peek\n")) {
+        }
+#ifdef DEX_LISTING_RESTORE_TRACE
+        else if (restoration_command(line)) {
+            /* Optional host-only diagnostic commands never change game memory. */
+        }
+#endif
+        else if (!strcmp(line, "peek\n")) {
             snapshot(-1);
+        } else if (!strcmp(line, "ui\n")) {
+            uint8_t map[21 * 18], attrs[21 * 18];
+            for (unsigned y = 0; y < 18; y++) for (unsigned x = 0; x < 21; x++) {
+                map[y * 21 + x] = gb.vram[0x1800 + y * 32 + x];
+                attrs[y * 21 + x] = gb.vram[0x3800 + y * 32 + x];
+            }
+            printf("{\"event\":\"ok\",\"view\":%u,\"page\":%u,\"types\":[%u,%u],\"map\":",
+                   byte(S_wPokedexSelectedView), byte(S_wPokedexDescriptionPage),
+                   gb.ram[0x1000 + (S_wBaseType1 & 4095)],
+                   gb.ram[0x1000 + (S_wBaseType2 & 4095)]);
+            hex(map, sizeof(map)); printf(",\"attrs\":"); hex(attrs, sizeof(attrs));
+            printf(",\"palettes\":"); hex(gb.background_palettes_data, 64);
+            printf(",\"border_gfx\":"); hex(gb.vram + 0x1710, 10 * 16);
+            printf(",\"type_gfx\":"); hex(gb.vram + 0x3640, 8 * 16); puts("}");
+        } else if (!strcmp(line, "rawcolor\n")) {
+            GB_set_color_correction_mode(&gb, GB_COLOR_CORRECTION_DISABLED);
+            puts("{\"event\":\"ok\"}");
         } else if (sscanf(line, "audit %u", &keys) == 1) {
             auditing = keys != 0;
             puts("{\"event\":\"ok\"}");
@@ -174,6 +208,9 @@ int main(int argc, char **argv)
         } else if (!strcmp(line, "quit\n")) break;
         else { fprintf(stderr, "Unknown host command\n"); return 2; }
     }
+#ifdef DEX_LISTING_RESTORE_TRACE
+    restoration_close();
+#endif
     GB_free(&gb);
     return 0;
 }

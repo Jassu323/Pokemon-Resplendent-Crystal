@@ -1,8 +1,10 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-09-21. This is the live issue/status list, not the chronological
-scheduler investigation. Settled Selected animation/audio acceptance has passed;
-the separate UI, input, transition and adjacent-owner items below remain deferred.
+Updated 2026-10-01. This is the live issue/status list, not the chronological
+scheduler investigation. Settled Selected animation/audio and New Dex Entry
+acceptance have passed, including instrumentation cleanup. Description UI,
+footprint styling and New Dex boundary wrapping are also accepted. The separate
+open UI, input, transition and adjacent-owner items below remain deferred.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -14,7 +16,7 @@ and [scheduler archive](archived/dex-scheduler/README.md).
 
 ### DEX-ANIM-01: Work scheduling falls behind authored publication deadlines
 
-Status: Settled cold-entry/internal-paging acceptance passed; cleanup regression pending
+Status: Solved for uninterrupted cold entry and settled internal paging; cleanup/UI regressions passed
 
 The current scheduler uses the hardware display clock with independent work
 completion, bounded finishing, quiet publication ownership and owner-local
@@ -29,9 +31,15 @@ The user's complete internal-paging pass and representative visual controls also
 pass. Drapion's initial static portrait remains the separate text overflow
 `DEX-UI-02`, not an animated-frame failure.
 
-Warm entry, rapid cancellation, Description text toggles and all owner/exit
-transactions are not signed off. Revalidate after removing instrumentation or
-warming; their timing is part of this accepted checkpoint. See the
+Instrumentation cleanup and the 2026-09-30 Description UI change each retained
+exact authored timing with no animation/audio misses across all 373 species on
+both cold entry and settled internal paging. See the
+[cleanup results](dex_instrumentation_cleanup.md) and
+[UI results](pokedex_description_ui.md#current-results).
+
+Warm entry, rapid cancellation, active-animation Description text toggles and
+all owner/exit transactions are not signed off by these settled-playback tests.
+Revalidate if warming is removed or production timing changes. See the
 [implementation](pokedex_animation_scheduler.md), [acceptance/test guide](dex_scheduler_validation.md)
 and [cold results](dex_cold_listing_results.md). Historical failures, hypotheses
 and progression remain in the archive rather than being repeated as current
@@ -39,7 +47,7 @@ open scheduler diagnoses.
 
 ### DEX-ANIM-02: Seviper's authored main animation repeats indefinitely
 
-Status: Script corrected; manual cold/internal and automated cold retests passed
+Status: Solved; manual cold/internal and automated cold retests passed
 
 The 2026-09-20 all-asset audit found Seviper is the only generated timeline with
 a persistent loop marker. In `gfx/pokemon/seviper/anim.asm`, `dorepeat 6` jumps
@@ -68,7 +76,7 @@ and [current acceptance](dex_scheduler_validation.md#acceptance-and-limits).
 
 ### DEX-CRY-01: Dusknoir's sampled cry underruns on the Selected page
 
-Status: Uninterrupted cold-entry/internal-paging acceptance passed
+Status: Solved for uninterrupted cold entry and settled internal paging
 
 The integrated scheduler retains the 32-block prefill and eight-block refill.
 The target-correction matrix records 112 natural sampled completions across
@@ -80,8 +88,9 @@ The earlier partial improvements and failed cache measurements are preserved
 in the [historical entry](archived/dex-scheduler/dex_backlog_investigation_history.md#dex-cry-01-dusknoirs-sampled-cry-underruns-on-the-selected-page).
 They describe older builds, not remaining settled-playback failures in this
 checkpoint. This acceptance does not close `DEX-CRY-02`, `DEX-CRY-03` or
-transition-only `DEX-CRY-04`. Warm entry remains untested, and instrumentation
-removal requires a fresh timed regression.
+transition-only `DEX-CRY-04`. Post-instrumentation-cleanup and Description UI
+regressions pass for all 122 sampled cries on both settled entry paths. Warm
+entry and rapid cancellation remain separate, unaccepted cases.
 
 ### DEX-CRY-02: A synthesized cry resumes after sampled playback ends
 
@@ -140,6 +149,13 @@ cry ownership with `DEX-CRY-02`; do not infer that one implementation necessaril
 fixes both without auditing the sound-engine cleanup. No increase to startup
 prefill or change to the settled animation scheduler is indicated by this capture.
 
+2026-10-01 Listing-restoration investigation: four normal-input early B-cancel
+cases (Dusknoir/Weavile at offsets 0/4) also exhaust the outgoing sampled cache
+while the Listing is prepared. This extends the same deferred cancellation
+scope to B-return. It does not invalidate settled Selected playback or establish
+an incoming cry failure. See the
+[restoration investigation](pokedex_listing_restoration_investigation.md#unreproduced-and-adjacent-findings).
+
 ## Description Paging
 
 ### DEX-DESC-01: Toggling description pages can corrupt the upper screen
@@ -196,12 +212,21 @@ transaction: hide, stage one complete species state, and reveal it atomically.
 
 ### DEX-NAV-01: Internal paging does not wrap at list boundaries
 
-Status: Open
+Status: Solved for New Dex internal paging; normal-input boundary regression passed
 
-Selected-Mon internal paging stops at the beginning and end of the Pokedex
-instead of wrapping between Chikorita and the final available entry in the
-opposite direction. This should match the full-list wrap behavior already used
-by the Listing page.
+The earlier Selected-Mon implementation stopped at the beginning and end of
+the Pokedex rather than wrapping. The current
+`PokedexSelectedMon_FindNextSeen` already wraps forward to index zero and
+backward to `wDexListingEnd - 1`, skipping unseen entries and stopping if it
+returns to the current selection.
+
+2026-09-30: A normal-input headless SameBoy check on the accepted Description UI
+build verifies Up from Chikorita (index 0) reaches Regigigas (index 372), then
+Down from Regigigas returns to Chikorita. Both entries finish without animation
+or sampled-cry misses. The all-seen New Dex save and the hash-matched UI ROM
+copy were used; no game RAM, ROM instructions or cartridge flags were patched.
+Evidence: `build/dex-description-ui/cold-final/boundary-wrap-report.json`.
+Sparse seen sets and Search Results were not part of this focused boundary test.
 
 ### DEX-NAV-02: A rapid axis change repeats the previous vertical input
 
@@ -224,33 +249,63 @@ observed. No fix has been attempted.
 
 ### DEX-RETURN-01: Some returns show a white blank screen
 
-Status: Open
+Status: Confirmed current-link cache-rebuild failure; fix not yet implemented
 
 Selected-Mon to Listing sometimes displays a white screen for roughly 4-5
 frames before the Listing appears.
 
+2026-10-01: open Chikorita, internally page nine times to Pidgey, then B after
+playback settles. A missing five-row cache tag invokes `Pokedex_PrimeGridCache`,
+which disables the LCD, rebuilds all rows, and re-enables it before the Listing
+is ready. Five white presented frames are followed by seven outgoing Description
+frames. Sparse seen rosters reproduce the same path with six white frames.
+Fix direction: retain matching rows and refill missing rows with the existing
+LCD-on uploader while keeping the outgoing owner visible until a complete
+Listing handoff. See the
+[current investigation](pokedex_listing_restoration_investigation.md#cause-3-lcd-off-cache-rebuild-exposes-the-wrong-owner).
+
 ### DEX-RETURN-02: The Selected page can reappear vertically displaced
 
-Status: Open
+Status: Page reappearance confirmed; vertical displacement needs revalidation
 
 After the white blank interval, the Selected page can reappear eight pixels too
 low and move upward one pixel per frame before the Listing takes ownership.
 
+2026-10-01: the outgoing page does reappear after LCD re-enable on cache rebuilds,
+but the eight-pixel displacement/upward movement is not reproduced in the
+current all-seen or sparse tests. Hardware and mirrored SCY remain zero.
+Do not close the displacement report solely by fixing the proven LCD-off path.
+
 ### DEX-RETURN-03: Listing BG minisprite columns can contain stale graphics
 
-Status: Open
+Status: Confirmed palette-restoration failure in current reproductions; fix not yet implemented
 
 Some returns reveal the Listing immediately, but the left and right BG
 minisprite columns contain footprint or frontpic-era tiles. The middle OAM
-column remains correct. This points to an incomplete BG cache restoration or
-publication transaction.
+column remains correct. The appearance initially suggested incomplete BG cache
+restoration or publication.
+
+2026-10-01: direct Chikorita -> Description -> B reliably reproduces the side
+columns' incorrect appearance. All 120 cached icon tiles remain byte-identical;
+the side maps still select those icons. `CGB_PokedexStageListLayout` prepares
+correct targets but leaves the palette dirty flags zero, so the owner publisher
+skips the restore and retains Description BG slots 2-7 (38 differing bytes).
+The middle OAM palettes remain correct. Six direct species, active B-cancels
+and text-page-2 returns reproduce this. This is palette state, not overwritten
+icon graphics, in these cases. Restore requests and the unsafe publication below
+must be addressed together. See the
+[palette diagnosis](pokedex_listing_restoration_investigation.md#cause-1-listing-palettes-are-prepared-but-not-requested).
 
 ### DEX-RETURN-04: Listing can briefly expose placeholder selection state
 
-Status: Open
+Status: Open; not reproduced by the current all-seen/sparse restoration suite
 
 Some returns briefly show the unseen portrait, `-----`, or an intermediate
 cursor position before restoring the real Listing selection.
+
+2026-10-01: 24 distinct restoration conditions did not expose these placeholder
+states. Keep this report open pending a matching current-link reproduction;
+palette/cached-row findings alone do not prove its cause.
 
 The return issues should be handled as one Selected-Mon-to-Listing ownership
 handoff, including tile data, tilemap, attrmap, palettes, OAM, scroll position,
@@ -260,7 +315,7 @@ and selection metadata.
 
 ### DEX-GRID-01: Intermittent minisprite palette errors
 
-Status: Open
+Status: Two current palette-handoff causes confirmed; fix not yet implemented
 
 Listing minisprites can receive the wrong palette, especially after ownership
 transitions. This may share its root cause with `DEX-RETURN-03`.
@@ -269,22 +324,40 @@ transitions. This may share its root cause with `DEX-RETURN-03`.
 from Selected to Listing. The automated logical-return checks do not validate
 palette restoration and do not close this issue.
 
+2026-10-01: direct returns skip BG restoration (`DEX-RETURN-03`). After internal
+paging, dirty flags instead remain `$fc/$3f`; the owner attempts maps plus both
+palette ranges in one VBlank. Its 5,540-T-cycle commit reaches visible LY 0,
+where eleven OBJ writes (byte indexes 22-32) are rejected in mode 3. It still
+acknowledges success and clears the flags. OBJ palette 3 keeps two wrong bytes
+in several cases; other cases mask the failure because old/new values happen
+to match. Fix the explicit restore request and actual write-window admission
+as one Listing publication change. See the
+[timing diagnosis](pokedex_listing_restoration_investigation.md#cause-2-the-owner-commit-runs-into-mode-3).
+
 ### DEX-GRID-02: Caught Poke Ball can receive the wrong OBJ palette
 
-Status: Open
+Status: Open; not reproduced by the current restoration suite
 
 The caught indicator has occasionally appeared with the wrong palette. The
 issue is difficult to reproduce and should be tested alongside Listing palette
 restoration.
 
+2026-10-01: caught-ball OBJ slot 1 is correct in the tested returns and lies
+outside the confirmed rejected-write range. Keep this issue separate/open;
+do not assume the palette-3 corruption explains the earlier caught-ball report.
+
 ## Secondary Pokedex Screens And Presentation
 
 ### DEX-UI-01: Footprint background uses pure black
 
-Status: Deferred
+Status: Solved for Selected Description; automated UI audit and manual confirmation passed
 
-Footprint graphics use a pure-black background instead of the Pokedex dark
-grey.
+The Selected Description footprint's formerly pure-black background now uses
+the Dex dark grey (`RGB 5,5,5`) in BG palette 2, retaining its white footprint
+pixels. The 2026-09-30 UI audit verifies the footprint palette and attributes
+across all 373 species, and the user accepts the new Description layout.
+This does not change the New Dex Entry layout. See
+[Description UI implementation](pokedex_description_ui.md#type-badges-and-palettes).
 
 ### DEX-UI-02: Pokemon category text is cut off for some species
 
@@ -355,7 +428,7 @@ unknown height/weight values.
 
 ### NEWDEX-ANIM-01: Restored Master Ball opening exposes a late first publication
 
-Status: Fixed; automated animation/audio regression and manual confirmation passed
+Status: Solved; automated animation/audio regression and manual confirmation passed
 
 After restoring the original Master Ball animation on 2026-09-21, Dusknoir's
 authentic catch replay reaches New Dex Entry but misses its first animation
@@ -391,7 +464,7 @@ code or breakpoint addresses; it does not affect this acceptance result.
 
 ### NEWDEX-UI-01: Mewtwo page-2 text refresh lags during short animation holds
 
-Status: Closed with accepted presentation caveat; automated regression passes
+Status: Solved with accepted presentation caveat; automated regression passes
 
 The restored-Master-Ball input sweep finds this on Mewtwo when A is pressed at
 offsets 32-41 or 43 from first publication. Fourteen UI cells, including the page
@@ -474,7 +547,7 @@ backlog wording incorrectly described a caught indicator remaining visible.
 
 ### QA-CLEANUP-01: Remove temporary encounter edits
 
-Status: Complete for Selected and New Entry; instrumentation intentionally retained
+Status: Complete; encounter/ball overrides restored and runtime instrumentation removed
 
 Earlier Route 29/30 stress-test encounters were restored before the previous
 Selected-Mon animation/cry commit. The Selected scheduler investigation's
@@ -488,6 +561,15 @@ Vibrava, Exeggcute and Garchomp on Route 29, and Dusknoir, Metagross, Luxray and
 Caterpie on Route 30. Following automated and manual New Entry acceptance, both
 blocks have now been restored exactly to the committed branch baseline. Trainer
 parties and the original Master Ball animation also match that baseline. The
-superseded host-only page-2 patch prototype was removed. Current instrumentation,
-auditing and reusable regression runners are intentionally retained for later
-cleanup. Generated outputs remain under ignored `build/`.
+superseded host-only page-2 patch prototype was removed. At that checkpoint,
+runtime instrumentation, auditing and reusable regression runners were retained
+for the subsequent cleanup.
+
+Runtime instrumentation has since been removed from Selected Description and
+New Dex Entry. Production readiness/deadline/cancellation checks and zero-byte
+observation labels remain, as do the reusable host-side regression runners.
+Post-cleanup automated acceptance and representative manual observations passed;
+the later Description UI regressions also pass. No temporary encounter or
+Master Ball override remains. See the
+[completed cleanup](dex_instrumentation_cleanup.md). Generated outputs remain
+under ignored `build/`.
