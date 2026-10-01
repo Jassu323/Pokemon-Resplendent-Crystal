@@ -1,4 +1,4 @@
-	db "Ogre Scorpion@" ; species name
+	db "Scorpion@" ; species name
 	dw 403, 1356 ; height, weight
 
 	db   "Placeholder"

@@ -6,8 +6,9 @@ acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
 Listing return palette/cache fixes now pass their reproduction and regression
 suites, and grid metadata now uses presence flags instead of retained transient
-IDs. The remaining open UI, input, transition and adjacent-owner items below
-remain deferred.
+IDs. Mew's incomplete category and Drapion's category overflow are also corrected
+with focused headless regressions passed. The remaining open UI, input,
+transition and adjacent-owner items below remain deferred.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -31,8 +32,9 @@ The recorded target-correction matrix passes 126 replays across 18 species.
 The subsequent normal-input cold suite checks all 373 New Dex species, every
 published portrait and exact full authored timing with no animation/audio misses.
 The user's complete internal-paging pass and representative visual controls also
-pass. Drapion's initial static portrait remains the separate text overflow
-`DEX-UI-02`, not an animated-frame failure.
+pass. Drapion's initial static portrait defect was the separate text overflow
+`DEX-UI-02`, not an animated-frame failure; its category-data correction below
+now passes the initial reveal check too.
 
 Instrumentation cleanup and the 2026-09-30 Description UI change each retained
 exact authored timing with no animation/audio misses across all 373 species on
@@ -407,8 +409,9 @@ The original Luxray sequence now retains Boolean flags with byte-correct visible
 graphics/palettes and no warnings. All 25 normal return conditions, 281 follow-up
 checks and 43 admission stress cases pass, along with 72 focused unit tests.
 All 373 species retain exact animation timing and uninterrupted sampled-cry
-completion on cold entry and internal paging; the known Drapion text overflow
-remains separate. See the [implementation and evidence](pokedex_listing_restoration_investigation.md#presence-flag-correction).
+completion on cold entry and internal paging. That build's separate Drapion
+text overflow was subsequently corrected under `DEX-UI-02`. See the
+[implementation and evidence](pokedex_listing_restoration_investigation.md#presence-flag-correction).
 
 ## Secondary Pokedex Screens And Presentation
 
@@ -425,16 +428,18 @@ This does not change the New Dex Entry layout. See
 
 ### DEX-UI-02: Pokemon category text is cut off for some species
 
-Status: Deferred; Drapion overflow confirmed by cold-entry audit, Mew unresolved
+Status: Solved; category-data corrections and focused headless regressions passed
 
-The user reports truncated category text in the Dex for Drapion and Mew.
-Drapion exceeds the available character width. Mew's category is expected to
-fit, so do not assume both cases are explained by string length or share the
-same cause.
+The two reports had different data causes. Drapion exceeded the available
+character width. Mew was not being clipped: its source category was already
+abbreviated to `New Specie@`, without the final `s` in `New Species`. The approved
+2026-10-01 data correction uses `New Species@` for Mew and `Scorpion@` for
+Drapion, matching Skorupi's existing category. No renderer or scheduler changed.
 
-The all-species cold Listing automation confirms a related Drapion portrait
-artifact before animation. `DisplayDexEntry` in `engine/pokedex/pokedex_2.asm`
-prints its 13-character `Ogre Scorpion` at `(9,4)` without a field-width limit.
+Historical baseline evidence: the all-species cold Listing automation confirmed
+a related Drapion portrait artifact before animation. `DisplayDexEntry` in
+`engine/pokedex/pokedex_2.asm` printed its 13-character `Ogre Scorpion` at `(9,4)`
+without a field-width limit.
 The last `o` and `n` overflow the 20-column WRAM row to `(0,5)` and `(1,5)`.
 At initial Selected-page reveal, portrait cell 28 contains font tile `$ad`
 (`n`) instead of base tile `$04`, with the correct bank attribute. This matches
@@ -450,14 +455,81 @@ paging still report only Drapion's static-reveal defect. A pre-cleanup control
 produces byte-identical static tilemap and tile pixels. Animation timing and cry
 completion pass in both links; the failure is deliberately not suppressed.
 
-2026-09-21: The user visually confirms Drapion's overflow in the current build.
-It remains deferred; the animation publications themselves still look correct.
+2026-09-21: The user visually confirmed Drapion's overflow in that build.
+It was deferred at the time; the animation publications themselves looked correct.
 
-Expected behavior: the complete category is readable for each species.
-During investigation, compare source strings with the rendered text, check
-field bounds and string termination, and determine whether later drawing
-overwrites any characters. Record the missing text and entry path for each
-case before choosing a fix. No runtime changes have been made for this report.
+2026-10-01 Mew investigation, before the correction:
+
+- `data/pokemon/dex_entries/mew.asm:1` stores `New Specie@`. The linked
+  `MewPokedexEntry` at `$73:$4915` contains
+  `8d a4 b6 7f 92 af a4 a2 a8 a4 50`: all ten characters followed immediately
+  by the `$50` string terminator, not the `$b2` tile for lowercase `s`.
+- The linked pointer for stable species 151 is `73 15 49`, confirming the
+  intended bank and entry. `DisplayDexEntry` obtains that pointer and prints
+  the category at `(9,4)` through `PlaceFarString`/`PlaceString`. The printer
+  stops at `@`; it does not impose a ten-character category limit.
+- The ten source characters occupy BG cells `(9,4)` through `(18,4)`.
+  Cell `(19,4)` remains the Description blank tile `$32`, with correct
+  attributes. No later drawing or animation publication removes a character.
+- Repository history already contains `NEW SPECIE@` before the title-case
+  conversion in commit `9d98748a6`. This is not a new animation/UI regression.
+- Reproduce in New Dex order by selecting Mew from Listing, paging Down from
+  Mewtwo, or paging Up from Celebi. The result is always `New Specie`, including
+  after settled A-button description-page toggles. Missing caught status only
+  suppresses later height/weight/description data, not the category printer.
+
+The read-only headless SameBoy test covers 15 Mew conditions: immediate new
+selection, short hover, fully warmed hover, Mewtwo-to-Mew, and Celebi-to-Mew,
+each with three input-delay variations. Six Natu/Bronzong control conditions
+verify that their existing eleven-character `Little Bird` and `Bronze Bell`
+categories fit, including the last character at `(19,4)`. Across all 21
+conditions, 63 settled description-page checks and 4,419 Selected-update-loop
+row observations match the linked category strings and expected attributes.
+There are no animation/audio miss stops or shell/type-badge audit failures.
+These are read-only observation points, not a claim of sampling every physical
+display frame. Mew was tested seen-but-not-caught; caught-category behavior is
+supported by the shared printer's unconditional placement before `CheckCaughtMon`.
+
+The diagnostic ROM is a byte-identical copy of the committed restoration/grid
+build, SHA-256 `3cafe3699e1a33d50865ea8ed82896bfc36be0fffc6b6e6d2cf27cdf8abd95da`,
+with matching symbols SHA-256
+`8ea6a02d3f6d7eab981cbe2dac7e3b0c0652406689f4c4974a8ed7323ed91a01`.
+The separate runner, read-only investigation script, raw report and screenshots
+are under ignored `build/dex-category-rendering/`. The initial investigation
+changed no game source, live battery save, production build artifact or runtime
+instrumentation.
+
+Implemented correction and validation:
+
+- Mew's category is now `New Species@`. It is eleven characters and fits
+  `(9,4)` through `(19,4)` without touching the right border at column 20.
+  Drapion's eight-character `Scorpion@` also fits without overflowing the map;
+  Skorupi already had that value and needs no edit.
+- The two data changes save four ROMX bytes net: one added for Mew and five
+  removed from Drapion. There is no new ROM0 code, WRAM/HRAM state, font tile or
+  VRAM allocation. Variable-length category parsing continues to locate the
+  numeric and description data through the terminator.
+- The fresh normal-input cold suite passes all six species: Mew, Skorupi,
+  Drapion, Chikorita, Natu and Bronzong. All qualify as cold at A acceptance and
+  pass static reveal, authored animation timing, cry completion and logical
+  B-return. Drapion's initial portrait is now byte-correct before animation.
+- The read-only UI suite passes 33 cold, hovered and internal-paging conditions,
+  99 settled description-page checks and 6,291 Selected-update-loop category-row
+  observations. Mew, Skorupi and Drapion display complete categories; shell,
+  type badges and category attributes remain correct. No animation/audio miss
+  stops occur. This is focused runtime coverage, not a fresh all-species replay.
+- A linked-data audit verifies all 373 entry pointers, category strings and
+  terminators, and height/weight values against their sources after relocation.
+  All 373 categories fit the eleven-character field. The audit does not add a
+  permanent build-time width guard or runtime clipping.
+
+Current test ROM SHA-256:
+`c94a70ad545580a580b55ba24133e222f032f3afb4c8c6f3102101796a763470`.
+Matching symbols SHA-256:
+`bb1222d0ad898826b9a1fa5b033aed98422c31dbfcf6d1aa8bcab867b061590e`.
+Reports and visually checked screenshots are under ignored
+`build/dex-category-rendering-fixed/`. Tests leave the production ROM and source
+battery unchanged; the live SameBoy save was not edited.
 
 ### DEX-AREA-01: Area transitions expose temporary corruption
 

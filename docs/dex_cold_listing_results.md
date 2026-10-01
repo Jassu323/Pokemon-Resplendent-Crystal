@@ -1,5 +1,22 @@
 # Automated Cold Listing Acceptance
 
+## Category Correction Follow-Up
+
+2026-10-01: Mew now uses the complete `New Species` category. Drapion uses
+`Scorpion`, matching Skorupi and eliminating its category overflow into the
+initial portrait. The current ROM passes all six focused normal-input cold
+cases (Mew, Skorupi, Drapion, Chikorita, Natu and Bronzong), including static
+reveal, exact authored animation timing, cry completion and logical B-return.
+Read-only category/UI checks pass 33 conditions and 99 settled pages; a separate
+linked-data audit verifies the entry pointers, categories and numeric fields of
+all 373 species. All category strings now fit the eleven-character field.
+
+This is focused regression coverage, not a new all-species runtime suite. The
+all-species results below remain historical evidence for their recorded ROM;
+their Drapion failure is no longer an open issue. See the
+[category correction and provenance](pokedex_selected_bug_backlog.md#dex-ui-02-pokemon-category-text-is-cut-off-for-some-species).
+Current outputs are under ignored `build/dex-category-rendering-fixed/`.
+
 ## Scope
 
 This adds a host-only normal-input suite to the headless SameBoy tooling. It
@@ -97,9 +114,9 @@ every cold entry manually is not required for this instrumented build.
 Meganium, Dusknoir, Rampardos or Luxray. This covers both synthesized and sampled
 cry species visually; it is not a separate waveform audit. The user also
 confirms Drapion's overflow and recurring B-return palette errors, both of
-which remain in the backlog. A newly reported rapid vertical-to-horizontal
-input error is recorded as `DEX-NAV-02`; the normal-input cold suite does not
-cover that rapid direction sequence.
+which were recorded in the backlog at that time. A newly reported rapid
+vertical-to-horizontal input error is recorded as `DEX-NAV-02`; the normal-input
+cold suite does not cover that rapid direction sequence.
 
 ### Static Reveal Finding: Drapion
 
@@ -119,8 +136,9 @@ animation publication restores the correct portrait map.
 
 The result is intentionally retained as a failing `static_reveal_tiles` check;
 the suite exits nonzero rather than hiding a known bug. Details were added to
-`DEX-UI-02` in the backlog. No game fix was attempted. Mew's separately reported
-category truncation still needs its own diagnosis.
+`DEX-UI-02` in the backlog. No game fix was attempted in that run. Mew's separately
+reported category truncation was not yet diagnosed. Both category reports were
+subsequently resolved by the follow-up above.
 
 An initial version of the extra reveal probe counted a few pending instructions
 twice when an interrupt was dispatched before they executed. The final driver
