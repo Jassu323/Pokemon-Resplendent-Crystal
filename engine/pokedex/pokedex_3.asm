@@ -152,8 +152,8 @@ Pokedex_NormalizeListingAfterSelectedMon:
 
 Pokedex_EnsureGridCache:
 ; Reuse a complete five-row cache when the Listing viewport is still inside
-; it. Detail paging can move farther away, in which case the cache is primed
-; again before the Listing is revealed.
+; it. Detail returns repair missing rows with the LCD on while their Window
+; and OAM remain hidden. Other owners retain the cold-prime fallback.
 	ld hl, wDexListingScrollOffset
 	ld e, [hl]
 	inc hl
@@ -173,7 +173,9 @@ Pokedex_EnsureGridCache:
 	inc c
 	dec b
 	jr nz, .find_top
-	jp Pokedex_PrimeGridCache
+	ld a, 1
+	ld [wPokedexGridTopPhysicalRow], a
+	jr .repair
 
 .found_top
 	ld a, c
@@ -207,7 +209,7 @@ Pokedex_EnsureGridCache:
 	dec d
 .check_previous
 	call .CheckRowTag
-	jp nc, Pokedex_PrimeGridCache
+	jr nc, .repair
 
 	; Validate the top row and the three rows after it.
 	ld hl, wDexListingScrollOffset
@@ -219,7 +221,7 @@ Pokedex_EnsureGridCache:
 	ld c, 4
 .check_forward
 	call .CheckRowTag
-	jp nc, Pokedex_PrimeGridCache
+	jr nc, .repair
 	ld a, b
 	inc a
 	cp POKEDEX_GRID_CACHE_ROWS
@@ -237,6 +239,12 @@ Pokedex_EnsureGridCache:
 	jr nz, .check_forward
 	scf
 	ret
+
+.repair
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_LEAVING
+	jp nz, Pokedex_PrimeGridCache
+	jp Pokedex_RepairGridCache
 
 .CheckRowTag:
 ; b = physical row, de = expected absolute Listing row offset.
@@ -263,6 +271,74 @@ Pokedex_EnsureGridCache:
 .tag_mismatch
 	pop hl
 	and a
+	ret
+
+Pokedex_RepairGridCache:
+; Retain the ring alignment found by EnsureGridCache. Only replace slots
+; whose tags do not match the destination viewport; publish tags after DMA.
+	ld a, [wPokedexGridTopPhysicalRow]
+	and a
+	jr nz, .got_previous_physical
+	ld a, POKEDEX_GRID_CACHE_ROWS
+.got_previous_physical
+	dec a
+	ld b, a
+	ld hl, wDexListingScrollOffset
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld a, d
+	and a
+	jr nz, .subtract_previous
+	ld a, e
+	cp POKEDEX_GRID_WIDTH
+	jr nc, .subtract_previous
+	ld de, -1
+	jr .ensure_previous
+.subtract_previous
+	ld a, e
+	sub POKEDEX_GRID_WIDTH
+	ld e, a
+	jr nc, .ensure_previous
+	dec d
+.ensure_previous
+	call .EnsureRow
+	ld hl, wDexListingScrollOffset
+	ld e, [hl]
+	inc hl
+	ld d, [hl]
+	ld a, [wPokedexGridTopPhysicalRow]
+	ld b, a
+	ld c, POKEDEX_GRID_CACHE_ROWS - 1
+.ensure_forward
+	call .EnsureRow
+	inc b
+	ld a, b
+	cp POKEDEX_GRID_CACHE_ROWS
+	jr c, .got_next_physical
+	ld b, 0
+.got_next_physical
+	ld a, e
+	add POKEDEX_GRID_WIDTH
+	ld e, a
+	jr nc, .no_forward_carry
+	inc d
+.no_forward_carry
+	dec c
+	jr nz, .ensure_forward
+	scf
+	ret
+
+.EnsureRow:
+	call Pokedex_EnsureGridCache.CheckRowTag
+	ret c
+	push bc
+	push de
+	ld a, b
+	call Pokedex_PrepareGridCacheRow
+	call Pokedex_UploadPendingGridCacheRow
+	pop de
+	pop bc
 	ret
 
 Pokedex_PrimeGridCache:
@@ -332,9 +408,8 @@ Pokedex_PrimeGridCache:
 	ret
 
 Pokedex_CacheGridIconPalette:
-; Resolve each visible slot's icon palette when its stable species ID is
-; cached, so the scroll transaction never reconstructs palettes from IDs that
-; may have moved in the conversion table.
+; Input: c = freshly resolved species ID, wDexTempCounter = visible position.
+; Cache the palette, not the temporary ID, before later allocations collect it.
 	ld a, [wDexTempCounter]
 	ld e, a
 	ld d, 0
@@ -342,9 +417,6 @@ Pokedex_CacheGridIconPalette:
 	add hl, de
 	bit POKEDEX_GRID_SEEN_F, [hl]
 	ret z
-	ld hl, wPokedexGridSpecies
-	add hl, de
-	ld c, [hl]
 	push de
 	farcall ReadMonMenuIconForPokedex
 	ld a, c
@@ -1156,6 +1228,10 @@ Pokedex_RevealOrCommitListing::
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
 	jr nz, .cold
+	ld a, POKEDEX_SELECTED_EXTENDED_BG_PALS
+	ld [wPokedexSelectedBGPaletteDirty], a
+	ld a, POKEDEX_LISTING_OBJ_PALS
+	ld [wPokedexSelectedOBJPaletteDirty], a
 	ld a, POKEDEX_OWNER_TRANSITION_LISTING
 	jp Pokedex_QueueOwnerTransition
 .cold
@@ -1209,9 +1285,9 @@ Pokedex_QueueOwnerTransition::
 	ret
 
 Pokedex_VBlankOwnerTransition::
-; Publish one complete BG0 owner while the LCD is in VBlank. Return carry
-; when committed so the dispatcher skips Listing animation. Publish the
-; prepared shadow OAM here before VBlank_Normal performs its bookkeeping.
+; Publish both maps in VBlank. Listing-only palettes use protected writes and
+; OAM completes before its first dependent scanline (34). Description retains
+; its VBlank-only palette path. Carry skips Listing animation for this handoff.
 	ld a, [wPokedexOwnerTransition]
 	and a
 	ret z
@@ -1222,6 +1298,8 @@ Pokedex_VBlankOwnerTransition::
 	and a
 	ret nz
 	ldh a, [rLY]
+	cp LY_VBLANK
+	ret c
 	cp LY_VBLANK + 1
 	ret nc
 	ld a, [wPokedexOwnerTransition]
@@ -1254,8 +1332,17 @@ Pokedex_VBlankOwnerTransition::
 
 	ld a, BANK(wBGPals2)
 	ldh [rSVBK], a
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_LISTING
+	jr z, .listing_palettes
 	call .CommitDirtyBGPals
 	call .CommitDirtyOBPals
+	jr .palettes_ready
+
+.listing_palettes
+	call .CommitListingBGPals
+	call .CommitListingOBPals
+.palettes_ready
 
 	pop af
 	ldh [rVBK], a
@@ -1268,7 +1355,34 @@ Pokedex_VBlankOwnerTransition::
 	ld [wPokedexOwnerTransition], a
 	ld [wPokedexSelectedBGPaletteDirty], a
 	ld [wPokedexSelectedOBJPaletteDirty], a
+.committed
 	scf
+	ret
+
+.CommitListingBGPals:
+	ld a, BGPI_AUTOINC palette 2
+	ldh [rBGPI], a
+	ld hl, wBGPals2 palette 2
+	ld c, LOW(rBGPD)
+	jr .CopyListingPalettes
+
+.CommitListingOBPals:
+	ld a, OBPI_AUTOINC palette 0
+	ldh [rOBPI], a
+	ld hl, wOBPals2 palette 0
+	ld c, LOW(rOBPD)
+.CopyListingPalettes:
+; Interrupts remain disabled, so the read/write pair cannot be preempted.
+; Mode 0/1 admission also leaves the following Mode 2 as a boundary reserve.
+	ld b, 6 palettes
+.wait_listing_palette
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_listing_palette
+	ld a, [hli]
+	ldh [c], a
+	dec b
+	jr nz, .wait_listing_palette
 	ret
 
 .CommitDirtyBGPals:
@@ -2125,7 +2239,7 @@ Pokedex_DrawListGrid:
 	ld a, [wDexTempCounter]
 	ld e, a
 	ld d, 0
-	ld bc, wPokedexGridSpecies
+	ld bc, wPokedexGridOccupied
 	push hl
 	ld h, d
 	ld l, e

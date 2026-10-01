@@ -16,8 +16,8 @@ from .description_ui import settle
 FIELDS = '''hSCX hSCY hWX hWY hVBlank hBGMapMode hCGBPalUpdate hOAMUpdate
     wPokedexOwnerTransition wPokedexSelectedBGPaletteDirty wPokedexSelectedOBJPaletteDirty
     wPokedexGridTopPhysicalRow wPokedexGridIconAnimFrame wPokedexGridCacheRowOffsets
-    wPokedexGridSpecies wPokedexGridFlags wPokedexGridIconPalettes
-    wBGPals2 wOBPals2 wShadowOAM'''.split()
+    wPokedexGridFlags wPokedexGridIconPalettes
+    wBGPals2 wOBPals2 wShadowOAM wPokemonIndexTableEntries'''.split()
 PHASES = dict(
     leave='PokedexSelectedMon_Leave',
     init_main='Pokedex_InitMainScreen',
@@ -42,20 +42,50 @@ PHASES = dict(
     transfer_map='Pokedex_VBlankOwnerTransition.TransferMap',
     update_oam='Pokedex_UpdateGridOAM',
 )
+OPTIONAL_PHASES = dict(
+    cache_repair='Pokedex_RepairGridCache',
+    prepare_cache_row='Pokedex_PrepareGridCacheRow',
+    cache_row_uploaded='Pokedex_UploadPendingGridCacheRow.publish',
+    listing_bg_pal_commit='Pokedex_VBlankOwnerTransition.CommitListingBGPals',
+    listing_obj_pal_commit='Pokedex_VBlankOwnerTransition.CommitListingOBPals',
+)
 
 
 def compile_observer(repo, source, output):
     header = (output / 'listing-restore-symbols.h').resolve()
     lines = [f'#define R_{name} 0x{repo.symbols[name][1]:04x}' for name in FIELDS]
+    presence = 'wPokedexGridOccupied' in repo.symbols
+    grid = 'wPokedexGridOccupied' if presence else 'wPokedexGridSpecies'
+    lines += [f'#define R_wPokedexGridCells 0x{repo.symbols[grid][1]:04x}',
+              f'#define R_GRID_USES_PRESENCE {int(presence)}']
     lines += ['static const struct { unsigned bank, pc; const char *name; } restoration_points[] = {']
-    for name, label in PHASES.items():
+    labels = dict(PHASES, **{name: label for name, label in OPTIONAL_PHASES.items()
+                           if label in repo.symbols})
+    for name, label in labels.items():
         bank, pc = repo.symbols[label]
         lines.append(f'{{{bank}, 0x{pc:04x}, "{name}"}},')
-    bank, pc = repo.symbols['Pokedex_VBlankOwnerTransition.CommitDirtyBGPals']
-    at = offset((bank, pc - 2))
+    bank, pc = repo.symbols.get('Pokedex_VBlankOwnerTransition.committed',
+        (repo.symbols['Pokedex_VBlankOwnerTransition.CommitDirtyBGPals'][0],
+         repo.symbols['Pokedex_VBlankOwnerTransition.CommitDirtyBGPals'][1] - 2))
+    at = offset((bank, pc))
     if repo.rom[at:at + 2] != bytes((0x37, 0xc9)):
         raise ValueError('Owner-transition success return changed; update the trace point')
-    lines.append(f'{{{bank}, 0x{pc - 2:04x}, "owner_done"}},')
+    lines.append(f'{{{bank}, 0x{pc:04x}, "owner_done"}},')
+    dispatch_bank, dispatch_pc = repo.symbols['Pokedex_VBlankDispatch']
+    owner_bank, owner_pc = repo.symbols['Pokedex_VBlankOwnerTransition']
+    dispatch = offset((dispatch_bank, dispatch_pc))
+    if repo.rom[dispatch:dispatch + 3] != bytes((0xcd, owner_pc & 255, owner_pc >> 8)):
+        raise ValueError('Owner-transition caller changed; update the return trace point')
+    lines.append(f'{{{dispatch_bank}, 0x{dispatch_pc + 3:04x}, "owner_returned"}},')
+    oam_pc = repo.symbols['hTransferShadowOAM'][1]
+    body = repo.rom[offset((owner_bank, owner_pc)):at]
+    oam_calls = [m.start() for m in re.finditer(re.escape(bytes((0xcd, oam_pc & 255, oam_pc >> 8))), body)]
+    if len(oam_calls) != 1:
+        raise ValueError('Owner-transition OAM call changed; update the trace points')
+    oam_call = owner_pc + oam_calls[0]
+    for name, address in (('owner_oam_call', oam_call), ('owner_oam_return', oam_call + 3),
+                          ('owner_oam_entry', oam_pc)):
+        lines.append(f'{{{owner_bank}, 0x{address:04x}, "{name}"}},')
     lines += ['};']
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, source, output, (
@@ -76,15 +106,32 @@ def cases(names):
     return result
 
 
+def physical_vblank_bounds(trace, commit_t):
+    lines = [e for e in trace if e['event'] == 'line']
+    start = next(e for e in reversed(lines) if e['physical_line'] == 144 and e['boundary_t'] <= commit_t)
+    end = next(e for e in lines if e['physical_line'] == 0 and e['boundary_t'] > start['boundary_t'])
+    if end['boundary_t'] - start['boundary_t'] != 4560:
+        raise ValueError('Physical VBlank boundaries differ from ten 456-cycle lines')
+    return start['boundary_t'], end['boundary_t']
+
+
 def summarize(trace, reference):
     phases = [e for e in trace if e['event'] == 'phase']
     frames = [e for e in trace if e['event'] == 'frame']
     writes = [e for e in trace if e['event'] == 'write']
     leave = next(e for e in phases if e['phase'] == 'leave')
     reveal = next(e for e in phases if e['phase'] == 'listing_revealed')
-    commit = next(e for e in phases if e['phase'] == 'owner_dispatch' and e['owner_transition'])
+    wx = next(e for e in phases if e['phase'] == 'owner_wx')
+    commit = next(e for e in reversed(phases) if e['phase'] == 'owner_dispatch' and e['t'] < wx['t'])
     done = next(e for e in phases if e['phase'] == 'owner_done')
+    returned = next(e for e in phases if e['phase'] == 'owner_returned' and e['t'] > done['t'])
+    start_t, end_t = physical_vblank_bounds(trace, commit['t'])
     final = phases[-1]
+    palette_entry = next(e for e in phases if e['t'] > commit['t'] and
+                         e['phase'] in ('bg_pal_commit', 'listing_bg_pal_commit'))
+    oam_return = next(e for e in phases if e['phase'] == 'owner_oam_return')
+    owner_palette_writes = [e for e in writes if commit['t'] <= e['t'] < returned['t']
+                            and e['address'] in (0xff69, 0xff6b)]
     mismatches = {}
     for kind in ('bg', 'obj'):
         actual, target = bytes.fromhex(final[f'{kind}_pal']), bytes.fromhex(final[f'target_{kind}'])
@@ -95,6 +142,22 @@ def summarize(trace, reference):
         leave_t=leave['t'], reveal_t=reveal['t'], return_cycles=reveal['t'] - leave['t'],
         return_intervals=(reveal['t'] - leave['t']) / 70224,
         commit_cycles=done['t'] - commit['t'], commit_done_ly=done['ly'],
+        commit_return_cycles=returned['t'] - commit['t'],
+        commit_return_physical_line=returned['physical_line'],
+        vblank_start_t=start_t, visible_start_t=end_t,
+        entry_offset_in_vblank=commit['t'] - start_t,
+        available_vblank_cycles=end_t - commit['t'],
+        return_vblank_margin=end_t - returned['t'],
+        maps_vblank_margin=end_t - palette_entry['t'],
+        bg_palette_first_use_margin=end_t + 40 * 456 -
+            max((e['t'] for e in owner_palette_writes if e['address'] == 0xff69), default=commit['t']),
+        obj_palette_first_use_margin=end_t + 34 * 456 -
+            max((e['t'] for e in owner_palette_writes if e['address'] == 0xff6b), default=commit['t']),
+        oam_first_use_margin=end_t + 34 * 456 - oam_return['t'],
+        palette_write_count=len(owner_palette_writes),
+        cache_rows_prepared=sum(e['phase'] == 'prepare_cache_row' for e in phases),
+        cache_rows_uploaded=sum(e['phase'] == 'cache_row_uploaded' for e in phases),
+        cache_repaired=any(e['phase'] == 'cache_repair' for e in phases),
         cache_rebuilt=any(e['phase'] == 'prime_cache' for e in phases),
         lcd_changes=[e for e in writes if e['address'] == 0xff40],
         blocked_palette_writes=[e for e in writes if e['address'] in (0xff69, 0xff6b) and e['pal_blocked']],
@@ -108,9 +171,138 @@ def summarize(trace, reference):
                      state=e['state'], white=bool(e['white']), scroll=e['scroll'],
                      mirrors=e['mirrors']) for e in frames],
         phase_timing=[dict(phase=e['phase'], t=e['t'], ly=e['ly'], stat=e['stat'],
+                           physical_line=e['physical_line'],
                            display=e['display'], bg_dirty=e['bg_dirty'], obj_dirty=e['obj_dirty'])
                       for e in phases if e['phase'] != 'owner_dispatch' or e['owner_transition']],
     )
+
+
+def restoration_failures(summary):
+    """Listing publication checks; outgoing canceled-cry events are reported separately."""
+    failures = []
+    if summary['blocked_palette_writes']:
+        failures.append('blocked_palette_write')
+    if any(summary['visible_palette_mismatch_bytes'].values()):
+        failures.append('visible_palette_mismatch')
+    if summary['white_frames']:
+        failures.append('white_frame')
+    if summary['lcd_changes']:
+        failures.append('lcd_toggled')
+    if summary['palette_write_count'] != 96:
+        failures.append('palette_write_count')
+    for name in ('maps_vblank_margin', 'bg_palette_first_use_margin',
+                 'obj_palette_first_use_margin', 'oam_first_use_margin'):
+        if summary[name] <= 0:
+            failures.append(name)
+    return failures
+
+
+def listing_snapshot(driver, prefix):
+    driver.command(f'restoretrace {prefix} 0')
+    driver.command('restorestop')
+    return json.loads(prefix.with_suffix('.jsonl').read_text().splitlines()[0])
+
+
+def cache_rows(snapshot):
+    tags = bytes.fromhex(snapshot['grid_tags'])
+    vram = bytes.fromhex(snapshot['vram'])
+    return {int.from_bytes(tags[2 * row:2 * row + 2], 'little'):
+            b''.join(vram[start + row * 128:start + (row + 1) * 128]
+                     for start in (0x2000, 0x3000, 0x2d20)) for row in range(5)}
+
+
+def check_listing_snapshot(actual, expected, count, all_rows=True):
+    """Compare cache bytes by absolute row tag, not by changing ring positions."""
+    problems = []
+    tags = bytes.fromhex(actual['grid_tags'])
+    scroll, top = actual['listing_scroll'], actual['grid_top']
+    presence = bytes.fromhex(actual['grid_presence'])
+    if any(value not in (0, 1) for value in presence):
+        problems.append('grid_presence_not_boolean')
+    if presence != bytes(int(scroll + i < count) for i in range(9)):
+        problems.append('grid_presence')
+    if actual['grid_presence'] != expected['grid_presence']:
+        problems.append('grid_presence_reference')
+    rows, expected_rows = cache_rows(actual), cache_rows(expected)
+    for delta in range(-1, 4) if all_rows else range(3):
+        slot = (top + delta) % 5
+        tag = max(-1, scroll + delta * 3) & 65535
+        if not all_rows and tag >= count:
+            continue
+        if int.from_bytes(tags[2 * slot:2 * slot + 2], 'little') != tag:
+            problems.append(f'cache_tag_{slot}')
+        if tag == 65535:
+            continue  # The unused look-behind slot is not a visible blank-tile owner.
+        want = expected_rows.get(tag)
+        if want is None and (tag == 65535 or tag >= count):
+            want = bytes(3 * 128)
+        if want is None:
+            problems.append(f'reference_missing_row_{tag}')
+        elif rows.get(tag) != want:
+            problems.append(f'cache_tiles_{tag}')
+    for key in ('grid_flags', 'grid_palettes'):
+        if actual[key] != expected[key]:
+            problems.append(key)
+    if bytes.fromhex(actual['bg_pal'])[16:] != bytes.fromhex(expected['target_bg'])[16:]:
+        problems.append('bg_palette_reference')
+    if bytes.fromhex(actual['obj_pal'])[:48] != bytes.fromhex(expected['target_obj'])[:48]:
+        problems.append('obj_palette_reference')
+    return problems
+
+
+def follow_up(driver, reference_driver, checkpoints, output, count):
+    """Normal-input cache, scroll/wrap and re-entry checks after a B return."""
+    output.mkdir(parents=True, exist_ok=True)
+    checks = []
+    def check(label):
+        actual = listing_snapshot(driver, output / label)
+        index = min(actual['listing_scroll'] + 6, count - 1)
+        reference_driver.command(f'load {checkpoints / "listing-states" / f"listing-{index:03}.s0"}')
+        expected = listing_snapshot(reference_driver, output / f'{label}-reference')
+        if actual['listing_scroll'] != expected['listing_scroll']:
+            raise ValueError(f'Listing reference viewport differs: {label}')
+        checks.append(dict(step=label, index=actual['index'], scroll=actual['listing_scroll'],
+                           metadata_warnings=['grid_indices'] if actual.get('grid_indices') != expected.get('grid_indices') else [],
+                           issues=check_listing_snapshot(actual, expected, count,
+                                all_rows=label in ('returned', 'reopened-and-returned'))))
+    check('returned')
+    driver.command(f'restoretrace {output / "navigation"} 0')
+    for n, direction in enumerate(('up', 'down', 'down', 'down', 'down', 'up', 'up', 'up', 'left', 'right')):
+        driver.run(('end_loop',))
+        driver.run(('end_loop',))
+        state = driver.command('peek')
+        if direction == 'left' and state['index'] % 3 == 0:
+            continue
+        if direction == 'right' and (state['index'] % 3 == 2 or state['index'] + 1 == count):
+            continue
+        move(driver, direction)
+        driver.run(('end_loop',))
+        driver.run(('end_loop',))
+        driver.command('restorestop')
+        (output / 'navigation.jsonl').rename(output / f'navigation-{n}.jsonl')
+        check(f'navigate-{n}-{direction}')
+        driver.command(f'restoretrace {output / "navigation"} 0')
+    driver.command('restorestop')
+    navigation = [json.loads(line) for p in output.glob('navigation*.jsonl') for line in p.read_text().splitlines()]
+    rejected = [e for e in navigation if e['event'] == 'write' and e['address'] in (0xff69, 0xff6b) and e['pal_blocked']]
+    current = listing_snapshot(driver, output / 'before-reentry')
+    seen = bytes.fromhex(current['grid_flags'])[current['cursor']] & 1
+    driver.run(('accept',), key='a')
+    if seen:
+        settle(driver)
+        driver.run(('leave',), key='b')
+    returned = driver.run(('listing',), 600)
+    if returned['hit'] != 'listing':
+        raise RuntimeError('Post-repair re-entry did not return to Listing')
+    driver.run(frames=5)
+    check('reopened-and-returned' if seen else 'unseen-selection-ignored')
+    result = dict(checks=checks, blocked_navigation_palette_writes=rejected,
+                  reentry='selected_and_returned' if seen else 'unseen_selection_ignored',
+                  metadata_warnings=[f'{c["step"]}:{warning}' for c in checks for warning in c['metadata_warnings']],
+                  issues=([f'{c["step"]}:{issue}' for c in checks for issue in c['issues']]
+                          + (['blocked_navigation_palette_write'] if rejected else [])))
+    (output / 'report.json').write_text(json.dumps(result, indent=2) + '\n')
+    return result
 
 
 def run_case(driver, checkpoints, output, case, names, images):
@@ -145,6 +337,7 @@ def run_case(driver, checkpoints, output, case, names, images):
     driver.command(f'image {directory / "selected-before.ppm"}')
     driver.command(f'save {directory / "selected-before.s0"}')
     driver.command(f'restoretrace {directory / "trace"} {int(images)}')
+    driver.command(f'restoreadmission {case.get("admission_delay", 0)}')
     driver.command('audit 1')
     driver.events.clear()
     before = driver.command('peek')
@@ -164,6 +357,7 @@ def run_case(driver, checkpoints, output, case, names, images):
     report = dict(case=case, selected=selected, before=before, left=left,
                   returned=returned, final=final, runtime_events=list(driver.events),
                   summary=summarize(trace, reference))
+    report['restoration_failures'] = restoration_failures(report['summary'])
     (directory / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
     return report
 
@@ -259,14 +453,18 @@ def main():
     parser.add_argument('--checkpoints', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--sameboy', type=Path, default=Path.home() / 'Documents/GitHub/SameBoy')
+    parser.add_argument('--sym', type=Path, default=ROOT / 'pokecrystal.sym', help='Matching symbols, including explicit baseline comparisons')
     parser.add_argument('--case', action='append', help='Run only these case labels')
     parser.add_argument('--no-images', action='store_true')
     parser.add_argument('--sparse', action='store_true', help='Boot a separate sparse-seen battery fixture')
     parser.add_argument('--repeat', type=int, default=1)
     parser.add_argument('--verify-observer', action='store_true')
+    parser.add_argument('--expect-fixed', action='store_true', help='Fail if any Listing publication check fails')
+    parser.add_argument('--follow-up', action='store_true', help='Audit cache bytes, scrolling/wrapping and re-entry after every return')
+    parser.add_argument('--admission-sweep', action='store_true', help='Separate synthetic pre-publication CPU-stall timing stress')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    repo = Repository(ROOT, args.checkpoints / 'input-copy.gbc', ROOT / 'pokecrystal.sym')
+    repo = Repository(ROOT, args.checkpoints / 'input-copy.gbc', args.sym)
     origin = json.loads((args.checkpoints / 'provenance.json').read_text())
     if any(origin[k] != v for k, v in repo.hashes.items()):
         raise ValueError('Checkpoint ROM or linked symbols differ from the accepted build')
@@ -280,6 +478,12 @@ def main():
     aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
     names = [aliases.get(n, n.lower()) for n in names]
     suite = [c for c in cases(names) if args.case is None or c['label'] in args.case]
+    if args.follow_up and args.case is None:
+        suite.append(dict(label='regigigas', start='regigigas', pages=0, wait=None, description_page=False))
+    if args.admission_sweep:
+        base = next(c for c in cases(names) if c['label'] == 'chikorita-down1')
+        suite = [dict(base, label=f'admission-{delay}', admission_delay=delay)
+                 for delay in (*range(0, 164, 4), 256, 456)]
     battery = args.checkpoints / 'input-copy.sav'
     checkpoints = args.checkpoints
     sparse = None
@@ -297,12 +501,19 @@ def main():
         Path('/Applications/SameBoy/SameBoy.app/Contents/Resources/cgb_boot.bin'),
         battery, args.output / 'core.log')
     results = []
+    reference_driver = Driver(core, rom,
+        Path('/Applications/SameBoy/SameBoy.app/Contents/Resources/cgb_boot.bin'),
+        battery, args.output / 'reference-core.log') if args.follow_up else None
     try:
         if sparse:
             bootstrap(driver)
-            prepare_states(driver, checkpoints / 'listing-states', 3)
+            prepare_states(driver, checkpoints / 'listing-states', len(names) if args.follow_up else 3)
         for case in suite:
             report = run_case(driver, checkpoints, args.output, case, names, not args.no_images)
+            if reference_driver:
+                report['follow_up'] = follow_up(driver, reference_driver, checkpoints,
+                    args.output / case['label'] / 'follow-up', len(names))
+                (args.output / case['label'] / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
             results.append(report)
             summary = report['summary']
             print(json.dumps(dict(case=case['label'], intervals=summary['return_intervals'],
@@ -310,10 +521,12 @@ def main():
                 mismatches=summary['palette_mismatch_bytes'])), flush=True)
     finally:
         driver.close()
+        if reference_driver:
+            reference_driver.close()
     (args.output / 'report.json').write_text(json.dumps(dict(
         provenance=repo.hashes, rom_unchanged=True, host_only_instrumentation=True,
         sparse_fixture=sparse, results=results), indent=2) + '\n')
-    return 0
+    return int(args.expect_fixed and any(r['restoration_failures'] or r.get('follow_up', {}).get('issues') for r in results))
 
 
 if __name__ == '__main__':

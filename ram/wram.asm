@@ -756,7 +756,7 @@ wPokedexDisplayNumber:: dw
 wDexLastSeenIndex:: db ; index into wPokedexSeen containing the last non-zero value
 wDexLastSeenValue:: db ; value at index
 wDexTempCounter:: dw
-wPokedexGridSpecies:: ds 9
+wPokedexGridOccupied:: ds 9 ; 0 = empty, 1 = valid order entry (including unseen)
 wPokedexGridFlags:: ds 9
 wPokedexGridIconPalettes:: ds 9
 wPokedexGridTopPhysicalRow:: db

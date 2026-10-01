@@ -1,6 +1,6 @@
 # Selected Pokedex Animation Scheduler
 
-Living implementation reference, updated 2026-09-21.
+Living implementation reference, updated 2026-10-01.
 
 This describes the **linked game implementation**, not an experimental host
 policy. It supersedes the runtime direction in the earlier micro-schedule
@@ -14,6 +14,7 @@ Companion documents:
 - [All-species normal-input cold Listing results](dex_cold_listing_results.md)
 - [VRAM and scratch allocation](pokedex_vram.md)
 - [New Dex Entry resident scheduler](new_dex_entry_animation_scheduler.md)
+- [Selected-to-Listing restoration contract and results](pokedex_listing_restoration_investigation.md)
 - [Outstanding bugs](pokedex_selected_bug_backlog.md)
 - [Historical implementation pre-flight](archived/dex-scheduler/dex_scheduler_implementation_preflight.md)
 - [Investigation record](archived/dex-scheduler/dex_scheduler_investigation.md)
@@ -403,6 +404,30 @@ mark that bug fixed by the scheduler.
 
 Future palette updates, scroll changes, OAM type icons or any other new display
 work must release/reestablish ownership or provide a newly measured contract.
+
+### Listing Return Is A Separate Publication Profile
+
+The 2026-10-01 restoration correction does not alter the quiet-animation gates
+or work scheduler. A Selected B-return cancels production/releases quiet
+ownership, repairs only missing icon-cache rows with the LCD on, stages the
+Listing and explicitly requests its BG slots 2-7 and OBJ slots 0-5.
+
+`Pokedex_VBlankOwnerTransition` accepts only `144 <= LY < 145`. Its two complete
+maps finish in VBlank. For the **Listing owner only**, palette stores use
+STAT-protected Mode 0/1 windows; OAM DMA follows and finishes before the first
+cursor pixels at line 34. BG slots 0/1 remain untouched and the first dependent
+side-icon BG pixels are at line 40. This owner transaction can finish on visible
+line 24: it is not the animation publisher and is not claimed to fit wholly
+inside VBlank. Description still uses the previous unrolled palette path.
+
+The late-admission stress suite retains at least 1,148 T of map headroom,
+4,688 T for OBJ palettes and 3,904 T for OAM before their first-use boundaries.
+These guarantees depend on the Listing layout and interrupt-disabled
+transaction. Moving dependent graphics earlier requires remeasurement; do not
+reuse this profile as a generic visible-time upload allowance. The correction
+adds 166 ROMX bytes in bank `$77` and no RAM, ROM0 or VRAM allocations. See the
+[full restoration record](pokedex_listing_restoration_investigation.md#implemented-restoration)
+for baseline comparisons, cache ownership and all-species regression limits.
 The current optimization cannot suppress a transfer that has become necessary.
 
 ## Pacing And Audio

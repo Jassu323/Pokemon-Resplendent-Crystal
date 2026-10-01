@@ -139,6 +139,7 @@ int main(int argc, char **argv)
 #ifdef DEX_LISTING_RESTORE_TRACE
     GB_set_vblank_callback(&gb, restoration_frame);
     GB_set_write_memory_callback(&gb, restoration_write);
+    GB_set_lcd_line_callback(&gb, restoration_line);
 #endif
     if (GB_load_rom(&gb, argv[1]) || GB_load_boot_rom(&gb, argv[2]) ||
         GB_load_battery(&gb, argv[3])) return 2;

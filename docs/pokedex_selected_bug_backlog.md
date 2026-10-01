@@ -4,7 +4,10 @@ Updated 2026-10-01. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
-open UI, input, transition and adjacent-owner items below remain deferred.
+Listing return palette/cache fixes now pass their reproduction and regression
+suites, and grid metadata now uses presence flags instead of retained transient
+IDs. The remaining open UI, input, transition and adjacent-owner items below
+remain deferred.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -249,7 +252,7 @@ observed. No fix has been attempted.
 
 ### DEX-RETURN-01: Some returns show a white blank screen
 
-Status: Confirmed current-link cache-rebuild failure; fix not yet implemented
+Status: Solved; LCD-on cache repair and all-seen/sparse return regressions passed
 
 Selected-Mon to Listing sometimes displays a white screen for roughly 4-5
 frames before the Listing appears.
@@ -261,12 +264,19 @@ is ready. Five white presented frames are followed by seven outgoing Description
 frames. Sparse seen rosters reproduce the same path with six white frames.
 Fix direction: retain matching rows and refill missing rows with the existing
 LCD-on uploader while keeping the outgoing owner visible until a complete
-Listing handoff. See the
+Listing handoff.
+
+Implemented 2026-10-01: `Pokedex_RepairGridCache` retains matching rows and
+uses the existing LCD-on three-transfer uploader for missing rows. The nine-page
+Pidgey path repairs one row, not five; sparse far jumps repair all five safely.
+All 25 all-seen/sparse/bottom-boundary return conditions and nine repeats have
+zero white frames and no LCDC toggles. Scrolling/wrapping and re-entry also pass.
+See the
 [current investigation](pokedex_listing_restoration_investigation.md#cause-3-lcd-off-cache-rebuild-exposes-the-wrong-owner).
 
 ### DEX-RETURN-02: The Selected page can reappear vertically displaced
 
-Status: Page reappearance confirmed; vertical displacement needs revalidation
+Status: LCD-off page reappearance resolved; vertical displacement still needs revalidation
 
 After the white blank interval, the Selected page can reappear eight pixels too
 low and move upward one pixel per frame before the Listing takes ownership.
@@ -276,9 +286,14 @@ but the eight-pixel displacement/upward movement is not reproduced in the
 current all-seen or sparse tests. Hardware and mirrored SCY remain zero.
 Do not close the displacement report solely by fixing the proven LCD-off path.
 
+The cache-repair correction removes the LCD-off/white interval and its later
+page reappearance. The outgoing page now remains visible continuously until
+the complete Listing is ready. No eight-pixel displacement is reproduced by
+the fixed return suite; the historical displacement report remains open.
+
 ### DEX-RETURN-03: Listing BG minisprite columns can contain stale graphics
 
-Status: Confirmed palette-restoration failure in current reproductions; fix not yet implemented
+Status: Solved for the confirmed palette cause; restoration and cache-byte checks passed
 
 Some returns reveal the Listing immediately, but the left and right BG
 minisprite columns contain footprint or frontpic-era tiles. The middle OAM
@@ -293,7 +308,14 @@ skips the restore and retains Description BG slots 2-7 (38 differing bytes).
 The middle OAM palettes remain correct. Six direct species, active B-cancels
 and text-page-2 returns reproduce this. This is palette state, not overwritten
 icon graphics, in these cases. Restore requests and the unsafe publication below
-must be addressed together. See the
+must be addressed together.
+
+Implemented 2026-10-01: every Selected B-return explicitly requests BG slots
+2-7 and OBJ slots 0-5, then uses the Listing-only safe publisher. All 96 bytes
+are committed legally and match the independent Listing targets. The tested
+direct, internally paged, active-cancel and page-2 return paths have no visible
+palette mismatch. Cached graphics also match independently reached viewports.
+See the
 [palette diagnosis](pokedex_listing_restoration_investigation.md#cause-1-listing-palettes-are-prepared-but-not-requested).
 
 ### DEX-RETURN-04: Listing can briefly expose placeholder selection state
@@ -303,7 +325,8 @@ Status: Open; not reproduced by the current all-seen/sparse restoration suite
 Some returns briefly show the unseen portrait, `-----`, or an intermediate
 cursor position before restoring the real Listing selection.
 
-2026-10-01: 24 distinct restoration conditions did not expose these placeholder
+2026-10-01: the original 24 restoration conditions and fixed 25-condition suite
+did not expose these placeholder
 states. Keep this report open pending a matching current-link reproduction;
 palette/cached-row findings alone do not prove its cause.
 
@@ -315,7 +338,7 @@ and selection metadata.
 
 ### DEX-GRID-01: Intermittent minisprite palette errors
 
-Status: Two current palette-handoff causes confirmed; fix not yet implemented
+Status: Solved for both confirmed Selected-to-Listing palette-handoff causes
 
 Listing minisprites can receive the wrong palette, especially after ownership
 transitions. This may share its root cause with `DEX-RETURN-03`.
@@ -334,6 +357,15 @@ to match. Fix the explicit restore request and actual write-window admission
 as one Listing publication change. See the
 [timing diagnosis](pokedex_listing_restoration_investigation.md#cause-2-the-owner-commit-runs-into-mode-3).
 
+Implemented 2026-10-01: map transfers remain in VBlank, and Listing-only palette
+writes wait for legal STAT windows. OAM completes before its first dependent
+line. The direct restore request and guarded publication are tested together;
+zero writes are rejected in the normal return suite or 43 late-entry stress
+cases. No wrong visible BG/OBJ palettes remain in these reproductions. This
+does not claim to close unrelated Search/Options/Area palette bugs or the
+separate caught-ball report below. See the
+[implementation and regression](pokedex_listing_restoration_investigation.md#implemented-restoration).
+
 ### DEX-GRID-02: Caught Poke Ball can receive the wrong OBJ palette
 
 Status: Open; not reproduced by the current restoration suite
@@ -345,6 +377,38 @@ restoration.
 2026-10-01: caught-ball OBJ slot 1 is correct in the tested returns and lies
 outside the confirmed rejected-write range. Keep this issue separate/open;
 do not assume the palette-3 corruption explains the earlier caught-ball report.
+
+### DEX-GRID-03: Retained grid IDs are not garbage-collection roots
+
+Status: Solved; presence flags replace retained grid IDs; reproduction and regressions passed
+
+2026-10-01: cold-open Luxray, settle, B, then Up, Down four times, Up three
+times, Left, Right, releasing the pad between presses. At Listing scroll 336,
+the middle row (Rampardos, Shieldon, Bastiodon) retains temporary species IDs
+`$52/$53/$54`, but their conversion-table entries are zero. Graphics, flags,
+palette metadata and hardware colors remain byte-correct. A full re-entry/
+return reconstructs the IDs. The exact unchanged baseline reproduces this too;
+it is not a regression from the Listing-restoration correction.
+
+`PokemonTableGarbageCollection` marks other retained species owners but not
+`wPokedexGridSpecies`; allocating the entering row can collect IDs still stored
+in shifted rows. Selected identity is independently resolved from the absolute
+16-bit order entry and locked, so no wrong name, selection or frontpic is seen
+in this test. Keep this as a metadata warning, not an invented visual defect.
+
+The approved correction reuses the same nine bytes as `wPokedexGridOccupied`:
+`1` for any valid order entry (seen or unseen), `0` for an empty cell. Palette
+construction receives a fresh ID explicitly; grid drawing and cursor validation
+retain only occupancy. Selected identity and the five-row VRAM cache continue
+using stable order positions. No global GC changes, additional locks, or RAM/
+VRAM allocations are needed; the linked code saves three ROMX bytes net.
+
+The original Luxray sequence now retains Boolean flags with byte-correct visible
+graphics/palettes and no warnings. All 25 normal return conditions, 281 follow-up
+checks and 43 admission stress cases pass, along with 72 focused unit tests.
+All 373 species retain exact animation timing and uninterrupted sampled-cry
+completion on cold entry and internal paging; the known Drapion text overflow
+remains separate. See the [implementation and evidence](pokedex_listing_restoration_investigation.md#presence-flag-correction).
 
 ## Secondary Pokedex Screens And Presentation
 

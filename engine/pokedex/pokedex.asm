@@ -1280,7 +1280,7 @@ Pokedex_GridHandleDPadInput:
 .try_target
 	ld e, a
 	ld d, 0
-	ld hl, wPokedexGridSpecies
+	ld hl, wPokedexGridOccupied
 	add hl, de
 	ld a, [hl]
 	and a
@@ -1346,8 +1346,8 @@ Pokedex_ScrollGridDown:
 
 Pokedex_ShiftGridMetadataUp:
 ; The old middle and bottom rows become the new top and middle rows.
-	ld hl, wPokedexGridSpecies + POKEDEX_GRID_WIDTH
-	ld de, wPokedexGridSpecies
+	ld hl, wPokedexGridOccupied + POKEDEX_GRID_WIDTH
+	ld de, wPokedexGridOccupied
 	ld bc, POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH
 	call CopyBytes
 	ld hl, wPokedexGridFlags + POKEDEX_GRID_WIDTH
@@ -1362,8 +1362,8 @@ Pokedex_ShiftGridMetadataUp:
 Pokedex_ShiftGridMetadataDown:
 ; Copy backwards so the old top and middle rows become the new middle and
 ; bottom rows without clobbering their source entries.
-	ld hl, wPokedexGridSpecies + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
-	ld de, wPokedexGridSpecies + POKEDEX_GRID_SIZE - 1
+	ld hl, wPokedexGridOccupied + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
+	ld de, wPokedexGridOccupied + POKEDEX_GRID_SIZE - 1
 	call .CopyArrayBackward
 	ld hl, wPokedexGridFlags + POKEDEX_GRID_SIZE - POKEDEX_GRID_WIDTH - 1
 	ld de, wPokedexGridFlags + POKEDEX_GRID_SIZE - 1
@@ -1961,7 +1961,7 @@ Pokedex_PlaceBorder:
 	jr .row_loop
 
 Pokedex_LoadGridPage:
-	ld hl, wPokedexGridSpecies
+	ld hl, wPokedexGridOccupied
 	ld bc, 3 * POKEDEX_GRID_SIZE
 	xor a
 	call ByteFill
@@ -1982,7 +1982,7 @@ Pokedex_CacheGridPosition:
 	ld [wDexTempCounter], a
 	ld e, a
 	ld d, 0
-	ld hl, wPokedexGridSpecies
+	ld hl, wPokedexGridOccupied
 	add hl, de
 	xor a
 	ld [hl], a
@@ -2034,10 +2034,9 @@ Pokedex_CacheGridPosition:
 	ld a, [wDexTempCounter]
 	ld e, a
 	ld d, 0
-	ld hl, wPokedexGridSpecies
+	ld hl, wPokedexGridOccupied
 	add hl, de
-	ld a, [wTempSpecies]
-	ld [hl], a
+	ld [hl], TRUE
 	ld hl, wPokedexGridFlags
 	add hl, de
 	ld [hl], 0
@@ -2071,6 +2070,8 @@ Pokedex_CacheGridPosition:
 .not_caught
 	pop af
 	ldh [rSVBK], a
+	ld a, [wTempSpecies]
+	ld c, a
 	farcall Pokedex_CacheGridIconPalette
 	ret
 
