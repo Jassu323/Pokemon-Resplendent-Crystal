@@ -1,6 +1,6 @@
 # Selected Scheduler Validation And Test Guide
 
-Updated 2026-09-21. This is the current instrumentation-free guide.
+Updated 2026-10-01. This is the current instrumentation-free guide.
 See the [implementation reference](pokedex_animation_scheduler.md) for the
 runtime contract and the [historical validation record](archived/dex-scheduler/dex_scheduler_validation_history.md)
 for earlier ROM hashes, experiments and acceptance stages. Statements about
@@ -11,19 +11,27 @@ older temporary encounters or unimplemented candidates belong to that archive.
 Test the normal root `pokecrystal.gbc`, not an earlier A/B cartridge.
 
 ```text
-ROM SHA-256: 18ec28c84656ee26e6f705b81982b12bd1fdc62a5efa7ba994ef7b1de77965ea
-SYM SHA-256: e8e29d612bb180daba45b2e5c3b310829ff119814cb2d55f7f6bab0413771fc2
-MAP SHA-256: b1884c4ed70433336524a1b9900fe77c880b8438aa53c44022ec50388cc5e0af
+ROM SHA-256: cb2eabc2db0df6678c3a3a99fa7b9f19f7044418f30fc1d4237a87493d6d2748
+SYM SHA-256: c83daf53a86ead8e6e127f42bcd4290d17f97bc2c349d901e9a928040a293358
+MAP SHA-256: 7211eacfbc39b6cdc0161a3deacf640e375e1530a09dad5b7868bb6edd459860
 RGBDS: v1.0.1
 SameBoy core: 213a12ce93d66b105a113debd9396306066a7cfc
 Hardware: CGB-E, normal CPU speed
 ```
 
 This link includes the later-event full-dictionary targets, restored Route 29/30
-encounters and Seviper's finite repeat correction. Startup remains 96 animation
-tail tiles and 32 sampled-cry blocks. Listing warming remains. Runtime telemetry is removed; the clean-link
+encounters, Seviper's finite repeat correction, Description UI/category fixes,
+Listing restoration, local cry cancellation, atomic internal reveal and
+buffered footprint/type icons with portrait-only masking.
+Startup remains 96 animation tail tiles and 32 sampled-cry blocks. Listing
+warming remains. Runtime telemetry is removed; the clean-link
 [cleanup report](dex_instrumentation_cleanup.md) records the cost remeasurement,
-all-species cold/paging passes, New Entry sweeps and unchanged known failures.
+all-species cold/paging passes and New Entry sweeps at that earlier checkpoint.
+The [internal handoff acceptance](pokedex_internal_transition_investigation.md#implemented-internal-handoff)
+records the earlier final link; [buffered icon acceptance](pokedex_internal_transition_investigation.md#buffered-icons-in-production)
+records the current link's regression and remaining limits. The generated
+historical outputs were cleaned; their source/parameter recipes remain in
+the [build catalog](archived/build-history.md).
 
 Boot through normal Continue using a battery save, not an older emulator state.
 Old states can retain incompatible return addresses or prepared work even when
@@ -41,14 +49,17 @@ emulator installation is overwritten by the host acceptance runner.
 | Synthesized audio | All 251 controls reach sound-channel completion |
 | Animation misses | Zero |
 | Logical B-return | 373 pass; palette restoration is not audited by this check |
-| Initial static portrait | 372 pass; Drapion category overflow remains a deliberate test failure |
+| Initial static portrait | 373 pass; Mew/Drapion category corrections retained |
+| Automated settled internal paging | 373 clean handoffs with exact full animation/cry completion |
+| Automated active paging/B-return | 1,492 owner handoffs pass with no outgoing cache-empty or retained-cry faults |
 | Live internal paging | User tested the entire New Dex with no uninterrupted-playback misses |
 | Live presentation controls | Chikorita, Bayleef, Meganium, Dusknoir, Rampardos and Luxray show no visible animation defects |
 
-The aggregate cold suite intentionally exits nonzero for Drapion's
-`static_reveal_tiles` failure (`DEX-UI-02`); do not describe it as wholly passing
-or suppress that check. The [cold Listing results](dex_cold_listing_results.md)
-preserve methodology, input identities, reproduction and limits. Unown A and
+The current aggregate cold suite passes every static-reveal check, including
+Drapion. The [cold Listing results](dex_cold_listing_results.md)
+preserve the earlier failing checkpoint and category correction; do not treat
+that historical failure as an expected current outcome or suppress its check.
+Unown A and
 finite Seviper passed both manual cold/internal checks and the automated suite.
 
 Earlier settled-playback evidence comprises 126 compiled-target replays across
@@ -65,12 +76,14 @@ not just the absence of miss breakpoints. Dusknoir's total is 107 main + 18 hold
 totaling 76 + 18 + 28 = 122 intervals. All 399 asset/form timelines terminate
 structurally; the normal-input suite tests 373 species, not every Unown form.
 
-Warm entry, rapid input/cancellation, A-button Description transactions, all
-transition frames/palettes, subjective waveform quality and other display
-owners are not certified by these passes. Known B-return palette, Drapion
-overflow, rapid-axis input and outgoing-cry issues remain in the
-[backlog](pokedex_selected_bug_backlog.md). New Dex Entry, Party Stats and
-battles retain separate scheduling paths.
+Warm entry, every possible rapid-input phase, A-button Description transactions,
+Area/Search/alternate-order transitions, subjective waveform quality and other
+display owners are not certified by these passes. The reproduced B-return,
+category, cry-owner and internal reveal issues now have focused fixes and
+regressions; rapid-axis input and active Description-page corruption remain in
+the [backlog](pokedex_selected_bug_backlog.md). Manual review of the integrated
+reveal and buffered icons passed. New Dex Entry, Party Stats and battles retain
+separate scheduling paths.
 
 ## Regression Suite After Runtime Changes
 
@@ -108,7 +121,8 @@ Broader coverage, once per route:
 
 Hitmonchan is an optional long synthesized control. The all-species cold runner
 is the scalable regression route; there is no need to manually repeat all 373
-cold selections. Keep Drapion's known static overflow separate from animation.
+cold selections. Category overflow was separate from animation and is now fixed;
+report any new static-reveal defect rather than treating it as expected.
 
 ### Ownership And Cancellation
 
@@ -140,7 +154,7 @@ transition. Known bugs remain deferred, not implicitly fixed by this suite.
 
 ## SameBoy Debugging
 
-Addresses below apply to the clean `18ec28c8...` ROM above. Verify the cartridge before
+Addresses below apply to the `cb2eabc2...` ROM above. Verify the cartridge before
 using them. For a fresh link, resolve the labels in `pokecrystal.sym` again.
 
 ### Animation Miss
@@ -193,13 +207,13 @@ publication/audio auditing, not a zero diagnostic count.
 Only needed if another full replay is requested:
 
 ```text
-breakpoint $77:$5edb
+breakpoint $77:$6093
 ```
 
 This is `Pokedex_VBlankAnimationFrontpicMap.deadline_reached`. Its first bytes
 are `f0 70 f5 f0 4f f5 3e 03`, starting `LDH a, [rSVBK & $ff]`.
 Capture registers, backtrace, `ticks`, `lcd`, and a new-build starting save state
-before continuing. Do not use the old `$77:$5ea5` address for this link.
+before continuing. Do not use older `$77:$5ea5`/`$77:$5edb`/`$77:$6014` addresses for this link.
 
 ### Suspected Sampled-Cry Underrun
 
@@ -212,8 +226,9 @@ breakpoint $0:$3cb3
 The first instruction is `POP af`; expected six bytes are
 `f1 e0 70 c3 63 00`. This path runs only when playback blocks remain but the
 decoded cache is empty. Normal completion and intentional cancellation do not
-pass through it. A hit during a hidden species transition can still be the
-outgoing cry exhausting; see `DEX-CRY-04` in the [bug backlog](pokedex_selected_bug_backlog.md). At a hit,
+pass through it. Outgoing exhaustion during the native Selected owner change
+is no longer expected after the local cancellation fix; see `DEX-CRY-04` in
+the [bug backlog](pokedex_selected_bug_backlog.md). At a hit,
 also capture `x/1 $0:$c727` to distinguish active playback from species staging.
 
 The broader alternative below catches any stop with remaining blocks:

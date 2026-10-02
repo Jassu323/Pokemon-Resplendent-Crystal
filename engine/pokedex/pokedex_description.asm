@@ -176,11 +176,11 @@ Pokedex_LoadDescriptionTypeGFX:
 	ld a, BANK(vTiles5)
 	ldh [rVBK], a
 	ld hl, wPokedexWRAM0Scratch
-	ld de, vTiles5 tile POKEDEX_DESCRIPTION_TYPE_TILE
+	call .TypeDestination
 	call Pokedex_HDMATransferCacheGFX
 	pop af
 	ldh [rVBK], a
-	ld a, POKEDEX_DESCRIPTION_TYPE_TILE
+	call .TypeBase
 	hlcoord 9, 7
 	call .PlaceType
 	ld a, [wBaseType1]
@@ -188,7 +188,8 @@ Pokedex_LoadDescriptionTypeGFX:
 	ld a, [wBaseType2]
 	cp b
 	ret z
-	ld a, POKEDEX_DESCRIPTION_TYPE_TILE + ICON_COMPACT_TYPE_TILES
+	call .TypeBase
+	add ICON_COMPACT_TYPE_TILES
 	hlcoord 14, 7
 .PlaceType:
 	ld c, ICON_COMPACT_TYPE_TILES
@@ -197,6 +198,20 @@ Pokedex_LoadDescriptionTypeGFX:
 	inc a
 	dec c
 	jr nz, .place
+	ret
+.TypeDestination:
+	ld de, vTiles5 tile POKEDEX_DESCRIPTION_TYPE_TILE
+	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
+	and a
+	ret z
+	ld de, vTiles5 tile POKEDEX_DESCRIPTION_ALT_TYPE_TILE
+	ret
+.TypeBase:
+	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
+	and a
+	ld a, POKEDEX_DESCRIPTION_TYPE_TILE
+	ret z
+	ld a, POKEDEX_DESCRIPTION_ALT_TYPE_TILE
 	ret
 .CopyType:
 	push de
@@ -418,4 +433,6 @@ PokedexDescriptionRightEdge:
 	assert .end - PokedexDescriptionRightEdge == SCREEN_HEIGHT
 	assert POKEDEX_DESCRIPTION_GFX_TILE + (PokedexDescriptionGFXEnd - PokedexDescriptionGFX) / TILE_SIZE <= $80
 	assert POKEDEX_DESCRIPTION_TYPE_TILE >= POKEDEX_ANIM_BUFFER_B_TILE + 7 * 7
-	assert POKEDEX_DESCRIPTION_TYPE_TILE + 2 * ICON_COMPACT_TYPE_TILES <= $80
+	assert POKEDEX_DESCRIPTION_TYPE_TILE + 2 * ICON_COMPACT_TYPE_TILES <= POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE
+	assert POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE + 4 <= POKEDEX_DESCRIPTION_ALT_TYPE_TILE
+	assert POKEDEX_DESCRIPTION_ALT_TYPE_TILE + 2 * ICON_COMPACT_TYPE_TILES <= $80

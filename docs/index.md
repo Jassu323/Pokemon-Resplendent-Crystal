@@ -23,10 +23,12 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [Live Dex and adjacent bug backlog](pokedex_selected_bug_backlog.md): current status, reproductions and deferred investigations.
 - [Listing restoration investigation](pokedex_listing_restoration_investigation.md): normal-input reproductions, skipped/late palette commits, LCD-off cache flashes and scoped fix directions.
 - [Cry ownership investigation](pokedex_cry_ownership_investigation.md): Dex-local cancellation, synth resumption/outgoing exhaustion/header-race fixes, exact resource costs and all-species transition regressions.
+- [Internal transition investigation and fix](pokedex_internal_transition_investigation.md): delayed blackout, atomic internal reveal, final-link costs/timing/regressions and historical prototype evidence.
 
 ## Historical Evidence
 
 - [Dex scheduler investigation archive](archived/dex-scheduler/README.md): measurements, failed controls, implementation preflight and older test-build records.
+- [Historical build catalog](archived/build-history.md): each former build/output, preserved recipes, parameter grids, source overrides and safe reconstruction script.
 - [Other archived material](archived/README.md): legacy references and artifact policy.
 
 Keep curated findings and reusable tools in the repository. Generated reports,

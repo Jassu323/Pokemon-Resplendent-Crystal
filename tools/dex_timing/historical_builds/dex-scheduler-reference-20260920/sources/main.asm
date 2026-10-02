@@ -1,0 +1,983 @@
+SECTION "bank1", ROMX
+
+INCLUDE "engine/link/place_waiting_text.asm"
+INCLUDE "engine/gfx/load_push_oam.asm"
+INCLUDE "engine/overworld/map_objects.asm"
+INCLUDE "engine/menus/intro_menu.asm"
+INCLUDE "engine/overworld/init_map.asm"
+INCLUDE "engine/pokemon/learn.asm"
+INCLUDE "engine/pokemon/correct_nick_errors.asm"
+INCLUDE "engine/math/math.asm"
+INCLUDE "data/items/attributes.asm"
+INCLUDE "engine/overworld/npc_movement.asm"
+INCLUDE "engine/events/happiness_egg.asm"
+INCLUDE "engine/events/shuckle.asm"
+INCLUDE "engine/events/haircut.asm"
+
+
+SECTION "bank2", ROMX
+
+INCLUDE "engine/overworld/player_object.asm"
+INCLUDE "engine/math/sine.asm"
+INCLUDE "engine/predef.asm"
+
+
+SECTION "Hall of Fame", ROMX
+
+INCLUDE "engine/events/halloffame.asm"
+
+
+SECTION "Mon Icons 3", ROMX
+
+CustomMonIcons::
+TreeckoIcon::       INCBIN "gfx/icons/treecko.2bpp"
+GrovyleIcon::       INCBIN "gfx/icons/grovyle.2bpp"
+SceptileIcon::      INCBIN "gfx/icons/sceptile.2bpp"
+TorchicIcon::       INCBIN "gfx/icons/torchic.2bpp"
+CombuskenIcon::     INCBIN "gfx/icons/combusken.2bpp"
+BlazikenIcon::      INCBIN "gfx/icons/blaziken.2bpp"
+MudkipIcon::        INCBIN "gfx/icons/mudkip.2bpp"
+MarshtompIcon::     INCBIN "gfx/icons/marshtomp.2bpp"
+SwampertIcon::      INCBIN "gfx/icons/swampert.2bpp"
+PoochyenaIcon::     INCBIN "gfx/icons/poochyena.2bpp"
+MightyenaIcon::     INCBIN "gfx/icons/mightyena.2bpp"
+WingullIcon::       INCBIN "gfx/icons/wingull.2bpp"
+PelipperIcon::      INCBIN "gfx/icons/pelipper.2bpp"
+RaltsIcon::         INCBIN "gfx/icons/ralts.2bpp"
+KirliaIcon::        INCBIN "gfx/icons/kirlia.2bpp"
+GardevoirIcon::     INCBIN "gfx/icons/gardevoir.2bpp"
+GalladeIcon::       INCBIN "gfx/icons/gallade.2bpp"
+ShroomishIcon::     INCBIN "gfx/icons/shroomish.2bpp"
+BreloomIcon::       INCBIN "gfx/icons/breloom.2bpp"
+MakuhitaIcon::      INCBIN "gfx/icons/makuhita.2bpp"
+HariyamaIcon::      INCBIN "gfx/icons/hariyama.2bpp"
+SkittyIcon::        INCBIN "gfx/icons/skitty.2bpp"
+MawileIcon::        INCBIN "gfx/icons/mawile.2bpp"
+AronIcon::          INCBIN "gfx/icons/aron.2bpp"
+LaironIcon::        INCBIN "gfx/icons/lairon.2bpp"
+AggronIcon::        INCBIN "gfx/icons/aggron.2bpp"
+MedititeIcon::      INCBIN "gfx/icons/meditite.2bpp"
+MedichamIcon::      INCBIN "gfx/icons/medicham.2bpp"
+CarvanhaIcon::      INCBIN "gfx/icons/carvanha.2bpp"
+SharpedoIcon::      INCBIN "gfx/icons/sharpedo.2bpp"
+NumelIcon::         INCBIN "gfx/icons/numel.2bpp"
+CameruptIcon::      INCBIN "gfx/icons/camerupt.2bpp"
+TorkoalIcon::       INCBIN "gfx/icons/torkoal.2bpp"
+TrapinchIcon::      INCBIN "gfx/icons/trapinch.2bpp"
+VibravaIcon::       INCBIN "gfx/icons/vibrava.2bpp"
+FlygonIcon::        INCBIN "gfx/icons/flygon.2bpp"
+SwabluIcon::        INCBIN "gfx/icons/swablu.2bpp"
+AltariaIcon::       INCBIN "gfx/icons/altaria.2bpp"
+ZangooseIcon::      INCBIN "gfx/icons/zangoose.2bpp"
+SeviperIcon::       INCBIN "gfx/icons/seviper.2bpp"
+LunatoneIcon::      INCBIN "gfx/icons/lunatone.2bpp"
+SolrockIcon::       INCBIN "gfx/icons/solrock.2bpp"
+BarboachIcon::      INCBIN "gfx/icons/barboach.2bpp"
+WhiscashIcon::      INCBIN "gfx/icons/whiscash.2bpp"
+CorphishIcon::      INCBIN "gfx/icons/corphish.2bpp"
+CrawdauntIcon::     INCBIN "gfx/icons/crawdaunt.2bpp"
+LileepIcon::        INCBIN "gfx/icons/lileep.2bpp"
+CradilyIcon::       INCBIN "gfx/icons/cradily.2bpp"
+AnorithIcon::       INCBIN "gfx/icons/anorith.2bpp"
+ArmaldoIcon::       INCBIN "gfx/icons/armaldo.2bpp"
+FeebasIcon::        INCBIN "gfx/icons/feebas.2bpp"
+MiloticIcon::       INCBIN "gfx/icons/milotic.2bpp"
+ShuppetIcon::       INCBIN "gfx/icons/shuppet.2bpp"
+BanetteIcon::       INCBIN "gfx/icons/banette.2bpp"
+DuskullIcon::       INCBIN "gfx/icons/duskull.2bpp"
+DusclopsIcon::      INCBIN "gfx/icons/dusclops.2bpp"
+DusknoirIcon::      INCBIN "gfx/icons/dusknoir.2bpp"
+AbsolIcon::         INCBIN "gfx/icons/absol.2bpp"
+SnoruntIcon::       INCBIN "gfx/icons/snorunt.2bpp"
+GlalieIcon::        INCBIN "gfx/icons/glalie.2bpp"
+FroslassIcon::      INCBIN "gfx/icons/froslass.2bpp"
+SphealIcon::        INCBIN "gfx/icons/spheal.2bpp"
+SealeoIcon::        INCBIN "gfx/icons/sealeo.2bpp"
+WalreinIcon::       INCBIN "gfx/icons/walrein.2bpp"
+BagonIcon::         INCBIN "gfx/icons/bagon.2bpp"
+ShelgonIcon::       INCBIN "gfx/icons/shelgon.2bpp"
+SalamenceIcon::     INCBIN "gfx/icons/salamence.2bpp"
+BeldumIcon::        INCBIN "gfx/icons/beldum.2bpp"
+MetangIcon::        INCBIN "gfx/icons/metang.2bpp"
+MetagrossIcon::     INCBIN "gfx/icons/metagross.2bpp"
+RegirockIcon::      INCBIN "gfx/icons/regirock.2bpp"
+RegiceIcon::        INCBIN "gfx/icons/regice.2bpp"
+RegisteelIcon::     INCBIN "gfx/icons/registeel.2bpp"
+KyogreIcon::        INCBIN "gfx/icons/kyogre.2bpp"
+GroudonIcon::       INCBIN "gfx/icons/groudon.2bpp"
+RayquazaIcon::      INCBIN "gfx/icons/rayquaza.2bpp"
+ShinxIcon::         INCBIN "gfx/icons/shinx.2bpp"
+LuxioIcon::         INCBIN "gfx/icons/luxio.2bpp"
+LuxrayIcon::        INCBIN "gfx/icons/luxray.2bpp"
+CranidosIcon::      INCBIN "gfx/icons/cranidos.2bpp"
+RampardosIcon::     INCBIN "gfx/icons/rampardos.2bpp"
+ShieldonIcon::      INCBIN "gfx/icons/shieldon.2bpp"
+BastiodonIcon::     INCBIN "gfx/icons/bastiodon.2bpp"
+AmbipomIcon::       INCBIN "gfx/icons/ambipom.2bpp"
+MismagiusIcon::     INCBIN "gfx/icons/mismagius.2bpp"
+HonchkrowIcon::     INCBIN "gfx/icons/honchkrow.2bpp"
+BronzorIcon::       INCBIN "gfx/icons/bronzor.2bpp"
+BronzongIcon::      INCBIN "gfx/icons/bronzong.2bpp"
+RioluIcon::         INCBIN "gfx/icons/riolu.2bpp"
+LucarioIcon::       INCBIN "gfx/icons/lucario.2bpp"
+CroagunkIcon::      INCBIN "gfx/icons/croagunk.2bpp"
+ToxicroakIcon::     INCBIN "gfx/icons/toxicroak.2bpp"
+SnoverIcon::        INCBIN "gfx/icons/snover.2bpp"
+AbomasnowIcon::     INCBIN "gfx/icons/abomasnow.2bpp"
+WeavileIcon::       INCBIN "gfx/icons/weavile.2bpp"
+MagnezoneIcon::     INCBIN "gfx/icons/magnezone.2bpp"
+LickilickyIcon::    INCBIN "gfx/icons/lickilicky.2bpp"
+RhyperiorIcon::     INCBIN "gfx/icons/rhyperior.2bpp"
+TangrowthIcon::     INCBIN "gfx/icons/tangrowth.2bpp"
+TogekissIcon::      INCBIN "gfx/icons/togekiss.2bpp"
+YanmegaIcon::       INCBIN "gfx/icons/yanmega.2bpp"
+LeafeonIcon::       INCBIN "gfx/icons/leafeon.2bpp"
+GlaceonIcon::       INCBIN "gfx/icons/glaceon.2bpp"
+GliscorIcon::       INCBIN "gfx/icons/gliscor.2bpp"
+MamoswineIcon::     INCBIN "gfx/icons/mamoswine.2bpp"
+
+SECTION "Mon Icons 4", ROMX
+
+GibleIcon::         INCBIN "gfx/icons/gible.2bpp"
+GabiteIcon::        INCBIN "gfx/icons/gabite.2bpp"
+GarchompIcon::      INCBIN "gfx/icons/garchomp.2bpp"
+SkorupiIcon::       INCBIN "gfx/icons/skorupi.2bpp"
+DrapionIcon::       INCBIN "gfx/icons/drapion.2bpp"
+DelcattyIcon::      INCBIN "gfx/icons/delcatty.2bpp"
+SableyeIcon::       INCBIN "gfx/icons/sableye.2bpp"
+ElectrikeIcon::     INCBIN "gfx/icons/electrike.2bpp"
+ManectricIcon::     INCBIN "gfx/icons/manectric.2bpp"
+RoseliaIcon::       INCBIN "gfx/icons/roselia.2bpp"
+RoseradeIcon::      INCBIN "gfx/icons/roserade.2bpp"
+BaltoyIcon::        INCBIN "gfx/icons/baltoy.2bpp"
+ClaydolIcon::       INCBIN "gfx/icons/claydol.2bpp"
+BunearyIcon::       INCBIN "gfx/icons/buneary.2bpp"
+LopunnyIcon::       INCBIN "gfx/icons/lopunny.2bpp"
+PorygonZIcon::      INCBIN "gfx/icons/porygonz.2bpp"
+RegigigasIcon::     INCBIN "gfx/icons/regigigas.2bpp"
+
+
+SECTION "bank3", ROMX
+
+INCLUDE "engine/events/checktime.asm"
+INCLUDE "engine/events/specials.asm"
+INCLUDE "engine/math/print_num.asm"
+INCLUDE "engine/pokemon/health.asm"
+INCLUDE "engine/events/overworld.asm"
+INCLUDE "engine/items/items.asm"
+INCLUDE "engine/overworld/player_step.asm"
+INCLUDE "engine/battle/anim_hp_bar.asm"
+INCLUDE "engine/pokemon/move_mon.asm"
+INCLUDE "engine/pokemon/bills_pc_top.asm"
+INCLUDE "engine/pokemon/breedmon_level_growth.asm"
+INCLUDE "engine/events/bug_contest/caught_mon.asm"
+INCLUDE "engine/events/bug_contest/display_stats.asm"
+INCLUDE "engine/items/item_effects.asm"
+INCLUDE "engine/battle_anims/pokeball_wobble.asm"
+INCLUDE "engine/pokemon/knows_move.asm"
+
+
+SECTION "bank4", ROMX
+
+
+SECTION "bank4_2", ROMX
+
+INCLUDE "engine/overworld/time.asm"
+INCLUDE "engine/items/tmhm2.asm"
+INCLUDE "engine/menus/naming_screen.asm"
+INCLUDE "engine/events/misc_scripts.asm"
+INCLUDE "engine/events/heal_machine_anim.asm"
+INCLUDE "engine/events/whiteout.asm"
+INCLUDE "engine/events/forced_movement.asm"
+INCLUDE "engine/events/itemfinder.asm"
+INCLUDE "engine/menus/start_menu.asm"
+INCLUDE "engine/pokemon/mon_menu.asm"
+INCLUDE "engine/overworld/select_menu.asm"
+INCLUDE "engine/events/elevator.asm"
+INCLUDE "engine/events/bug_contest/contest.asm"
+INCLUDE "engine/events/hidden_item.asm"
+INCLUDE "engine/events/std_collision.asm"
+INCLUDE "engine/events/bug_contest/judging.asm"
+INCLUDE "engine/events/pokerus/apply_pokerus_tick.asm"
+INCLUDE "engine/events/bug_contest/contest_2.asm"
+INCLUDE "engine/pokemon/correct_party_errors.asm"
+INCLUDE "engine/math/get_square_root.asm"
+
+
+SECTION "bank5", ROMX
+
+INCLUDE "engine/rtc/rtc.asm"
+INCLUDE "engine/overworld/overworld.asm"
+INCLUDE "engine/overworld/tile_events.asm"
+INCLUDE "engine/menus/save.asm"
+INCLUDE "engine/overworld/spawn_points.asm"
+INCLUDE "engine/overworld/map_setup.asm"
+INCLUDE "engine/events/pokecenter_pc.asm"
+INCLUDE "engine/items/mart.asm"
+INCLUDE "engine/events/money.asm"
+INCLUDE "data/items/marts.asm"
+INCLUDE "engine/events/mom.asm"
+INCLUDE "engine/events/daycare.asm"
+INCLUDE "engine/pokemon/breeding.asm"
+
+
+SECTION "Roofs", ROMX
+
+INCLUDE "engine/tilesets/mapgroup_roofs.asm"
+
+
+SECTION "Clock Reset", ROMX
+
+INCLUDE "engine/rtc/restart_clock.asm"
+
+
+SECTION "bank9", ROMX
+
+INCLUDE "data/text_buffers.asm"
+INCLUDE "engine/menus/menu.asm"
+INCLUDE "engine/items/update_item_description.asm"
+INCLUDE "engine/events/pokepic.asm"
+INCLUDE "engine/overworld/map_objects_2.asm"
+INCLUDE "engine/menus/scrolling_menu.asm"
+INCLUDE "engine/items/switch_items.asm"
+INCLUDE "engine/menus/menu_2.asm"
+INCLUDE "engine/pokemon/mon_submenu.asm"
+INCLUDE "engine/battle/menu.asm"
+INCLUDE "engine/items/buy_sell_toss.asm"
+INCLUDE "engine/menus/trainer_card.asm"
+INCLUDE "engine/events/prof_oaks_pc.asm"
+INCLUDE "engine/overworld/decorations.asm"
+INCLUDE "engine/pokemon/level_up_happiness.asm"
+INCLUDE "engine/battle/read_trainer_dvs.asm"
+INCLUDE "engine/battle/returntobattle_useball.asm"
+INCLUDE "engine/battle/consume_held_item.asm"
+INCLUDE "data/moves/effects.asm"
+INCLUDE "engine/events/kurt_selectquantity_interpretjoypad.asm"
+
+
+SECTION "Battle Menu Graphics", ROMX
+
+INCLUDE "engine/battle/battle_menu_graphic.asm"
+
+
+SECTION "Battle Menu GFX", ROMX
+
+INCLUDE "gfx/battle_menu.asm"
+
+
+SECTION "bankA", ROMX
+
+INCLUDE "engine/overworld/wildmons.asm"
+
+
+SECTION "bankB", ROMX
+
+INCLUDE "engine/battle/trainer_huds.asm"
+INCLUDE "data/trainers/class_names.asm"
+INCLUDE "engine/battle/ai/redundant.asm"
+INCLUDE "engine/events/move_deleter.asm"
+INCLUDE "engine/items/tmhm.asm"
+INCLUDE "engine/pokemon/print_move_description.asm"
+INCLUDE "engine/events/pokerus/pokerus.asm"
+INCLUDE "engine/battle/start_battle.asm"
+INCLUDE "engine/gfx/place_graphic.asm"
+
+
+SECTION "Effect Commands", ROMX
+
+INCLUDE "engine/battle/effect_commands.asm"
+
+
+SECTION "Enemy Trainers", ROMX
+
+INCLUDE "engine/battle/ai/items.asm"
+INCLUDE "engine/battle/ai/scoring.asm"
+INCLUDE "engine/battle/read_trainer_attributes.asm"
+INCLUDE "engine/battle/read_trainer_party.asm"
+
+
+SECTION "Battle Core", ROMX
+
+INCLUDE "engine/battle/core.asm"
+
+
+SECTION "bank10", ROMX
+
+INCLUDE "engine/pokedex/pokedex.asm"
+INCLUDE "data/moves/moves.asm"
+INCLUDE "engine/pokemon/evolve.asm"
+
+
+SECTION "Pokedex Animation", ROMX
+
+INCLUDE "engine/pokedex/pokedex_animation.asm"
+INCLUDE "engine/pokedex/pokedex_detail.asm"
+INCLUDE "gfx/pokemon/dex_animation_plan_pointers.asm"
+INCLUDE "gfx/pokemon/dex_animation_plans.asm"
+INCLUDE "gfx/pokemon/dex_animation_timelines.asm"
+INCLUDE "engine/pokedex/pokedex_animation_timeline.asm"
+INCLUDE "gfx/pokemon/dex_animation_schedules.asm"
+INCLUDE "engine/pokedex/pokedex_animation_schedule.asm"
+
+
+SECTION "bank11", ROMX
+
+INCLUDE "engine/events/fruit_trees.asm"
+INCLUDE "engine/battle/ai/move.asm"
+INCLUDE "engine/pokedex/pokedex_2.asm"
+INCLUDE "engine/pokemon/mail.asm"
+
+
+SECTION "Pack", ROMX
+
+INCLUDE "engine/items/pack.asm"
+
+SECTION "Pack Kris Code", ROMX
+
+INCLUDE "engine/items/pack_kris.asm"
+
+
+SECTION "Crystal Features 1", ROMX
+
+INCLUDE "engine/menus/init_gender.asm"
+
+
+SECTION "Crystal Features 1_2", ROMX
+
+INCLUDE "engine/events/move_tutor.asm"
+INCLUDE "engine/gfx/crystal_layouts.asm"
+INCLUDE "engine/events/celebi.asm"
+INCLUDE "engine/menus/main_menu.asm"
+INCLUDE "engine/pokemon/search_owned.asm"
+INCLUDE "engine/events/buena_menu.asm"
+
+
+SECTION "bank13", ROMX
+
+INCLUDE "engine/tilesets/map_palettes.asm"
+INCLUDE "gfx/tileset_palette_maps.asm"
+INCLUDE "data/collision/collision_permissions.asm"
+INCLUDE "engine/menus/empty_sram.asm"
+INCLUDE "engine/menus/savemenu_copytilemapatonce.asm"
+INCLUDE "engine/events/checksave.asm"
+INCLUDE "data/maps/scenes.asm"
+INCLUDE "engine/overworld/load_map_part.asm"
+INCLUDE "engine/phone/phonering_copytilemapatonce.asm"
+
+
+SECTION "bank13_2", ROMX
+
+INCLUDE "engine/link/link_2.asm"
+INCLUDE "engine/rtc/reset_password.asm"
+INCLUDE "engine/menus/delete_save.asm"
+INCLUDE "data/tilesets.asm"
+INCLUDE "engine/smallflag.asm"
+INCLUDE "engine/gfx/trademon_frontpic.asm"
+INCLUDE "engine/events/pokerus/check_pokerus.asm"
+INCLUDE "engine/events/lucky_number.asm"
+INCLUDE "engine/pokemon/caught_data.asm"
+INCLUDE "engine/pokemon/search_party.asm"
+INCLUDE "engine/gfx/icon_draw.asm"
+INCLUDE "engine/pokemon/stats_screen.asm"
+INCLUDE "engine/events/catch_tutorial.asm"
+INCLUDE "engine/movie/evolution_animation.asm"
+INCLUDE "engine/movie/init_hof_credits.asm"
+INCLUDE "engine/events/battle_tower/get_trainer_class.asm"
+INCLUDE "engine/battle/sliding_intro.asm"
+INCLUDE "mobile/print_opp_message.asm"
+INCLUDE "engine/battle/check_battle_scene.asm"
+INCLUDE "engine/movie/gbc_only.asm"
+INCLUDE "engine/events/poke_seer.asm"
+
+
+SECTION "bank14", ROMX
+
+INCLUDE "engine/pokemon/party_menu.asm"
+INCLUDE "engine/events/poisonstep.asm"
+INCLUDE "engine/events/sweet_scent.asm"
+INCLUDE "engine/events/squirtbottle.asm"
+INCLUDE "engine/events/card_key.asm"
+INCLUDE "engine/events/basement_key.asm"
+INCLUDE "engine/events/sacred_ash.asm"
+INCLUDE "engine/pokemon/tempmon.asm"
+INCLUDE "engine/pokemon/types.asm"
+INCLUDE "engine/pokemon/mon_stats.asm"
+INCLUDE "engine/link/init_list.asm"
+INCLUDE "engine/pokemon/experience.asm"
+INCLUDE "engine/pokemon/switchpartymons.asm"
+INCLUDE "engine/gfx/load_pics.asm"
+INCLUDE "engine/pokemon/move_mon_wo_mail.asm"
+INCLUDE "data/pokemon/base_stats.asm"
+INCLUDE "data/pokemon/names.asm"
+
+
+SECTION "Crystal Phone Text", ROMX
+
+INCLUDE "data/phone/text/irwin_caller.asm"
+INCLUDE "data/phone/text/arnie_caller.asm"
+INCLUDE "data/phone/text/alan_caller.asm"
+INCLUDE "data/phone/text/dana_caller.asm"
+INCLUDE "data/phone/text/chad_caller.asm"
+INCLUDE "data/phone/text/derek_caller.asm"
+INCLUDE "data/phone/text/tully_caller.asm"
+INCLUDE "data/phone/text/brent_caller.asm"
+INCLUDE "data/phone/text/tiffany_caller.asm"
+INCLUDE "data/phone/text/vance_caller.asm"
+INCLUDE "data/phone/text/wilton_caller.asm"
+INCLUDE "data/phone/text/kenji_caller.asm"
+INCLUDE "data/phone/text/parry_caller.asm"
+INCLUDE "data/phone/text/erin_caller.asm"
+
+
+SECTION "bank20", ROMX
+
+INCLUDE "engine/overworld/player_movement.asm"
+INCLUDE "engine/events/engine_flags.asm"
+INCLUDE "engine/overworld/variables.asm"
+INCLUDE "data/text/battle.asm"
+
+
+SECTION "Color", ROMX
+
+INCLUDE "engine/gfx/color.asm"
+
+
+SECTION "Crystal Features 2", ROMX
+
+INCLUDE "engine/events/kurt.asm"
+INCLUDE "engine/gfx/player_gfx.asm"
+INCLUDE "engine/events/unown_walls.asm"
+INCLUDE "engine/events/buena.asm"
+INCLUDE "engine/events/dratini.asm"
+INCLUDE "engine/events/battle_tower/rules.asm"
+
+
+SECTION "bank23", ROMX
+
+INCLUDE "engine/tilesets/timeofday_pals.asm"
+INCLUDE "engine/battle/battle_transition.asm"
+INCLUDE "engine/events/field_moves.asm"
+INCLUDE "engine/events/magnet_train.asm"
+INCLUDE "engine/battle/battlestart_copytilemapatonce.asm"
+INCLUDE "engine/sprite_anims/core.asm"
+INCLUDE "engine/gfx/mon_icons.asm"
+
+
+SECTION "bank24", ROMX
+
+INCLUDE "engine/phone/phone.asm"
+INCLUDE "engine/rtc/timeset.asm"
+INCLUDE "engine/pokegear/pokegear.asm"
+INCLUDE "engine/events/fish.asm"
+INCLUDE "engine/games/slot_machine.asm"
+INCLUDE "data/pokemon/first_stages.asm"
+
+SECTION "Phone Scripts 1", ROMX
+
+INCLUDE "engine/phone/scripts/generic_caller.asm"
+INCLUDE "engine/phone/scripts/jack_gossip.asm"
+INCLUDE "engine/phone/scripts/liz_gossip.asm"
+INCLUDE "engine/phone/scripts/chad_gossip.asm"
+INCLUDE "engine/phone/scripts/brent_gossip.asm"
+INCLUDE "engine/phone/scripts/irwin_gossip.asm"
+INCLUDE "engine/phone/scripts/hangups.asm"
+INCLUDE "engine/phone/scripts/reminders.asm"
+INCLUDE "engine/phone/scripts/hangups_2.asm"
+INCLUDE "engine/phone/scripts/reminders_2.asm"
+INCLUDE "engine/phone/scripts/bike_shop.asm"
+INCLUDE "engine/phone/scripts/buena.asm"
+
+
+SECTION "Phone Text", ROMX
+
+INCLUDE "data/phone/text/anthony_overworld.asm"
+INCLUDE "data/phone/text/todd_overworld.asm"
+INCLUDE "data/phone/text/gina_overworld.asm"
+INCLUDE "data/phone/text/irwin_overworld.asm"
+INCLUDE "data/phone/text/arnie_overworld.asm"
+INCLUDE "data/phone/text/alan_overworld.asm"
+INCLUDE "data/phone/text/dana_overworld.asm"
+INCLUDE "data/phone/text/chad_overworld.asm"
+INCLUDE "data/phone/text/derek_overworld.asm"
+INCLUDE "data/phone/text/tully_overworld.asm"
+INCLUDE "data/phone/text/brent_overworld.asm"
+INCLUDE "data/phone/text/tiffany_overworld.asm"
+INCLUDE "data/phone/text/vance_overworld.asm"
+INCLUDE "data/phone/text/wilton_overworld.asm"
+INCLUDE "data/phone/text/kenji_overworld.asm"
+INCLUDE "data/phone/text/parry_overworld.asm"
+INCLUDE "data/phone/text/erin_overworld.asm"
+
+
+SECTION "bank2E", ROMX
+
+INCLUDE "engine/events/map_name_sign.asm"
+INCLUDE "engine/events/checkforhiddenitems.asm"
+INCLUDE "engine/events/treemons.asm"
+INCLUDE "engine/events/fishing_gfx.asm"
+INCLUDE "engine/pokegear/radio.asm"
+INCLUDE "engine/pokemon/mail_2.asm"
+
+
+SECTION "Phone Scripts 2", ROMX
+
+INCLUDE "engine/events/std_scripts.asm"
+INCLUDE "engine/phone/scripts/unused.asm"
+INCLUDE "engine/phone/scripts/mom.asm"
+INCLUDE "engine/phone/scripts/bill.asm"
+INCLUDE "engine/phone/scripts/elm.asm"
+INCLUDE "engine/phone/scripts/jack.asm"
+INCLUDE "engine/phone/scripts/beverly.asm"
+INCLUDE "engine/phone/scripts/huey.asm"
+INCLUDE "engine/phone/scripts/gaven.asm"
+INCLUDE "engine/phone/scripts/beth.asm"
+INCLUDE "engine/phone/scripts/jose.asm"
+INCLUDE "engine/phone/scripts/reena.asm"
+INCLUDE "engine/phone/scripts/joey.asm"
+INCLUDE "engine/phone/scripts/wade.asm"
+INCLUDE "engine/phone/scripts/ralph.asm"
+INCLUDE "engine/phone/scripts/liz.asm"
+INCLUDE "engine/phone/scripts/anthony.asm"
+INCLUDE "engine/phone/scripts/todd.asm"
+INCLUDE "engine/phone/scripts/gina.asm"
+INCLUDE "engine/phone/scripts/irwin.asm"
+INCLUDE "engine/phone/scripts/arnie.asm"
+INCLUDE "engine/phone/scripts/alan.asm"
+INCLUDE "engine/phone/scripts/dana.asm"
+INCLUDE "engine/phone/scripts/chad.asm"
+INCLUDE "engine/phone/scripts/derek.asm"
+INCLUDE "engine/phone/scripts/tully.asm"
+INCLUDE "engine/phone/scripts/brent.asm"
+INCLUDE "engine/phone/scripts/tiffany.asm"
+INCLUDE "engine/phone/scripts/vance.asm"
+INCLUDE "engine/phone/scripts/wilton.asm"
+INCLUDE "engine/phone/scripts/kenji.asm"
+INCLUDE "engine/phone/scripts/parry.asm"
+INCLUDE "engine/phone/scripts/erin.asm"
+INCLUDE "engine/phone/scripts/generic_callee.asm"
+INCLUDE "engine/events/trainer_scripts.asm"
+
+
+SECTION "Battle Animation GFX 2", ROMX
+
+INCLUDE "gfx/battle_anims_bank2f.asm"
+
+
+SECTION "bank32", ROMX
+
+INCLUDE "engine/battle_anims/bg_effects.asm"
+INCLUDE "gfx/battle_anims.asm"
+
+
+SECTION "Battle Animation Scripts", ROMX
+
+INCLUDE "data/moves/animations.asm"
+
+
+SECTION "Move Animations", ROMX
+
+INCLUDE "engine/battle_anims/anim_commands.asm"
+INCLUDE "engine/battle_anims/core.asm"
+INCLUDE "engine/battle_anims/helpers.asm"
+INCLUDE "engine/battle_anims/extension_frame_oam.asm"
+
+
+SECTION "Pic Animations 1", ROMX
+
+INCLUDE "engine/gfx/pic_animation.asm"
+INCLUDE "gfx/pokemon/anim_pointers.asm"
+INCLUDE "gfx/pokemon/anims.asm"
+INCLUDE "gfx/pokemon/idle_pointers.asm"
+INCLUDE "gfx/pokemon/idles.asm"
+INCLUDE "gfx/pokemon/unown_anim_pointers.asm"
+INCLUDE "gfx/pokemon/unown_anims.asm"
+INCLUDE "gfx/pokemon/unown_idle_pointers.asm"
+INCLUDE "gfx/pokemon/unown_idles.asm"
+
+
+SECTION "Pic Animations 2", ROMX
+
+INCLUDE "gfx/pokemon/frame_pointers.asm"
+INCLUDE "gfx/pokemon/kanto_frames.asm"
+
+
+SECTION "Pic Animations 3", ROMX
+
+INCLUDE "gfx/pokemon/johto_frames.asm"
+INCLUDE "gfx/pokemon/unown_frame_pointers.asm"
+INCLUDE "gfx/pokemon/bitmask_pointers.asm"
+INCLUDE "gfx/pokemon/bitmasks.asm"
+
+
+SECTION "Pic Animations 4", ROMX
+
+INCLUDE "gfx/pokemon/unown_frames.asm"
+INCLUDE "gfx/pokemon/unown_bitmask_pointers.asm"
+INCLUDE "gfx/pokemon/unown_bitmasks.asm"
+ElectrikeFrames: INCLUDE "gfx/pokemon/electrike/frames.asm"
+ManectricFrames: INCLUDE "gfx/pokemon/manectric/frames.asm"
+RoseliaFrames:   INCLUDE "gfx/pokemon/roselia/frames.asm"
+RoseradeFrames:  INCLUDE "gfx/pokemon/roserade/frames.asm"
+CarvanhaFrames:  INCLUDE "gfx/pokemon/carvanha/frames.asm"
+SharpedoFrames:   INCLUDE "gfx/pokemon/sharpedo/frames.asm"
+NumelFrames:      INCLUDE "gfx/pokemon/numel/frames.asm"
+CameruptFrames:   INCLUDE "gfx/pokemon/camerupt/frames.asm"
+TorkoalFrames:    INCLUDE "gfx/pokemon/torkoal/frames.asm"
+TrapinchFrames:   INCLUDE "gfx/pokemon/trapinch/frames.asm"
+VibravaFrames:    INCLUDE "gfx/pokemon/vibrava/frames.asm"
+FlygonFrames:     INCLUDE "gfx/pokemon/flygon/frames.asm"
+SwabluFrames:     INCLUDE "gfx/pokemon/swablu/frames.asm"
+AltariaFrames:    INCLUDE "gfx/pokemon/altaria/frames.asm"
+ZangooseFrames:   INCLUDE "gfx/pokemon/zangoose/frames.asm"
+SeviperFrames:    INCLUDE "gfx/pokemon/seviper/frames.asm"
+LunatoneFrames:   INCLUDE "gfx/pokemon/lunatone/frames.asm"
+SolrockFrames:    INCLUDE "gfx/pokemon/solrock/frames.asm"
+BarboachFrames:   INCLUDE "gfx/pokemon/barboach/frames.asm"
+WhiscashFrames:   INCLUDE "gfx/pokemon/whiscash/frames.asm"
+CorphishFrames:   INCLUDE "gfx/pokemon/corphish/frames.asm"
+CrawdauntFrames:  INCLUDE "gfx/pokemon/crawdaunt/frames.asm"
+BaltoyFrames:     INCLUDE "gfx/pokemon/baltoy/frames.asm"
+ClaydolFrames:    INCLUDE "gfx/pokemon/claydol/frames.asm"
+LileepFrames:     INCLUDE "gfx/pokemon/lileep/frames.asm"
+CradilyFrames:    INCLUDE "gfx/pokemon/cradily/frames.asm"
+AnorithFrames:    INCLUDE "gfx/pokemon/anorith/frames.asm"
+ArmaldoFrames:    INCLUDE "gfx/pokemon/armaldo/frames.asm"
+FeebasFrames:     INCLUDE "gfx/pokemon/feebas/frames.asm"
+MiloticFrames:    INCLUDE "gfx/pokemon/milotic/frames.asm"
+ShuppetFrames:    INCLUDE "gfx/pokemon/shuppet/frames.asm"
+BanetteFrames:    INCLUDE "gfx/pokemon/banette/frames.asm"
+DuskullFrames:    INCLUDE "gfx/pokemon/duskull/frames.asm"
+DusclopsFrames:   INCLUDE "gfx/pokemon/dusclops/frames.asm"
+DusknoirFrames:   INCLUDE "gfx/pokemon/dusknoir/frames.asm"
+AbsolFrames:      INCLUDE "gfx/pokemon/absol/frames.asm"
+SnoruntFrames:    INCLUDE "gfx/pokemon/snorunt/frames.asm"
+GlalieFrames:     INCLUDE "gfx/pokemon/glalie/frames.asm"
+FroslassFrames:   INCLUDE "gfx/pokemon/froslass/frames.asm"
+SphealFrames:     INCLUDE "gfx/pokemon/spheal/frames.asm"
+SealeoFrames:     INCLUDE "gfx/pokemon/sealeo/frames.asm"
+WalreinFrames:    INCLUDE "gfx/pokemon/walrein/frames.asm"
+BagonFrames:      INCLUDE "gfx/pokemon/bagon/frames.asm"
+ShelgonFrames:    INCLUDE "gfx/pokemon/shelgon/frames.asm"
+SalamenceFrames:  INCLUDE "gfx/pokemon/salamence/frames.asm"
+BeldumFrames:     INCLUDE "gfx/pokemon/beldum/frames.asm"
+MetangFrames:     INCLUDE "gfx/pokemon/metang/frames.asm"
+MetagrossFrames:  INCLUDE "gfx/pokemon/metagross/frames.asm"
+RegirockFrames:   INCLUDE "gfx/pokemon/regirock/frames.asm"
+RegiceFrames:     INCLUDE "gfx/pokemon/regice/frames.asm"
+RegisteelFrames:  INCLUDE "gfx/pokemon/registeel/frames.asm"
+KyogreFrames:     INCLUDE "gfx/pokemon/kyogre/frames.asm"
+GroudonFrames:    INCLUDE "gfx/pokemon/groudon/frames.asm"
+RayquazaFrames:   INCLUDE "gfx/pokemon/rayquaza/frames.asm"
+ShinxFrames:      INCLUDE "gfx/pokemon/shinx/frames.asm"
+LuxioFrames:      INCLUDE "gfx/pokemon/luxio/frames.asm"
+LuxrayFrames:     INCLUDE "gfx/pokemon/luxray/frames.asm"
+CranidosFrames:   INCLUDE "gfx/pokemon/cranidos/frames.asm"
+RampardosFrames:  INCLUDE "gfx/pokemon/rampardos/frames.asm"
+ShieldonFrames:   INCLUDE "gfx/pokemon/shieldon/frames.asm"
+BastiodonFrames:  INCLUDE "gfx/pokemon/bastiodon/frames.asm"
+AmbipomFrames:    INCLUDE "gfx/pokemon/ambipom/frames.asm"
+BunearyFrames:    INCLUDE "gfx/pokemon/buneary/frames.asm"
+LopunnyFrames:    INCLUDE "gfx/pokemon/lopunny/frames.asm"
+MismagiusFrames:  INCLUDE "gfx/pokemon/mismagius/frames.asm"
+HonchkrowFrames:  INCLUDE "gfx/pokemon/honchkrow/frames.asm"
+BronzorFrames:    INCLUDE "gfx/pokemon/bronzor/frames.asm"
+BronzongFrames:   INCLUDE "gfx/pokemon/bronzong/frames.asm"
+GibleFrames:      INCLUDE "gfx/pokemon/gible/frames.asm"
+GabiteFrames:     INCLUDE "gfx/pokemon/gabite/frames.asm"
+GarchompFrames:   INCLUDE "gfx/pokemon/garchomp/frames.asm"
+RioluFrames:      INCLUDE "gfx/pokemon/riolu/frames.asm"
+LucarioFrames:    INCLUDE "gfx/pokemon/lucario/frames.asm"
+SkorupiFrames:    INCLUDE "gfx/pokemon/skorupi/frames.asm"
+DrapionFrames:    INCLUDE "gfx/pokemon/drapion/frames.asm"
+CroagunkFrames:   INCLUDE "gfx/pokemon/croagunk/frames.asm"
+ToxicroakFrames:  INCLUDE "gfx/pokemon/toxicroak/frames.asm"
+SnoverFrames:     INCLUDE "gfx/pokemon/snover/frames.asm"
+AbomasnowFrames:  INCLUDE "gfx/pokemon/abomasnow/frames.asm"
+WeavileFrames:    INCLUDE "gfx/pokemon/weavile/frames.asm"
+MagnezoneFrames:  INCLUDE "gfx/pokemon/magnezone/frames.asm"
+LickilickyFrames: INCLUDE "gfx/pokemon/lickilicky/frames.asm"
+RhyperiorFrames:  INCLUDE "gfx/pokemon/rhyperior/frames.asm"
+TangrowthFrames:  INCLUDE "gfx/pokemon/tangrowth/frames.asm"
+TogekissFrames:   INCLUDE "gfx/pokemon/togekiss/frames.asm"
+YanmegaFrames:    INCLUDE "gfx/pokemon/yanmega/frames.asm"
+LeafeonFrames:    INCLUDE "gfx/pokemon/leafeon/frames.asm"
+GlaceonFrames:    INCLUDE "gfx/pokemon/glaceon/frames.asm"
+GliscorFrames:    INCLUDE "gfx/pokemon/gliscor/frames.asm"
+MamoswineFrames:  INCLUDE "gfx/pokemon/mamoswine/frames.asm"
+PorygonZFrames:   INCLUDE "gfx/pokemon/porygonz/frames.asm"
+RegigigasFrames:  INCLUDE "gfx/pokemon/regigigas/frames.asm"
+
+INCLUDE "gfx/pokemon/custom_bitmasks.asm"
+
+
+SECTION "bank38", ROMX
+
+INCLUDE "engine/games/card_flip.asm"
+INCLUDE "engine/games/unown_puzzle.asm"
+INCLUDE "engine/games/memory_game.asm"
+INCLUDE "engine/pokemon/bills_pc.asm"
+
+
+SECTION "bank39", ROMX
+
+INCLUDE "engine/menus/options_menu.asm"
+INCLUDE "engine/movie/splash.asm"
+INCLUDE "engine/movie/intro.asm"
+
+
+SECTION "bank3E", ROMX
+
+INCLUDE "engine/gfx/load_font.asm"
+INCLUDE "engine/link/time_capsule.asm"
+INCLUDE "engine/events/name_rater.asm"
+INCLUDE "engine/events/play_slow_cry.asm"
+INCLUDE "engine/pokedex/new_pokedex_entry.asm"
+INCLUDE "engine/link/time_capsule_2.asm"
+INCLUDE "engine/pokedex/unown_dex.asm"
+INCLUDE "engine/events/magikarp.asm"
+INCLUDE "engine/battle/hidden_power.asm"
+INCLUDE "engine/battle/misc.asm"
+
+
+SECTION "Battle Move Info GFX", ROMX
+
+INCLUDE "gfx/battle_move_info_gfx.asm"
+
+
+SECTION "Footprints", ROMX
+
+INCLUDE "gfx/footprints.asm"
+
+
+SECTION "bank3F", ROMX
+
+INCLUDE "engine/tilesets/tileset_anims.asm"
+INCLUDE "engine/events/npc_trade.asm"
+INCLUDE "engine/events/mom_phone.asm"
+
+
+SECTION "Apricorn Box", ROMX
+
+INCLUDE "engine/items/apricorn_box.asm"
+
+
+SECTION "Battle Animation Extensions", ROMX
+
+INCLUDE "engine/battle_anims/extensions.asm"
+
+
+SECTION "Battle Animation Pointers", ROMX, BANK[$3f]
+
+INCLUDE "data/moves/animation_pointers.asm"
+
+
+SECTION "TMHM Case", ROMX
+
+INCLUDE "engine/items/tmhm_case.asm"
+
+
+SECTION "mobile40", ROMX
+
+INCLUDE "mobile/mobile_40_stubs.asm"
+
+
+SECTION "bank41", ROMX
+
+INCLUDE "engine/gfx/dma_transfer.asm"
+INCLUDE "gfx/emotes.asm"
+INCLUDE "engine/overworld/warp_connection.asm"
+INCLUDE "engine/battle/used_move_text.asm"
+INCLUDE "mobile/mobile_41.asm"
+INCLUDE "engine/gfx/load_overworld_font.asm"
+
+
+SECTION "Title", ROMX
+
+INCLUDE "engine/movie/title.asm"
+
+
+SECTION "mobile45", ROMX
+
+INCLUDE "mobile/mobile_45_2.asm"
+INCLUDE "mobile/mobile_45_stadium.asm"
+
+
+SECTION "mobile46", ROMX
+
+INCLUDE "mobile/mobile_46.asm"
+
+
+SECTION "Battle Tower", ROMX
+
+INCLUDE "engine/events/battle_tower/trainer_text.asm"
+
+
+SECTION "bank5B", ROMX
+
+INCLUDE "engine/link/link_trade.asm"
+INCLUDE "engine/link/link.asm"
+INCLUDE "engine/link/serial_exchange.asm"
+INCLUDE "engine/battle/link_result.asm"
+
+
+SECTION "mobile5C", ROMX
+
+INCLUDE "mobile/mobile_5c.asm"
+
+
+SECTION "Crystal Phone Text 2", ROMX
+
+INCLUDE "data/phone/text/bike_shop.asm"
+INCLUDE "data/phone/text/jack_caller.asm"
+INCLUDE "data/phone/text/beverly_caller.asm"
+INCLUDE "data/phone/text/huey_caller.asm"
+INCLUDE "data/phone/text/gaven_caller.asm"
+INCLUDE "data/phone/text/beth_caller.asm"
+INCLUDE "data/phone/text/jose_caller.asm"
+INCLUDE "data/phone/text/reena_caller.asm"
+INCLUDE "data/phone/text/joey_caller.asm"
+INCLUDE "data/phone/text/wade_caller.asm"
+INCLUDE "data/phone/text/ralph_caller.asm"
+INCLUDE "data/phone/text/liz_caller.asm"
+INCLUDE "data/phone/text/anthony_caller.asm"
+INCLUDE "data/phone/text/todd_caller.asm"
+INCLUDE "data/phone/text/gina_caller.asm"
+
+
+SECTION "UpdateBattleHUDs", ROMX
+
+INCLUDE "engine/battle/update_battle_huds.asm"
+
+
+SECTION "mobile5F", ROMX
+
+INCLUDE "mobile/mobile_5f.asm"
+
+
+SECTION "Phone Text 2", ROMX
+
+INCLUDE "data/text/std_text.asm"
+INCLUDE "data/phone/text/jack_overworld.asm"
+INCLUDE "data/phone/text/beverly_overworld.asm"
+INCLUDE "data/phone/text/huey_overworld.asm"
+INCLUDE "data/phone/text/gaven_overworld.asm"
+INCLUDE "data/phone/text/beth_overworld.asm"
+INCLUDE "data/phone/text/jose_overworld.asm"
+INCLUDE "data/phone/text/reena_overworld.asm"
+INCLUDE "data/phone/text/joey_overworld.asm"
+INCLUDE "data/phone/text/wade_overworld.asm"
+INCLUDE "data/phone/text/ralph_overworld.asm"
+INCLUDE "data/phone/text/liz_overworld.asm"
+
+
+SECTION "Special Phone Text", ROMX
+
+INCLUDE "data/phone/text/mom.asm"
+INCLUDE "data/phone/text/bill.asm"
+INCLUDE "data/phone/text/elm.asm"
+INCLUDE "data/phone/text/jack_callee.asm"
+INCLUDE "data/phone/text/beverly_callee.asm"
+INCLUDE "data/phone/text/huey_callee.asm"
+INCLUDE "data/phone/text/unknown_callee.asm"
+INCLUDE "data/phone/text/gaven_callee.asm"
+INCLUDE "data/phone/text/beth_callee.asm"
+INCLUDE "data/phone/text/jose_callee.asm"
+INCLUDE "data/phone/text/reena_callee.asm"
+INCLUDE "data/phone/text/joey_callee.asm"
+INCLUDE "data/phone/text/wade_callee.asm"
+INCLUDE "data/phone/text/ralph_callee.asm"
+INCLUDE "data/phone/text/liz_callee.asm"
+INCLUDE "data/phone/text/anthony_callee.asm"
+INCLUDE "data/phone/text/todd_callee.asm"
+INCLUDE "data/phone/text/gina_callee.asm"
+INCLUDE "data/phone/text/irwin_callee.asm"
+INCLUDE "data/phone/text/arnie_callee.asm"
+INCLUDE "data/phone/text/alan_callee.asm"
+INCLUDE "data/phone/text/dana_callee.asm"
+INCLUDE "data/phone/text/chad_callee.asm"
+INCLUDE "data/phone/text/derek_callee.asm"
+INCLUDE "data/phone/text/tully_callee.asm"
+INCLUDE "data/phone/text/brent_callee.asm"
+INCLUDE "data/phone/text/tiffany_callee.asm"
+INCLUDE "data/phone/text/vance_callee.asm"
+INCLUDE "data/phone/text/wilton_callee.asm"
+INCLUDE "data/phone/text/kenji_callee.asm"
+INCLUDE "data/phone/text/parry_callee.asm"
+INCLUDE "data/phone/text/erin_callee.asm"
+INCLUDE "data/phone/text/unused.asm"
+
+
+SECTION "Miscellaneous Text", ROMX
+
+INCLUDE "data/items/names.asm"
+INCLUDE "engine/items/print_item_description.asm"
+INCLUDE "data/moves/names.asm"
+INCLUDE "engine/overworld/landmarks.asm"
+
+
+SECTION "bank77", ROMX
+
+INCLUDE "engine/rtc/print_hours_mins.asm"
+INCLUDE "engine/events/diploma.asm"
+INCLUDE "engine/pokedex/pokedex_3.asm"
+INCLUDE "engine/events/catch_tutorial_input.asm"
+INCLUDE "engine/pokegear/townmap_convertlinebreakcharacters.asm"
+
+
+SECTION "Pokedex Order", ROMX
+
+INCLUDE "engine/pokedex/order.asm"
+
+
+SECTION "European Mail", ROMX
+
+INCLUDE "engine/pokemon/european_mail.asm"
+
+
+SECTION "Debug Room", ROMX, BANK[$43]
+
+if DEF(_DEBUG)
+INCLUDE "engine/debug/debug_room.asm"
+endc
+
+
+; Reserved for battle animation function migration.
+SECTION "Battle Animation Function Bank", ROMX, BANK[$78]
+
+INCLUDE "engine/battle_anims/functions.asm"
+INCLUDE "engine/battle_anims/extension_functions.asm"
+
+
+SECTION "Battle Core Extensions", ROMX, BANK[$7B]
+
+INCLUDE "data/moves/attributes.asm"
+INCLUDE "data/pokemon/abilities.asm"
+INCLUDE "data/abilities/names.asm"
+INCLUDE "data/abilities/descriptions.asm"
+INCLUDE "engine/battle/effect_command_extensions.asm"
+
+
+SECTION "Battle Tower Trainer Data", ROMX
+
+INCLUDE "data/battle_tower/trainer_text.asm"
+INCLUDE "data/battle_tower/unknown.asm"
+
+
+SECTION "Battle Command Pointers", ROMX
+
+INCLUDE "data/battle/effect_command_pointers.asm"
+
+
+SECTION "Crystal Events", ROMX
+
+INCLUDE "engine/events/battle_tower/load_trainer.asm"
+INCLUDE "engine/events/odd_egg.asm"
+INCLUDE "engine/events/poisonstep_pals.asm"
+INCLUDE "engine/events/repel.asm"
+
+SECTION "16-bit ID stuff", ROMX
+
+INCLUDE "engine/16/table_functions.asm"
+
+; own section
+INCLUDE "data/trainers/parties.asm"

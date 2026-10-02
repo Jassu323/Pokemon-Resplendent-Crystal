@@ -193,7 +193,13 @@ int main(int argc, char **argv)
             hex(map, sizeof(map)); printf(",\"attrs\":"); hex(attrs, sizeof(attrs));
             printf(",\"palettes\":"); hex(gb.background_palettes_data, 64);
             printf(",\"border_gfx\":"); hex(gb.vram + 0x1710, 10 * 16);
-            printf(",\"type_gfx\":"); hex(gb.vram + 0x3640, 8 * 16); puts("}");
+            unsigned type_cell = 7 * 21 + 9, foot_cell = 21 + 18;
+            unsigned type_address = 0x1000 + (int8_t)map[type_cell] * 16;
+            unsigned foot_address = 0x1000 + (int8_t)map[foot_cell] * 16;
+            if (attrs[type_cell] & 8) type_address += 0x2000;
+            if (attrs[foot_cell] & 8) foot_address += 0x2000;
+            printf(",\"type_gfx\":"); hex(gb.vram + type_address, 8 * 16);
+            printf(",\"footprint_gfx\":"); hex(gb.vram + foot_address, 4 * 16); puts("}");
         } else if (!strcmp(line, "rawcolor\n")) {
             GB_set_color_correction_mode(&gb, GB_COLOR_CORRECTION_DISABLED);
             puts("{\"event\":\"ok\"}");

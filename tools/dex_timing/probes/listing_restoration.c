@@ -20,6 +20,23 @@ static void restoration_hex(const uint8_t *data, unsigned length)
     fputc('"', restoration_log);
 }
 
+#ifdef DEX_INTERNAL_TRANSITION_TRACE
+static uint32_t restoration_pixel_hash(unsigned x0, unsigned y0, unsigned x1, unsigned y1)
+{
+    uint32_t hash = 2166136261u;
+    for (unsigned y = y0; y < y1; y++) {
+        for (unsigned x = x0; x < x1; x++) {
+            uint32_t pixel = pixels[y * 160 + x];
+            for (unsigned shift = 0; shift < 24; shift += 8) {
+                hash ^= (pixel >> shift) & 255;
+                hash *= 16777619u;
+            }
+        }
+    }
+    return hash;
+}
+#endif
+
 static void restoration_snapshot(const char *kind, const char *phase, bool full)
 {
     if (!restoration_log) return;
@@ -75,6 +92,13 @@ static void restoration_snapshot(const char *kind, const char *phase, bool full)
     fprintf(restoration_log, ",\"grid_palettes\":"); restoration_hex(gb.ram + R_wPokedexGridIconPalettes - 0xc000, 9);
     fprintf(restoration_log, ",\"oam\":"); restoration_hex(gb.oam, 160);
     fprintf(restoration_log, ",\"shadow_oam\":"); restoration_hex(gb.ram + R_wShadowOAM - 0xc000, 160);
+#ifdef DEX_INTERNAL_TRANSITION_TRACE
+    bool black = true;
+    for (unsigned i = 0; i < 160 * 144 && black; i++) black = (pixels[i] & 0xffffff) == 0;
+    fprintf(restoration_log, ",\"black\":%u,\"header_hash\":%u,\"front_hash\":%u",
+            black, restoration_pixel_hash(60, 0, 152, 64),
+            restoration_pixel_hash(8, 8, 56, 64));
+#endif
     if (full) {
         fprintf(restoration_log, ",\"vram\":"); restoration_hex(gb.vram, 0x4000);
     }
@@ -85,7 +109,8 @@ static void restoration_observe(unsigned bank, unsigned pc)
 {
     /* Optional synthetic CPU-stall stress, separate from normal-input replays.
      * Advance the actual core's devices without editing ROM, RAM or registers. */
-    if (restoration_admission_delay && byte(R_wPokedexOwnerTransition) == 2) {
+    unsigned owner = byte(R_wPokedexOwnerTransition);
+    if (restoration_admission_delay && (owner == 2 || owner == 3)) {
         for (unsigned i = 0; i < sizeof(restoration_points) / sizeof(*restoration_points); i++) {
             if (bank == restoration_points[i].bank && pc == restoration_points[i].pc &&
                 !strcmp(restoration_points[i].name, "owner_dispatch")) {

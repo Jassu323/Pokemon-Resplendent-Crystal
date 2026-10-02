@@ -1,0 +1,666 @@
+Publication:
+
+Breakpoint 1: PC = $5ea5
+  ->5ea5: LDH a, [rSVBK & $FF] ; =$70
+    5ea7: PUSH af
+    5ea8: LDH a, [rVBK & $FF] ; =$4f
+    5eaa: PUSH af
+    5eab: LD a, $03
+
+registers:
+AF  = $00c0 (--NZ)
+BC  = $6200
+DE  = $0007
+HL  = $c72f
+SP  = $c0af
+PC  = $5ea5
+IME = Disabled
+
+backtrace:
+  1. $77:$5ea5
+  2. $77:$5cfb
+  3. $00:$02bb
+  4. $00:$029a
+  5. $00:$047f
+  6. $10:$4036
+  7. $00:$29e9
+  8. $04:$550f
+  9. $04:$5202
+ 10. $00:$29e9
+ 11. $25:$6e15
+ 12. $25:$6c9a
+ 13. $25:$6c52
+ 14. $00:$29e9
+ 15. $25:$67ac
+ 16. $25:$679b
+ 17. $25:$677f
+ 18. $25:$66ba
+ 19. $00:$29e9
+ 20. $01:$5e25
+ 21. $00:$29e9
+ 22. $12:$4b45
+ 23. $12:$49ee
+ 24. $00:$29e9
+ 25. $01:$5b00
+
+x/27 $0:$c72e:
+00:c72e: 13 2f 00 ff 0a 00 00 ff ff 00 02 62 07 00 00 90 
+00:c73e: f1 4a 60 d8 00 86 00 86 31 5c 52 
+
+x/139 $0:$c758:
+00:c758: d7 06 13 00 00 01 00 00 00 00 00 ff 0f 00 02 0f 
+00:c768: 00 86 86 86 53 00 00 02 05 15 5d 7c 00 00 00 00 
+00:c778: 61 4c 61 4c 61 4c 61 4c 61 4c 53 40 53 4d 15 01 
+00:c788: 00 00 5d 7c 5d 7d 5d 85 5d 85 5d 85 5d 85 86 00 
+00:c798: 81 01 00 62 61 4c 61 4c 61 4c 61 4c 61 4c 61 4c 
+00:c7a8: 86 00 15 01 00 00 5d 1e 5d 1f 5d 36 5d 37 5d 37 
+00:c7b8: 5d 37 79 00 15 01 00 00 5d 3d 5d 3e 5d 52 5d 52 
+00:c7c8: 5d 52 5d 52 7f 00 15 01 00 00 5d 58 5d 59 5d 75 
+00:c7d8: 5d 76 5d 76 5d 76 85 00 55 4c 00 
+
+x/4 $0:$ff04:
+00:ff04: 44 ff 38 fe 
+
+print/x [$ff0f]:
+=$f0
+
+print/x [$ffff]:
+=$f
+
+print/x [$ff9b]:
+=$61
+
+print/x [$ff44]:
+=$91
+
+print/x [$ff41]:
+=$89
+
+print/x [$ff4f]:
+=$fe
+
+print/x [$ff70]:
+=$f9
+
+x/6 $0:$ffee:
+00:ffee: 8f 40 d0 01 f8 01 
+
+x/8 $4:$dff4:
+04:dff4: 1c dc 01 c2 54 00 d2 c8 
+
+x/2 $0:$c6dc:
+00:c6dc: 00 00 
+
+x/1 $0:$cfb2:
+00:cfb2: 07 
+
+x/1 $0:$cfbc:
+00:cfbc: 01 
+
+x/1 $0:$c727:
+00:c727: 01 
+
+x/1 $0:$cf63:
+00:cf63: 03 
+
+x/2 $0:$ff9d:
+00:ff9d: 77 07 
+
+x/1 $0:$ffaa:
+00:ffaa: 01 
+
+x/1 $0:$ffd4:
+00:ffd4: 00 
+
+x/1 $0:$ffd8:
+00:ffd8: 00 
+
+x/1 $0:$ffc6:
+00:ffc6: 00 
+
+x/1 $2:$d184:
+02:d184: a2 
+
+x/2 $2:$d18f:
+02:d18f: b6 62 
+
+print/x [$ff40]:
+=$e3
+
+print/x [$ff43]:
+=$5
+
+print/x [$ff4b]:
+=$a7
+
+print/x [$ff4d]:
+=$7e
+
+ticks:
+T-cycles: 71629084
+M-cycles: 17907271
+Absolute 8MHz ticks: 143258168
+Tick count reset.
+
+lcd:
+LCDC:
+    LCD enabled: Enabled
+    Object priority flags: Enabled
+    Objects: Enabled
+    Object size: 8x8
+    Background tilemap: $9800
+    Background and Window Tileset: $8800
+    Window: Enabled
+    Window tilemap: $9C00
+
+STAT:
+    Current mode: Mode 1, V-Blank
+    LYC flag: Off
+    H-Blank interrupt: Enabled
+    V-Blank interrupt: Disabled
+    OAM interrupt: Disabled
+    LYC interrupt: Disabled
+
+Current line: 145
+Current state: Sleeping (300 cycles to next event)
+LY: 145
+LYC: 0
+Window position: 160, 0
+Interrupt line: Off
+Background shifter size: 3
+Background fetcher state: High data (2/2)
+
+-----
+
+Stage Entry:
+
+Breakpoint 1: PC = $6483
+  ->6483: LD hl, $c72f
+    6486: BIT [hl], 0
+    6488: RET z
+    6489: BIT [hl], 2
+    648b: RET nz
+
+registers:
+AF  = $00a0 (-H-Z)
+BC  = $0a03
+DE  = $9a2f
+HL  = $c72f
+SP  = $c0b7
+PC  = $6483
+IME = Enabled
+
+backtrace:
+  1. $a0:$6483
+  2. $a0:$673f
+  3. $a0:$6a44
+  4. $00:$29e9
+  5. $10:$43d9
+  6. $10:$4033
+  7. $00:$29e9
+  8. $04:$550f
+  9. $04:$5202
+ 10. $00:$29e9
+ 11. $25:$6e15
+ 12. $25:$6c9a
+ 13. $25:$6c52
+ 14. $00:$29e9
+ 15. $25:$67ac
+ 16. $25:$679b
+ 17. $25:$677f
+ 18. $25:$66ba
+ 19. $00:$29e9
+ 20. $01:$5e25
+ 21. $00:$29e9
+ 22. $12:$4b45
+ 23. $12:$49ee
+ 24. $00:$29e9
+ 25. $01:$5b00
+
+x/27 $0:$c72e:
+00:c72e: 13 03 00 ff 0a 00 00 ff ff 00 02 6c 07 00 00 90 
+00:c73e: f1 4a 60 d8 00 86 00 86 31 5c 52 
+
+x/139 $0:$c758:
+00:c758: d7 06 13 62 00 01 01 00 00 00 00 ff 0f 00 02 0f 
+00:c768: 00 86 86 86 53 62 62 02 05 15 5d 7c 94 01 00 ff 
+00:c778: 61 4c 61 4c 61 4c 61 4c 61 4c 53 40 53 4d 15 01 
+00:c788: 00 00 5d 7c 5d 7d 5d 85 5d 85 5d 85 5d 85 86 00 
+00:c798: 81 01 00 62 61 4c 61 4c 61 4c 61 4c 61 4c 61 4c 
+00:c7a8: 86 00 15 01 00 00 5d 1e 5d 1f 5d 36 5d 37 5d 37 
+00:c7b8: 5d 37 79 00 15 01 00 00 5d 3d 5d 3e 5d 52 5d 52 
+00:c7c8: 5d 52 5d 52 7f 00 15 01 00 00 5d 58 5d 59 5d 75 
+00:c7d8: 5d 76 5d 76 5d 76 85 00 55 4c 00 
+
+x/4 $0:$ff04:
+00:ff04: d4 e8 38 fe 
+
+print/x [$ff0f]:
+=$f0
+
+print/x [$ffff]:
+=$f
+
+print/x [$ff9b]:
+=$62
+
+print/x [$ff44]:
+=$48
+
+print/x [$ff41]:
+=$8b
+
+print/x [$ff4f]:
+=$fe
+
+print/x [$ff70]:
+=$f9
+
+x/6 $0:$ffee:
+00:ffee: 8f 70 d0 01 f5 01 
+
+x/8 $4:$dff4:
+04:dff4: 21 d4 01 0a 55 80 d2 c8 
+
+ticks keep:
+T-cycles: 36964
+M-cycles: 9241
+Absolute 8MHz ticks: 73928
+
+lcd:
+LCDC:
+    LCD enabled: Enabled
+    Object priority flags: Enabled
+    Objects: Enabled
+    Object size: 8x8
+    Background tilemap: $9800
+    Background and Window Tileset: $8800
+    Window: Enabled
+    Window tilemap: $9C00
+
+STAT:
+    Current mode: Mode 3, Rendering
+    LYC flag: Off
+    H-Blank interrupt: Enabled
+    V-Blank interrupt: Disabled
+    OAM interrupt: Disabled
+    LYC interrupt: Disabled
+
+Current line: 72
+Current state: Rendering pixel (82/160)
+LY: 72
+LYC: 0
+Window position: 160, 0
+Interrupt line: Off
+Background shifter size: 1
+Background fetcher state: Push (1/2)
+
+-----
+
+Producer Entry:
+
+Breakpoint 1: PC = $6282
+  ->6282: LDH a, [$e6]
+    6284: AND a
+    6285: RET z
+    6286: LD a, [$c72f]
+    6289: BIT a, 0
+
+registers:
+AF  = $0220 (-H--)
+BC  = $1141
+DE  = $0010
+HL  = $c72f
+SP  = $c0b9
+PC  = $6282
+IME = Enabled
+
+backtrace:
+  1. $a0:$6282
+  2. $a0:$6a47
+  3. $00:$29e9
+  4. $10:$43d9
+  5. $10:$4033
+  6. $00:$29e9
+  7. $04:$550f
+  8. $04:$5202
+  9. $00:$29e9
+ 10. $25:$6e15
+ 11. $25:$6c9a
+ 12. $25:$6c52
+ 13. $00:$29e9
+ 14. $25:$67ac
+ 15. $25:$679b
+ 16. $25:$677f
+ 17. $25:$66ba
+ 18. $00:$29e9
+ 19. $01:$5e25
+ 20. $00:$29e9
+ 21. $12:$4b45
+ 22. $12:$49ee
+ 23. $00:$29e9
+ 24. $01:$5b00
+
+x/27 $0:$c72e:
+00:c72e: 13 07 00 ff 03 11 01 ff ff 00 02 6c 07 00 00 90 
+00:c73e: f1 4a 60 d8 00 86 42 42 33 5c 52 
+
+x/139 $0:$c758:
+00:c758: d7 06 13 62 00 02 01 00 00 00 00 ff 0f 00 02 0f 
+00:c768: 00 86 86 86 53 62 62 03 05 15 5d 7c 94 01 00 ff 
+00:c778: 62 7e 62 7e 62 7e 62 7e 62 7e 62 48 62 7d 15 01 
+00:c788: 00 00 5d 7c 5d 7d 5d 85 5d 85 5d 85 5d 85 86 00 
+00:c798: 81 01 00 62 61 4c 61 4c 61 4c 61 4c 61 4c 61 4c 
+00:c7a8: 86 00 80 02 01 6c 62 48 62 7e 62 7e 62 7e 62 7e 
+00:c7b8: 62 7e 86 00 15 01 00 00 5d 3d 5d 3e 5d 52 5d 52 
+00:c7c8: 5d 52 5d 52 7f 00 15 01 00 00 5d 58 5d 59 5d 75 
+00:c7d8: 5d 76 5d 76 5d 76 85 00 55 4c 00 
+
+x/4 $0:$ff04:
+00:ff04: 39 ee 38 fe 
+
+print/x [$ff0f]:
+=$f0
+
+print/x [$ffff]:
+=$f
+
+print/x [$ff9b]:
+=$62
+
+print/x [$ff44]:
+=$81
+
+print/x [$ff41]:
+=$8b
+
+print/x [$ff4f]:
+=$fe
+
+print/x [$ff70]:
+=$f9
+
+x/6 $0:$ffee:
+00:ffee: 8f 90 d0 01 f3 01 
+
+x/8 $4:$dff4:
+04:dff4: 1f d4 01 0a 55 80 d2 c8 
+
+ticks keep:
+T-cycles: 62940
+M-cycles: 15735
+Absolute 8MHz ticks: 125880
+
+lcd:
+LCDC:
+    LCD enabled: Enabled
+    Object priority flags: Enabled
+    Objects: Enabled
+    Object size: 8x8
+    Background tilemap: $9800
+    Background and Window Tileset: $8800
+    Window: Enabled
+    Window tilemap: $9C00
+
+STAT:
+    Current mode: Mode 3, Rendering
+    LYC flag: Off
+    H-Blank interrupt: Enabled
+    V-Blank interrupt: Disabled
+    OAM interrupt: Disabled
+    LYC interrupt: Disabled
+
+Current line: 129
+Current state: Rendering pixel (66/160)
+LY: 129
+LYC: 0
+Window position: 160, 0
+Interrupt line: Off
+Background shifter size: 1
+Background fetcher state: Push (1/2)
+
+-----
+
+Frame Wait:
+
+Breakpoint 1: PC = $047e
+  ->047e: HALT
+    047f: NOP
+    0480: LD a, [$cfb3]
+    0483: AND a
+    0484: JR nz, $047e
+
+registers:
+AF  = $0120 (-H--)
+BC  = $6308
+DE  = $0010
+HL  = $c72f
+SP  = $c0c1
+PC  = $047e
+IME = Enabled
+
+backtrace:
+  1. $00:$047e
+  2. $10:$4036
+  3. $00:$29e9
+  4. $04:$550f
+  5. $04:$5202
+  6. $00:$29e9
+  7. $25:$6e15
+  8. $25:$6c9a
+  9. $25:$6c52
+ 10. $00:$29e9
+ 11. $25:$67ac
+ 12. $25:$679b
+ 13. $25:$677f
+ 14. $25:$66ba
+ 15. $00:$29e9
+ 16. $01:$5e25
+ 17. $00:$29e9
+ 18. $12:$4b45
+ 19. $12:$49ee
+ 20. $00:$29e9
+ 21. $01:$5b00
+
+x/27 $0:$c72e:
+00:c72e: 13 07 00 ff 03 11 01 ff ff 00 02 6c 07 00 00 90 
+00:c73e: f1 4a 60 d8 00 86 42 42 33 5c 52 
+
+x/139 $0:$c758:
+00:c758: d7 06 13 62 00 02 01 00 00 00 00 ff 10 00 02 0f 
+00:c768: 00 86 86 86 53 62 62 04 05 10 62 82 94 01 00 ff 
+00:c778: 62 82 62 82 62 82 62 82 62 82 62 48 62 7d 15 01 
+00:c788: 00 00 5d 7c 5d 7d 5d 85 5d 85 5d 85 5d 85 86 00 
+00:c798: 81 01 00 62 61 4c 61 4c 61 4c 61 4c 61 4c 61 4c 
+00:c7a8: 86 00 80 02 01 6c 62 48 62 7e 62 7e 62 7e 62 7e 
+00:c7b8: 62 7e 86 00 10 02 01 6c 62 82 62 82 62 82 62 82 
+00:c7c8: 62 82 62 82 86 00 15 01 00 00 5d 58 5d 59 5d 75 
+00:c7d8: 5d 76 5d 76 5d 76 85 00 56 4c 08 
+
+x/4 $0:$ff04:
+00:ff04: 4e 7a 38 fe 
+
+print/x [$ff0f]:
+=$f0
+
+print/x [$ffff]:
+=$f
+
+print/x [$ff9b]:
+=$62
+
+print/x [$ff44]:
+=$8d
+
+print/x [$ff41]:
+=$8a
+
+print/x [$ff4f]:
+=$fe
+
+print/x [$ff70]:
+=$f9
+
+x/6 $0:$ffee:
+00:ffee: 8f a0 d0 01 f2 01 
+
+x/8 $4:$dff4:
+04:dff4: 1e d4 01 0a 55 80 d2 c8 
+
+ticks keep:
+T-cycles: 68280
+M-cycles: 17070
+Absolute 8MHz ticks: 136560
+
+lcd:
+LCDC:
+    LCD enabled: Enabled
+    Object priority flags: Enabled
+    Objects: Enabled
+    Object size: 8x8
+    Background tilemap: $9800
+    Background and Window Tileset: $8800
+    Window: Enabled
+    Window tilemap: $9C00
+
+STAT:
+    Current mode: Mode 2, OAM
+    LYC flag: Off
+    H-Blank interrupt: Enabled
+    V-Blank interrupt: Disabled
+    OAM interrupt: Disabled
+    LYC interrupt: Disabled
+
+Current line: 141
+Current state: Reading OAM data (15/40)
+LY: 141
+LYC: 0
+Window position: 160, 0
+Interrupt line: Off
+Background shifter size: 3
+Background fetcher state: High data (2/2)
+
+-----
+
+Frame Miss:
+
+Breakpoint 1: PC = $67fc
+  ->67fc: LD hl, $c73b
+    67ff: INC [hl]
+    6800: RET nz
+    6801: INC hl
+    6802: INC [hl]
+
+registers:
+AF  = $8290 (C--Z)
+BC  = $7f00
+DE  = $9a2f
+HL  = $c72f
+SP  = $c0b9
+PC  = $67fc
+IME = Enabled
+
+backtrace:
+  1. $a0:$67fc
+  2. $a0:$6774
+  3. $00:$29e9
+  4. $10:$43d9
+  5. $10:$4033
+  6. $00:$29e9
+  7. $04:$550f
+  8. $04:$5202
+  9. $00:$29e9
+ 10. $25:$6e15
+ 11. $25:$6c9a
+ 12. $25:$6c52
+ 13. $00:$29e9
+ 14. $25:$67ac
+ 15. $25:$679b
+ 16. $25:$677f
+ 17. $25:$66ba
+ 18. $00:$29e9
+ 19. $01:$5e25
+ 20. $00:$29e9
+ 21. $12:$4b45
+ 22. $12:$49ee
+ 23. $00:$29e9
+ 24. $01:$5b00
+
+x/27 $0:$c72e:
+00:c72e: 13 07 01 00 05 15 02 01 ff 00 02 7f 07 00 00 90 
+00:c73e: f1 4a 60 d8 00 86 57 86 3d 5c 52 
+
+x/139 $0:$c758:
+00:c758: d7 06 13 62 00 07 06 01 01 01 00 00 2a 00 03 0f 
+00:c768: 01 86 86 86 75 78 78 01 05 10 7e 43 94 06 01 00 
+00:c778: 7e 49 7e 49 7e 49 7e 49 7e 49 78 49 78 89 82 07 
+00:c788: 02 7f 7e 48 7e 49 7e 49 7e 49 7e 49 7e 49 86 00 
+00:c798: 10 07 02 7f 7b 40 7b 40 7b 40 7b 40 7b 40 7b 40 
+00:c7a8: 86 00 10 07 02 7f 7c 43 7c 43 7c 43 7c 43 7c 43 
+00:c7b8: 7c 43 86 00 10 07 02 7f 7d 45 7d 45 7d 45 7d 45 
+00:c7c8: 7d 45 7d 45 86 00 10 07 02 7f 7e 43 7e 43 7e 43 
+00:c7d8: 7e 43 7e 43 7e 43 86 00 58 4c 00 
+
+x/4 $0:$ff04:
+00:ff04: db b6 38 fe 
+
+print/x [$ff0f]:
+=$f0
+
+print/x [$ffff]:
+=$f
+
+print/x [$ff9b]:
+=$7e
+
+print/x [$ff44]:
+=$4c
+
+print/x [$ff41]:
+=$8a
+
+print/x [$ff4f]:
+=$fe
+
+print/x [$ff70]:
+=$f9
+
+x/6 $0:$ffee:
+00:ffee: 8f 10 da 01 5b 01 
+
+x/8 $4:$dff4:
+04:dff4: 57 04 01 5a 5c 90 d3 c8 
+
+ticks keep:
+T-cycles: 2004924
+M-cycles: 501231
+Absolute 8MHz ticks: 4009848
+
+lcd:
+LCDC:
+    LCD enabled: Enabled
+    Object priority flags: Enabled
+    Objects: Enabled
+    Object size: 8x8
+    Background tilemap: $9800
+    Background and Window Tileset: $8800
+    Window: Enabled
+    Window tilemap: $9C00
+
+STAT:
+    Current mode: Mode 2, OAM
+    LYC flag: Off
+    H-Blank interrupt: Enabled
+    V-Blank interrupt: Disabled
+    OAM interrupt: Disabled
+    LYC interrupt: Disabled
+
+Current line: 76
+Current state: Reading OAM data (21/40)
+LY: 76
+LYC: 0
+Window position: 160, 0
+Interrupt line: Off
+Background shifter size: 3
+Background fetcher state: High data (2/2)
+

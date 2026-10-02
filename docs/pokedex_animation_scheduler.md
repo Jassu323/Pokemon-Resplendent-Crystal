@@ -207,6 +207,9 @@ ROMs solely to reproduce the investigation.
    deficit: the 96-tail-tile lead and complete first stage.
 3. The Selected reveal installs the UI, palette, viewport and empty OAM through
    the existing owner transition. There is no new neighboring-species cache.
+   Internal paging keeps the outgoing page frozen during RAM preparation, hides
+   before shared VRAM uploads, then publishes the maps and used BG palettes in
+   one VBlank. See [internal handoff](#internal-description-handoff).
 4. `Pokedex_BeginDescriptionAnimation` starts the cry using the existing audio
    setup, then attempts to acquire quiet ownership.
 5. It queues the first visual event for the next hardware interval. That first
@@ -418,7 +421,8 @@ STAT-protected Mode 0/1 windows; OAM DMA follows and finishes before the first
 cursor pixels at line 34. BG slots 0/1 remain untouched and the first dependent
 side-icon BG pixels are at line 40. This owner transaction can finish on visible
 line 24: it is not the animation publisher and is not claimed to fit wholly
-inside VBlank. Description still uses the previous unrolled palette path.
+inside VBlank. Cold Description retains its unrolled dirty-palette path;
+internal Description uses the separate profile below.
 
 The late-admission stress suite retains at least 1,148 T of map headroom,
 4,688 T for OBJ palettes and 3,904 T for OAM before their first-use boundaries.
@@ -429,6 +433,34 @@ adds 166 ROMX bytes in bank `$77` and no RAM, ROM0 or VRAM allocations. See the
 [full restoration record](pokedex_listing_restoration_investigation.md#implemented-restoration)
 for baseline comparisons, cache ownership and all-species regression limits.
 The current optimization cannot suppress a transfer that has become necessary.
+
+### Internal Description Handoff
+
+This 2026-10-01 cleanup changes initial species publication, not animation work
+selection, finish admission, deadlines, startup lead or sampled-cry refill.
+After canceling the outgoing owner, native internal paging retains the old
+display through RAM-only text/base/footprint preparation, then masks the shared
+portrait white before replacing its graphics. Alternating footprint/type tile
+sets retain the outgoing icons until the new maps and palettes are published.
+Selected palette staging never requests a premature generic hardware update.
+
+The new internal owner-request value reuses the existing request byte and two
+576-byte buffers. The VBlank owner dispatcher admits at `144 <= LY < 145`, then
+publishes both maps and only BG palettes 0/1/2/6/7 (40 bytes). No Selected OBJ
+content is visible, so this profile skips OBJ palettes/OAM DMA. Bank restore,
+request/dirty clearing and success carry precede incoming playback. Mainline
+honors that carry and omits the old general copier/separate reveal wait.
+
+The linked owner body takes 3,924 T to its success marker and returns with
+252 T before physical line 0 in the tested settled/active traces. That is not
+a whole-interrupt completion guarantee. Map/palette publication itself is
+entirely in VBlank; Listing's distinct visible-time profile is unchanged.
+The original handoff added 176 ROMX bytes and no other resource allocations.
+The accepted buffered-icon follow-up adds another 228 ROMX bytes and 12 BG tiles,
+reusing one existing scratch byte without allocating RAM or HRAM. Neither change
+borrows an animation slot. Exact timing comparisons, all-species regressions,
+icon lifetimes and visibility limits are in the
+[handoff implementation record](pokedex_internal_transition_investigation.md#buffered-icons-in-production).
 
 ## Pacing And Audio
 

@@ -8,7 +8,9 @@ Listing return palette/cache fixes now pass their reproduction and regression
 suites, and grid metadata now uses presence flags instead of retained transient
 IDs. Mew's incomplete category and Drapion's category overflow are also corrected
 with focused headless regressions passed. The remaining open UI, input,
-transition and adjacent-owner items below remain deferred.
+and adjacent-owner items below remain deferred. Internal paging's delayed
+portrait masking, buffered icons and atomic reveal are implemented, with
+automated regression and the user's manual visual review passed.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -229,31 +231,81 @@ cause. Do not mark this fixed solely because the lower-bound check now exists.
 
 ### DEX-TRANS-01: Internal paging has a long black staging interval
 
-Status: Open
+Status: Solved 2026-10-01 for internal Description paging; automated and manual acceptance passed
 
 Paging between Selected-Mon entries shows a fully black screen for roughly
 8-16 frames. This occurred on every internal paging operation in the
 `pokecrystal-260902-084326.mkv` review.
 
+2026-10-01: All-species normal-input paging on the accepted cry-ownership build
+measures 8.831-14.962 intervals from accepted change to the revealed codepoint.
+Blackout precedes RAM preparation, then internal paging stages owner buffers
+but still uses the general map copier and a separate reveal wait. A private
+atomic-publication/late-hide prototype established the fix direction. The
+integrated handoff now reduces mean navigation time by 2.316 intervals and
+mean completed black frames from 9.936 to 4.670 across all 373 transitions.
+Necessary shared-VRAM staging still produces 3-9 black frames; this is not a
+blackout-free architecture. See the
+[implemented transition](pokedex_internal_transition_investigation.md#implemented-internal-handoff).
+
+That paragraph records the first integration, not the current presentation.
+The accepted follow-up masks only the portrait to white while preserving the
+outgoing shell, footprint and type badges. Incoming icons upload into an
+inactive set and reveal with the new maps/palettes. The final production link
+has zero fully black/white display frames across all 373 settled transitions;
+the portrait still needs a bounded masked staging period. Manual review passed.
+
 ### DEX-TRANS-02: Species identity is not published atomically
 
-Status: Open
+Status: Solved 2026-10-01 for the reproduced internal handoff; automated and manual acceptance passed
 
 During internal paging, the frontpic and textual identity can belong to
 different Pokemon. Confirmed examples include Mewtwo with Exeggcute data,
 Rayquaza with Kyogre data, and Meganium with Bayleef data.
 
+2026-10-01: Current normal-input reproductions are Heracross -> Koffing,
+Doduo -> Dodrio, Crawdaunt -> Baltoy, Baltoy -> Claydol, and Croagunk -> Toxicroak.
+They expose the incoming portrait with outgoing identity for 2-3 completed
+frames. `Pokedex_ApplyUsualPals` temporarily requests palette publication before
+new maps are ready. A request-free local staging helper removes all reproduced
+mixing in the private sweep. Production now uses request-free staging and an
+atomic owner publication, with all 373 settled handoffs and 36 focused active
+traces clean. The historical pairs above were not re-established on the baseline
+link; the actual five current reproductions pass on the integrated build.
+The accepted buffered-icon follow-up also passes all 373 current-link pixel,
+type/footprint and publication checks, plus focused active transitions.
+
 ### DEX-TRANS-03: Graphics and palettes can mix before playback begins
 
-Status: Open
+Status: Solved 2026-10-01 for the demonstrated shared handoff; automated and manual acceptance passed
 
 Internal paging can expose a staged frontpic with the prior Pokemon's palette
 or stale tiles. Confirmed examples include Dusknoir with Metagross's blue
 palette and a following mixed Metagross frame containing stale graphics and an
 incorrect Pokedex number.
 
-These three items should be addressed together as one Selected-Mon paging
-transaction: hide, stage one complete species state, and reveal it atomically.
+2026-10-01: The current premature palette reveal also exposes stale outgoing
+second type badges during Heracross -> Koffing and Crawdaunt -> Baltoy. The
+historical blue Dusknoir palette itself was not reproduced. No blocked palette
+writes or animation/audio misses accompany the five current raced transitions.
+All reproduced staging artifacts disappear on the integrated build, with no
+blocked palette writes, exposed staging or playback misses. The historical blue
+Dusknoir example remains un-reproduced on the baseline; this result establishes
+the correction of the demonstrated shared handoff, not an independent diagnosis
+of every historical screenshot.
+Manual review of the resulting presentation, including retained outgoing icons,
+passed. No historical un-reproduced screenshot is claimed independently diagnosed.
+
+These three items are addressed together as one Selected-Mon paging
+transaction: retain the old page through RAM preparation, hide for shared-VRAM
+portrait replacement while retaining buffered icons, then reveal one complete
+species state atomically.
+The [current investigation](pokedex_internal_transition_investigation.md) records
+reproduction steps, trace evidence, final-link regression, resource costs and
+remaining limits. All-species cold/paging playback, 1,492 active owner handoffs,
+and Listing return/cache regression pass; animation/audio production quotas
+are unchanged. Icon buffering adds twelve VRAM tiles and reuses one existing
+scratch-union byte; it does not allocate more WRAM or change the animation slots.
 
 ### DEX-NAV-01: Internal paging does not wrap at list boundaries
 
@@ -574,6 +626,10 @@ battery unchanged; the live SameBoy save was not edited.
 ### DEX-AREA-01: Area transitions expose temporary corruption
 
 Status: Deferred
+
+2026-10-01 buffered-icon integration: twelve focused Area roundtrips (six on
+icon set A and six on set B) retain correct returning footprint/type graphics.
+These controls do not independently close the older Area presentation report.
 
 Description-to-Area and Area-to-Description transitions can reveal temporary
 tilemap corruption.

@@ -39,6 +39,15 @@ def audit(repo, ui):
     types = ui['types']
     palettes = bytes.fromhex(ui['palettes'])
     issues = []
+    type_base = tilemap[7 * 21 + 9]
+    if type_base not in (0x64, 0x70):
+        issues.append('type_buffer')
+        type_base = 0x64
+    foot_base = 0xb1 if type_base == 0x64 else 0x6c
+    for cell, delta in ((21 + 18, 0), (21 + 19, 1), (42 + 18, 2), (42 + 19, 3)):
+        if tilemap[cell] != foot_base + delta:
+            issues.append('footprint_tiles')
+            break
     shell = linked(repo, 'PokedexDescriptionTilemap', 360)
     edge = linked(repo, 'PokedexDescriptionRightEdge', 18)
     for y in range(18):
@@ -64,7 +73,7 @@ def audit(repo, ui):
             issues.append(f'type_graphics_{slot}')
         x = 9 + 5 * slot
         cells = slice(7 * 21 + x, 7 * 21 + x + 4)
-        if tilemap[cells] != bytes(range(0x64 + 4 * slot, 0x68 + 4 * slot)):
+        if tilemap[cells] != bytes(range(type_base + 4 * slot, type_base + 4 * slot + 4)):
             issues.append(f'type_tiles_{slot}')
         if attrs[cells] != bytes([14 + slot] * 4):
             issues.append(f'type_attrs_{slot}')
@@ -87,6 +96,16 @@ def audit(repo, ui):
     if tilemap[9 * 21 + 1:9 * 21 + 3] != page_tiles:
         issues.append('page_badge')
     return issues
+
+
+def audit_footprint(repo, name, ui):
+    names = re.findall(r'^\s*const\s+(\w+)',
+                       (repo.root / 'constants/pokemon_constants.asm').read_text(), re.M)
+    aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
+    names = [aliases.get(n, n.lower()) for n in names]
+    start = offset(repo.symbols['Footprints']) + names.index(name) * 32
+    expected = bytes(value for byte in repo.rom[start:start + 32] for value in (byte, byte))
+    return [] if bytes.fromhex(ui['footprint_gfx']) == expected else ['footprint_graphics']
 
 
 def settle(driver):
@@ -132,7 +151,7 @@ def main():
             for page in (0, 1, 0):
                 driver.run(frames=2)
                 ui = driver.command('ui')
-                issues = audit(repo, ui)
+                issues = audit(repo, ui) + audit_footprint(repo, name, ui)
                 if ui['types'] != expected_types(repo, name):
                     issues.append('wrong_species_types')
                 if ui['page'] != page:
@@ -148,7 +167,7 @@ def main():
             state = settle(driver)
             driver.run(frames=2)
             ui = driver.command('ui')
-            issues = audit(repo, ui)
+            issues = audit(repo, ui) + audit_footprint(repo, names[target], ui)
             if ui['types'] != expected_types(repo, names[target]):
                 issues.append('wrong_species_types')
             if state['selected_index'] != target:

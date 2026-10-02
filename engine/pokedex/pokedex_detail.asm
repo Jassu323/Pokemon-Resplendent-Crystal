@@ -1,5 +1,5 @@
 PokedexSelectedMon_Enter:
-	call LowVolume
+	call PokedexSelectedMon_InitializeIcons
 	xor a
 	ld [wPokedexSelectedView], a
 	ld [wPokedexDescriptionPage], a
@@ -124,7 +124,14 @@ PokedexSelectedMon_ChangeSpecies:
 	ld hl, wPokedexSelectedGeneration
 	inc [hl]
 	call Pokedex_CancelAnimationPrefetch
+	ldh a, [hCGB]
+	and a
+	jr z, .hide_dmg
+	call PokedexSelectedMon_BeginBufferedIconTransition
+	jr .transition_ready
+.hide_dmg
 	call PokedexSelectedMon_BeginHiddenTransition
+.transition_ready
 	ld hl, wPokedexSelectedPendingIndex
 	ld a, [hli]
 	ld [wPokedexSelectedIndex], a
@@ -134,6 +141,7 @@ PokedexSelectedMon_ChangeSpecies:
 	ld [wPokedexDescriptionPage], a
 	ld [wPokedexStatus], a
 	call PokedexSelectedMon_StageDescription
+	jr c, .revealed
 	call PokedexSelectedMon_Reveal
 .revealed
 	call Pokedex_BeginDescriptionAnimation
@@ -163,7 +171,7 @@ PokedexSelectedMon_Leave:
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
 	jr nz, .linear_return
-	farcall Pokedex_NormalizeListingAfterSelectedMon
+	farcall Pokedex_RestoreListingAfterSelectedMon
 	jr .set_return_state
 
 .linear_return
@@ -239,13 +247,17 @@ PokedexSelectedMon_StageDescription:
 	ldh a, [hCGB]
 	and a
 	jr z, .load_selected_tiles_dmg
-	farcall Pokedex_PrepareAndCommitSelectedMonGFX
+	farcall Pokedex_PrepareSelectedMonTiles
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_SWITCHING_SPECIES
+	call z, PokedexSelectedMon_BeginHiddenTransition
+	farcall Pokedex_CommitPreparedSelectedMonGFX
 	jr .selected_tiles_ready
 
 .load_selected_tiles_dmg
 	farcall Pokedex_LoadSelectedMonTiles
 .selected_tiles_ready
-	farcall Pokedex_DrawResidentFootprint
+	call PokedexSelectedMon_DrawFootprint
 	farcall Pokedex_LoadDescriptionTypeGFX
 	call Pokedex_StartAnimationPrefetch
 	call Pokedex_PrimeDescriptionAnimation
@@ -256,7 +268,7 @@ PokedexSelectedMon_StageDescription:
 	and a
 	jr z, .sgb_layout
 	farcall CGB_PokedexStageSelectedMonLayout
-	farcall Pokedex_ApplyUsualPals
+	call PokedexSelectedMon_StageUsualPals
 	xor a
 	ldh [hCGBPalUpdate], a
 	call Pokedex_StageInitialAnimationFrame
@@ -266,6 +278,26 @@ PokedexSelectedMon_StageDescription:
 	farcall Pokedex_GetDexSGBLayout
 .copy_backing
 	farcall Pokedex_PublishOrStageDescriptionBacking
+	ret
+
+PokedexSelectedMon_StageUsualPals:
+; ApplyPals already copied the identity BG mapping. Retain the usual OBJ0
+; conversion without requesting publication before the owner maps are ready.
+	ld a, $e4
+	ldh [rBGP], a
+	ld a, $e0
+	ldh [rOBP0], a
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wOBPals2)
+	ldh [rSVBK], a
+	ld hl, wOBPals2
+	ld de, wOBPals1
+	ld b, $e0
+	ld c, 1
+	call CopyPals
+	pop af
+	ldh [rSVBK], a
 	ret
 
 PokedexSelectedMon_BeginHiddenTransition:
@@ -300,6 +332,57 @@ PokedexSelectedMon_BeginWarmTransition:
 	ld a, TRUE
 	ldh [hOAMUpdate], a
 	call ClearSprites
+	ret
+
+PokedexSelectedMon_InitializeIcons:
+	xor a
+	ld [POKEDEX_DESCRIPTION_ICON_BUFFER], a
+	jp LowVolume
+
+PokedexSelectedMon_BeginBufferedIconTransition:
+; Choose the inactive set before StageDescription replaces the backing map.
+	hlcoord 18, 1
+	ld a, [hl]
+	cp POKEDEX_RESIDENT_FOOTPRINT_TILE
+	ld a, 0
+	jr nz, .store
+	inc a
+.store
+	ld [POKEDEX_DESCRIPTION_ICON_BUFFER], a
+	jp PokedexSelectedMon_BeginWarmTransition
+
+PokedexSelectedMon_DrawFootprint:
+	ldh a, [hCGB]
+	and a
+	jr nz, .cgb
+	farcall Pokedex_DrawResidentFootprint
+	ret
+.cgb
+	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
+	and a
+	jr nz, .alternate
+; Listing may retain the frontpic while its normal footprint cache is invalid.
+	ld a, [wPokedexSelectedSpecies]
+	ld b, a
+	ld a, [wPokedexResidentFootprintSpecies]
+	cp b
+	jr z, .original
+	farcall Pokedex_ReloadNormalFootprint
+.original
+	ld a, POKEDEX_RESIDENT_FOOTPRINT_TILE
+	jr .place
+.alternate
+	ld a, POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE
+.place
+	hlcoord 18, 1
+	ld [hli], a
+	inc a
+	ld [hl], a
+	inc a
+	hlcoord 18, 2
+	ld [hli], a
+	inc a
+	ld [hl], a
 	ret
 
 PokedexSelectedMon_Reveal:

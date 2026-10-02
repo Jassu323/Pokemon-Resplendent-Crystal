@@ -2,8 +2,8 @@
 
 For the current execution/ownership contract and adaptation to other owners,
 see [Selected animation scheduler](pokedex_animation_scheduler.md). The resource
-allocation below includes the Description border and type badges added on
-2026-09-30; the animation slots remain unchanged. See
+allocation below includes the Description border/type badges and the buffered
+icons accepted on 2026-10-01; the animation slots remain unchanged. See
 [Description UI](pokedex_description_ui.md) for layout and palette ownership.
 
 This document records the current Pokedex graphics ownership and the target
@@ -91,14 +91,16 @@ comes from the same 64-tile source.
 | --- | --- | ---: | --- |
 | `vTiles3 $00-$27` | Center-column mini-sprites | 40 | Both 2x2 frames for five physical OBJ-icon rows: three visible plus one above and below. |
 | `vTiles4 $00-$30` | Animation buffer A | 49 | Streams only changed tiles; tilemap entries use `$80-$b0`. |
-| `vTiles4 $31-$34` | Selected footprint | 4 | Prepared alongside the current known selection. |
+| `vTiles4 $31-$34` | Description footprint set A | 4 | Normal Listing resident footprint; signed IDs `$b1-$b4`. |
 | `vTiles4 $35-$4f` | Unown glyphs and cursor | 27 | Loaded once when the Dex starts. |
 | `vTiles4 $50-$51` | Listing joined border | 2 | Permanent copies outside the shared bank-0 UI range. |
 | `vTiles4 $52-$79` | Left/right mini-sprite frame 1 | 40 | Second frame for ten 2x2 BG icons across the five physical cache rows. |
 | `vTiles5 $00-$27` | Left/right mini-sprite frame 0 | 40 | First frame for ten 2x2 BG icons across the five physical cache rows. |
 | `vTiles5 $32` | Unown cursor background | 1 | Bank-1 copy of the dark-gray background tile. |
 | `vTiles5 $33-$63` | Animation buffer B | 49 | Streams only changed tiles; tilemap entries use `$33-$63`. |
-| `vTiles5 $64-$6b` | Description type badges | 8 maximum | Four tiles per type; monotypes use only the first four. Loaded before priming animation. |
+| `vTiles5 $64-$6b` | Description type badges set A | 8 maximum | Four tiles per type; monotypes use only the first four. |
+| `vTiles5 $6c-$6f` | Description footprint set B | 4 | Inactive-set preparation during internal paging. |
+| `vTiles5 $70-$77` | Description type badges set B | 8 maximum | Alternate badge allocation; no extra palettes. |
 
 ## Target permanent allocation
 
@@ -122,7 +124,9 @@ requirements without assigning VRAM for neighboring known frontpics.
 | `vTiles5 $00-$27` | Frame 0 for five cached left/right mini-sprite rows | 40 |
 | `vTiles5 $32` | Unown cursor background | 1 |
 | `vTiles5 $33-$63` | Animation buffer B | 49 |
-| `vTiles5 $64-$6b` | Description type badges | 8 |
+| `vTiles5 $64-$6b` | Description type badges set A | 8 |
+| `vTiles5 $6c-$6f` | Description footprint set B | 4 |
+| `vTiles5 $70-$77` | Description type badges set B | 8 |
 
 The `vTiles4` ranges above are physical offsets within the `$8800-$8fff`
 region. With signed BG tile addressing they appear in tilemaps as `$80-$b0`,
@@ -134,8 +138,11 @@ The Listing uses a five-row ring: the three visible rows plus one fully
 prepared row above and below. Each physical row retains both animation frames.
 A scroll consumes the already-resident incoming row, reveals the complete
 visible state, and then refills only the newly offscreen look-ahead/look-behind
-row before accepting more input. This leaves 124 tiles free in VRAM bank 1:
-88 in `vTiles3`, 6 in `vTiles4`, and 30 in `vTiles5`. Bank 0 `vTiles2`
+row before accepting more input. This leaves 112 tiles free in VRAM bank 1:
+88 OBJ-only tiles in `vTiles3`, 6 BG-addressable tiles in `vTiles4`, and 18
+BG-addressable tiles in `vTiles5` (`$28-$31` and `$78-$7f`). Thus 24 remaining
+bank-1 tiles are usable by signed BG maps, including eight contiguous tiles
+after icon set B. Bank 0 `vTiles2`
 has five unallocated tiles (`$7b-$7f`) after the Description additions. The CGB
 footprint, Unown overlays, joined border, and cursor-background tile are
 loaded into their permanent destinations when the Pokedex starts.
@@ -164,6 +171,15 @@ does not reload the base portrait or footprint. Description additionally copies
 one or two compact type badges into bank 1 using the existing WRAM0 payload
 workspace, before animation production starts.
 
+Internal paging alternates footprint/type sets A and B. Only the shared
+portrait palette is masked to white; the outgoing icons and their hardware
+palettes stay visible while the incoming icon graphics upload offscreen.
+The existing owner publication switches tile IDs, attributes and palettes
+together. Set A's cache tag is invalidated when preparing B, because it must
+not falsely describe the incoming footprint. B-return repairs A under the
+normal hidden Listing handoff; fresh Description entry resets to A. No
+minisprite or animation-buffer tile is borrowed for this operation.
+
 The area map remains an explicit temporary overlay. It loads 48 town-map
 tiles to `vTiles2 $00-$2f` and five OBJ tiles to `vTiles0 $78-$7b/$7f`.
 Returning from the area map must restore the current static frontpic when one
@@ -186,7 +202,8 @@ The Dex uses these fixed overlapping views:
 | Buffer B tilemap and attributes | `$3fe` | 98 |
 | Changed source-tile indexes | `$460` | 49 |
 | Active-order seen mask | `$4d0` | 47 currently |
-| Persistent unused tail | `$4ff` | 21 currently |
+| Persistent unused tail | `$4ff` | 20 currently |
+| Description icon-buffer selector | `$513` | 1 existing union byte |
 
 The first 848 bytes still overlap the selection-change staging layout: 784
 bytes for the static frontpic and 64 bytes for its footprint. That is
@@ -209,6 +226,10 @@ it remains valid across Listing movement and Selected-page animation. It uses
 one bit per position in the current Dex ordering and is rebuilt whenever that
 ordering changes. Its maximum 64-byte size under the current 512-species flag
 capacity also fits in the 68-byte persistent tail.
+The icon selector uses the last byte of the 1,300-byte union, outside even
+the maximum 64-byte seen mask and all temporary grid staging. Assembly
+assertions enforce those boundaries. Zero selects A; one selects B. This
+is an alias within existing storage, not a new WRAM0 allocation or padding byte.
 
 Other useful maximum sizes include:
 

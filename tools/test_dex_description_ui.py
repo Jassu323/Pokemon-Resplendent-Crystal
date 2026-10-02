@@ -14,7 +14,7 @@ class DescriptionUITests(unittest.TestCase):
         if 'PokedexDescriptionTilemap' not in cls.repo.symbols:
             raise unittest.SkipTest('rebuild the Description UI implementation')
 
-    def fixture(self, types=(22, 22), page=0):
+    def fixture(self, types=(22, 22), page=0, alternate=False):
         repo = self.repo
         shell = linked(repo, 'PokedexDescriptionTilemap', 360)
         edge = linked(repo, 'PokedexDescriptionRightEdge', 18)
@@ -25,6 +25,7 @@ class DescriptionUITests(unittest.TestCase):
         for y in (1, 2):
             for x in (18, 19):
                 attrs[y * 21 + x] = 10
+                tilemap[y * 21 + x] = (0x6c if alternate else 0xb1) + 2 * (y - 1) + x - 18
         for slot, type_id in enumerate(types if types[0] != types[1] else types[:1]):
             pointer = linked(repo, 'CompactTypeIconGFXPointers', 87)[3 * type_id:3 * type_id + 3]
             start = offset((pointer[0], int.from_bytes(pointer[1:], 'little')))
@@ -33,7 +34,8 @@ class DescriptionUITests(unittest.TestCase):
                 icon[address] |= mask
             gfx[slot * 64:(slot + 1) * 64] = icon
             cells = slice(7 * 21 + 9 + 5 * slot, 7 * 21 + 13 + 5 * slot)
-            tilemap[cells] = bytes(range(100 + 4 * slot, 104 + 4 * slot))
+            base = 0x70 if alternate else 0x64
+            tilemap[cells] = bytes(range(base + 4 * slot, base + 4 * slot + 4))
             attrs[cells] = bytes([14 + slot] * 4)
             pointers = linked(repo, 'TypeIconPalettePointers', 58)
             address = int.from_bytes(pointers[2 * type_id:2 * type_id + 2], 'little')
@@ -52,7 +54,15 @@ class DescriptionUITests(unittest.TestCase):
         for type_id in range(29):
             for types in ((type_id, type_id), (type_id, (type_id + 1) % 29)):
                 for page in (0, 1):
-                    self.assertEqual(audit(self.repo, self.fixture(types, page)), [])
+                    for alternate in (False, True):
+                        self.assertEqual(audit(self.repo, self.fixture(types, page, alternate)), [])
+
+    def test_icons_cannot_mix_buffer_sets(self):
+        ui = self.fixture(alternate=True)
+        data = bytearray.fromhex(ui['map'])
+        data[21 + 18] = 0xb1
+        ui['map'] = data.hex()
+        self.assertIn('footprint_tiles', audit(self.repo, ui))
 
     def test_type_graphics_attributes_and_palette_are_checked_independently(self):
         ui = self.fixture((22, 28))

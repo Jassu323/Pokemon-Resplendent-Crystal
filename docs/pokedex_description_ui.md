@@ -1,6 +1,6 @@
 # Selected Description UI
 
-Updated 2026-09-30. This layout belongs only to the Start-menu Dex's Selected
+Updated 2026-10-01. This layout belongs only to the Start-menu Dex's Selected
 Description view. New Dex Entry keeps its existing shell and shared text printer;
 the animation scheduler, dictionary plans and audio decoder are unchanged.
 
@@ -42,6 +42,14 @@ before animation priming. Only this temporary copy has its four corners changed
 to background color, leaving the icons used in other screens unchanged.
 One exact four- or eight-block HDMA transfer uploads the badges to bank 1.
 
+Internal paging alternates two footprint/type sets: footprint A at `$8b10`
+and types A at `$9640`, footprint B at `$96c0` and types B at `$9700`, all in
+bank 1. The outgoing footprint and badges remain visible until the incoming
+owner's atomic reveal. Only the shared portrait becomes white during VRAM
+replacement. New entry resets to set A; B-return restores its normal resident
+footprint before Listing resumes. This avoids an extra reentry repair frame
+and prevents a stale resident-footprint tag after repeated internal paging.
+
 BG palette 6 belongs to the first badge, palette 7 to the optional second.
 Their shared type colors are retained, but color 1 is replaced with the Dex
 background `RGB 5,5,5`. BG palette 2 belongs to the footprint: white color 0,
@@ -55,8 +63,13 @@ when ownership returns. Palette writes explicitly select/restore WRAM bank 5.
 | --- | ---: |
 | Bank 0 `vTiles2 $71-$7a` | 10 border/badge tiles, 160 bytes |
 | Bank 1 `vTiles5 $64-$6b` | 8 type tiles maximum, 128 bytes |
-| ROMX | 1,133 linked bytes, chiefly alongside Selected code in bank `$a0` |
+| Bank 1 `vTiles5 $6c-$77` | 12 alternate footprint/type tiles, 192 bytes |
+| ROMX | Original UI addition 1,133 bytes; buffered-icon follow-up adds 228 bytes |
 | ROM0, WRAM0, WRAMX, HRAM | No new allocations |
+
+The buffer selector reuses the last existing Dex scratch-union byte at `$cd13`.
+The follow-up uses 127 additional ROMX bytes in `$77` and 101 in `$a0`; no new
+bank, metadata dataset, font graphics or animation slot is required.
 
 Both 49-tile animation slots, all Listing minisprite allocations, the inverted
 font and all existing generated animation metadata remain intact. The border
@@ -85,12 +98,22 @@ RGB expansion and RetroArch correction can otherwise produce misleading
 differences. A settled animation is used before A-button text paging; the
 separately logged active-animation A-button issue is not fixed by this change.
 
-The existing Drapion category overflow can corrupt the left shell and static
-reveal. The audits report it rather than suppressing it; it remains a separate
-backlog item, not an animation or badge failure. Outputs remain under ignored
-`build/dex-description-ui/`.
+Drapion's former category overflow and Mew's embedded terminator have since
+been corrected. The audits still report shell/static defects rather than
+suppressing them. Outputs remain under ignored `build/` and can be regenerated
+from a matching fresh all-seen battery and ROM.
 
 ### Current Results
+
+The following bullets describe the original 2026-09-30 UI checkpoint. The
+2026-10-01 production link has no Mew/Drapion failures: all 373 cold entries,
+373 internal targets and 373 fully rendered buffered transitions pass.
+Continuous paging through all 373 species, 36 back-and-forth swaps, 13
+Listing returns/reentries and 36 footer checks (24 text-page toggles and
+12 Area roundtrips, including both icon sets) also pass. The exact final-link
+identity and transition acceptance are in the
+[transition reference](pokedex_internal_transition_investigation.md#buffered-icons-in-production).
+Historical builds/notes are cataloged in [build history](archived/build-history.md).
 
 - 65 current-link unit/contract tests pass. The finishing tables remain
   conservative in all 216,000 host inequalities; no table changes were needed.

@@ -150,6 +150,35 @@ Pokedex_NormalizeListingAfterSelectedMon:
 	dec h
 	ret
 
+Pokedex_RestoreListingAfterSelectedMon:
+	call Pokedex_NormalizeListingAfterSelectedMon
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
+	and a
+	ret z
+; The visible Description uses set B; restore set A before Listing cache reuse.
+	jp Pokedex_ReloadNormalFootprint
+
+Pokedex_ReloadNormalFootprint:
+	ld a, [wPokedexSelectedSpecies]
+	ld [wTempSpecies], a
+	farcall Pokedex_PrepareCurrentFootprint
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(vTiles4)
+	ldh [rVBK], a
+	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
+	ld de, vTiles4 tile $31
+	ld c, 4
+	call Pokedex_HDMATransferCacheGFX
+	pop af
+	ldh [rVBK], a
+	ld a, [wPokedexSelectedSpecies]
+	ld [wPokedexResidentFootprintSpecies], a
+	ret
+
 Pokedex_EnsureGridCache:
 ; Reuse a complete five-row cache when the Listing viewport is still inside
 ; it. Detail returns repair missing rows with the LCD on while their Window
@@ -981,24 +1010,53 @@ Pokedex_CommitPreparedSelectedMonGFX::
 	bit B_LCDC_ENABLE, a
 	jr z, .copy_footprint
 	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
-	ld de, vTiles4 tile $31
+	call Pokedex_GetPreparedFootprintDestination
 	ld c, 4
 	call Pokedex_HDMATransferSelectionGFX
 	jr .footprint_ready
 
 .copy_footprint
 	ld hl, wPokedexWRAM0Scratch + 7 * 7 tiles
-	ld de, vTiles4 tile $31
+	call Pokedex_GetPreparedFootprintDestination
 	ld bc, 4 tiles
 	call CopyBytes
 
 .footprint_ready
-	ld a, [wCurPartySpecies]
+	call Pokedex_GetPreparedFootprintCacheKey
 	ld [wPokedexResidentFootprintSpecies], a
 
 .done
 	pop af
 	ldh [rVBK], a
+	ret
+
+Pokedex_GetPreparedFootprintDestination:
+	ld de, vTiles4 tile $31
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_SWITCHING_SPECIES
+	jr z, .selected
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	ret nz
+.selected
+	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
+	and a
+	ret z
+	ld de, vTiles5 tile POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE
+	ret
+
+Pokedex_GetPreparedFootprintCacheKey:
+	push de
+	call Pokedex_GetPreparedFootprintDestination
+	ld a, d
+	cp HIGH(vTiles5 tile POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE)
+	pop de
+	ld a, [wCurPartySpecies]
+	ret nz
+; Zero invalidates set A's tag, but unlike $ff still means a footprint is visible.
+	xor a
 	ret
 
 Pokedex_PrepareAndCommitSelectedMonGFX::
@@ -1202,12 +1260,18 @@ Pokedex_PublishOrStageDescriptionBacking::
 	jr z, .publish
 	call Pokedex_StageOwnerTransitionMaps
 	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_SWITCHING_SPECIES
+	jr z, .internal
 	cp DEXSELECT_STATE_ENTERING
 	jr nz, .publish
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
 	jr nz, .publish
 	ld a, POKEDEX_OWNER_TRANSITION_DESCRIPTION
+	jr .queue
+.internal
+	ld a, POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
+.queue
 	call Pokedex_QueueOwnerTransition
 	xor a
 	ldh [hVBlank], a
@@ -1254,7 +1318,28 @@ Pokedex_BlackOutSelectedMonBG::
 	ld [hl], a
 	ld a, POKEDEX_LISTING_OBJ_PALS
 	ld [wPokedexSelectedOBJPaletteDirty], a
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_SWITCHING_SPECIES
+	jr z, .portrait
 	farcall Pokedex_BlackOutBG
+	ret
+.portrait
+; Incoming icons have separate storage; only the shared portrait needs masking.
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wBGPals1)
+	ldh [rSVBK], a
+	ld hl, wBGPals1 palette 1
+	ld b, 4
+.white
+	ld a, $ff
+	ld [hli], a
+	ld a, $7f
+	ld [hli], a
+	dec b
+	jr nz, .white
+	pop af
+	ldh [rSVBK], a
 	ret
 
 Pokedex_VBlankDispatch::
@@ -1285,9 +1370,9 @@ Pokedex_QueueOwnerTransition::
 	ret
 
 Pokedex_VBlankOwnerTransition::
-; Publish both maps in VBlank. Listing-only palettes use protected writes and
-; OAM completes before its first dependent scanline (34). Description retains
-; its VBlank-only palette path. Carry skips Listing animation for this handoff.
+; Internal Description publishes both maps and its used BG palettes in one
+; early VBlank. Listing keeps protected palette writes and its OAM deadline.
+; Carry skips other Dex publication work for the completed owner handoff.
 	ld a, [wPokedexOwnerTransition]
 	and a
 	ret z
@@ -1335,6 +1420,8 @@ Pokedex_VBlankOwnerTransition::
 	ld a, [wPokedexOwnerTransition]
 	cp POKEDEX_OWNER_TRANSITION_LISTING
 	jr z, .listing_palettes
+	cp POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
+	jr z, .internal_palettes
 	call .CommitDirtyBGPals
 	call .CommitDirtyOBPals
 	jr .palettes_ready
@@ -1342,21 +1429,48 @@ Pokedex_VBlankOwnerTransition::
 .listing_palettes
 	call .CommitListingBGPals
 	call .CommitListingOBPals
+	jr .palettes_ready
+
+.internal_palettes
+	call .CommitInternalDescriptionBGPals
 .palettes_ready
 
 	pop af
 	ldh [rVBK], a
 	pop af
 	ldh [rSVBK], a
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
+	jr z, .clear_request
 	call hTransferShadowOAM
 	ld a, TRUE
 	ldh [hOAMUpdate], a
+.clear_request
 	xor a
 	ld [wPokedexOwnerTransition], a
 	ld [wPokedexSelectedBGPaletteDirty], a
 	ld [wPokedexSelectedOBJPaletteDirty], a
 .committed
 	scf
+	ret
+
+.CommitInternalDescriptionBGPals:
+; UI, portrait, footprint and two type badges. No OBJ graphics are visible.
+	ld a, BGPI_AUTOINC palette 0
+	ldh [rBGPI], a
+	ld hl, wBGPals2 palette 0
+	ld c, LOW(rBGPD)
+	rept 3 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
+	ld a, BGPI_AUTOINC palette 6
+	ldh [rBGPI], a
+	ld hl, wBGPals2 palette 6
+	rept 2 palettes
+		ld a, [hli]
+		ldh [c], a
+	endr
 	ret
 
 .CommitListingBGPals:
