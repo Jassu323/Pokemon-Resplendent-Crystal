@@ -325,6 +325,37 @@ class SchedulerContracts(unittest.TestCase):
         self.assertGreater(margin, 0)
         print(f'Quiet publication: critical <= {maximum} T; latest-accepted LY margin >= {margin} T')
 
+    def test_portrait_and_text_publication_fit_the_same_early_vblank(self):
+        cpu = self.cpu()
+        for name, value in (
+            ('hSampledCryTimer', 1), ('wGameTimerPaused', 1),
+            ('wPokedexSelectedState', 1), ('hVBlank', 0x87),
+            ('wPokedexAnimFlags', 0x23), ('wPokedexAnimDeadline', 0),
+            ('hOAMUpdate', 1), ('wPokedexAnimStageFrameID', 1),
+            ('wPokedexOwnerTransition', 4), ('wPokedexDescriptionTextState', 4),
+        ):
+            cpu.field(name, value)
+        cpu.ram[0xff44] = 144
+        begin, end = (offset(self.repo.symbols[n]) for n in ('OAMDMACode', 'OAMDMACode.End'))
+        cpu.block(self.repo.symbols['hTransferShadowOAM'][1], self.repo.rom[begin:end])
+        prefix = run_to(cpu, 'VBlank', 'Pokedex_VBlankAnimationFrontpicMap.have_cutoff')
+        origin, stalls, transfers = cpu.cycles, 0, []
+        cpu.record_writes = True
+        while cpu.pc != self.repo.symbols['VBlank_Normal.done_oam'][1]:
+            start = len(cpu.writes)
+            cpu.step()
+            for _, address, value in cpu.writes[start:]:
+                if address == 0xff55:
+                    self.assertFalse(value & 128)
+                    transfers.append(value + 1)
+                    stalls += (value + 1) * 32 + 4
+        critical = cpu.cycles - origin + stalls
+        self.assertEqual(transfers, [14, 14, 14])
+        self.assertEqual(self.value(cpu, 'wPokedexOwnerTransition'), 0)
+        self.assertTrue(self.value(cpu, 'wPokedexAnimFlags') & 0x40)
+        self.assertLess(prefix + critical + 20, 4560)
+        print(f'Combined portrait/text publication: {prefix + critical + 20} T through VBlank VRAM work')
+
 
 if __name__ == '__main__':
     unittest.main()

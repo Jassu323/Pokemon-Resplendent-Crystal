@@ -44,12 +44,17 @@ PokedexSelectedMon_Update:
 	jp nz, PokedexSelectedMon_Leave
 	ld a, [hl]
 	and PAD_A
-	jp nz, PokedexSelectedMon_ActivateFooterView
+	jr z, .directions
+	call PokedexSelectedMon_ActivateFooterView
+	jr .service
+.directions
 	call PokedexSelectedMon_FindNextSeen
 	jp c, PokedexSelectedMon_ChangeSpecies
+.service
 	call Pokedex_PrepareDescriptionAnimation
 	call Pokedex_ServiceAnimationProducer
-	jp Pokedex_CommitDescriptionAnimation
+	call Pokedex_CommitDescriptionAnimation
+	jp PokedexSelectedMon_ServiceDescriptionText
 
 PokedexSelectedMon_CommitFooterCursor:
 	xor a
@@ -99,11 +104,28 @@ PokedexSelectedMon_Unavailable:
 	ret
 
 PokedexSelectedMon_ToggleDescriptionPage:
-	call Pokedex_ReleaseQuietAnimationOwner
 	ld a, [wPokedexDescriptionPage]
 	xor 1
 	ld [wPokedexDescriptionPage], a
 	ld [wPokedexStatus], a
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	call PokedexSelectedMon_CancelDescriptionText
+	ld a, [wPokedexSelectedSpecies]
+	call CheckCaughtMon
+	ret z
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wPokedexDescriptionTextState)
+	ldh [rSVBK], a
+	ld a, POKEDEX_DESCRIPTION_TEXT_INITIALIZE
+	ld [wPokedexDescriptionTextState], a
+	pop af
+	ldh [rSVBK], a
+.queued
+	ret
+.dmg
 	xor a
 	ldh [hBGMapMode], a
 	farcall Pokedex_GetSelectedMon
@@ -118,6 +140,7 @@ PokedexSelectedMon_ToggleDescriptionPage:
 	ret
 
 PokedexSelectedMon_ChangeSpecies:
+	call PokedexSelectedMon_CancelDescriptionText
 	ld a, DEXSELECT_STATE_SWITCHING_SPECIES
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
@@ -150,6 +173,7 @@ PokedexSelectedMon_ChangeSpecies:
 	ret
 
 PokedexSelectedMon_Leave:
+	call PokedexSelectedMon_CancelDescriptionText
 	ld a, DEXSELECT_STATE_LEAVING
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
@@ -184,6 +208,7 @@ PokedexSelectedMon_Leave:
 	ret
 
 PokedexSelectedMon_Area:
+	call PokedexSelectedMon_CancelDescriptionText
 	ld a, DEXSELECT_STATE_SWITCHING_VIEW
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
@@ -221,6 +246,7 @@ PokedexSelectedMon_Area:
 	ret
 
 PokedexSelectedMon_StageDescription:
+	call PokedexSelectedMon_CancelDescriptionText
 	xor a
 	ldh [hBGMapMode], a
 	farcall Pokedex_DrawDescriptionScreenBG

@@ -1,6 +1,6 @@
 # Selected Description UI
 
-Updated 2026-10-01. This layout belongs only to the Start-menu Dex's Selected
+Updated 2026-10-02. This layout belongs only to the Start-menu Dex's Selected
 Description view. New Dex Entry keeps its existing shell and shared text printer;
 the animation scheduler, dictionary plans and audio decoder are unchanged.
 
@@ -20,9 +20,11 @@ the visible display. Name, category, height, weight, description text and
 frontpic placement are unchanged.
 
 The page badge is embedded in the divider, with its glyph two pixels higher
-than the former badge. `Pokedex_DisplayDescriptionEntry` delegates content to
-`DisplayDexEntry`, then restores the Description-specific divider and P.1/P.2
-tiles. The registration page continues calling the shared printer directly.
+than the former badge. Initial staging through `Pokedex_DisplayDescriptionEntry`
+delegates content to `DisplayDexEntry`, then restores the Description-specific
+divider and P.1/P.2 tiles. A-button text paging now uses a bounded lower-text
+transaction instead of redrawing the entry. The registration page continues
+calling the shared printer directly.
 
 The upper-right species footprint retains its white mark but now uses a
 dark-gray background instead of the former black square. This is a footprint,
@@ -95,13 +97,24 @@ footprint attributes, both page badges, right-edge preservation and internal
 paging. It saves native-resolution images with color correction disabled for
 comparison. Color values should be compared as 5-bit GBC colors; emulator
 RGB expansion and RetroArch correction can otherwise produce misleading
-differences. A settled animation is used before A-button text paging; the
-separately logged active-animation A-button issue is not fixed by this change.
+differences. This shell audit uses a settled animation before A-button text
+paging and now waits for the requested complete lower map rather than assuming
+a fixed two-frame completion. Separate active-phase tests cover `DEX-DESC-01`.
 
 Drapion's former category overflow and Mew's embedded terminator have since
 been corrected. The audits still report shell/static defects rather than
 suppressing them. Outputs remain under ignored `build/` and can be regenerated
 from a matching fresh all-seen battery and ROM.
+
+### Description Text Ownership
+
+The 2026-10-02 `DEX-DESC-01` fix keeps the current portrait/quiet owner running
+while it stages the requested page in bounded WRAM work. One admitted VBlank
+transfer publishes rows 8-14, including the page badge, without changing upper
+data, type badges, footprint, palettes or attributes. The old complete text
+page remains visible until this transfer. There is no full-screen map copy or
+animation restart on A. See the [transaction reference and final acceptance](pokedex_description_paging_investigation.md#implemented-transaction)
+for cancellation, resource use, phase tests and measured text-only latency.
 
 ### Current Results
 

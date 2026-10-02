@@ -168,7 +168,10 @@ class LinkedCryCancellationTests(unittest.TestCase):
         for start, end in (('ChangeSpecies', 'Leave'), ('Leave', 'Area'), ('Area', 'StageDescription')):
             code = self.repo.rom[offset(symbols['PokedexSelectedMon_' + start]):
                                  offset(symbols['PokedexSelectedMon_' + end])]
-            self.assertEqual(code[5:8], call)
+            text_cancel = symbols.get('PokedexSelectedMon_CancelDescriptionText')
+            prefix = bytes((0xcd, text_cancel[1] & 255, text_cancel[1] >> 8)) if text_cancel else b''
+            self.assertTrue(code.startswith(prefix))
+            self.assertEqual(code[len(prefix) + 5:len(prefix) + 8], call)
             self.assertEqual(code.count(call), 1)
         code = self.repo.rom[offset(symbols['PokedexSelectedMon_ToggleDescriptionPage']):
                              offset(symbols['PokedexSelectedMon_ChangeSpecies'])]

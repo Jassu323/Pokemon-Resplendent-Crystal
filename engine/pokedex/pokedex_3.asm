@@ -1346,6 +1346,12 @@ Pokedex_VBlankDispatch::
 	call Pokedex_VBlankOwnerTransition
 	ret c
 	call Pokedex_VBlankAnimationFrontpicMap
+	jr nc, .no_portrait
+	call Pokedex_VBlankDescriptionText
+	scf
+	ret
+.no_portrait
+	call Pokedex_VBlankDescriptionText
 	ret c
 	jp Pokedex_VBlankGridIconAnimation
 
@@ -1388,6 +1394,8 @@ Pokedex_VBlankOwnerTransition::
 	cp LY_VBLANK + 1
 	ret nc
 	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_DESCRIPTION_TEXT
+	ret z
 	cp POKEDEX_OWNER_TRANSITION_LISTING
 	ld a, $47
 	jr z, .got_wx
@@ -1540,6 +1548,62 @@ Pokedex_VBlankOwnerTransition::
 	ldh [rVDMA_DEST_LOW], a
 	ld a, 2 * SCREEN_HEIGHT - 1
 	ldh [rVDMA_LEN], a
+	ret
+
+Pokedex_VBlankDescriptionText:
+; The portrait has first priority. Only lower tile IDs change: no attributes,
+; palettes, icons, upper backing rows or animation publication bookkeeping.
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_DESCRIPTION_TEXT
+	jr z, .pending
+	and a
+	ret
+.pending
+	ldh a, [hBGMapUpdate]
+	and a
+	ret nz
+	ldh a, [hDMATransfer]
+	and a
+	ret nz
+	ldh a, [rLY]
+	cp LY_VBLANK
+	ret c
+	cp LY_VBLANK + 4
+	ret nc
+	ldh a, [rSVBK]
+	push af
+	ldh a, [rVBK]
+	push af
+	ld a, BANK(wPokedexOwnerTilemapBuffer)
+	ldh [rSVBK], a
+	xor a
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH
+	ld a, h
+	ldh [rVDMA_SRC_HIGH], a
+	ld a, l
+	ldh [rVDMA_SRC_LOW], a
+	ld a, HIGH(vBGMap0 + 8 * TILEMAP_WIDTH) & $1f
+	ldh [rVDMA_DEST_HIGH], a
+	ld a, LOW(vBGMap0 + 8 * TILEMAP_WIDTH)
+	ldh [rVDMA_DEST_LOW], a
+	ld a, 7 * TILEMAP_WIDTH / $10 - 1
+	ldh [rVDMA_LEN], a
+	xor a
+	ld [wPokedexDescriptionTextState], a
+	ld [wPokedexOwnerTransition], a
+	ld hl, wPokedexAnimFlags
+	bit POKEDEX_ANIM_MAP_PENDING_F, [hl]
+	jr nz, .committed
+	ldh a, [hVBlank]
+	and 1 << VBLANK_DEX_QUIET_F
+	ldh [hVBlank], a
+.committed
+	pop af
+	ldh [rVBK], a
+	pop af
+	ldh [rSVBK], a
+	scf
 	ret
 
 Pokedex_VBlankAnimationFrontpicMap:

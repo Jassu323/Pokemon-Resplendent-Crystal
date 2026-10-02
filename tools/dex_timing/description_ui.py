@@ -118,7 +118,21 @@ def settle(driver):
     raise RuntimeError('Playback did not finish')
 
 
+def settle_description_text(driver, expected):
+    """Wait for the requested transaction, not a fixed number of owner calls."""
+    for _ in range(300):
+        state = driver.run(('selected', 'animation_miss', 'audio_miss'), frames=120)
+        if state['hit'] != 'selected':
+            raise RuntimeError(f'Description text stopped returning safely: {state}')
+        tilemap = bytes.fromhex(driver.command('ui')['map'])
+        actual = b''.join(tilemap[y * 21:y * 21 + 20] for y in range(8, 15))
+        if actual == expected:
+            return
+    raise RuntimeError('Requested Description text did not publish')
+
+
 def main():
+    from .description_paging import description_pages
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--checkpoints', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
@@ -148,8 +162,10 @@ def main():
             move(driver, direction, index)
             driver.run(('accept',), key='a')
             settle(driver)
+            pages = description_pages(repo, name)
             for page in (0, 1, 0):
                 driver.run(frames=2)
+                settle_description_text(driver, pages[page])
                 ui = driver.command('ui')
                 issues = audit(repo, ui) + audit_footprint(repo, name, ui)
                 if ui['types'] != expected_types(repo, name):

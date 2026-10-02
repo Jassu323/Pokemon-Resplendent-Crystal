@@ -3579,6 +3579,18 @@ SECTION UNION "Battle Tower RAM", WRAMX
 wPokedexOwnerTilemapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
 wPokedexOwnerAttrmapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
 
+; Selected Description text jobs reuse the otherwise inactive Battle Tower
+; union. The publication source remains in the existing padded tilemap.
+wPokedexDescriptionTextState:: db
+wPokedexDescriptionTextBank:: db
+wPokedexDescriptionTextSource:: dw
+wPokedexDescriptionTextCursor:: dw
+wPokedexDescriptionTextOwnerCursor:: dw
+wPokedexDescriptionTextRow:: db
+wPokedexDescriptionTextPage:: db
+wPokedexDescriptionTextChunk:: ds 24
+wPokedexDescriptionTextChunkEnd::
+
 
 SECTION "Sampled Cry RAM", WRAMX
 

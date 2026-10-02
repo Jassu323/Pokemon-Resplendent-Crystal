@@ -1,6 +1,6 @@
 # Selected Pokedex Animation Scheduler
 
-Living implementation reference, updated 2026-10-01.
+Living implementation reference, updated 2026-10-02.
 
 This describes the **linked game implementation**, not an experimental host
 policy. It supersedes the runtime direction in the earlier micro-schedule
@@ -15,6 +15,7 @@ Companion documents:
 - [VRAM and scratch allocation](pokedex_vram.md)
 - [New Dex Entry resident scheduler](new_dex_entry_animation_scheduler.md)
 - [Selected-to-Listing restoration contract and results](pokedex_listing_restoration_investigation.md)
+- [Description text transaction and regression results](pokedex_description_paging_investigation.md#implemented-transaction)
 - [Outstanding bugs](pokedex_selected_bug_backlog.md)
 - [Historical implementation pre-flight](archived/dex-scheduler/dex_scheduler_implementation_preflight.md)
 - [Investigation record](archived/dex-scheduler/dex_scheduler_investigation.md)
@@ -41,7 +42,8 @@ require structural validation and representative timed replay. The current
 integration starts at a relocated first-publication state. The separate
 normal-input cold Listing suite now covers real selection/startup and complete
 playback for all 373 New Dex species, with exact timelines and no misses. It
-also exposes a separate Drapion static-reveal text overflow (`DEX-UI-02`). It
+originally exposed a separate Drapion static-reveal text overflow (`DEX-UI-02`,
+since corrected). It
 boots a copied save and never injects producer state. This complements the
 user's all-species internal-paging pass; it does not cover every input or owner
 handoff. See the cold Listing results for the precise checks and limitations.
@@ -94,6 +96,7 @@ by the dictionary's end; a larger first-frame requirement must still be met.
 | --- | --- |
 | `engine/pokedex/pokedex.asm` | Dex outer loop, shared constants, Listing owner |
 | `engine/pokedex/pokedex_detail.asm` | Selected entry, input, species/view changes, exit |
+| `engine/pokedex/pokedex_description_text.asm` | Bounded lower-text staging with animation-first admission and cancellation |
 | `engine/pokedex/pokedex_animation.asm` | Dictionary cursor, stage maps, gather/upload, deadlines |
 | `engine/pokedex/pokedex_animation_policy.asm` | Display-clock work choice, pacing, quiet ownership, finishing admission |
 | `engine/pokedex/pokedex_animation_timeline.asm` | Fixed-bank exact-event reader |
@@ -397,13 +400,20 @@ contract, not a general allowance for arbitrary VBlank transfers.
 
 `Pokedex_CancelAnimationPrefetch` releases quiet ownership before clearing
 producer state. Selected species changes, B-return and Area handoff use it.
-The Description A-button text-page path explicitly releases because it does
-not cancel animation work. A later completed reveal may acquire ownership again.
+These owner changes also cancel pending Description text before reusing the
+backing buffers.
 
-The existing Description text-page corruption bug remains deferred. That path
-does not reacquire quiet ownership automatically, so settled timing guarantees
-must not be claimed after it until a new qualifying reveal. Do not silently
-mark that bug fixed by the scheduler.
+Description A-button text paging no longer releases quiet ownership. Its
+bounded local job services text after animation prepare/produce/commit, then
+publishes only padded lower tile-ID rows 8-14 in one admitted VBlank transfer.
+The due portrait has priority; text cannot acknowledge an animation event or
+rewrite portrait attributes. Both publications may occur in the same VBlank
+only if their individual admission gates allow it. This specifically measured
+contract replaces the old synchronous whole-screen copy and avoids stopping
+the producer or permanently losing quiet mode on A. The 81-phase matched
+controls retain identical animation publication signatures, with all-species
+content/playback tests also clean. See the
+[text ownership contract and latency measurements](pokedex_description_paging_investigation.md#implemented-transaction).
 
 Future palette updates, scroll changes, OAM type icons or any other new display
 work must release/reestablish ownership or provide a newly measured contract.

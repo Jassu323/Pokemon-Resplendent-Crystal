@@ -59,6 +59,9 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef SHARED_MENU_INPUT_TRACE
 #include "shared_menu_input.c"
 #endif
+#ifdef DEX_DESCRIPTION_PAGING_TRACE
+#include "description_paging.c"
+#endif
 
 static void snapshot(int hit)
 {
@@ -102,6 +105,9 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
 #endif
 #ifdef SHARED_MENU_INPUT_TRACE
     shared_menu_observe(bank, pc);
+#endif
+#ifdef DEX_DESCRIPTION_PAGING_TRACE
+    description_paging_observe(bank, pc);
 #endif
     if (bank==B_INIT && pc==P_INIT) dictionary_services=upload_services=publications=0;
     if (bank==B_DECODE && pc==P_DECODE) dictionary_services++;
@@ -159,6 +165,11 @@ int main(int argc, char **argv)
     GB_set_write_memory_callback(&gb, restoration_write);
     GB_set_lcd_line_callback(&gb, restoration_line);
 #endif
+#ifdef DEX_DESCRIPTION_PAGING_TRACE
+    GB_set_vblank_callback(&gb, description_paging_frame);
+    GB_set_write_memory_callback(&gb, description_paging_write);
+    GB_set_lcd_line_callback(&gb, description_paging_line);
+#endif
     if (GB_load_rom(&gb, argv[1]) || GB_load_boot_rom(&gb, argv[2]) ||
         GB_load_battery(&gb, argv[3])) return 2;
     setvbuf(stdout, NULL, _IOLBF, 0);
@@ -201,6 +212,11 @@ int main(int argc, char **argv)
 #ifdef SHARED_MENU_INPUT_TRACE
         else if (shared_menu_command(line)) {
             /* Physical input and read-only snapshots in a private test core. */
+        }
+#endif
+#ifdef DEX_DESCRIPTION_PAGING_TRACE
+        else if (description_paging_command(line)) {
+            /* Read-only A-button transaction tracing in a private executable. */
         }
 #endif
         else if (!strcmp(line, "peek\n")) {
@@ -262,6 +278,9 @@ int main(int argc, char **argv)
 #endif
 #ifdef SHARED_MENU_INPUT_TRACE
     shared_menu_close();
+#endif
+#ifdef DEX_DESCRIPTION_PAGING_TRACE
+    description_paging_close();
 #endif
     GB_free(&gb);
     return 0;

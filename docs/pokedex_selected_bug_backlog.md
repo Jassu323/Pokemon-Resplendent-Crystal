@@ -209,7 +209,7 @@ does not establish that other screens reproduce the race. See the
 
 ### DEX-DESC-01: Toggling description pages can corrupt the upper screen
 
-Status: Open; historical diagnosis superseded, current-link retest required
+Status: Implemented 2026-10-02; automated regression passed, manual confirmation pending
 
 Pressing A to switch an entry's Description text pages was observed corrupting
 the frontpic, header and other upper tile rows. This is a separate transaction
@@ -222,12 +222,37 @@ checks `LY_VBLANK` as a lower bound before applying its upper cutoff. The
 [superseded diagnostic](archived/dex-scheduler/dex_backlog_investigation_history.md#dex-desc-01-toggling-description-pages-can-corrupt-the-upper-screen)
 is retained only as historical evidence.
 
-Retest A during and after animation on the current link before choosing a fix.
-Audit the full backing-map transfer through
-`CopyTilemapAtOnce` in [tilemap.asm](../home/tilemap.asm), pending portrait
-publication, quiet-owner release/reacquisition and text redraw as one
-transaction. A race remains an investigation direction, not a proven current
-cause. Do not mark this fixed solely because the lower-bound check now exists.
+The 2026-10-02 headless investigation reproduces animation misses in 24 of 81
+A-page phase tests; 18 matched uninterrupted controls are clean. The old toggle
+permanently released the quiet animation owner, synchronously redrew unchanged
+header fields and both text pages for a page-2 request, then copies the whole
+backing map/attributes through `CopyTilemapAtOnce`. That copy bypasses portrait
+publication ownership and exposes transient mixed portraits. Interrupted
+production and the slower later owner loop also cause delayed animation-miss
+fallback corruption.
+
+No current header/type/footprint pixel corruption was reproduced in the
+detailed replays, so that part of the historical report remains unconfirmed.
+The same full copy masks timer service for long enough to interrupt sampled
+block timing, despite no cache-empty hits. Retaining quiet ownership alone is
+insufficient; retaining it and omitting the copy still leaves two of sixteen
+cases failing from synchronous redraw work.
+
+The implemented Selected-local text job preserves the animation owner,
+prepares only the requested text page in bounded slices, and atomically
+publishes the lower text/badge/divider tile IDs. It does not rewrite portrait,
+upper data, icons, attributes or palettes. Repeated A coalesces the desired
+page; B/species/Area changes cancel the job before changing owners.
+
+The rebuilt production ROM passes 153 unit/contract checks, the 81-case phase
+sweep, 746 all-species active/completed A cases, 1,492 UI checks and both
+373-species cold/internal playback suites. Matched uninterrupted controls
+have identical portrait publication signatures. Neither animation nor active
+sampled-cache-empty misses occur. All 90 non-Area repeated-input/handoff cases
+pass; existing Area setup stalls remain separately deferred under
+`DEX-AREA-01`. Text-only publication sometimes waits behind animation work:
+median about 2.6 display intervals and worst observed about 8 (132 ms).
+See the [implemented contract, costs and results](pokedex_description_paging_investigation.md#implemented-transaction).
 
 ## Selected-Mon Internal Paging
 
@@ -680,6 +705,14 @@ VBlank handler before Area requests, or provide measured Area-local tile
 service, with entry/return graphics ownership audited. Area-entry cry cleanup
 passes, but Area navigation/rendering is not signed off. See the
 [deferred Area diagnostic](pokedex_cry_ownership_investigation.md#deferred-area-stall).
+
+2026-10-02 Description-text regression: twelve of fifteen pending-text Area
+entries stall during setup; three roundtrips pass. A separate no-A replay on
+the unchanged pre-text-fix ROM stalls in thirteen of fifteen entries. Both
+tests enter the Area owner and wait before its input loop, confirming that
+this existing setup failure is independent of Description text publication.
+The new text job is canceled at Area handoff; this pass does not fix or sign
+off Area rendering/navigation.
 
 ### DEX-SEARCH-01: Search-page Slowpoke has an all-black palette
 
