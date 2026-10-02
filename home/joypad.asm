@@ -288,6 +288,17 @@ JoyTextDelay::
 	and a
 	ldh a, [hJoyPressed]
 	jr z, .ok
+	; A new menu direction takes priority over older held directions.
+	and PAD_CTRL_PAD
+	jr z, .held
+	push bc
+	ld b, a
+	ldh a, [hJoyDown]
+	and PAD_BUTTONS
+	or b
+	pop bc
+	jr .ok
+.held
 	ldh a, [hJoyDown]
 .ok
 	ldh [hJoyLast], a

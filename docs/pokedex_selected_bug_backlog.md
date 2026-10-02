@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-01. This is the live issue/status list, not the chronological
+Updated 2026-10-02. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -11,6 +11,8 @@ with focused headless regressions passed. The remaining open UI, input,
 and adjacent-owner items below remain deferred. Internal paging's delayed
 portrait masking, buffered icons and atomic reveal are implemented, with
 automated regression and the user's manual visual review passed.
+The shared-menu fresh-direction correction is now accepted for production;
+overworld turning-delay changes remain a separate research spike.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -327,20 +329,50 @@ Sparse seen sets and Search Results were not part of this focused boundary test.
 
 ### DEX-NAV-02: A rapid axis change repeats the previous vertical input
 
-Status: Reported; deferred investigation
+Status: Solved 2026-10-02; shared-menu production fix accepted after automated and manual testing
 
 2026-09-21: During Dex testing, quickly pressing Up followed by Left or Right
 is processed as two Up inputs. Quickly pressing Down followed by Left or Right
 is likewise processed as two Down inputs. The reverse order, Left or Right
 followed by Up or Down, processes both directions correctly.
 
-Expected behavior: each accepted press uses its actual direction, without
-replaying the preceding vertical direction. Record the exact Listing/Selected
-owner, whether the first key was released, and the interval between presses
-when reproducing; those details have not yet been captured. Inspect newly
-pressed, held and auto-repeat input state together with any queued navigation
-direction. Do not assume a scheduler or input-buffer cause until that state is
-observed. No fix has been attempted.
+Expected behavior: a newly pressed D-pad direction takes priority over a held
+direction, while ordinary held-key repeats remain available.
+
+2026-10-01: normal-input headless SameBoy reproduces all 24 vertical-first
+overlap cases across Listing and Selected. All 80 clean-release conditions
+work. `JoyTextDelay` accepts the whole held mask on any new press while
+`hInMenu` is set; the Listing then prioritizes Up/Down in `hJoyLast`. A new
+Right therefore has `hJoyPressed = $10` but `hJoyLast = $50`, and another Up
+wins. This is not a stale navigation queue or ordinary timer-driven repeat.
+
+Selected has the same cause: its footer accepts new Left/Right, then species
+paging also accepts the old Up/Down from `hJoyLast`. When the footer repeat
+delay expires, the reverse combination can likewise repeat an old horizontal
+move before new vertical paging. Simultaneously new diagonal inputs remain
+a separate existing priority policy, not a replayed old key.
+
+Follow-up: the user also reproduces the issue in the Pack. The approved
+diagnostic implements the fresh-direction rule inside `JoyTextDelay`'s shared
+menu branch, preserving button bits, registers and no-new-direction repeats.
+Native Pack input now reproduces the baseline's old-axis pouch change and
+confirms its removal in the candidate. The separate cartridge passes 393,216
+linked contracts, 1,536 scripted-input fixtures, a 57-state menu matrix,
+all-species cold/internal Dex audits and the 20-species New Entry input sweep.
+Walking and cycling movement checkpoints match the baseline. Cost is 14
+ROM0 bytes, no allocated memory or added display waits, and zero extra CPU
+cycles outside menu mode. The original Dex-only alternative costs 28 ROMX
+bytes and affects only Listing/Selected.
+
+2026-10-02: the user confirms improved menu input and unchanged overworld
+movement, and approves promotion. The exact diagnostic correction is now in
+production `home/joypad.asm:JoyTextDelay`. Fresh menu directions exclude old
+held D-pad bits while retaining held A/B/Select/Start. Non-menu input,
+ordinary repeat timing and simultaneous-new diagonal priority are unchanged.
+This resolves the demonstrated menu issue, not rapid-tap buffering or turning
+delays in the overworld. See the
+[direction change investigation](pokedex_direction_change_investigation.md)
+for reliable steps, trace evidence, coverage limits, results and measured costs.
 
 ## Return To Listing
 
@@ -791,6 +823,62 @@ experience is awarded. The user requested reviewing that presentation even
 though it was not a regression. This is about the capture animation's ball,
 not the small HUD caught indicator or trainer party-ball palette; the earlier
 backlog wording incorrectly described a caught indicator remaining visible.
+
+### OW-MOVE-01: Research faster player turning without changing walking behavior
+
+Status: Research spike; deferred, no implementation approved
+
+2026-10-02: following acceptance of the shared-menu direction fix, the user
+reports that overworld movement feels unchanged and requests retaining
+Polished Crystal's turning-delay approach for future consideration. This is a
+responsiveness option, not a confirmed new regression or part of `DEX-NAV-02`.
+
+Reference reviewed: local `~/Documents/GitHub/polishedcrystal`, master snapshot
+`f7745f128030c2ba8b0bd7ec8c3f161b58791d07`. Relevant code at that snapshot:
+
+- [StepFunction_Turn and .GetTurningSpeed](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/overworld/map_objects.asm#L1626):
+  both turn phases load their duration through the helper. `TURNING_SPEED`
+  clear returns four updates (Slow); set returns two (Fast). Initialization
+  falls through into decrementing each phase, so counter totals alone are not
+  an exact input-to-step display-duration measurement.
+- [Options_TurningSpeed](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/menus/options_menu.asm#L482)
+  toggles the bit in `wOptions1` and displays Slow/Fast. The
+  [default options](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/data/options/default_options.asm#L8)
+  leave the bit clear: Slow is the default.
+- [CheckTurning](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/overworld/player_movement.asm#L187)
+  still turns before stepping, permitting a tap to change facing without moving.
+  [GetAction](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/overworld/player_movement.asm#L650)
+  uses held directions with Down/Up/Left/Right priority, not a queue of taps or
+  a newest-direction-wins rule.
+- Timing context: Polished's
+  [overworld loop](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/overworld/events.asm#L114)
+  targets one display interval per update (approximately 60 Hz), and CGB
+  [initialization enables double CPU speed](https://github.com/Rangi42/polishedcrystal/blob/f7745f128030c2ba8b0bd7ec8c3f161b58791d07/engine/init.asm#L27).
+  Normal walking uses one pixel over 16 updates; this fork uses two pixels
+  over eight updates at approximately 30 Hz. The walking pace is broadly the
+  same, but the animation resolution differs. Do not copy the turn counters
+  without accounting for the different update cadence.
+
+Current fork touch points: `engine/overworld/map_objects.asm:StepFunction_Turn`
+uses fixed two-update counters for both phases;
+`engine/overworld/player_movement.asm:DoPlayerMovement.CheckTurning` selects the
+turn; `engine/overworld/events.asm:MaxOverworldDelay/NextOverworldFrame` governs
+the nominal two-display-interval update cadence. Physical input sampling and
+menu repeat handling should remain outside this spike.
+
+Research deliverables before proposing a patch:
+
+1. Measure input-to-facing and input-to-first-step timing in headless SameBoy
+   for taps, held turns, reversals and overlapping directions at several
+   display phases. Separate ordinary tile-step completion from turn holds.
+2. Compare a player-only shorter turn hold with a configurable hold, preserving
+   the ability to face an NPC without taking a step. Measure costs rather than
+   assuming the Polished counters imply the same wall-clock delay here.
+3. Check walking, cycling, surfing, collisions, ice/forced movement, scripts
+   and NPC turns. The existing turn-step handler is shared with other objects;
+   an unguarded change could shorten scripted or NPC turns unintentionally.
+4. Return a scoped recommendation and ROM/RAM costs. A 60 Hz overworld port,
+   CPU-speed change and D-pad tap queue are separate, unapproved projects.
 
 ### QA-CLEANUP-01: Remove temporary encounter edits
 

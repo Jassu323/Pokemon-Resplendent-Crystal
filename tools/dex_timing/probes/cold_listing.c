@@ -53,6 +53,12 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef DEX_CRY_OWNER_TRACE
 #include "cry_ownership.c"
 #endif
+#ifdef DEX_DIRECTION_CHANGE_TRACE
+#include "direction_changes.c"
+#endif
+#ifdef SHARED_MENU_INPUT_TRACE
+#include "shared_menu_input.c"
+#endif
 
 static void snapshot(int hit)
 {
@@ -90,6 +96,12 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
 #endif
 #ifdef DEX_CRY_OWNER_TRACE
     cry_owner_observe(bank, pc);
+#endif
+#ifdef DEX_DIRECTION_CHANGE_TRACE
+    direction_observe(bank, pc);
+#endif
+#ifdef SHARED_MENU_INPUT_TRACE
+    shared_menu_observe(bank, pc);
 #endif
     if (bank==B_INIT && pc==P_INIT) dictionary_services=upload_services=publications=0;
     if (bank==B_DECODE && pc==P_DECODE) dictionary_services++;
@@ -155,6 +167,9 @@ int main(int argc, char **argv)
         unsigned keys; uint64_t mask, budget;
         if (sscanf(line, "run %" SCNu64 " %" SCNu64 " %u", &mask, &budget, &keys) == 3) {
             GB_set_key_mask(&gb, keys);
+#ifdef DEX_DIRECTION_CHANGE_TRACE
+            direction_input(keys);
+#endif
             uint64_t start = ticks;
             int hit = -1;
             do {
@@ -176,6 +191,16 @@ int main(int argc, char **argv)
 #ifdef DEX_CRY_OWNER_TRACE
         else if (cry_owner_command(line)) {
             /* Read-only ownership snapshots in the diagnostic executable. */
+        }
+#endif
+#ifdef DEX_DIRECTION_CHANGE_TRACE
+        else if (direction_command(line)) {
+            /* Read-only input snapshots in the diagnostic executable. */
+        }
+#endif
+#ifdef SHARED_MENU_INPUT_TRACE
+        else if (shared_menu_command(line)) {
+            /* Physical input and read-only snapshots in a private test core. */
         }
 #endif
         else if (!strcmp(line, "peek\n")) {
@@ -231,6 +256,12 @@ int main(int argc, char **argv)
 #endif
 #ifdef DEX_CRY_OWNER_TRACE
     cry_owner_close();
+#endif
+#ifdef DEX_DIRECTION_CHANGE_TRACE
+    direction_close();
+#endif
+#ifdef SHARED_MENU_INPUT_TRACE
+    shared_menu_close();
 #endif
     GB_free(&gb);
     return 0;
