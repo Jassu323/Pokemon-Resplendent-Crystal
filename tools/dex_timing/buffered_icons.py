@@ -22,6 +22,8 @@ def render(snapshot):
         raise ValueError('Unexpected Description viewport')
     picture = np.zeros((144, 160, 3), dtype=np.uint8)
     portrait = np.zeros((144, 160), dtype=bool)
+    bg_colors = np.zeros((144, 160), dtype=np.uint8)
+    bg_priority = np.zeros((144, 160), dtype=bool)
     for y in range(144):
         for x in range(160):
             cell = 0x1800 + ((y + sy) // 8) * 32 + (x + sx) // 8
@@ -36,10 +38,43 @@ def render(snapshot):
             if attr & 8:
                 at += 0x2000
             color = ((vram[at] >> (7 - tx)) & 1) | (((vram[at + 1] >> (7 - tx)) & 1) << 1)
+            bg_colors[y, x] = color
+            bg_priority[y, x] = bool(attr & 128)
             at = (attr & 7) * 8 + color * 2
             value = int.from_bytes(pals[at:at + 2], 'little')
             channels = [(value >> shift) & 31 for shift in (0, 5, 10)]
             picture[y, x] = [(v << 3) | (v >> 2) for v in channels]
+    # Types and the Info HP endpoint use OBJ tiles. Reconstruct the actual
+    # hardware OAM, including the ten-object scanline limit and CGB priority.
+    if snapshot['lcd'] & 2:
+        oam, obj_pals = bytes.fromhex(snapshot['oam']), bytes.fromhex(snapshot['obj_pal'])
+        height = 16 if snapshot['lcd'] & 4 else 8
+        for y in range(144):
+            objects = [(i, oam[i:i + 4]) for i in range(0, 160, 4)
+                       if oam[i] - 16 <= y < oam[i] - 16 + height][:10]
+            occupied = set()
+            for _, (oy, ox, tile, attr) in objects:
+                row = y - oy + 16
+                if attr & 64:
+                    row = height - 1 - row
+                if height == 16:
+                    tile &= 254
+                at = tile * 16 + row * 2 + (0x2000 if attr & 8 else 0)
+                for px in range(8):
+                    x = ox - 8 + px
+                    if not 0 <= x < 160 or x in occupied:
+                        continue
+                    bit = px if attr & 32 else 7 - px
+                    color = ((vram[at] >> bit) & 1) | (((vram[at + 1] >> bit) & 1) << 1)
+                    if not color:
+                        continue
+                    occupied.add(x)
+                    if snapshot['lcd'] & 1 and bg_colors[y, x] and (bg_priority[y, x] or attr & 128):
+                        continue
+                    pal = (attr & 7) * 8 + color * 2
+                    value = int.from_bytes(obj_pals[pal:pal + 2], 'little')
+                    channels = [(value >> shift) & 31 for shift in (0, 5, 10)]
+                    picture[y, x] = [(v << 3) | (v >> 2) for v in channels]
     return picture, portrait
 
 
@@ -75,8 +110,10 @@ def audit_transition(folder, trace):
     incoming = next((e for e in frames if e['t'] > reveal['t']), None)
     if incoming:
         expected, _ = render(reveal)
-        actual_footer, _ = render(incoming)
-        expected[136:144, 3:11] = actual_footer[136:144, 3:11]
+        # Footer arrows blink independently of the incoming map handoff.
+        # Only the four cursor cells are exempt, never the labels or borders.
+        for x in (3, 43, 83, 115):
+            expected[136:144, x:x + 8] = pictures[incoming['display']][136:144, x:x + 8]
         if not np.array_equal(pictures[incoming['display']], expected):
             issues.append('incoming_reveal_pixels')
     else:
@@ -96,7 +133,8 @@ def check_ui(driver, repo, name):
     if issues:
         raise RuntimeError(f'{name}: {issues}')
     tilemap = bytes.fromhex(ui['map'])
-    return dict(footprint_tile=tilemap[21 + 18], type_tile=tilemap[7 * 21 + 9], issues=[])
+    type_tile = bytes.fromhex(ui['oam'])[2] if 'PokedexInfo_LoadTypeSprites' in repo.symbols else tilemap[7 * 21 + 9]
+    return dict(footprint_tile=tilemap[21 + 18], type_tile=type_tile, issues=[])
 
 
 def main():
@@ -142,7 +180,8 @@ def main():
             raise RuntimeError(f'Reentry failed: {incoming}')
         settle(driver)
         ui = check_ui(driver, repo, name)
-        if ui['footprint_tile'] != 0xb1 or ui['type_tile'] != 0x64:
+        type_a = 0x28 if 'PokedexInfo_LoadTypeSprites' in repo.symbols else 0x64
+        if ui['footprint_tile'] != 0xb1 or ui['type_tile'] != type_a:
             raise RuntimeError('Listing reentry failed to restore icon set A')
         return dict(species=name, ui=ui)
 

@@ -3590,6 +3590,48 @@ wPokedexDescriptionTextRow:: db
 wPokedexDescriptionTextPage:: db
 wPokedexDescriptionTextChunk:: ds 24
 wPokedexDescriptionTextChunkEnd::
+	ds 14 ; align the reusable lower-panel GDMA payload
+wPokedexInfoGFX:: ds 40 * TILE_SIZE
+wPokedexInfoMiniGFX:: ds 16 * TILE_SIZE
+wPokedexInfoOAM:: ds 8 * 4
+wPokedexInfoTileSources:: ds 40 * 2
+wPokedexInfoState:: db
+wPokedexInfoPage:: db
+wPokedexInfoPageCount:: db
+wPokedexInfoRow:: db
+wPokedexInfoTileCount:: db
+wPokedexInfoCopyTile:: db
+wPokedexInfoUploadTile:: db
+wPokedexInfoAtlasBuffer:: db
+wPokedexInfoActiveAtlasBuffer:: db
+wPokedexInfoListingCacheDirty:: db
+wPokedexInfoCaught:: db
+wPokedexInfoMiniCount:: db
+wPokedexInfoMiniBuffer:: db
+wPokedexInfoActiveMiniCount:: db
+wPokedexInfoActiveMiniBuffer:: db
+wPokedexInfoMiniPhase:: db
+wPokedexInfoMiniPalettes:: ds 2 * PAL_SIZE
+wPokedexInfoEvolutionList:: dw
+wPokedexInfoEvolutionRecord:: dw
+wPokedexInfoStats:: ds 6
+wPokedexInfoWidth:: db
+wPokedexInfoMapCursor:: dw
+wPokedexInfoAttrCursor:: dw
+wPokedexInfoPalette:: db
+wPokedexInfoScratch:: db
+wPokedexInfoRestoreDescription:: db
+wPokedexInfoLineRemaining:: db
+wPokedexInfoLineSource:: dw
+; Committed pages survive cancellation and reuse of the inactive workspaces.
+; Each atlas retains seven map rows, forty ROM glyph pointers and its count.
+wPokedexInfoReturnRecordA:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
+wPokedexInfoReturnRecordB:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
+wPokedexInfoVisible:: db
+wPokedexInfoWorkspaceEnd::
+ASSERT wPokedexInfoWorkspaceEnd <= $dc00
+ASSERT LOW(wPokedexInfoGFX) & $f == 0
+ASSERT LOW(wPokedexInfoMiniGFX) & $f == 0
 
 
 SECTION "Sampled Cry RAM", WRAMX

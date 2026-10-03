@@ -27,6 +27,14 @@ PokedexSelectedMon_ServiceDescriptionText:
 	and a
 	ret z
 	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_DESCRIPTION_TEXT
+	jr nz, .not_ready
+	; A competing portrait publication may clear the one-shot IRQ request.
+	ldh a, [hVBlank]
+	or VBLANK_POKEDEX
+	ldh [hVBlank], a
+	ret
+.not_ready
 	and a
 	ret nz
 	ldh a, [rSVBK]

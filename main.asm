@@ -322,6 +322,20 @@ INCLUDE "engine/pokedex/pokedex_animation_timeline.asm"
 INCLUDE "engine/pokedex/new_dex_entry_animation.asm"
 INCLUDE "engine/gfx/new_dex_entry_pics.asm"
 
+SECTION "Pokedex Info", ROMX
+INCLUDE "engine/pokedex/pokedex_info.asm"
+INCLUDE "build/dex-info-assets/tables.asm"
+
+SECTION "Pokedex Info Glyphs", ROMX
+PokedexInfoTileGFX:
+INCBIN "build/dex-info-assets/tiles.2bpp"
+PokedexInfoTileGFXEnd:
+ASSERT PokedexInfoTileGFXEnd - PokedexInfoTileGFX <= $4000
+PokedexInfoTitleGFX:
+INCBIN "build/dex-info-assets/titles.2bpp"
+PokedexInfoTitleGFXEnd:
+ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
+
 
 SECTION "bank11", ROMX
 
@@ -923,6 +937,7 @@ SECTION "bank77", ROMX
 INCLUDE "engine/rtc/print_hours_mins.asm"
 INCLUDE "engine/events/diploma.asm"
 INCLUDE "engine/pokedex/pokedex_3.asm"
+INCLUDE "engine/pokedex/pokedex_info_publish.asm"
 INCLUDE "engine/events/catch_tutorial_input.asm"
 INCLUDE "engine/pokegear/townmap_convertlinebreakcharacters.asm"
 

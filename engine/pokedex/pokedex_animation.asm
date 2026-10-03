@@ -800,7 +800,14 @@ Pokedex_ServiceAnimationUploadChunk:
 	bit B_LCDC_ENABLE, a
 	jr z, .copy_lcd_off
 .transfer
+	; The HDMA helper programs registers before its next-frame wait. Lower
+	; panel publication must not replace those registers while it is suspended.
+	ld a, [wPokedexAnimSchedulerControl]
+	or 1 << POKEDEX_ANIM_UPLOAD_ACTIVE_F
+	ld [wPokedexAnimSchedulerControl], a
 	call Pokedex_HDMATransferAnimationGFX
+	ld hl, wPokedexAnimSchedulerControl
+	res POKEDEX_ANIM_UPLOAD_ACTIVE_F, [hl]
 	jr .transfer_done
 
 .copy_lcd_off
@@ -1479,6 +1486,7 @@ Pokedex_LoadPermanentCGBGFX:
 	ldh a, [hCGB]
 	and a
 	ret z
+	farcall PokedexInfo_LoadTitleGFX
 	ldh a, [rVBK]
 	push af
 	ld a, BANK(vTiles4)

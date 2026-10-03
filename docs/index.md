@@ -7,6 +7,7 @@ addresses and proposed fixes are not mistaken for current instructions.
 ## Current Systems
 
 - [Selected Pokedex animation scheduler](pokedex_animation_scheduler.md): runtime architecture, timing/admission contract, resource costs and adaptation to other owners.
+- [Selected Pokedex Info pages](pokedex_info.md): stats/evolution pages, build-time glyphs, bounded preparation, OBJ types, palettes, memory budgets and regression/manual checks.
 - [New Dex Entry animation scheduler](new_dex_entry_animation_scheduler.md): resident dictionary, exact publication timing, local batch uploader and reusable owner contracts.
 - [Pokedex VRAM and scratch ownership](pokedex_vram.md): graphics allocation and memory lifetimes.
 - [Sampled cries](sampled_cries.md): codec, asset pipeline, playback/refill behavior and owner-specific limits.
@@ -21,11 +22,17 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [New Dex Entry testing](dex_new_entry_testing.md): current miss breakpoints, focused manual checks, eight catch fixtures and headless validation.
 - [New Dex Entry input-timing regression](new_dex_entry_regression_results.md): 20-species acceptance, timer-phase stress, the acknowledged Mewtwo text-refresh fix and historical failure evidence.
 - [Live Dex and adjacent bug backlog](pokedex_selected_bug_backlog.md): current status, reproductions and deferred investigations.
+- [Info return and evolution investigation](pokedex_info_return_evolution_investigation.md): transient glyph/cache aliasing, independently verified missing gameplay records, shared buffered pagination for future Moves, fix estimates and regression requirements.
+- [Info return relocation preflight](pokedex_info_return_preflight.md): separate test ROM, unchanged outgoing pixels, linked resource costs, paired return latency and full input/playback regressions.
+- [Info return committed records acceptance](pokedex_info_return_records_preflight.md): integrated retained-page fix, reused Tower WRAMX, three-way timing comparisons, production regressions and accepted preparation tradeoff.
 - [Listing restoration investigation](pokedex_listing_restoration_investigation.md): normal-input reproductions, skipped/late palette commits, LCD-off cache flashes and scoped fix directions.
+- [Historical return and exit revalidation](pokedex_backlog_revalidation.md): current-link results for the four older Listing/exit reports, confirmed viewport/white-mask ordering defect and measured private fix costs.
+- [Dex opening and closing optimization story](pokedex_selected_bug_backlog.md#dex-perf-01-optimize-pokedex-opening-and-closing): deferred lifecycle work including the merged `DEX-EXIT-01` shift, timing measurements and regression requirements.
+- [Whole-Dex performance optimization story](pokedex_selected_bug_backlog.md#dex-perf-02-profile-and-optimize-the-completed-dex): deferred until Moves, Area and other Dex modes are implemented; profile tab/paging/cache work while preserving exact playback and presentation.
 - [Cry ownership investigation](pokedex_cry_ownership_investigation.md): Dex-local cancellation, synth resumption/outgoing exhaustion/header-race fixes, exact resource costs and all-species transition regressions.
 - [Internal transition investigation and fix](pokedex_internal_transition_investigation.md): delayed blackout, atomic internal reveal, final-link costs/timing/regressions and historical prototype evidence.
 - [Direction change investigation](pokedex_direction_change_investigation.md): held/new-axis conflicts, accepted shared-menu correction, exact costs, 57-state menu regressions and animation/overworld acceptance.
-- [Description page transaction](pokedex_description_paging_investigation.md): original A-page corruption diagnosis, implemented bounded lower-text publication, resource costs and automated acceptance; manual confirmation pending.
+- [Description page transaction](pokedex_description_paging_investigation.md): original A-page corruption diagnosis, accepted bounded lower-text publication, resource costs and automated/manual acceptance.
 - [Overworld turning-delay research spike](pokedex_selected_bug_backlog.md#ow-move-01-research-faster-player-turning-without-changing-walking-behavior): Polished Crystal references, timing differences, proposed measurements and scope limits; no overworld change implemented.
 
 ## Historical Evidence

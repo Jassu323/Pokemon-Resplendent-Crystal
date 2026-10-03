@@ -114,6 +114,27 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     if (bank==B_UPLOAD && pc==P_UPLOAD) upload_services++;
     if (bank==B_BEGIN && pc==P_BEGIN) publications=0;
     if (!auditing) return;
+#ifdef P_INFO_ASSETS
+    static uint64_t info_slice_start;
+    static unsigned info_slice_ly, info_slice_state;
+    if (bank==B_INFO_SLICE && pc==P_INFO_SLICE) {
+        info_slice_start=now;
+        info_slice_ly=byte(0xff44);
+        info_slice_state=gb.ram[3 * 4096 + (S_wPokedexInfoState & 4095)];
+    }
+    if (bank==B_INFO_SLICE_DONE && pc==P_INFO_SLICE_DONE) {
+        printf("{\"event\":\"info_slice\",\"t\":%" PRIu64 ",\"elapsed\":%" PRIu64
+               ",\"state\":%u,\"ly_start\":%u,\"ly_end\":%u}\n",
+               info_slice_start/2, (now-info_slice_start)/2,
+               info_slice_state, info_slice_ly, byte(0xff44));
+    }
+    if ((bank==B_INFO_ASSETS && pc==P_INFO_ASSETS) ||
+        (bank==B_INFO_OAM && pc==P_INFO_OAM) ||
+        (bank==B_INFO_MAP && pc==P_INFO_MAP) ||
+        (bank==B_INFO_PALETTE && pc==P_INFO_PALETTE)) {
+        printf("{\"event\":\"info_stage\",\"pc\":%u,\"ly\":%u,\"t\":%" PRIu64 "}\n",pc,byte(0xff44),now/2);
+    }
+#endif
     bool reveal = (bank == B_REVEAL && pc == P_REVEAL) ||
         (bank == B_PAGE_REVEAL && pc == P_PAGE_REVEAL);
     if (reveal || (bank == B_PUBLISH && pc == P_PUBLISH)) {
@@ -176,6 +197,9 @@ int main(int argc, char **argv)
     char line[4096];
     while (fgets(line, sizeof(line), stdin)) {
         unsigned keys; uint64_t mask, budget;
+#ifdef DEX_BACKLOG_REVALIDATION_TRACE
+        unsigned target_bank, target_pc, target_keys;
+#endif
         if (sscanf(line, "run %" SCNu64 " %" SCNu64 " %u", &mask, &budget, &keys) == 3) {
             GB_set_key_mask(&gb, keys);
 #ifdef DEX_DIRECTION_CHANGE_TRACE
@@ -194,6 +218,20 @@ int main(int argc, char **argv)
             } while (hit < 0 && ticks - start < budget * 2);
             snapshot(hit);
         }
+#ifdef DEX_BACKLOG_REVALIDATION_TRACE
+        else if (sscanf(line, "restorerun %u %u %" SCNu64 " %u", &target_bank, &target_pc,
+                        &budget, &target_keys) == 4) {
+            GB_set_key_mask(&gb, target_keys);
+            uint64_t start = ticks;
+            do {
+                unsigned before = gb.cycles_since_run;
+                step_origin = before;
+                GB_cpu_run(&gb);
+                ticks += (unsigned)(gb.cycles_since_run - before);
+            } while (!at(target_bank, target_pc) && ticks - start < budget * 2);
+            snapshot(at(target_bank, target_pc) ? 0 : -1);
+        }
+#endif
 #ifdef DEX_LISTING_RESTORE_TRACE
         else if (restoration_command(line)) {
             /* Optional host-only diagnostic commands never change game memory. */
@@ -227,20 +265,45 @@ int main(int argc, char **argv)
                 map[y * 21 + x] = gb.vram[0x1800 + y * 32 + x];
                 attrs[y * 21 + x] = gb.vram[0x3800 + y * 32 + x];
             }
-            printf("{\"event\":\"ok\",\"view\":%u,\"page\":%u,\"types\":[%u,%u],\"map\":",
+            printf("{\"event\":\"ok\",\"view\":%u,\"page\":%u,\"footer_cursor\":%u,\"types\":[%u,%u],\"map\":",
                    byte(S_wPokedexSelectedView), byte(S_wPokedexDescriptionPage),
+                   byte(S_wDexArrowCursorPosIndex),
                    gb.ram[0x1000 + (S_wBaseType1 & 4095)],
                    gb.ram[0x1000 + (S_wBaseType2 & 4095)]);
             hex(map, sizeof(map)); printf(",\"attrs\":"); hex(attrs, sizeof(attrs));
             printf(",\"palettes\":"); hex(gb.background_palettes_data, 64);
+            printf(",\"obj_palettes\":"); hex(gb.object_palettes_data, 64);
+            printf(",\"oam\":"); hex(gb.oam, sizeof(gb.oam));
+            printf(",\"lcdc\":%u,\"scx\":%u,\"scy\":%u,\"wx\":%u,\"wy\":%u,\"owner_transition\":%u",
+                   byte(0xff40),byte(0xff43),byte(0xff42),byte(0xff4b),byte(0xff4a),
+                   byte(S_wPokedexOwnerTransition));
+            printf(",\"info_page\":%u,\"info_pages\":%u,\"info_state\":%u,\"info_minis\":%u,\"info_tiles\":%u,\"caught\":%u",
+                   gb.ram[3*4096+(S_wPokedexInfoPage & 4095)],
+                   gb.ram[3*4096+(S_wPokedexInfoPageCount & 4095)],
+                   gb.ram[3*4096+(S_wPokedexInfoState & 4095)],
+                   gb.ram[3*4096+(S_wPokedexInfoActiveMiniCount & 4095)],
+                   gb.ram[3*4096+(S_wPokedexInfoTileCount & 4095)],
+                   gb.ram[3*4096+(S_wPokedexInfoCaught & 4095)]);
             printf(",\"border_gfx\":"); hex(gb.vram + 0x1710, 10 * 16);
-            unsigned type_cell = 7 * 21 + 9, foot_cell = 21 + 18;
-            unsigned type_address = 0x1000 + (int8_t)map[type_cell] * 16;
+            unsigned foot_cell = 21 + 18;
+            unsigned type_address = 0x2000 + gb.oam[2] * 16;
             unsigned foot_address = 0x1000 + (int8_t)map[foot_cell] * 16;
-            if (attrs[type_cell] & 8) type_address += 0x2000;
             if (attrs[foot_cell] & 8) foot_address += 0x2000;
             printf(",\"type_gfx\":"); hex(gb.vram + type_address, 8 * 16);
-            printf(",\"footprint_gfx\":"); hex(gb.vram + foot_address, 4 * 16); puts("}");
+            printf(",\"mini_gfx\":"); hex(gb.vram + 0x2000 + (gb.oam[34] & ~4) * 16, 16 * 16);
+            printf(",\"footprint_gfx\":"); hex(gb.vram + foot_address, 4 * 16);
+            printf(",\"staged_map\":"); hex(gb.ram+3*4096+(S_wPokedexOwnerTilemapBuffer&4095),18*32);
+            printf(",\"staged_attrs\":"); hex(gb.ram+3*4096+(S_wPokedexOwnerAttrmapBuffer&4095),18*32);
+            printf(",\"info_gfx\":"); hex(gb.ram+3*4096+(S_wPokedexInfoGFX&4095),40*16);
+            printf(",\"info_sources\":"); hex(gb.ram+3*4096+(S_wPokedexInfoTileSources&4095),40*2);
+            printf(",\"lower_tiles\":");
+            uint8_t lower[8*21*16];
+            for (unsigned y=8; y<16; y++) for (unsigned x=0; x<21; x++) {
+                unsigned cell=y*21+x, tile=map[cell];
+                unsigned address=0x1000+(int8_t)tile*16+((attrs[cell]&8)?0x2000:0);
+                memcpy(lower+((y-8)*21+x)*16,gb.vram+address,16);
+            }
+            hex(lower,sizeof(lower)); puts("}");
         } else if (!strcmp(line, "rawcolor\n")) {
             GB_set_color_correction_mode(&gb, GB_COLOR_CORRECTION_DISABLED);
             puts("{\"event\":\"ok\"}");

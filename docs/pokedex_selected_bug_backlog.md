@@ -1,18 +1,49 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-02. This is the live issue/status list, not the chronological
+Updated 2026-10-03. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
 Listing return palette/cache fixes now pass their reproduction and regression
 suites, and grid metadata now uses presence flags instead of retained transient
 IDs. Mew's incomplete category and Drapion's category overflow are also corrected
-with focused headless regressions passed. The remaining open UI, input,
-and adjacent-owner items below remain deferred. Internal paging's delayed
+with focused headless regressions passed. The remaining historical UI,
+secondary-screen and adjacent-owner items below remain deferred. Internal paging's delayed
 portrait masking, buffered icons and atomic reveal are implemented, with
 automated regression and the user's manual visual review passed.
 The shared-menu fresh-direction correction is now accepted for production;
 overworld turning-delay changes remain a separate research spike.
+The bounded A-button Description transaction is also manually accepted and
+committed as `9f89227efd33a56e064fc010a9ebb4c7d0666d7f` (Description Paging Bug
+Fix). Its automated timing/content regressions remain the recorded evidence;
+the user's confirmation closes `DEX-DESC-01` without closing Area or older
+Listing/exit presentation reports.
+
+Remaining Dex review queue:
+
+- `DEX-INFO-01` is solved by the integrated
+  [committed-record return fix](pokedex_info_return_records_preflight.md).
+  It preserves outgoing pixels with about 50ms common return overhead and
+  two extra intervals of Info preparation, accepted for now and retained as
+  measured baselines for `DEX-PERF-02`. `DEX-INFO-04` is a separately confirmed early-cancellation
+  Description badge defect, also present in production. Missing evolution
+  data (`DEX-INFO-02`) is deferred into the broader `DEX-DATA-02` species pass.
+  Shared pagination remains separate under `DEX-PAGE-01`. `DEX-INFO-03`,
+  delayed tab changes during frontpic playback, remains uninvestigated.
+- `DEX-PERF-01` is a deferred optimization story for opening and closing the
+  Dex. It includes the confirmed `DEX-EXIT-01` shell shift, now merged into
+  that broader lifecycle work rather than scheduled as a standalone fix.
+- `DEX-PERF-02` defers broader Dex profiling/optimization until Moves, Area
+  and the remaining Dex modes have been implemented.
+- Historical reports `DEX-RETURN-02` (vertical displacement), `DEX-RETURN-04`
+  (placeholder Listing state) and `DEX-GRID-02` (caught-ball OBJ palette) do not
+  reproduce in the current 448-return/746-viewport revalidation. Keep their
+  individual historical reports pending manual revalidation rather than
+  inventing another fix. See the [full revalidation](pokedex_backlog_revalidation.md).
+- Keep `DEX-AREA-01` separate: its Area setup stall is reproduced, while the
+  older transition-corruption report still needs presentation revalidation.
+- `DEX-SEARCH-01` remains a deferred Search palette report; recheck it before
+  changing that screen. `DEX-DATA-01` is content completion, not scheduling.
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
@@ -47,7 +78,10 @@ both cold entry and settled internal paging. See the
 [UI results](pokedex_description_ui.md#current-results).
 
 Warm entry, rapid cancellation, active-animation Description text toggles and
-all owner/exit transactions are not signed off by these settled-playback tests.
+all owner/exit transactions are not signed off by these settled-playback tests
+alone. The separate `DEX-DESC-01` active-input regression and manual acceptance
+now sign off the bounded text transaction; older Listing/exit reports retain
+their individual status below.
 Revalidate if warming is removed or production timing changes. See the
 [implementation](pokedex_animation_scheduler.md), [acceptance/test guide](dex_scheduler_validation.md)
 and [cold results](dex_cold_listing_results.md). Historical failures, hypotheses
@@ -205,11 +239,155 @@ audit should make its no-active-sample requirement explicit; this investigation
 does not establish that other screens reproduce the race. See the
 [instruction-level trace](pokedex_cry_ownership_investigation.md#incoming-header-race).
 
+## Info Pages
+
+### DEX-INFO-01: B-return from Stats corrupts the lower Listing graphics
+
+Status: Solved 2026-10-03; committed-record return preservation accepted and integrated
+
+Reproduction: cold-select caught Chikorita, open Info once and press B without
+another A. The lower labels/bars acquire minisprite pixels before the correct
+Listing appears. Settled playback is enough. Chikorita P.2 is a clean control;
+Tyrogue P.3 and Stats after Chikorita -> Bayleef -> Meganium also reproduce.
+
+Cause: atlas B borrows bank-1 Listing frame-0 cells. Cache repair uploads into
+them before removing the outgoing Info BG references. Hiding the Window does
+not hide this BG panel. This is not a rejected palette-write deadline.
+Twenty-one of 33 focused returns corrupt for 11-12 display frames; all 33 final
+Listings, used palettes, cache bytes, scrolling and re-entry checks pass.
+
+The user selected preserving the outgoing panel by relocating its actual
+Info-B tiles to unaliased Info-A storage, then acknowledging an identical-pixel
+map publication before the unchanged full-cache Listing repair. A separate
+private ROM passes 96 paired returns and 150 pending-job cancellation pairs,
+with no exposed tile replacement or lower-panel blanking. Linked cost is
+280 ROMX bytes, no new ROM0/RAM/VRAM. It adds approximately 50ms on unaliased
+Info returns and 151ms when relocation is required; production is untouched
+pending review. The user rejected this readback latency. Its
+[committed-record successor](pokedex_info_return_records_preflight.md) passes
+the same suites plus 100 additional cancellation cases. Common atlas-B
+returns add about 50ms/three intervals; atlas-A returns are effectively
+unchanged. Cost is 364 ROMX bytes and 611 reused Tower-overlay bytes, with
+zero physical WRAM growth or premium/VRAM additions. Info preparation itself
+adds about two intervals. The user accepted these costs and requested
+production integration, deferring further performance work until the other
+Dex components are situated. The production ROM, SYM and MAP reproduce the
+accepted prototype byte-for-byte. The retained-screen transaction remains
+separate from `DEX-INFO-04`; acceptance does not close that badge defect.
+See [historical readback results](pokedex_info_return_preflight.md).
+The test probe's extra A was corrected, and the oracle checks outgoing display
+frames rather than just the final Listing.
+See [full reproduction, trace, alternatives and costs](pokedex_info_return_evolution_investigation.md#confirmed-b-return-corruption).
+
+### DEX-INFO-04: Early Info cancellation can erase Description's P. badge
+
+Status: Confirmed in production and private return preflight 2026-10-03; not fixed
+
+Reproduction: cold-select caught Rhyperior, immediately select Info with
+Right/A, then Left/A back to Description before Info finishes preparation.
+The phase-0 automated replay reproduces; phases 8, 32 and settled do not.
+The lower `P.` badge remains blank while the description and digit display
+correctly. Playback completes without animation/audio misses. This is not a
+Listing return defect and occurs before the new return helper executes.
+
+Cause: Info's incremental row clear replaces row 9 column 1 with blank `$32`;
+its badge renderer restores `$77` only after all rows are cleared. The caught
+Description-restoration path and text initializer assume this cell survives,
+updating the page digit but not explicitly restoring `P.`. The failure differs
+from the expected Description map at that one cell only.
+
+Recommended direction: stage the complete Description badge on restoration,
+then sweep cancellation before/during every Info preparation phase. A small
+ROMX-only change is expected, but not yet implemented or linked-costed. No new
+ROM0, WRAM0 or HRAM is expected. Include caught/uncaught, both atlas buffers,
+active playback and internally paged owners. Retain the current failing test;
+do not suppress its badge check. See [preflight evidence](pokedex_info_return_preflight.md#existing-badge-failure).
+
+### DEX-INFO-02: Added-species evolution pages and added branches are missing
+
+Status: Confirmed; deferred 2026-10-03 into DEX-DATA-02, not solved
+
+The user will address evolution/family records while revising species learnsets,
+base stats and other species data. Do not add gameplay evolution links or
+Dex-only substitutes as part of the current return/pagination work. Retain the
+existing approved Skitty link. See [DEX-DATA-02](#dex-data-02-complete-species-data-during-the-planned-species-revision).
+
+Reproduction: on caught post-Gen-2 species with future evolutions, open Info's
+Stats page and press A again. The user reports that it never advances to the
+evolution pages, while vanilla evolution families generally work. This also
+affects vanilla roots with added evolutions: Eevee is missing Leafeon and
+Glaceon. Include Skitty/Delcatty and representative added multi-stage families,
+and regression-test every existing vanilla family as well.
+
+Independent linked-data decoding across all 373 species finds no generator,
+indexing or visibility mismatch. Current Info lists correctly match the
+gameplay graph, which has only 123 direct edges. Skitty is the only added
+species with an evolution record; Eevee stops after its five vanilla targets.
+The separate first-stage family table names 67 members unreachable from their
+root, including Leafeon/Glaceon. Delcatty's lowest-stage entry also still needs
+normalizing to match the approved Skitty link. A fresh 373-species headless
+pass preserves current content and exact playback; this does not certify
+family completeness against missing input data.
+
+Recommend filling the real gameplay evolution tables and regenerating Info,
+not a Dex-only override. Ordinary records are four ROMX bytes each (five for
+stat comparisons), plus generated display records/glyphs; no premium RAM
+growth is expected for data-only changes. Approve requirements for absent
+items or unsupported special methods before adding them to the game.
+
+Eevee's seven intended targets will require five Info pages once its data is
+completed. Pagination is independent renderer work under `DEX-PAGE-01`, not
+deferred with these source records. See [full data audit and fix choices](pokedex_info_return_evolution_investigation.md#confirmed-missing-evolution-content).
+
+### DEX-INFO-03: Switching lower tabs waits for frontpic animation completion
+
+Status: User-reported 2026-10-03; investigation pending
+
+Reproduction: leave Info's Stats page selected, internally page to another
+Pokemon, then select Desc while that incoming frontpic is still animating.
+The user observes that the lower tab does not change until the animation ends.
+
+Investigate when the input request is accepted, when Description preparation
+receives budget, and when its completed panel publishes. Separate dropped
+input from an accepted but starved job. Compare both tab directions, active
+and settled playback, and sampled/synthesized cries. Any fix must keep exact
+portrait deadlines and avoid sampled-cache exhaustion while making progress
+on the requested tab; the cause and acceptable latency are not yet measured.
+
+### DEX-PAGE-01: Shared Buffered Page Indicators For Lower Tabs
+
+Status: Proposed renderer work; independent of deferred species-data completion
+
+Support more than four lower-panel pages for Info and future Moves learnsets.
+Keep page counts owned by each tab, while sharing a bounded badge-preparation
+and atomic publication contract. Reuse `$7b-$7e` as two two-tile digit buffers;
+prepare the incoming digit in the unreferenced pair and switch its map references
+with the corresponding completed lower page. Keep resident P.1/P.2 and the
+editable source sheet. P.1-P.9 are the current single-digit asset scope; pages
+10+ require a separate wider-badge layout/assets decision, not silent wrap.
+
+Estimated 150-300 ROMX code bytes plus 160 net graphics bytes through P.9,
+zero additional VRAM; an independent selector may need one WRAMX byte.
+No new ROM0, WRAM0 or HRAM expected. Exact costs await implementation preflight.
+See [the proposed shared transaction](pokedex_info_return_evolution_investigation.md#shared-page-indicator-including-future-moves).
+
+Recommended sequencing: handle B-return correctness first and validate it
+independently, then integrate and validate shared pagination, followed by the
+combined regression. This can be one work pass with separate checkpoints;
+neither change requires the other or authorizes evolution-data edits.
+
+Validation must cover rapid A, canceled preparations, species paging,
+Info-to-Desc changes and B-return from both badge-buffer parities. Use private
+diagnostic page fixtures for P.5-P.9 until real content needs them; do not edit
+production species records solely to exercise pagination. Preserve exact
+portrait/audio timing and current P.1/P.2 graphics. Include the existing
+33-return visible-pixel/cache suite and all-species playback regression.
+
 ## Description Paging
 
 ### DEX-DESC-01: Toggling description pages can corrupt the upper screen
 
-Status: Implemented 2026-10-02; automated regression passed, manual confirmation pending
+Status: Solved 2026-10-02; automated regression and manual confirmation passed
 
 Pressing A to switch an entry's Description text pages was observed corrupting
 the frontpic, header and other upper tile rows. This is a separate transaction
@@ -253,6 +431,9 @@ pass; existing Area setup stalls remain separately deferred under
 `DEX-AREA-01`. Text-only publication sometimes waits behind animation work:
 median about 2.6 display intervals and worst observed about 8 (132 ms).
 See the [implemented contract, costs and results](pokedex_description_paging_investigation.md#implemented-transaction).
+The user confirms the fix checks out and has committed/pushed it as
+`9f89227efd33a56e064fc010a9ebb4c7d0666d7f`. No new Description behavior concern
+was reported in that manual acceptance.
 
 ## Selected-Mon Internal Paging
 
@@ -427,7 +608,7 @@ See the
 
 ### DEX-RETURN-02: The Selected page can reappear vertically displaced
 
-Status: LCD-off page reappearance resolved; vertical displacement still needs revalidation
+Status: LCD-off page reappearance resolved; historical displacement not reproduced in current-link revalidation
 
 After the white blank interval, the Selected page can reappear eight pixels too
 low and move upward one pixel per frame before the Listing takes ownership.
@@ -441,6 +622,12 @@ The cache-repair correction removes the LCD-off/white interval and its later
 page reappearance. The outgoing page now remains visible continuously until
 the complete Listing is ready. No eight-pixel displacement is reproduced by
 the fixed return suite; the historical displacement report remains open.
+
+2026-10-02: 448 targeted/all-species B-returns, including sparse-seen,
+active-cancel, text-page-2 and internally paged paths, expose no displacement
+across 7,211 completed display frames. Hardware and mirrored SCY remain zero.
+Keep the older report as unreproduced pending manual confirmation; no scroll
+patch is proposed. See the [revalidation evidence](pokedex_backlog_revalidation.md).
 
 ### DEX-RETURN-03: Listing BG minisprite columns can contain stale graphics
 
@@ -471,7 +658,7 @@ See the
 
 ### DEX-RETURN-04: Listing can briefly expose placeholder selection state
 
-Status: Open; not reproduced by the current all-seen/sparse restoration suite
+Status: Historical report not reproduced in current-link revalidation; manual revalidation pending
 
 Some returns briefly show the unseen portrait, `-----`, or an intermediate
 cursor position before restoring the real Listing selection.
@@ -480,6 +667,13 @@ cursor position before restoring the real Listing selection.
 did not expose these placeholder
 states. Keep this report open pending a matching current-link reproduction;
 palette/cached-row findings alone do not prove its cause.
+
+2026-10-02: the 448-return revalidation compares the rendered selection header,
+static portrait, actual absolute selection and hardware cursor against an
+independently reached Listing. No unseen portrait, `-----` or intermediate
+cursor appears on first reveal or subsequent observed frames. The existing
+atomic handoff passes; no additional repair is justified without a matching
+reproduction. See the [revalidation evidence](pokedex_backlog_revalidation.md).
 
 The return issues should be handled as one Selected-Mon-to-Listing ownership
 handoff, including tile data, tilemap, attrmap, palettes, OAM, scroll position,
@@ -519,7 +713,7 @@ separate caught-ball report below. See the
 
 ### DEX-GRID-02: Caught Poke Ball can receive the wrong OBJ palette
 
-Status: Open; not reproduced by the current restoration suite
+Status: Historical report not reproduced in current-link revalidation; manual revalidation pending
 
 The caught indicator has occasionally appeared with the wrong palette. The
 issue is difficult to reproduce and should be tested alongside Listing palette
@@ -528,6 +722,13 @@ restoration.
 2026-10-01: caught-ball OBJ slot 1 is correct in the tested returns and lies
 outside the confirmed rejected-write range. Keep this issue separate/open;
 do not assume the palette-3 corruption explains the earlier caught-ball report.
+
+2026-10-02: actual hardware OBJ palette 1, marker OAM attributes/tile/bank and
+uploaded tile pixels pass all 746 mixed/all-caught Listing viewports (3,382
+visible markers), plus the transient return-frame checks. Target buffers alone
+are not used as proof. This does not establish the original report's cause;
+retain it as unreproduced and do not add a marker-specific patch. See the
+[revalidation evidence](pokedex_backlog_revalidation.md).
 
 ### DEX-GRID-03: Retained grid IDs are not garbage-collection roots
 
@@ -721,13 +922,15 @@ Status: Deferred
 The Search page currently displays Slowpoke with an incorrect all-black
 palette.
 
-### DEX-EXIT-01: Dex-to-menu shell shift needs revalidation
+### DEX-EXIT-01: Saved menu viewport is restored before the Dex is hidden
 
-Status: Needs revalidation
+Status: Merged into DEX-PERF-01 on 2026-10-02; confirmed defect remains unfixed
 
-A shell/layout shift was previously reported while leaving the Pokedex for the
-main menu. Recent full-screen fades appeared normal, but the original issue has
-not been explicitly closed.
+The user deferred the standalone fix so entry/exit timing and presentation can
+be addressed together. See
+[DEX-PERF-01](#dex-perf-01-optimize-pokedex-opening-and-closing) for scope,
+acceptance criteria and retained diagnostic evidence. This ID remains as a
+cross-reference, not a separate active work item or a solved bug.
 
 ### DEX-DATA-01: Custom entries contain placeholder data
 
@@ -735,6 +938,146 @@ Status: Content backlog
 
 Some custom Pokemon entries still have blank or placeholder descriptions and
 unknown height/weight values.
+
+### DEX-DATA-02: Complete Species Data During The Planned Species Revision
+
+Status: Deferred by the user 2026-10-03; includes confirmed DEX-INFO-02
+
+The user will review species learnsets, updated base stats and related species
+data in a later content pass. Complete actual gameplay evolution links and
+their requirements during that work, then regenerate Dex Info. Missing
+evolution pages remain an expected consequence of incomplete source records,
+not a reason to invent a separate Dex-only evolution graph.
+
+Retain the [independent source/linked audit](pokedex_info_return_evolution_investigation.md#confirmed-missing-evolution-content):
+all 373 Info lists match gameplay, but only Skitty has a nonempty added-species
+evolution block; the existing first-stage table identifies 67 family members
+unreachable from their root. Check added branches on vanilla roots as well as
+new families, and normalize Delcatty's lowest-stage metadata to match the
+approved Skitty link. Preserve current evolution records until changes are
+explicitly chosen; approve absent items or unsupported methods separately.
+
+Acceptance: independently verify intended family completeness and requirements,
+regenerate Info and confirm all future stages/conditions/pages, then test actual
+gameplay evolution behavior and relevant species/learnset/stat consumers.
+`DEX-DATA-01` remains the separate placeholder Dex prose/height/weight backlog;
+coordinate that content where appropriate without silently closing it.
+Shared pagination (`DEX-PAGE-01`) is renderer work and may proceed before this
+species pass without changing the data. No content implementation is approved
+by this deferral, and no completion date is assigned.
+
+## Dex Performance Optimization
+
+### DEX-PERF-01: Optimize Pokedex opening and closing
+
+Status: Deferred story; includes DEX-EXIT-01, no production implementation approved
+
+2026-10-02: optimize the full Start-menu-to-Dex entry and Dex-to-menu exit
+procedures together rather than adding a standalone mask fix. The objective
+is faster, responsive opening/closing with clean graphics ownership throughout
+the transition, not simply replacing visible waiting with a longer blank mask.
+Selected-Mon internal paging and New Dex Entry are separate transactions.
+
+Investigation scope:
+
+- Measure accepted input to first visible transition, complete incoming screen
+  and renewed input readiness separately on both entry and exit.
+- Profile menu fades, Dex graphics/cache initialization, waits, exit sound,
+  cleanup and overworld map reconstruction. Identify redundant work or waits
+  and useful opportunities to prepare work without exposing partial screens.
+- Design viewport, tilemap/attributes, palette and OAM handoffs together;
+  resolve the merged exit shift as part of that sequencing.
+- Preserve the overworld-union reconstruction required by Dex scratch use,
+  species-ID cleanup, menu/viewport restoration and audio ownership. Do not
+  remove necessary rebuilds or waits solely to improve a timing number.
+- Cost any proposed implementation before approval, explicitly flagging ROM0,
+  WRAM0 or HRAM changes. The broader optimization has not yet been costed.
+
+Merged defect and evidence from DEX-EXIT-01:
+
+A shell/layout shift was previously reported while leaving the Pokedex for the
+main menu. The user reconfirms it in the latest build. Headless normal-input
+revalidation reproduces one colored outgoing Dex frame displaced five pixels
+right, with the right-hand window content missing, in all 88 exit cases.
+
+`Pokedex.exit` restores saved `hSCX/hWX/hWY` before returning. The Start-menu
+caller then rebuilds overworld map blocks before `CloseSubmenu` requests white
+palettes. That rebuild takes 76,660-84,004 T cycles, crossing VBlank while old
+Dex colors/maps remain visible under the restored viewport. No palette write
+is rejected; this is owner/cleanup ordering, not animation or audio starvation.
+
+A private Dex-local early white-mask request removes the displaced frame in
+all 88 matched cases without adding a display interval. Final menu VRAM,
+palettes, OAM and viewport state match; first white occurs 19 intervals earlier,
+replacing the previous static-Dex dwell. Proposed net cost is nine ROMX bytes,
+with no new ROM0, WRAM0, WRAMX, HRAM or VRAM allocation. The earlier white
+appearance is the visual tradeoff. The late-hide-and-wait alternative may add
+an interval and is not yet tested. No production assembly or ROM changed.
+These remain comparison candidates, not the prescribed optimization design;
+the user deferred promotion of the narrow early-mask fix.
+See [reproduction, trace, alternatives and costs](pokedex_backlog_revalidation.md#confirmed-exit-shift).
+
+Acceptance and regression requirements:
+
+- Report before/after entry and exit timings, with any added blank duration or
+  latency tradeoff made explicit; retain a matching baseline/private test ROM.
+- Eliminate the displaced colored Dex frame and avoid mixed-owner palettes,
+  missing window content, placeholder selection or partially restored maps.
+- Re-run the existing 88-case exit matrix and Listing restoration/cache tests;
+  broaden entry/exit controls to supported Dex modes and secondary-owner
+  routes affected by the implementation, plus rapid open/close and re-entry.
+- Verify returned Start-menu graphics, OAM, palettes, selection/input state and
+  viewport, then normal overworld rendering, movement and audio after closing.
+- Preserve accepted Description animation/cry timing and input behavior in
+  focused and all-species regressions. Obtain manual presentation approval.
+
+### DEX-PERF-02: Profile And Optimize The Completed Dex
+
+Status: Deferred story; start after Moves, Area and other Dex modes are implemented
+
+Requested 2026-10-03 after the Info return/evolution investigation. Optimize
+the completed Dex as a whole using measured headless normal-input traces,
+not assumptions about heavy operations or isolated synthetic throughput.
+Coordinate entry/exit work with `DEX-PERF-01`; retain that story's merged
+`DEX-EXIT-01` acceptance requirements rather than duplicating or closing them.
+
+Scope:
+
+- Profile accepted input to first visible response, complete publication and
+  renewed input readiness for Listing selection, internal species paging,
+  B-return, lower-tab/page changes, searches, supported modes and entry/exit.
+- Separate CPU copy/decode work, VRAM/DMA and palette/OAM publication, boundary
+  waits, input-repeat timing and necessary cache restoration. Record cold,
+  settled and canceled/rapid-input cases, including sampled/synthesized cries.
+- Investigate restoring only invalid Listing components, retaining unaffected
+  cache rows/frames, deduplicating repeated preparation and performing safe
+  early work. Info currently invalidates complete row tags when only its
+  borrowed frame-0 glyph atlas changed; evaluate component ownership before
+  weakening those tags, especially after internal paging changes the viewport.
+- Assess bounded lower-job scheduling and shared buffered pagination after all
+  tabs exist. Do not trade exact portrait timing/audio reliability for an
+  apparently faster tab, remove input checks or expose partial graphics.
+- Revisit the accepted committed-record B-return costs: common atlas-B
+  returns add about 50ms/three intervals (smaller glyph sets about two),
+  atlas-A returns are effectively unchanged, and settled Info Stats activation
+  adds about 33.49ms/two intervals. Preserve the outgoing panel and immutable
+  visible-page ownership when optimizing either preparation or Listing repair.
+  The records reuse 611 overlay bytes, leaving 200 bytes before `$dc00`;
+  future mutually exclusive lower tabs should share the workspace. See the
+  [measured comparison and production acceptance](pokedex_info_return_records_preflight.md).
+- Cost each candidate and explicitly flag ROM0, WRAM0, WRAMX, HRAM and VRAM
+  additions. Prefer existing owner scratch and ROMX trades where justified.
+
+Acceptance:
+
+- Matching baseline/prototype ROM identities and repeatable before/after timing
+  distributions, including added mask/blank duration and timer/display phases.
+- Measurable responsiveness improvement without visual corruption, icon lag,
+  stale page digits, palette rejection, incorrect input or ownership leakage.
+- Full all-species cold/internal playback accounting, tab/paging/cancellation,
+  Listing-cache/navigation, supported-mode and menu/overworld exit regressions.
+- Manual presentation confirmation before promotion. Preserve separately
+  logged correctness fixes; this story is not permission to defer INFO-01/02.
 
 ## Adjacent Deferred Work
 

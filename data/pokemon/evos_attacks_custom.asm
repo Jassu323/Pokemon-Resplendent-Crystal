@@ -231,6 +231,7 @@ HariyamaEvosAttacks:
 	db 0 ; no more level-up moves
 
 SkittyEvosAttacks:
+	dbbw EVOLVE_ITEM, MOON_STONE, DELCATTY
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	db 0 ; no more level-up moves

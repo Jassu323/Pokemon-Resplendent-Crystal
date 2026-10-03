@@ -3,8 +3,8 @@
 import unittest
 from pathlib import Path
 
-from dex_timing.assets import Repository
-from dex_timing.costs import machine
+from dex_timing.assets import Repository, offset
+from dex_timing.costs import machine, run_to
 from dex_timing.internal_transitions import summarize
 
 
@@ -78,8 +78,11 @@ class LinkedTransitionContracts(unittest.TestCase):
 
     def cpu(self):
         cpu = machine(self.repo)
-        cpu.allowed_io.update((0xff46, 0xff47, 0xff48, 0xff4a, 0xff4b,
+        cpu.allowed_io.update((0xff41, 0xff46, 0xff47, 0xff48, 0xff4a, 0xff4b,
                                *range(0xff51, 0xff56), *range(0xff68, 0xff6c)))
+        cpu.ram[0xff41] = 1
+        begin, end = (offset(self.repo.symbols[n]) for n in ('OAMDMACode', 'OAMDMACode.End'))
+        cpu.block(self.repo.symbols['hTransferShadowOAM'][1], self.repo.rom[begin:end])
         return cpu
 
     def value(self, cpu, name):
@@ -105,10 +108,11 @@ class LinkedTransitionContracts(unittest.TestCase):
             palette_bank, address = self.repo.symbols['wBGPals2']
             self.assertEqual(bytes(cpu.wram[palette_bank][address - 0xd000:address - 0xd000 + 64]), bg)
 
-    def test_internal_publication_uses_only_visible_bg_palettes_and_restores_banks(self):
+    def test_internal_publication_owns_stat_bg_and_type_obj_palettes_and_restores_banks(self):
         cpu = self.cpu()
         payload = bytes(range(64))
         cpu.field('wBGPals2', int.from_bytes(payload, 'little'), len(payload))
+        cpu.field('wOBPals2', int.from_bytes(payload, 'little'), len(payload))
         cpu.field('wPokedexOwnerTransition', 3)
         cpu.field('wPokedexSelectedBGPaletteDirty', 0xff)
         cpu.field('wPokedexSelectedOBJPaletteDirty', 0xff)
@@ -117,9 +121,10 @@ class LinkedTransitionContracts(unittest.TestCase):
         cpu.run('Pokedex_VBlankOwnerTransition')
         self.assertTrue(cpu.f & 0x10)
         self.assertEqual(bytes(v for _, a, v in cpu.writes if a == 0xff69),
-                         payload[:24] + payload[48:])
+                         payload)
+        self.assertEqual(bytes(v for _, a, v in cpu.writes if a == 0xff6b), payload[:48])
         self.assertEqual([v for _, a, v in cpu.writes if a == 0xff55], [35, 35])
-        self.assertFalse(any(a in (0xff6b, 0xff46) for _, a, _ in cpu.writes))
+        self.assertEqual(sum(a == 0xff46 for _, a, _ in cpu.writes), 1)
         self.assertEqual((cpu.ram[0xff70], cpu.ram[0xff4f]), (6, 1))
         for field in ('wPokedexOwnerTransition', 'wPokedexSelectedBGPaletteDirty',
                       'wPokedexSelectedOBJPaletteDirty'):
@@ -141,6 +146,32 @@ class LinkedTransitionContracts(unittest.TestCase):
             ports = (0xff46, 0xff4a, 0xff4b, 0xff4f, 0xff70,
                      *range(0xff51, 0xff56), *range(0xff68, 0xff6c))
             self.assertFalse(any(a in ports for _, a, _ in cpu.writes))
+
+    def test_internal_mask_changes_only_the_portrait_target(self):
+        cpu = self.cpu()
+        bg, obj = bytes(range(64)), bytes(range(64, 128))
+        cpu.field('wBGPals2', int.from_bytes(bg, 'little'), len(bg))
+        cpu.field('wOBPals2', int.from_bytes(obj, 'little'), len(obj))
+        cpu.field('wPokedexSelectedState', 2)
+        cpu.ram[0xff70] = 3
+        cpu.run('Pokedex_BlackOutSelectedMonBG')
+        bank, at = self.repo.symbols['wBGPals2']
+        actual = bytes(cpu.wram[bank][at - 0xd000:at - 0xd000 + 64])
+        self.assertEqual(actual, bg[:8] + b'\xff\x7f' * 4 + bg[16:])
+        bank, at = self.repo.symbols['wOBPals2']
+        self.assertEqual(bytes(cpu.wram[bank][at - 0xd000:at - 0xd000 + 64]), obj)
+        self.assertEqual(cpu.ram[0xff70], 3)
+
+    def test_internal_mask_holds_oam_until_the_owner_handoff(self):
+        cpu = self.cpu()
+        oam = bytes(range(160))
+        cpu.field('wShadowOAM', int.from_bytes(oam, 'little'), len(oam))
+        cpu.field('wPokedexSelectedState', 2)
+        run_to(cpu, 'PokedexSelectedMon_BeginHiddenTransition', 'DelayFrame')
+        self.assertEqual(self.value(cpu, 'hOAMUpdate'), 1)
+        self.assertEqual(self.value(cpu, 'hCGBPalUpdate'), 1)
+        at = self.repo.symbols['wShadowOAM'][1]
+        self.assertEqual(bytes(cpu.read(at + i) for i in range(160)), oam)
 
 
 if __name__ == '__main__':

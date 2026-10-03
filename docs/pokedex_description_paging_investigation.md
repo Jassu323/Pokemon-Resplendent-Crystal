@@ -3,8 +3,10 @@
 Investigated 2026-10-02 for `DEX-DESC-01` against committed checkpoint
 `c289b1b365ad47d9882148f026c53493217fb15a` (Menu Navigation Fix).
 The recommended bounded text transaction is now implemented in production.
-Automated acceptance passes; manual acceptance remains pending. The original
-diagnosis below refers to that checkpoint, not the corrected game. See
+Automated and manual acceptance pass. The user committed/pushed the accepted
+fix as `9f89227efd33a56e064fc010a9ebb4c7d0666d7f` (Description Paging Bug Fix).
+The original diagnosis below refers to the diagnostic checkpoint, not the
+corrected game. See
 [Implemented Transaction](#implemented-transaction) for current behavior,
 resource costs and complete regression results.
 
@@ -449,8 +451,11 @@ median 2.586 display intervals, 95th percentile 4.294, maximum 7.872 intervals
 (Weavile, active offset 2), about 132 ms. The all-species offset-0/completed
 suite has median 2.521 and maximum 5.280 intervals. Animation/cry work has
 priority during those waits; the old page remains complete and visible.
-Manual acceptance should specifically assess whether the rare text-only wait
-is acceptable, not mistake unchanged playback for instantaneous text reveal.
+The user confirms the corrected behavior checks out and has committed/pushed
+the fix. This closes manual acceptance; no additional measured coverage is
+inferred from that confirmation. The variable text-only wait remains an
+explicit presentation tradeoff, not instantaneous text reveal or slower
+animation playback.
 
 During implementation, tests caught and corrected an owner-transition
 classification added before the startup LY gate, a missing text-only dispatch

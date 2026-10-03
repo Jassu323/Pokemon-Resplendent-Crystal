@@ -513,7 +513,9 @@ ROMX $a5
 	"Dex Animation Timeline Reader"
 	"New Dex Entry Animation"
 ROMX $a6
+	"Pokedex Info"
 ROMX $a7
+	"Pokedex Info Glyphs"
 ROMX $a8
 ROMX $a9
 ROMX $aa

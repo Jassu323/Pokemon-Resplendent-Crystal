@@ -5,8 +5,8 @@ Pokedex_IsDescriptionLayout:
 	cp DEXSTATE_SELECTED_MON_RESERVED + 1
 	jr nc, .other
 	ld a, [wPokedexSelectedView]
-	and a
-	jr nz, .other
+	cp DEXSELECT_VIEW_INFO + 1
+	jr nc, .other
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
 	jr z, .other
@@ -24,6 +24,16 @@ Pokedex_LoadDescriptionGFX:
 	ld de, PokedexDescriptionGFX
 	ld hl, vTiles2 tile POKEDEX_DESCRIPTION_GFX_TILE
 	lb bc, BANK(PokedexDescriptionGFX), (PokedexDescriptionGFXEnd - PokedexDescriptionGFX) / TILE_SIZE
+	call Get2bpp
+	ld de, PokedexInfoPageGFX
+	ld hl, vTiles2 tile $7b
+	lb bc, BANK(PokedexInfoPageGFX), 4
+	call Get2bpp
+	ld a, 1
+	ldh [rVBK], a
+	ld de, PokedexInfoHPEndpointGFX
+	ld hl, vTiles3 tile POKEDEX_INFO_HP_OBJ_TILE
+	lb bc, BANK(PokedexInfoHPEndpointGFX), 2
 	call Get2bpp
 	pop af
 	ldh [rVBK], a
@@ -57,7 +67,7 @@ Pokedex_DrawDescriptionScreenBG:
 .Weight:
 	db "Wt   ???lb", -1
 .MenuItems:
-	db $3b, " Desc Stat Mov Area", -1
+	db $3b, " Desc Info Mov Area", -1
 
 Pokedex_DisplayDescriptionEntry:
 	farcall DisplayDexEntry
@@ -152,99 +162,9 @@ Pokedex_CopyDescriptionRightEdge:
 	ret
 
 Pokedex_LoadDescriptionTypeGFX:
-	ldh a, [hCGB]
-	and a
-	ret z
-	ld a, [wPokedexSelectedSpecies]
-	ld [wCurSpecies], a
-	call GetBaseData
-	ld a, [wBaseType1]
-	ld de, wPokedexWRAM0Scratch
-	call .CopyType
-	ld a, [wBaseType1]
-	ld b, a
-	ld a, [wBaseType2]
-	cp b
-	ld c, ICON_COMPACT_TYPE_TILES
-	jr z, .upload
-	ld de, wPokedexWRAM0Scratch + ICON_COMPACT_TYPE_TILES tiles
-	call .CopyType
-	ld c, 2 * ICON_COMPACT_TYPE_TILES
-.upload
-	ldh a, [rVBK]
-	push af
-	ld a, BANK(vTiles5)
-	ldh [rVBK], a
-	ld hl, wPokedexWRAM0Scratch
-	call .TypeDestination
-	call Pokedex_HDMATransferCacheGFX
-	pop af
-	ldh [rVBK], a
-	call .TypeBase
-	hlcoord 9, 7
-	call .PlaceType
-	ld a, [wBaseType1]
-	ld b, a
-	ld a, [wBaseType2]
-	cp b
-	ret z
-	call .TypeBase
-	add ICON_COMPACT_TYPE_TILES
-	hlcoord 14, 7
-.PlaceType:
-	ld c, ICON_COMPACT_TYPE_TILES
-.place
-	ld [hli], a
-	inc a
-	dec c
-	jr nz, .place
+	farcall PokedexInfo_LoadTypeSprites
 	ret
-.TypeDestination:
-	ld de, vTiles5 tile POKEDEX_DESCRIPTION_TYPE_TILE
-	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
-	and a
-	ret z
-	ld de, vTiles5 tile POKEDEX_DESCRIPTION_ALT_TYPE_TILE
-	ret
-.TypeBase:
-	ld a, [POKEDEX_DESCRIPTION_ICON_BUFFER]
-	and a
-	ld a, POKEDEX_DESCRIPTION_TYPE_TILE
-	ret z
-	ld a, POKEDEX_DESCRIPTION_ALT_TYPE_TILE
-	ret
-.CopyType:
-	push de
-	ld e, a
-	ld d, 0
-	ld hl, CompactTypeIconGFXPointers
-	add hl, de
-	add hl, de
-	add hl, de
-	ld a, BANK(CompactTypeIconGFXPointers)
-	call GetFarByte
-	push af
-	inc hl
-	ld a, BANK(CompactTypeIconGFXPointers)
-	call GetFarWord
-	pop af
-	pop de
-	push de
-	ld bc, ICON_COMPACT_TYPE_TILES tiles
-	call FarCopyBytes
-	pop hl
-	; Round only this owner's badge corners into palette color 1 (background).
-	set 7, [hl]
-	ld bc, 14
-	add hl, bc
-	set 7, [hl]
-	ld c, 34
-	add hl, bc
-	set 0, [hl]
-	ld c, 14
-	add hl, bc
-	set 0, [hl]
-	ret
+
 
 Pokedex_SetDescriptionTypeAttrsAndPals:
 	ld hl, .FootprintPalette
@@ -252,56 +172,8 @@ Pokedex_SetDescriptionTypeAttrsAndPals:
 	ld bc, 1 palettes
 	ld a, BANK(wBGPals1)
 	call FarCopyWRAM
-	ld a, [wBaseType1]
-	ld de, wBGPals1 palette POKEDEX_DESCRIPTION_TYPE1_PAL
-	call .LoadTypePalette
-	hlcoord 9, 7, wAttrmap
-	ld a, BG_BANK1 | POKEDEX_DESCRIPTION_TYPE1_PAL
-	ld bc, ICON_COMPACT_TYPE_TILES
-	call ByteFill
-	ld a, [wBaseType1]
-	ld b, a
-	ld a, [wBaseType2]
-	cp b
-	jr z, .dirty
-	ld de, wBGPals1 palette POKEDEX_DESCRIPTION_TYPE2_PAL
-	call .LoadTypePalette
-	hlcoord 14, 7, wAttrmap
-	ld a, BG_BANK1 | POKEDEX_DESCRIPTION_TYPE2_PAL
-	ld bc, ICON_COMPACT_TYPE_TILES
-	call ByteFill
-.dirty
 	ld hl, wPokedexSelectedBGPaletteDirty
-	ld a, [hl]
-	or (1 << POKEDEX_DESCRIPTION_FOOTPRINT_PAL) | (1 << POKEDEX_DESCRIPTION_TYPE1_PAL) | (1 << POKEDEX_DESCRIPTION_TYPE2_PAL)
-	ld [hl], a
-	ret
-.LoadTypePalette:
-	push de
-	ld e, a
-	ld d, 0
-	ld hl, TypeIconPalettePointers
-	add hl, de
-	add hl, de
-	ld a, BANK(TypeIconPalettePointers)
-	call GetFarWord
-	pop de
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wBGPals1)
-	ldh [rSVBK], a
-	push de
-	ld a, BANK(TypeIconPalettes)
-	ld bc, 1 palettes
-	call FarCopyBytes
-	pop hl
-	inc hl
-	inc hl
-	ld [hl], LOW((5 << 10) | (5 << 5) | 5)
-	inc hl
-	ld [hl], HIGH((5 << 10) | (5 << 5) | 5)
-	pop af
-	ldh [rSVBK], a
+	set POKEDEX_DESCRIPTION_FOOTPRINT_PAL, [hl]
 	ret
 .FootprintPalette:
 	RGB 31, 31, 31
@@ -309,10 +181,15 @@ Pokedex_SetDescriptionTypeAttrsAndPals:
 	RGB 0, 0, 0
 	RGB 5, 5, 5
 
+PokedexInfoPageGFX:
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 6 * TILE_SIZE, 4 * TILE_SIZE
+
 ; Fixed shell data follows. Frontpic, text, footprint and type badges are
 ; supplied by their existing owners after this background is copied.
 
 PokedexDescriptionGFX:
+	; The page sheet is column-major: P., 1..9, each upper tile then lower.
+	; Pack only P./1/2 into the existing Description shell allocation.
 	; $71: divider left
 	db %11111100, %00000001
 	db %11111100, %00000001
@@ -323,23 +200,9 @@ PokedexDescriptionGFX:
 	db %11111100, %00000001
 	db %11111100, %00000001
 	; $72: P. badge upper left
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %00000000
-	db %11111111, %00000000
-	db %11111111, %00000000
-	db %00000000, %00000000
-	db %00000000, %10111111
-	db %00000000, %10100011
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 0 * TILE_SIZE, TILE_SIZE
 	; $73: page 1 upper right
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %00000000
-	db %11111111, %00000000
-	db %11111111, %00000000
-	db %00000000, %00000000
-	db %00000000, %11111101
-	db %00000000, %11001101
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 2 * TILE_SIZE, TILE_SIZE
 	; $74: divider
 	db %00000000, %11111111
 	db %00000000, %11111111
@@ -368,41 +231,13 @@ PokedexDescriptionGFX:
 	db %00001111, %11100000
 	db %00001111, %11100000
 	; $77: P. badge lower left
-	db %00000000, %10101011
-	db %00000000, %10100011
-	db %00000000, %10101110
-	db %00000000, %10111111
-	db %00000000, %10000000
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %11111111
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 1 * TILE_SIZE, TILE_SIZE
 	; $78: page 1 lower right
-	db %00000000, %11101101
-	db %00000000, %11101101
-	db %00000000, %11101101
-	db %00000000, %11111101
-	db %00000000, %00000001
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %11111111
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 3 * TILE_SIZE, TILE_SIZE
 	; $79: page 2 upper right
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %00000000
-	db %11111111, %00000000
-	db %11111111, %00000000
-	db %00000000, %00000000
-	db %00000000, %11111101
-	db %00000000, %10000101
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 4 * TILE_SIZE, TILE_SIZE
 	; $7a: page 2 lower right
-	db %00000000, %11100101
-	db %00000000, %10011101
-	db %00000000, %10000101
-	db %00000000, %11111101
-	db %00000000, %00000001
-	db %00000000, %11111111
-	db %00000000, %11111111
-	db %00000000, %11111111
+	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 5 * TILE_SIZE, TILE_SIZE
 PokedexDescriptionGFXEnd:
 
 PokedexDescriptionTilemap:
@@ -432,7 +267,7 @@ PokedexDescriptionRightEdge:
 .end
 	assert .end - PokedexDescriptionRightEdge == SCREEN_HEIGHT
 	assert POKEDEX_DESCRIPTION_GFX_TILE + (PokedexDescriptionGFXEnd - PokedexDescriptionGFX) / TILE_SIZE <= $80
-	assert POKEDEX_DESCRIPTION_TYPE_TILE >= POKEDEX_ANIM_BUFFER_B_TILE + 7 * 7
-	assert POKEDEX_DESCRIPTION_TYPE_TILE + 2 * ICON_COMPACT_TYPE_TILES <= POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE
-	assert POKEDEX_DESCRIPTION_ALT_FOOTPRINT_TILE + 4 <= POKEDEX_DESCRIPTION_ALT_TYPE_TILE
-	assert POKEDEX_DESCRIPTION_ALT_TYPE_TILE + 2 * ICON_COMPACT_TYPE_TILES <= $80
+	assert POKEDEX_TYPE_OBJ_TILE >= 5 * ICON_4X2_TILES
+	assert POKEDEX_TYPE_OBJ_TILE + 4 * ICON_COMPACT_TYPE_TILES <= POKEDEX_INFO_MINI_OBJ_TILE
+	assert POKEDEX_INFO_MINI_OBJ_TILE + 4 * ICON_4X2_TILES <= POKEDEX_INFO_HP_OBJ_TILE
+	assert POKEDEX_INFO_HP_OBJ_TILE + 2 <= $80

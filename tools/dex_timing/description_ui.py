@@ -34,16 +34,47 @@ def expected_types(repo, name):
     return [values[match[1]], values[match[2]]]
 
 
+def audit_type_sprites(repo, ui):
+    issues, types = [], ui['types']
+    oam, pals, graphics = (bytes.fromhex(ui[key]) for key in ('oam', 'obj_palettes', 'type_gfx'))
+    count = 1 if types[0] == types[1] else 2
+    if oam[2] not in (0x28, 0x30):
+        issues.append('type_buffer')
+    for slot in range(count):
+        type_id = types[slot]
+        ptr = linked(repo, 'CompactTypeIconGFXPointers', 29 * 3)[type_id * 3:type_id * 3 + 3]
+        start = offset((ptr[0], int.from_bytes(ptr[1:], 'little')))
+        expected = bytearray(repo.rom[start:start + 64])
+        for at, mask in ((0, 128), (14, 128), (48, 1), (62, 1)):
+            expected[at] |= mask
+        for at in range(0, 64, 2):
+            expected[at] = ~(expected[at] ^ expected[at + 1]) & 255
+        if graphics[slot * 64:(slot + 1) * 64] != expected:
+            issues.append(f'type_graphics_{slot}')
+        for index in range(4):
+            sprite = oam[(slot * 4 + index) * 4:(slot * 4 + index + 1) * 4]
+            if sprite != bytes((72, 75 + slot * 40 + index * 8, oam[2] + slot * 4 + index, 8 + slot)):
+                issues.append(f'type_oam_{slot}_{index}')
+        pointers = linked(repo, 'TypeIconPalettePointers', 29 * 2)
+        start = offset((repo.symbols['TypeIconPalettes'][0], int.from_bytes(pointers[type_id * 2:type_id * 2 + 2], 'little')))
+        expected_palette = bytearray(repo.rom[start:start + 8])
+        expected_palette[2:4] = expected_palette[0:2]
+        if pals[slot * 8:(slot + 1) * 8] != expected_palette:
+            issues.append(f'type_palette_{slot}')
+    if count == 1 and any(oam[16:32]):
+        issues.append('stale_second_type')
+    if any(bytes.fromhex(ui['map'])[7 * 21 + x] != 0x32 for x in list(range(9, 13)) + list(range(14, 18))):
+        issues.append('old_bg_type_tiles')
+    return issues
+
+
 def audit(repo, ui):
     tilemap, attrs = bytes.fromhex(ui['map']), bytes.fromhex(ui['attrs'])
     types = ui['types']
     palettes = bytes.fromhex(ui['palettes'])
     issues = []
-    type_base = tilemap[7 * 21 + 9]
-    if type_base not in (0x64, 0x70):
-        issues.append('type_buffer')
-        type_base = 0x64
-    foot_base = 0xb1 if type_base == 0x64 else 0x6c
+    type_base = bytes.fromhex(ui['oam'])[2]
+    foot_base = 0xb1 if type_base == 0x28 else 0x6c
     for cell, delta in ((21 + 18, 0), (21 + 19, 1), (42 + 18, 2), (42 + 19, 3)):
         if tilemap[cell] != foot_base + delta:
             issues.append('footprint_tiles')
@@ -60,35 +91,8 @@ def audit(repo, ui):
                 issues.append(f'shell_{x}_{y}')
     if bytes.fromhex(ui['border_gfx']) != linked(repo, 'PokedexDescriptionGFX', 160):
         issues.append('border_graphics')
-    for slot, type_id in enumerate(types if types[0] != types[1] else types[:1]):
-        if not 0 <= type_id < 29:
-            issues.append('invalid_type')
-            continue
-        ptr = linked(repo, 'CompactTypeIconGFXPointers', 29 * 3)[type_id * 3:type_id * 3 + 3]
-        start = offset((ptr[0], int.from_bytes(ptr[1:], 'little')))
-        expected_gfx = bytearray(repo.rom[start:start + 64])
-        for address, mask in ((0, 128), (14, 128), (48, 1), (62, 1)):
-            expected_gfx[address] |= mask
-        if bytes.fromhex(ui['type_gfx'])[slot * 64:(slot + 1) * 64] != expected_gfx:
-            issues.append(f'type_graphics_{slot}')
-        x = 9 + 5 * slot
-        cells = slice(7 * 21 + x, 7 * 21 + x + 4)
-        if tilemap[cells] != bytes(range(type_base + 4 * slot, type_base + 4 * slot + 4)):
-            issues.append(f'type_tiles_{slot}')
-        if attrs[cells] != bytes([14 + slot] * 4):
-            issues.append(f'type_attrs_{slot}')
-        pointers = linked(repo, 'TypeIconPalettePointers', 29 * 2)
-        address = int.from_bytes(pointers[2 * type_id:2 * type_id + 2], 'little')
-        start = offset((repo.symbols['TypeIconPalettes'][0], address))
-        palette = bytearray(repo.rom[start:start + 8])
-        palette[2:4] = bytes((0xa5, 0x14))
-        if palettes[(6 + slot) * 8:(7 + slot) * 8] != palette:
-            issues.append(f'type_palette_{slot}')
-    if types[0] == types[1]:
-        cells = slice(7 * 21 + 14, 7 * 21 + 18)
-        if tilemap[cells] != bytes([0x32] * 4) or any(attrs[cells]):
-            issues.append('stale_second_type')
-    if palettes[16:24] != bytes((255, 127, 0, 0, 0, 0, 165, 20)):
+    issues += audit_type_sprites(repo, ui)
+    if palettes[16:18] != bytes((255, 127)) or palettes[22:24] != bytes((165, 20)):
         issues.append('footprint_palette')
     if any(attrs[y * 21 + x] != 10 for y in (1, 2) for x in (18, 19)):
         issues.append('footprint_attrs')

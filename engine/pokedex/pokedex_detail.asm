@@ -54,7 +54,11 @@ PokedexSelectedMon_Update:
 	call Pokedex_PrepareDescriptionAnimation
 	call Pokedex_ServiceAnimationProducer
 	call Pokedex_CommitDescriptionAnimation
-	jp PokedexSelectedMon_ServiceDescriptionText
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_INFO
+	jp nz, PokedexSelectedMon_ServiceDescriptionText
+	farcall PokedexInfo_Service
+	ret
 
 PokedexSelectedMon_CommitFooterCursor:
 	xor a
@@ -96,22 +100,34 @@ PokedexSelectedMon_ActivateFooterView:
 
 PokedexSelectedMon_ViewActionJumptable:
 	dw PokedexSelectedMon_ToggleDescriptionPage
-	dw PokedexSelectedMon_Unavailable
+	dw PokedexSelectedMon_Info
 	dw PokedexSelectedMon_Unavailable
 	dw PokedexSelectedMon_Area
 
 PokedexSelectedMon_Unavailable:
 	ret
 
+PokedexSelectedMon_Info:
+	call PokedexSelectedMon_CancelDescriptionText
+	farcall PokedexInfo_Activate
+	ret
+
 PokedexSelectedMon_ToggleDescriptionPage:
+	call PokedexSelectedMon_CancelDescriptionText
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_INFO
+	jr nz, .description
+	farcall PokedexInfo_ReturnDescription
+	jr .queue_description
+.description
 	ld a, [wPokedexDescriptionPage]
 	xor 1
 	ld [wPokedexDescriptionPage], a
 	ld [wPokedexStatus], a
+.queue_description
 	ldh a, [hCGB]
 	and a
 	jr z, .dmg
-	call PokedexSelectedMon_CancelDescriptionText
 	ld a, [wPokedexSelectedSpecies]
 	call CheckCaughtMon
 	ret z
@@ -141,6 +157,7 @@ PokedexSelectedMon_ToggleDescriptionPage:
 
 PokedexSelectedMon_ChangeSpecies:
 	call PokedexSelectedMon_CancelDescriptionText
+	farcall PokedexInfo_Cancel
 	ld a, DEXSELECT_STATE_SWITCHING_SPECIES
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
@@ -174,10 +191,13 @@ PokedexSelectedMon_ChangeSpecies:
 
 PokedexSelectedMon_Leave:
 	call PokedexSelectedMon_CancelDescriptionText
+	farcall PokedexInfo_Cancel
 	ld a, DEXSELECT_STATE_LEAVING
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
 	call Pokedex_CancelAnimationPrefetch
+	farcall PokedexInfo_PreserveReturnPanel
+	farcall PokedexInfo_RestoreListingCache
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
 	jr z, .restore_volume
@@ -209,6 +229,7 @@ PokedexSelectedMon_Leave:
 
 PokedexSelectedMon_Area:
 	call PokedexSelectedMon_CancelDescriptionText
+	farcall PokedexInfo_Cancel
 	ld a, DEXSELECT_STATE_SWITCHING_VIEW
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
@@ -251,6 +272,11 @@ PokedexSelectedMon_StageDescription:
 	ldh [hBGMapMode], a
 	farcall Pokedex_DrawDescriptionScreenBG
 	farcall Pokedex_InitArrowCursor
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_INFO
+	jr nz, .footer_ready
+	ld [wDexArrowCursorPosIndex], a
+.footer_ready
 	farcall Pokedex_GetSelectedMon
 	ld a, [wTempSpecies]
 	ld [wPokedexSelectedSpecies], a
@@ -295,6 +321,9 @@ PokedexSelectedMon_StageDescription:
 	jr z, .sgb_layout
 	farcall CGB_PokedexStageSelectedMonLayout
 	call PokedexSelectedMon_StageUsualPals
+	farcall PokedexInfo_StageTypePalettes
+	farcall PokedexInfo_StageStaticPalettes
+	farcall PokedexInfo_PrepareSpecies
 	xor a
 	ldh [hCGBPalUpdate], a
 	call Pokedex_StageInitialAnimationFrame
@@ -329,7 +358,23 @@ PokedexSelectedMon_StageUsualPals:
 PokedexSelectedMon_BeginHiddenTransition:
 	xor a
 	ldh [hBGMapMode], a
+	ldh a, [hCGB]
+	and a
+	jr z, .clear_sprites
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_SWITCHING_SPECIES
+	jr nz, .clear_sprites
+; The outgoing badges and Info sprites remain visible until the owner reveal.
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	farcall Pokedex_BlackOutSelectedMonBG
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	call DelayFrame
+	ret
+.clear_sprites
 	call ClearSprites
+	xor a
 	ldh [hOAMUpdate], a
 	ldh a, [hCGB]
 	and a
@@ -361,6 +406,7 @@ PokedexSelectedMon_BeginWarmTransition:
 	ret
 
 PokedexSelectedMon_InitializeIcons:
+	farcall PokedexInfo_Reset
 	xor a
 	ld [POKEDEX_DESCRIPTION_ICON_BUFFER], a
 	jp LowVolume

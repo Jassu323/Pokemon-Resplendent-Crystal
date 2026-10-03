@@ -2,14 +2,17 @@
 
 For the current execution/ownership contract and adaptation to other owners,
 see [Selected animation scheduler](pokedex_animation_scheduler.md). The resource
-allocation below includes the Description border/type badges and the buffered
-icons accepted on 2026-10-01; the animation slots remain unchanged. See
-[Description UI](pokedex_description_ui.md) for layout and palette ownership.
+allocation below includes the Description border, buffered OBJ type badges
+and Info pages, including the 2026-10-03 heading/entry placement revision; the
+animation slots remain unchanged.
+See [Description UI](pokedex_description_ui.md) and
+[Info pages](pokedex_info.md) for layout, palette ownership and exact budgets.
 
 This document records the current Pokedex graphics ownership and the target
 permanent allocation for the listing, description, search, search-results,
-options, and Unown screens. The area map is the only normal Pokedex screen
-allowed to load graphics on demand.
+options, and Unown screens. The area map loads a temporary graphics overlay;
+Info prepares bounded, double-buffered local glyphs and evolution icons on
+demand without replacing the resident portrait or shared font.
 
 The allocation deliberately does not cache neighboring frontpics. The
 selected known or unseen static frontpic occupies one 49-tile bank-0 region.
@@ -74,9 +77,11 @@ dictionary up front.
 | `vTiles1 $00-$7f` | Inverted font | 128 | Occupies the full signed-font region. |
 | `vTiles1 $3a-$3f` | Listing scrollbar | 6 | Replaces signed characters `$ba-$bf`. |
 | `vTiles1 $46-$49` | Unseen grid icon | 4 | Replaces signed characters `$c6-$c9`. |
+| `vTiles1 $4a-$4f,$57-$5e,$64-$65` | Shifted Info headings | 16 | Otherwise blank font gaps; signed IDs `$ca-$cf,$d7-$de,$e4-$e5`. Both titles share the identical final partial `s` at `$cf`. |
 | `vTiles2 $00-$30` | Selected static frontpic or unseen image | 49 | Area-map graphics temporarily overwrite `$00-$2f`. |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 | Loaded from `pokedex.2bpp`. |
 | `vTiles2 $71-$7a` | Description border and page badge | 10 | Loaded once with permanent Dex graphics; the other screens retain their existing shell. |
+| `vTiles2 $7b-$7e` | Info P.3/P.4 digits | 4 | Upper/lower tiles from the standalone editable page-number sheet. |
 | `vTiles2 $54` and `$5b` | DMG Listing joined border | 2 | CGB uses the resident bank-1 copies instead. |
 | `vTiles2 $62-$65` | Standalone-entry/DMG footprint | 4 | The normal CGB Dex uses the resident bank-1 footprint. |
 | `vTiles2 $40-$5a` | DMG Unown glyphs and cursor | 27 | CGB uses the resident bank-1 copies instead. |
@@ -90,43 +95,21 @@ comes from the same 64-tile source.
 | Region | Current owner | Tiles | Notes |
 | --- | --- | ---: | --- |
 | `vTiles3 $00-$27` | Center-column mini-sprites | 40 | Both 2x2 frames for five physical OBJ-icon rows: three visible plus one above and below. |
+| `vTiles3 $28-$37` | Selected type badges | 16 | Two buffered sets of first/second type, four tiles each. |
+| `vTiles3 $38-$57` | Info evolution mini-sprites | 32 | Two buffered sets of two animated eight-tile icons. |
+| `vTiles3 $58-$59` | Info HP endpoint | 2 | One/two visible pixels for 100px/101px bars. |
 | `vTiles4 $00-$30` | Animation buffer A | 49 | Streams only changed tiles; tilemap entries use `$80-$b0`. |
 | `vTiles4 $31-$34` | Description footprint set A | 4 | Normal Listing resident footprint; signed IDs `$b1-$b4`. |
 | `vTiles4 $35-$4f` | Unown glyphs and cursor | 27 | Loaded once when the Dex starts. |
 | `vTiles4 $50-$51` | Listing joined border | 2 | Permanent copies outside the shared bank-0 UI range. |
 | `vTiles4 $52-$79` | Left/right mini-sprite frame 1 | 40 | Second frame for ten 2x2 BG icons across the five physical cache rows. |
-| `vTiles5 $00-$27` | Left/right mini-sprite frame 0 | 40 | First frame for ten 2x2 BG icons across the five physical cache rows. |
+| `vTiles5 $00-$27` | Left/right mini-sprite frame 0; Info atlas B | 40 | Borrowed only while Selected Info owns the display; its writes invalidate the Listing ring before return. |
+| `vTiles4 $7a-$7f` and `vTiles5 $28-$31,$64-$6b,$70-$7f` | Info atlas A | 40 | Six signed IDs `$fa-$ff`, plus 34 IDs in `$9000-$97ff`. |
 | `vTiles5 $32` | Unown cursor background | 1 | Bank-1 copy of the dark-gray background tile. |
 | `vTiles5 $33-$63` | Animation buffer B | 49 | Streams only changed tiles; tilemap entries use `$33-$63`. |
-| `vTiles5 $64-$6b` | Description type badges set A | 8 maximum | Four tiles per type; monotypes use only the first four. |
 | `vTiles5 $6c-$6f` | Description footprint set B | 4 | Inactive-set preparation during internal paging. |
-| `vTiles5 $70-$77` | Description type badges set B | 8 maximum | Alternate badge allocation; no extra palettes. |
 
-## Target permanent allocation
-
-The ranges below reserve all known listing, description, search, and Unown
-requirements without assigning VRAM for neighboring known frontpics.
-
-| Region | Target owner | Tiles |
-| --- | --- | ---: |
-| `vTiles0 $00-$36` | Shared Dex artwork and OBJ graphics | 55 |
-| `vTiles0 $40-$41` | Listing cursor and caught ball | 2 |
-| `vTiles1 $00-$7f` | Inverted font plus the existing scrollbar/grid-icon substitutions | 128 |
-| `vTiles2 $00-$30` | Current known frontpic or unseen image | 49 |
-| `vTiles2 $31-$70` | Shared Pokedex UI | 64 |
-| `vTiles2 $71-$7a` | Description border and page badge | 10 |
-| `vTiles3 $00-$27` | Both frames for five cached center-column mini-sprite rows | 40 |
-| `vTiles4 $00-$30` | Animation buffer A | 49 |
-| `vTiles4 $31-$34` | Preloaded selected footprint | 4 |
-| `vTiles4 $35-$4f` | Permanent Unown glyphs and cursor | 27 |
-| `vTiles4 $50-$51` | Permanent Listing joined border | 2 |
-| `vTiles4 $52-$79` | Frame 1 for five cached left/right mini-sprite rows | 40 |
-| `vTiles5 $00-$27` | Frame 0 for five cached left/right mini-sprite rows | 40 |
-| `vTiles5 $32` | Unown cursor background | 1 |
-| `vTiles5 $33-$63` | Animation buffer B | 49 |
-| `vTiles5 $64-$6b` | Description type badges set A | 8 |
-| `vTiles5 $6c-$6f` | Description footprint set B | 4 |
-| `vTiles5 $70-$77` | Description type badges set B | 8 |
+## Listing Residency And Info Borrowing
 
 The `vTiles4` ranges above are physical offsets within the `$8800-$8fff`
 region. With signed BG tile addressing they appear in tilemaps as `$80-$b0`,
@@ -138,12 +121,14 @@ The Listing uses a five-row ring: the three visible rows plus one fully
 prepared row above and below. Each physical row retains both animation frames.
 A scroll consumes the already-resident incoming row, reveals the complete
 visible state, and then refills only the newly offscreen look-ahead/look-behind
-row before accepting more input. This leaves 112 tiles free in VRAM bank 1:
-88 OBJ-only tiles in `vTiles3`, 6 BG-addressable tiles in `vTiles4`, and 18
-BG-addressable tiles in `vTiles5` (`$28-$31` and `$78-$7f`). Thus 24 remaining
-bank-1 tiles are usable by signed BG maps, including eight contiguous tiles
-after icon set B. Bank 0 `vTiles2`
-has five unallocated tiles (`$7b-$7f`) after the Description additions. The CGB
+row before accepting more input. Type badges moving to OBJ frees sixteen BG
+cells, which join the former 24 free BG cells to make Info atlas A. Atlas B
+temporarily borrows all 40 Listing frame-0 side-icon cells. It does not borrow
+the other side-icon frames, center-column minis, title/font storage or portrait slots.
+There is no unassigned bank-1 signed-BG tile with Info's allocations reserved.
+Bank 1 has 38 free OBJ-only tiles (`vTiles3 $5a-$7f`); bank 0 `vTiles2` has one
+free BG tile (`$7f`). Future mutually exclusive lower tabs should reuse Info's
+atlases rather than budget new permanent BG storage. The CGB
 footprint, Unown overlays, joined border, and cursor-background tile are
 loaded into their permanent destinations when the Pokedex starts.
 
@@ -168,8 +153,8 @@ they use the shared font and Pokedex UI. The normal description path also
 reuses the listing frontpic. Its four-tile footprint is prepared and loaded
 while that known species is selected, so entering Description from Listing
 does not reload the base portrait or footprint. Description additionally copies
-one or two compact type badges into bank 1 using the existing WRAM0 payload
-workspace, before animation production starts.
+one or two compact type badges into bank-1 OBJ storage using the existing
+WRAM0 payload workspace, before animation production starts.
 
 Internal paging alternates footprint/type sets A and B. Only the shared
 portrait palette is masked to white; the outgoing icons and their hardware
@@ -177,8 +162,16 @@ palettes stay visible while the incoming icon graphics upload offscreen.
 The existing owner publication switches tile IDs, attributes and palettes
 together. Set A's cache tag is invalidated when preparing B, because it must
 not falsely describe the incoming footprint. B-return repairs A under the
-normal hidden Listing handoff; fresh Description entry resets to A. No
-minisprite or animation-buffer tile is borrowed for this operation.
+normal hidden Listing handoff; fresh Description entry resets to A. Type and
+footprint buffering itself borrows no minisprite or animation-buffer tile.
+Info additionally borrows the Listing's bank-1 BG frame-0 cells for its second
+glyph atlas. It invalidates those cache-row tags before the normal hidden
+Listing repair. The 2026-10-03 [Info return investigation](pokedex_info_return_evolution_investigation.md)
+confirms that hiding the Listing Window does not hide the outgoing Info BG:
+visible atlas-B references must be removed before those cache uploads. That
+correction is proposed, not implemented. The owner reveal transfers incoming type/lower OAM and their
+palettes together; outgoing types, minis and HP endpoints remain intact until
+that handoff.
 
 The area map remains an explicit temporary overlay. It loads 48 town-map
 tiles to `vTiles2 $00-$2f` and five OBJ tiles to `vTiles0 $78-$7b/$7f`.
@@ -257,23 +250,29 @@ from a saved offset in chunks of at most 20 tiles. A separately admitted
 finishing action may complete one ready remainder in that owner iteration. Each
 physical animation slot retains its completed frame ID after release, allowing
 an exact later match to become tilemap-only. An underrun deliberately installs
-its incomplete slot and increments `wPokedexAnimUnderflowCount` instead of
-concealing the missed deadline behind the previous complete frame.
+its incomplete slot and increments its reserved diagnostic counter instead of
+concealing the missed deadline behind the previous complete frame. The two
+diagnostic counter bytes remain unlabeled padding after instrumentation
+cleanup; current miss detection is a host observer/breakpoint at
+`Pokedex_AnimationMiss`.
 
 Twenty-six bytes in `wPokedexData` hold timeline, playback, deadline, slot,
-residency, underrun-diagnostic, and background-dictionary state. This is one
+residency, reserved diagnostic padding, and background-dictionary state. This is one
 byte smaller than the prior controller and returns that byte to the union's
-reserved padding; no new WRAM, SRAM, or HRAM is allocated. The diagnostic block,
-including the part marked `TEMPORARY DEX ANIMATION SCHEDULER TRACE`, currently
-occupies 136 bytes within the Pokedex union's existing 143-byte reservation. It includes five
-18-byte circular records plus the last VBlank publication and producer phase
-timestamps. Three production scheduler bytes follow it, reusing the former
-compact-schedule cursor for loop tick, last-work tick and control flags. Keep
-those three bytes when removing the instrumentation. No existing RAM symbol
-outside the renamed three-byte state moves.
-The Listing cache remains in the same union, and all symbols following it retain
-their previous addresses. Search that exact marker to remove the temporary
-trace after diagnosis.
+reserved padding; no new WRAM, SRAM, or HRAM is allocated. The temporary
+136-byte scheduler trace and its runtime writes have been removed. Three
+production scheduler bytes at `$c758-$c75a` remain for loop tick, last-work
+tick and control flags. Their existing control bit 2 now guards portrait DMA
+register ownership against lower-page publication. The Listing cache remains
+in the same union, and subsequent RAM symbols retain their addresses. Current
+telemetry runs in the host-side SameBoy observer, not in cartridge RAM.
+
+Info extends the mutually exclusive bank-3 Battle Tower/Dex overlay by 1,686
+bytes, including alignment and the committed-page B-return records. It ends
+at `$db38`, leaving 200 bytes before the asserted `$dc00`
+boundary. Its 640-byte glyph buffer, 256-byte mini buffer, 32-byte OAM buffer,
+80-byte glyph pointers, 53-byte state and 611-byte records/visible flag do not enlarge the overall union or
+use new WRAM0/HRAM. See [Info's exact workspace and budget](pokedex_info.md#ram-and-rom-budget).
 
 The frame-plan ROM cost is 47,186 bytes of generated payload plus a 1,197-byte
 far-pointer table. The payload remains isolated in banks `$a1`-`$a3` (decimal
@@ -284,5 +283,8 @@ two-byte pointers, with the 97-byte fixed-bank reader also resident there and
 the 13-byte increase from Seviper's finite repeat correction. Bank `$a0`
 (decimal 160), which owns the runtime, frame-plan pointer table and 80 global
 finishing-bound bytes, retains 2,979 free bytes in that link. The
-obsolete compact micro-schedule and its reader are removed; bank `$a6` is empty
-and reusable. See the scheduler document for the complete linked resource bill.
+obsolete compact micro-schedule and its reader are removed. The formerly empty
+`$a6` bank now holds Info code/tables (9,951 bytes), and `$a7` holds its local
+glyphs (7,728 bytes). The totals above describe the historical scheduler
+checkpoint, not current whole-cart use; see Info's resource table for the
+current link and the scheduler document for its historical resource bill.

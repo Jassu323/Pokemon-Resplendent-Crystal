@@ -1259,6 +1259,11 @@ Pokedex_PublishOrStageDescriptionBacking::
 	and a
 	jr z, .publish
 	call Pokedex_StageOwnerTransitionMaps
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_INFO
+	jr nz, .lower_ready
+	farcall PokedexInfo_PrepareInitial
+.lower_ready
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_SWITCHING_SPECIES
 	jr z, .internal
@@ -1325,11 +1330,12 @@ Pokedex_BlackOutSelectedMonBG::
 	ret
 .portrait
 ; Incoming icons have separate storage; only the shared portrait needs masking.
+	; Keep every other hardware target unchanged, including Info's stat colors.
 	ldh a, [rSVBK]
 	push af
-	ld a, BANK(wBGPals1)
+	ld a, BANK(wBGPals2)
 	ldh [rSVBK], a
-	ld hl, wBGPals1 palette 1
+	ld hl, wBGPals2 palette 1
 	ld b, 4
 .white
 	ld a, $ff
@@ -1345,13 +1351,44 @@ Pokedex_BlackOutSelectedMonBG::
 Pokedex_VBlankDispatch::
 	call Pokedex_VBlankOwnerTransition
 	ret c
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_INFO
+	jr nz, .owner
+	ld a, [wPokedexAnimFlags]
+	and 1 << POKEDEX_ANIM_MAP_PENDING_F
+	jr z, .info
+	ldh a, [hVBlankCounter]
+	inc a
+	ld b, a
+	ld a, [wPokedexAnimDeadline]
+	sub b
+	jr z, .owner
+	bit 7, a
+	jr nz, .owner
+.info
+	call Pokedex_VBlankInfo
+	ret c
+.owner
 	call Pokedex_VBlankAnimationFrontpicMap
 	jr nc, .no_portrait
-	call Pokedex_VBlankDescriptionText
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wPokedexInfoRestoreDescription)
+	ldh [rSVBK], a
+	ld a, [wPokedexInfoRestoreDescription]
+	ld c, a
+	pop af
+	ldh [rSVBK], a
+	ld a, c
+	and a
+	call z, Pokedex_VBlankDescriptionText
+	call Pokedex_VBlankInfo
 	scf
 	ret
 .no_portrait
 	call Pokedex_VBlankDescriptionText
+	ret c
+	call Pokedex_VBlankInfo
 	ret c
 	jp Pokedex_VBlankGridIconAnimation
 
@@ -1394,7 +1431,11 @@ Pokedex_VBlankOwnerTransition::
 	cp LY_VBLANK + 1
 	ret nc
 	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_INFO_RETURN
+	jp z, Pokedex_VBlankInfoReturn
 	cp POKEDEX_OWNER_TRANSITION_DESCRIPTION_TEXT
+	ret z
+	cp POKEDEX_OWNER_TRANSITION_INFO
 	ret z
 	cp POKEDEX_OWNER_TRANSITION_LISTING
 	ld a, $47
@@ -1414,6 +1455,7 @@ Pokedex_VBlankOwnerTransition::
 
 	ld a, BANK(wPokedexOwnerAttrmapBuffer)
 	ldh [rSVBK], a
+	call Pokedex_VBlankInfoAssets
 	ld a, BANK(vBGMap2)
 	ldh [rVBK], a
 	ld hl, wPokedexOwnerAttrmapBuffer
@@ -1441,15 +1483,13 @@ Pokedex_VBlankOwnerTransition::
 
 .internal_palettes
 	call .CommitInternalDescriptionBGPals
+	call .CommitListingOBPals
 .palettes_ready
 
 	pop af
 	ldh [rVBK], a
 	pop af
 	ldh [rSVBK], a
-	ld a, [wPokedexOwnerTransition]
-	cp POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
-	jr z, .clear_request
 	call hTransferShadowOAM
 	ld a, TRUE
 	ldh [hOAMUpdate], a
@@ -1463,22 +1503,20 @@ Pokedex_VBlankOwnerTransition::
 	ret
 
 .CommitInternalDescriptionBGPals:
-; UI, portrait, footprint and two type badges. No OBJ graphics are visible.
+; Type badges are OBJ; all six lower stat colors may be in use.
 	ld a, BGPI_AUTOINC palette 0
 	ldh [rBGPI], a
 	ld hl, wBGPals2 palette 0
 	ld c, LOW(rBGPD)
-	rept 3 palettes
-		ld a, [hli]
-		ldh [c], a
-	endr
-	ld a, BGPI_AUTOINC palette 6
-	ldh [rBGPI], a
-	ld hl, wBGPals2 palette 6
-	rept 2 palettes
-		ld a, [hli]
-		ldh [c], a
-	endr
+	ld b, 8 palettes
+.internal_palette_wait
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .internal_palette_wait
+	ld a, [hli]
+	ldh [c], a
+	dec b
+	jr nz, .internal_palette_wait
 	ret
 
 .CommitListingBGPals:
@@ -1525,17 +1563,23 @@ Pokedex_VBlankOwnerTransition::
 	ld a, [wPokedexSelectedOBJPaletteDirty]
 	and a
 	ret z
-	ld a, OBPI_AUTOINC palette 0
-	ldh [rOBPI], a
-	ld hl, wOBPals2 palette 0
-	ld c, LOW(rOBPD)
-	rept 6 palettes
-		ld a, [hli]
-		ldh [c], a
-	endr
-	ret
+	jp .CommitListingOBPals
 
 .TransferMap:
+	ld c, 2 * SCREEN_HEIGHT - 1
+	ld b, LOW(vBGMap0)
+	ld a, [wPokedexOwnerTransition]
+	cp POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
+	jr nz, .map_range
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_INFO
+	jr nz, .map_range
+; Internal Info keeps the same top/bottom shell and footer. Publish rows 1-15.
+	ld de, TILEMAP_WIDTH
+	add hl, de
+	ld c, 2 * 15 - 1
+	ld b, LOW(vBGMap0 + TILEMAP_WIDTH)
+.map_range
 	ld a, h
 	ldh [rVDMA_SRC_HIGH], a
 	ld a, l
@@ -1544,9 +1588,9 @@ Pokedex_VBlankOwnerTransition::
 	ld a, HIGH(vBGMap0)
 	and $1f
 	ldh [rVDMA_DEST_HIGH], a
-	ld a, LOW(vBGMap0)
+	ld a, b
 	ldh [rVDMA_DEST_LOW], a
-	ld a, 2 * SCREEN_HEIGHT - 1
+	ld a, c
 	ldh [rVDMA_LEN], a
 	ret
 
@@ -1559,6 +1603,9 @@ Pokedex_VBlankDescriptionText:
 	and a
 	ret
 .pending
+	ld a, [wPokedexAnimSchedulerControl]
+	bit POKEDEX_ANIM_UPLOAD_ACTIVE_F, a
+	ret nz
 	ldh a, [hBGMapUpdate]
 	and a
 	ret nz
@@ -1576,21 +1623,38 @@ Pokedex_VBlankDescriptionText:
 	push af
 	ld a, BANK(wPokedexOwnerTilemapBuffer)
 	ldh [rSVBK], a
+	ld a, [wPokedexInfoRestoreDescription]
+	and a
+	jr z, .info_restored
+	xor a
+	ld [wPokedexInfoRestoreDescription], a
+	ld hl, wShadowOAMSprite08
+	ld bc, 8 * 4
+	call ByteFill
+	call hTransferShadowOAM
+	ld a, 1
+	ldh [rVBK], a
+	ld hl, wPokedexOwnerAttrmapBuffer + 9 * TILEMAP_WIDTH
+	call Pokedex_InfoTransferLowerRows
+.info_restored
 	xor a
 	ldh [rVBK], a
-	ld hl, wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH
+	ld hl, wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH
 	ld a, h
 	ldh [rVDMA_SRC_HIGH], a
 	ld a, l
 	ldh [rVDMA_SRC_LOW], a
-	ld a, HIGH(vBGMap0 + 8 * TILEMAP_WIDTH) & $1f
+	ld a, HIGH(vBGMap0 + 9 * TILEMAP_WIDTH) & $1f
 	ldh [rVDMA_DEST_HIGH], a
-	ld a, LOW(vBGMap0 + 8 * TILEMAP_WIDTH)
+	ld a, LOW(vBGMap0 + 9 * TILEMAP_WIDTH)
 	ldh [rVDMA_DEST_LOW], a
 	ld a, 7 * TILEMAP_WIDTH / $10 - 1
 	ldh [rVDMA_LEN], a
+	ld a, [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 2]
+	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 2], a
 	xor a
 	ld [wPokedexDescriptionTextState], a
+	ld [wPokedexInfoVisible], a
 	ld [wPokedexOwnerTransition], a
 	ld hl, wPokedexAnimFlags
 	bit POKEDEX_ANIM_MAP_PENDING_F, [hl]
@@ -2631,3 +2695,36 @@ Pokedex_FillColumn2:
 	jr nz, .loop
 	pop de
 	ret
+
+; These Listing assets are loaded through Get2bpp with their own BANK labels.
+PokedexScrollbarGFX:
+INCBIN "gfx/pokedex/scrollbar.2bpp"
+
+PokedexUnseenGFX:
+INCBIN "gfx/pokedex/unseen_pokemon.2bpp"
+
+PokedexListCursorGFX:
+INCBIN "gfx/pokedex/dex_cursor.2bpp"
+
+PokedexCaughtBallGFX:
+INCBIN "gfx/pokedex/caught_pokeball.2bpp"
+
+PokedexListJoinedLeftGFX:
+	db %11111100, %00000001
+	db %11111100, %00000001
+	db %11111100, %00000000
+	db %11111111, %00000000
+	db %11111111, %00000000
+	db %11111100, %00000000
+	db %11111100, %00000001
+	db %11111100, %00000001
+
+PokedexListJoinedMiddleGFX:
+	db %00000000, %11111111
+	db %00000000, %11111111
+	db %00000000, %00000000
+	db %11111111, %00000000
+	db %11111111, %00000000
+	db %00000000, %00000000
+	db %00000000, %11111111
+	db %00000000, %11111111

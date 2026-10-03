@@ -136,6 +136,13 @@ $(info $(shell $(MAKE) -C tools))
 # As a side effect, they're evaluated immediately instead of when the rule is invoked.
 # It doesn't look like $(shell) can be deferred so there might not be a better way.
 preinclude_deps := includes.asm $(shell tools/scan_includes includes.asm)
+info_asset_inputs := tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/item_constants.asm constants/charmap.asm data/pokemon/names.asm data/items/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font.1bpp gfx/font/font_battle_extra.2bpp gfx/pokedex/dex_stat_bar.2bpp
+build/dex-info-assets/tables.asm: $(info_asset_inputs)
+	python3 -B tools/pokedex_info_assets.py
+build/dex-info-assets/tiles.2bpp: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py
+build/dex-info-assets/titles.2bpp: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py
 define DEP
 $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<
@@ -249,6 +256,7 @@ gfx/mail/litebluemail_border.1bpp: tools/gfx += --remove-whitespace
 
 gfx/pokedex/pokedex.2bpp: tools/gfx += --trim-whitespace
 gfx/pokedex/pokedex_sgb.2bpp: tools/gfx += --trim-whitespace
+gfx/pokedex/pokedex_page_numbers.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/question_mark.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
 

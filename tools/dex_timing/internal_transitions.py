@@ -257,8 +257,10 @@ def summarize(trace, events):
 
 
 def run_case(driver, checkpoints, output, names, source, target, key, delay, images, repo, assets,
-             admission_delay=None):
+             admission_delay=None, info_page=None):
     label = f'{source}-to-{target}-' + ('settled' if delay is None else f'active{delay}')
+    if info_page is not None:
+        label += f'-info{info_page + 1}'
     if admission_delay is not None:
         label += f'-admission{admission_delay}'
     folder = output / label
@@ -268,6 +270,14 @@ def run_case(driver, checkpoints, output, names, source, target, key, delay, ima
         settle(driver)
     elif delay:
         driver.run(frames=delay)
+    if info_page is not None:
+        from .info_ui import press, ready
+        press(driver, 'right')
+        press(driver, 'a')
+        ui = ready(driver, 0)
+        for page in range(1, min(info_page, ui['info_pages'] - 1) + 1):
+            press(driver, 'a')
+            ready(driver, page)
     driver.run(frames=2)
     driver.command(f'image {folder / "before.ppm"}')
     driver.command(f'save {folder / "before.s0"}')
@@ -295,8 +305,15 @@ def run_case(driver, checkpoints, output, names, source, target, key, delay, ima
     # input poll is pending, then intentionally stop its unfinished cry. Audit
     # only the incoming owner; keep the entire raw trace as handoff evidence.
     incoming_events = [e for e in events if e['t'] >= reveal_t]
-    report = dict(label=label, source=source, target=target, delay=delay, incoming=incoming,
-                  final=final, events=events, final_ui_issues=audit_ui(repo, ui) + audit_footprint(repo, target, ui),
+    if info_page is None:
+        ui_issues = audit_ui(repo, ui) + audit_footprint(repo, target, ui)
+    else:
+        from .info_ui import info_audit, type_audit
+        from pokedex_info_assets import Compiler
+        compiler = Compiler()
+        ui_issues = type_audit(repo, target, ui) + info_audit(compiler, compiler.compile(), target, 0, ui, repo)
+    report = dict(label=label, source=source, target=target, delay=delay, info_page=info_page, incoming=incoming,
+                  final=final, events=events, final_ui_issues=ui_issues,
                   animation_audit=audit_animation(assets[target], changed, incoming_events, final, cold=False),
                   summary=summarize(trace, events))
     if 'PokedexSelectedMon_BeginBufferedIconTransition' in repo.symbols and images:
@@ -357,6 +374,8 @@ def main():
     parser.add_argument('--reuse-states', action='store_true')
     parser.add_argument('--active', action='store_true')
     parser.add_argument('--all-species', action='store_true')
+    parser.add_argument('--info-page', type=int, choices=range(4),
+                        help='Enter this zero-based Info page before the species handoff')
     parser.add_argument('--prototype', choices=('palette-only', 'fast-maps', 'late-hide'))
     parser.add_argument('--no-images', action='store_true')
     parser.add_argument('--verify-observer', action='store_true')
@@ -407,7 +426,7 @@ def main():
                 stalls = (*range(0, 164, 4), 256, 456) if args.admission_sweep else (None,)
                 for stall in stalls:
                     report = run_case(driver, checkpoints, args.output, names, source, target, key,
-                                      delay, not args.no_images, repo, assets, stall)
+                                      delay, not args.no_images, repo, assets, stall, args.info_page)
                     results.append(report)
                     s = report['summary']
                     print(json.dumps(dict(case=report['label'],

@@ -92,6 +92,17 @@ static void restoration_snapshot(const char *kind, const char *phase, bool full)
     fprintf(restoration_log, ",\"grid_palettes\":"); restoration_hex(gb.ram + R_wPokedexGridIconPalettes - 0xc000, 9);
     fprintf(restoration_log, ",\"oam\":"); restoration_hex(gb.oam, 160);
     fprintf(restoration_log, ",\"shadow_oam\":"); restoration_hex(gb.ram + R_wShadowOAM - 0xc000, 160);
+#ifdef R_wPokedexAnimSchedulerControl
+    fprintf(restoration_log, ",\"scheduler_control\":%u,\"info_job\":%u,\"tick\":%u",
+            byte(R_wPokedexAnimSchedulerControl),
+            gb.ram[3 * 4096 + (S_wPokedexInfoState & 4095)], byte(S_hVBlankCounter));
+#endif
+#ifdef DEX_BACKLOG_REVALIDATION_TRACE
+    /* Host-only historical-bug validation. No new cartridge instrumentation. */
+    fprintf(restoration_log, ",\"selection_key\":%u,\"jumptable\":%u,\"menu\":%u",
+            word(R_wPokedexRenderedSelectionKey), byte(S_wJumptableIndex),
+            byte(S_wMenuCursorPosition));
+#endif
 #ifdef DEX_INTERNAL_TRANSITION_TRACE
     bool black = true;
     for (unsigned i = 0; i < 160 * 144 && black; i++) black = (pixels[i] & 0xffffff) == 0;
@@ -138,16 +149,22 @@ static void restoration_observe(unsigned bank, unsigned pc)
 static bool restoration_write(GB_gameboy_t *g, uint16_t address, uint8_t value)
 {
     (void)g;
-    if (restoration_log && (address == 0xff40 || address == 0xff43 || address == 0xff42 ||
+    bool watched = address == 0xff40 || address == 0xff43 || address == 0xff42 ||
         address == 0xff4a || address == 0xff4b || address == 0xff69 || address == 0xff6b ||
-        address == 0xff55 || address == 0xff46)) {
+        address == 0xff55 || address == 0xff46;
+#ifdef DEX_BACKLOG_REVALIDATION_TRACE
+    watched |= address == R_hSCX || address == R_hSCY || address == R_hWX || address == R_hWY;
+#endif
+    if (restoration_log && watched) {
         fprintf(restoration_log, "{\"event\":\"write\",\"t\":%" PRIu64
             ",\"display\":%u,\"pc\":%u,\"bank\":%u,\"ly\":%u,\"stat\":%u,"
             "\"physical_line\":%u,\"address\":%u,\"value\":%u,\"bgpi\":%u,\"obpi\":%u,"
-            "\"pal_blocked\":%u,\"vram_blocked\":%u}\n",
+            "\"pal_blocked\":%u,\"vram_blocked\":%u,\"vbk\":%u,\"svbk\":%u,\"dma\":[%u,%u,%u,%u]}\n",
             restoration_now(), restoration_frames, restoration_pc, restoration_bank,
             byte(0xff44), byte(0xff41), gb.current_line, address, value, byte(0xff68), byte(0xff6a),
-            gb.cgb_palettes_blocked, gb.vram_write_blocked);
+            gb.cgb_palettes_blocked, gb.vram_write_blocked, gb.cgb_vram_bank, gb.cgb_ram_bank,
+            gb.hdma_current_src >> 8, gb.hdma_current_src & 255,
+            gb.hdma_current_dest >> 8, gb.hdma_current_dest & 255);
     }
     return true;
 }

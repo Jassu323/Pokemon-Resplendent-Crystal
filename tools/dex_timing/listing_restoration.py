@@ -48,12 +48,16 @@ OPTIONAL_PHASES = dict(
     cache_row_uploaded='Pokedex_UploadPendingGridCacheRow.publish',
     listing_bg_pal_commit='Pokedex_VBlankOwnerTransition.CommitListingBGPals',
     listing_obj_pal_commit='Pokedex_VBlankOwnerTransition.CommitListingOBPals',
+    info_return_preserve='PokedexInfo_PreserveReturnPanel',
+    info_return_relocate='PokedexInfo_PreserveReturnPanel.relocate',
+    info_return_remap='PokedexInfo_PreserveReturnPanel.remap',
+    info_return_published='Pokedex_VBlankInfoReturn.published',
 )
 
 
-def compile_observer(repo, source, output):
+def compile_observer(repo, source, output, *, extra_points=None, extra_fields=(), extra_flags=()):
     header = (output / 'listing-restore-symbols.h').resolve()
-    lines = [f'#define R_{name} 0x{repo.symbols[name][1]:04x}' for name in FIELDS]
+    lines = [f'#define R_{name} 0x{repo.symbols[name][1]:04x}' for name in (*FIELDS, *extra_fields)]
     presence = 'wPokedexGridOccupied' in repo.symbols
     grid = 'wPokedexGridOccupied' if presence else 'wPokedexGridSpecies'
     lines += [f'#define R_wPokedexGridCells 0x{repo.symbols[grid][1]:04x}',
@@ -61,6 +65,7 @@ def compile_observer(repo, source, output):
     lines += ['static const struct { unsigned bank, pc; const char *name; } restoration_points[] = {']
     labels = dict(PHASES, **{name: label for name, label in OPTIONAL_PHASES.items()
                            if label in repo.symbols})
+    labels.update(extra_points or {})
     for name, label in labels.items():
         bank, pc = repo.symbols[label]
         lines.append(f'{{{bank}, 0x{pc:04x}, "{name}"}},')
@@ -74,9 +79,11 @@ def compile_observer(repo, source, output):
     dispatch_bank, dispatch_pc = repo.symbols['Pokedex_VBlankDispatch']
     owner_bank, owner_pc = repo.symbols['Pokedex_VBlankOwnerTransition']
     dispatch = offset((dispatch_bank, dispatch_pc))
-    if repo.rom[dispatch:dispatch + 3] != bytes((0xcd, owner_pc & 255, owner_pc >> 8)):
+    instruction = bytes((0xcd, owner_pc & 255, owner_pc >> 8))
+    body = repo.rom[dispatch:offset((dispatch_bank, owner_pc))]
+    if body.count(instruction) != 1:
         raise ValueError('Owner-transition caller changed; update the return trace point')
-    lines.append(f'{{{dispatch_bank}, 0x{dispatch_pc + 3:04x}, "owner_returned"}},')
+    lines.append(f'{{{dispatch_bank}, 0x{dispatch_pc + body.index(instruction) + 3:04x}, "owner_returned"}},')
     oam_pc = repo.symbols['hTransferShadowOAM'][1]
     body = repo.rom[offset((owner_bank, owner_pc)):at]
     oam_calls = [m.start() for m in re.finditer(re.escape(bytes((0xcd, oam_pc & 255, oam_pc >> 8))), body)]
@@ -89,7 +96,8 @@ def compile_observer(repo, source, output):
     lines += ['};']
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, source, output, (
-        '-DDEX_LISTING_RESTORE_TRACE', f'-DDEX_LISTING_RESTORE_SYMBOLS="{header}"'))
+        '-DDEX_LISTING_RESTORE_TRACE', f'-DDEX_LISTING_RESTORE_SYMBOLS="{header}"',
+        *extra_flags))
 
 
 def cases(names):
@@ -333,6 +341,32 @@ def run_case(driver, checkpoints, output, case, names, images):
         driver.run(frames=2)
         driver.run(frames=2, key='a')
         driver.run(frames=2)
+    if 'info_page' in case:
+        from .info_ui import press, ready
+        press(driver, 'right')
+        press(driver, 'a')
+        ready(driver, 0)
+        for page in range(1, case['info_page'] + 1):
+            press(driver, 'a')
+            ready(driver, page)
+        ui = driver.command('ui')
+        if ui['view'] != 1 or ui['info_page'] != case['info_page'] or ui['info_state']:
+            raise RuntimeError(f'Return probe is not on the requested Info page: {case}: {ui}')
+        for _ in range(case.get('info_internal_pages', 0)):
+            driver.run(frames=2)
+            changed = driver.run(('change_species',), key='down')
+            if changed['hit'] != 'change_species':
+                raise RuntimeError(f'Info internal paging was not accepted: {case}: {changed}')
+            driver.run(('selected', 'animation_miss', 'audio_miss'))
+            ready(driver, 0)
+            settle(driver)
+        if 'info_cancel_frames' in case:
+            driver.run(frames=1, key='a')
+            driver.run(frames=case['info_cancel_frames'])
+        if 'description_cancel_frames' in case:
+            press(driver, 'left')
+            driver.run(frames=1, key='a')
+            driver.run(frames=case['description_cancel_frames'])
     selected = driver.command('peek')
     driver.command(f'image {directory / "selected-before.ppm"}')
     driver.command(f'save {directory / "selected-before.s0"}')
@@ -407,12 +441,12 @@ def verify_observer(repo, source, observed_core, checkpoints, output):
     control.mkdir(exist_ok=True)
     control_core = build_core(repo, source, control)
     results = []
-    for pages in (0, 1, 9):
+    for pages, info in ((0, None), (1, None), (9, None), (0, 0), (0, 1)):
         samples = []
         for tracing, core in ((False, control_core), (True, observed_core)):
             driver = Driver(core, checkpoints / 'input-copy.gbc',
                 Path('/Applications/SameBoy/SameBoy.app/Contents/Resources/cgb_boot.bin'),
-                checkpoints / 'input-copy.sav', control / f'core-{pages}-{tracing}.log')
+                checkpoints / 'input-copy.sav', control / f'core-{pages}-{info}-{tracing}.log')
             try:
                 driver.command(f'load {checkpoints / "listing-states/listing-001.s0"}')
                 driver.command('rawcolor')
@@ -426,13 +460,21 @@ def verify_observer(repo, source, observed_core, checkpoints, output):
                     driver.run(frames=2)
                     driver.run(('change_species',), key='down')
                     settle(driver)
+                if info is not None:
+                    from .info_ui import press, ready
+                    press(driver, 'right')
+                    press(driver, 'a')
+                    ready(driver, 0)
+                    for page in range(1, info + 1):
+                        press(driver, 'a')
+                        ready(driver, page)
                 if tracing:
-                    driver.command(f'restoretrace {control / f"observed-{pages}"} 1')
+                    driver.command(f'restoretrace {control / f"observed-{pages}-{info}"} 1')
                 left = driver.run(('leave',), key='b')
                 returned = driver.run(('listing',), 600)
                 final = driver.run(frames=5)
                 ui = driver.command('ui')
-                image = control / f'final-{pages}-{tracing}.ppm'
+                image = control / f'final-{pages}-{info}-{tracing}.ppm'
                 driver.command(f'image {image}')
                 if tracing:
                     driver.command('restorestop')
@@ -441,9 +483,9 @@ def verify_observer(repo, source, observed_core, checkpoints, output):
             finally:
                 driver.close()
         same = samples[0] == samples[1]
-        results.append(dict(pages=pages, cycles_state_palettes_maps_pixels_equal=same))
+        results.append(dict(pages=pages, info_page=info, cycles_state_palettes_maps_pixels_equal=same))
         if not same:
-            raise RuntimeError(f'Host instrumentation changed replay output: {pages}')
+            raise RuntimeError(f'Host instrumentation changed replay output: {pages}:{info}')
     (output / 'observer-control.json').write_text(json.dumps(results, indent=2) + '\n')
     return results
 
@@ -477,7 +519,19 @@ def main():
     names = re.findall(r'^\s*dw (\w+)\s*$', (ROOT / 'data/pokemon/dex_order_new.asm').read_text(), re.M)
     aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
     names = [aliases.get(n, n.lower()) for n in names]
-    suite = [c for c in cases(names) if args.case is None or c['label'] in args.case]
+    suite = cases(names)
+    if 'PokedexInfo_Service' in repo.symbols:
+        suite += [dict(label=f'{name}-info{page + 1}', start=name, pages=0,
+                       wait=wait, description_page=False, info_page=page)
+                  for name, page, wait in (
+                      ('chikorita', 0, None), ('chikorita', 1, None),
+                      ('tyrogue', 2, None), ('eevee', 3, None),
+                      ('chansey', 0, None), ('blissey', 0, None),
+                      ('skitty', 1, None), ('dusknoir', 0, 8), ('kyogre', 0, 0))]
+        suite += [dict(label=f'chikorita-info-down{n}', start='chikorita', pages=0,
+                       wait=None, description_page=False, info_page=0,
+                       info_internal_pages=n) for n in (1, 2)]
+    suite = [c for c in suite if args.case is None or c['label'] in args.case]
     if args.follow_up and args.case is None:
         suite.append(dict(label='regigigas', start='regigigas', pages=0, wait=None, description_page=False))
     if args.admission_sweep:

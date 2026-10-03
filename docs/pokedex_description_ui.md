@@ -34,29 +34,32 @@ not the Listing's caught-ball marker; its graphics are unchanged.
 
 First type: `(9,7)` in backing tiles, screen x=67..98, y=56..63.
 Second type: `(14,7)`, screen x=107..138, y=56..63. Each badge is 32x8 and
-occupies four BG tiles. Matching base-stat types display only the first badge;
-the background template clears the second slot on every species transition.
+uses four 8x8 OBJs. Matching base-stat types display only the first badge;
+the shadow-OAM template clears the second slot on every species transition.
+The backing BG beneath both slots remains dark gray.
 
 `GetBaseData` resolves the selected species through the existing extended-ID
 tables. The shared compact type graphics are copied into the first 128 bytes
 of `wPokedexWRAM0Scratch`, after the base/footprint have been committed but
-before animation priming. Only this temporary copy has its four corners changed
-to background color, leaving the icons used in other screens unchanged.
+before animation priming. The temporary copy remaps background/corners to
+transparent OBJ color 0, retaining white lettering and the colored fill. The
+shared graphics used in other screens are unchanged.
 One exact four- or eight-block HDMA transfer uploads the badges to bank 1.
 
 Internal paging alternates two footprint/type sets: footprint A at `$8b10`
-and types A at `$9640`, footprint B at `$96c0` and types B at `$9700`, all in
-bank 1. The outgoing footprint and badges remain visible until the incoming
+and OBJ types A at `$8280-$82ff`, footprint B at `$96c0` and OBJ types B at
+`$8300-$837f`, all in bank 1. The outgoing footprint and badges remain visible until the incoming
 owner's atomic reveal. Only the shared portrait becomes white during VRAM
 replacement. New entry resets to set A; B-return restores its normal resident
 footprint before Listing resumes. This avoids an extra reentry repair frame
 and prevents a stale resident-footprint tag after repeated internal paging.
 
-BG palette 6 belongs to the first badge, palette 7 to the optional second.
-Their shared type colors are retained, but color 1 is replaced with the Dex
-background `RGB 5,5,5`. BG palette 2 belongs to the footprint: white color 0,
-black colors 1/2, dark-gray color 3. All three palette slots participate in
-the existing staged owner's dirty mask; Listing reconstructs its own palettes
+OBJ palette 0 belongs to the first badge, palette 1 to the optional second.
+Their type colors and white lettering are retained, with transparent color 0.
+BG palettes 6/7 are now available to Info's stat rows. BG palette 2 belongs
+to HP and the footprint; the footprint contains only white color 0 and
+dark-gray color 3, so HP's border/fill do not recolor it. Dirty owner masks
+include both badge OBJ palettes; Listing reconstructs its own used palettes
 when ownership returns. Palette writes explicitly select/restore WRAM bank 5.
 
 ## Resources
@@ -64,17 +67,20 @@ when ownership returns. Palette writes explicitly select/restore WRAM bank 5.
 | Resource | Added use |
 | --- | ---: |
 | Bank 0 `vTiles2 $71-$7a` | 10 border/badge tiles, 160 bytes |
-| Bank 1 `vTiles5 $64-$6b` | 8 type tiles maximum, 128 bytes |
-| Bank 1 `vTiles5 $6c-$77` | 12 alternate footprint/type tiles, 192 bytes |
-| ROMX | Original UI addition 1,133 bytes; buffered-icon follow-up adds 228 bytes |
-| ROM0, WRAM0, WRAMX, HRAM | No new allocations |
+| Bank 1 `vTiles3 $28-$37` | 16 double-buffered OBJ type tiles, 256 bytes |
+| Bank 1 `vTiles5 $6c-$6f` | 4 alternate footprint tiles, 64 bytes |
+| ROMX | Historical border/UI addition 1,133 bytes; earlier BG-buffer follow-up 228 bytes |
+| ROM0, WRAM0, HRAM | No new allocations |
 
 The buffer selector reuses the last existing Dex scratch-union byte at `$cd13`.
-The follow-up uses 127 additional ROMX bytes in `$77` and 101 in `$a0`; no new
-bank, metadata dataset, font graphics or animation slot is required.
+The historical BG-buffer follow-up used 127 ROMX bytes in `$77` and 101 in
+`$a0`. Its former BG type cells now belong to Info's glyph atlas. Current OBJ
+type loading is part of Info's `$a6` code; see [Info's current resource bill](pokedex_info.md#ram-and-rom-budget)
+instead of treating those historical figures as its present cost.
 
-Both 49-tile animation slots, all Listing minisprite allocations, the inverted
-font and all existing generated animation metadata remain intact. The border
+Both 49-tile animation slots, the inverted font and all existing generated
+animation metadata remain intact. Info temporarily borrows one Listing BG
+minisprite frame atlas and restores its cache before returning. The border
 is loaded while the LCD is off when opening the Dex. Species entry performs
 the small badge upload before starting playback, not during timed production.
 
@@ -100,6 +106,10 @@ RGB expansion and RetroArch correction can otherwise produce misleading
 differences. This shell audit uses a settled animation before A-button text
 paging and now waits for the requested complete lower map rather than assuming
 a fixed two-frame completion. Separate active-phase tests cover `DEX-DESC-01`.
+The 2026-10-02 Info suite adds active-page glyph preparation, animated evolution
+minis, buffered type OAM, HP endpoints and complete Info-to-Desc restoration.
+See [Info acceptance](pokedex_info.md#validation-and-manual-checks) for current
+tests, transition timing and the manual visual suite.
 
 Drapion's former category overflow and Mew's embedded terminator have since
 been corrected. The audits still report shell/static defects rather than

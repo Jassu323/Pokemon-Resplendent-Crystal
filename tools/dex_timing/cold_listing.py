@@ -33,7 +33,11 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexAnimPlaybackState hSampledCryTimer hSampledCryBlocks hVBlankCounter
     hJoyDown wPokedexAnimStageFrameID wPokedexAnimStageSlot
     wChannel5Flags1 wChannel6Flags1 wChannel7Flags1 wChannel8Flags1
-    wPokedexDescriptionPage wPokedexSelectedView wBaseType1 wBaseType2'''.split()
+    wPokedexDescriptionPage wPokedexSelectedView wBaseType1 wBaseType2
+    wPokedexInfoPage wPokedexInfoPageCount wPokedexInfoState wPokedexInfoActiveMiniCount
+    wPokedexInfoTileCount wPokedexInfoCaught wPokedexInfoMiniBuffer wPokedexInfoRow wPokedexOwnerTransition
+    wPokedexOwnerTilemapBuffer wPokedexOwnerAttrmapBuffer wPokedexInfoGFX wPokedexInfoTileSources
+    wDexArrowCursorPosIndex'''.split()
 
 
 def build_core(repo, source, output, extra_compile_flags=()):
@@ -61,6 +65,20 @@ def build_core(repo, source, output, extra_compile_flags=()):
                  UPLOAD=upload,
                  BEGIN=symbols['Pokedex_BeginDescriptionAnimation'],
                  AUDIO_STOP=symbols['StopSampledCryAsync_NoInterruptControl'])
+    if 'Pokedex_VBlankInfoAssets' in symbols:
+        pairs.update(INFO_ASSETS=symbols['Pokedex_VBlankInfoAssets'],
+                     INFO_OAM=symbols['Pokedex_VBlankInfoAssets.oam'],
+                     INFO_MAP=symbols['Pokedex_InfoTransferLowerRows'],
+                     INFO_PALETTE=symbols['Pokedex_InfoCopyHardwarePalette'])
+        step_bank, step_pc = symbols['PokedexInfo_Step']
+        service_bank, service_pc = symbols['PokedexInfo_Service.admit']
+        service_end = symbols['PokedexInfo_Service.publish'][1]
+        body = repo.rom[offset((service_bank, service_pc)):offset((service_bank, service_end))]
+        call = bytes((0xcd, step_pc & 255, step_pc >> 8))
+        if body.count(call) != 1 or step_bank != service_bank:
+            raise ValueError('Info slice call changed; update its read-only timing observer')
+        pairs.update(INFO_SLICE=(service_bank, service_pc),
+                     INFO_SLICE_DONE=(service_bank, service_pc + body.index(call) + 3))
     # Derive the cache-empty branch from the linked labels and verify its bytes.
     bank, decoded = symbols['SampledCry_AsyncTimerTick.has_decoded_block']
     empty = decoded - 6
