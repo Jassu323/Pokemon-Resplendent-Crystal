@@ -137,6 +137,13 @@ $(info $(shell $(MAKE) -C tools))
 # It doesn't look like $(shell) can be deferred so there might not be a better way.
 preinclude_deps := includes.asm $(shell tools/scan_includes includes.asm)
 info_asset_inputs := tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/item_constants.asm constants/charmap.asm data/pokemon/names.asm data/items/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font.1bpp gfx/font/font_battle_extra.2bpp gfx/pokedex/dex_stat_bar.2bpp
+move_asset_inputs := tools/pokedex_moves_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/move_constants.asm constants/item_constants.asm data/moves/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/egg_moves_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font_battle_extra.2bpp
+build/dex-moves-assets/tables.asm: $(move_asset_inputs)
+	python3 -B tools/pokedex_moves_assets.py
+build/dex-moves-assets/level.2bpp: build/dex-moves-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_moves_assets.py
+build/dex-moves-assets/evos_exports.asm build/dex-moves-assets/egg_exports.asm: build/dex-moves-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_moves_assets.py
 build/dex-info-assets/tables.asm: $(info_asset_inputs)
 	python3 -B tools/pokedex_info_assets.py
 build/dex-info-assets/tiles.2bpp: build/dex-info-assets/tables.asm
@@ -257,6 +264,7 @@ gfx/mail/litebluemail_border.1bpp: tools/gfx += --remove-whitespace
 gfx/pokedex/pokedex.2bpp: tools/gfx += --trim-whitespace
 gfx/pokedex/pokedex_sgb.2bpp: tools/gfx += --trim-whitespace
 gfx/pokedex/pokedex_page_numbers.2bpp: RGBGFXFLAGS += --columns
+gfx/pokedex/pokedex_page_numbers_double_digits.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/question_mark.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
 

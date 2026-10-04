@@ -49,6 +49,7 @@ PokedexInfo_Cancel:
 	ldh [rSVBK], a
 	xor a
 	ld [wPokedexInfoState], a
+	ld [wPokedexMovesState], a
 	ld [wPokedexInfoActiveMiniCount], a
 	pop af
 	ldh [rSVBK], a
@@ -416,28 +417,10 @@ PokedexInfo_ClearRow:
 	ret
 
 PokedexInfo_DrawBadge:
-	ld a, $77
-	ld [wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH + 1], a
 	ld a, [wPokedexInfoPage]
-	cp 2
-	jr nc, .extra
-	and a
-	ld b, $73
-	ld a, $78
-	jr z, .store
-	ld b, $79
-	ld a, $7a
-	jr .store
-.extra
-	sub 2
-	add a
-	add $7b
-	ld b, a
 	inc a
-.store
-	ld [wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH + 2], a
-	ld a, b
-	ld [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 2], a
+	ld c, a
+	farcall PokedexBadge_Prepare
 	ret
 
 PokedexInfo_PlanStats:

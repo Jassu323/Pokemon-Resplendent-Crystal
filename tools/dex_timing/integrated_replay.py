@@ -240,7 +240,8 @@ def main():
         symbols = dict(DEX_PUBLICATION_PC='Pokedex_VBlankAnimationFrontpicMap.deadline_reached',
             DEX_STAGE_PC='Pokedex_PrepareNextAnimationStage', DEX_PRODUCER_PC='Pokedex_ServiceAnimationProducer',
             DEX_WAIT_PC='Pokedex_EndOwnerLoop.wait', DEX_MISS_PC='Pokedex_AnimationMiss' if 'Pokedex_AnimationMiss' in repo.symbols else 'Pokedex_CountAnimationUnderflow',
-            DEX_STOP_PC='StopSampledCryAsync_NoInterruptControl')
+            DEX_STOP_PC=('StopSampledCryAsync_FromTimer' if 'StopSampledCryAsync_FromTimer' in repo.symbols
+                         else 'StopSampledCryAsync_NoInterruptControl'))
         header.write_text(''.join(f'#define {k} 0x{repo.symbols[v][1]:04x}\n' for k,v in symbols.items())+
                           '#define DEX_WAIT_BANK 0xa0\n')
         files = ('apu camera display gb joypad mbc memory printer random rumble save_state sgb '

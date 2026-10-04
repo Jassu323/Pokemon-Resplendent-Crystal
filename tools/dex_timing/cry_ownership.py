@@ -97,6 +97,9 @@ def compile_observer(repo, source, output, extra_points=None):
         if label == '@audio_empty':
             pc -= 6
         lines.append(f'{{{bank}, 0x{pc:04x}, "{name}"}},')
+    if 'StopSampledCryAsync_FromTimer' in repo.symbols:
+        bank, pc = repo.symbols['StopSampledCryAsync_FromTimer']
+        lines.append(f'{{{bank}, 0x{pc:04x}, "sample_stop"}},')
     for name, (bank, pc) in (extra_points or {}).items():
         lines.append(f'{{{bank}, 0x{pc:04x}, "{name}"}},')
     lines += ['};']

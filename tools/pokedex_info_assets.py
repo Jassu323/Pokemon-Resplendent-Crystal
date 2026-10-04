@@ -217,8 +217,8 @@ class Compiler:
                         raise ValueError('Evolution entries must fit a name and one requirement line')
                     records[key] = (target, [self.line(t) for t in texts], texts)
                 roots[name].append(list(records).index(key))
-            if 1 + (len(roots[name]) + 1) // 2 > 4:
-                raise ValueError(f'{name} requires additional resident page badges')
+            if 1 + (len(roots[name]) + 1) // 2 > 19:
+                raise ValueError(f'{name} requires more than 19 Info pages')
             for first in range(0, len(roots[name]), 2):
                 used = {tile for i in roots[name][first:first + 2]
                         for line in list(records.values())[i][1]

@@ -5,7 +5,7 @@ Pokedex_IsDescriptionLayout:
 	cp DEXSTATE_SELECTED_MON_RESERVED + 1
 	jr nc, .other
 	ld a, [wPokedexSelectedView]
-	cp DEXSELECT_VIEW_INFO + 1
+	cp DEXSELECT_VIEW_MOVES + 1
 	jr nc, .other
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
@@ -25,9 +25,9 @@ Pokedex_LoadDescriptionGFX:
 	ld hl, vTiles2 tile POKEDEX_DESCRIPTION_GFX_TILE
 	lb bc, BANK(PokedexDescriptionGFX), (PokedexDescriptionGFXEnd - PokedexDescriptionGFX) / TILE_SIZE
 	call Get2bpp
-	ld de, PokedexInfoPageGFX
+	ld de, PokedexBadgePermanentGFX
 	ld hl, vTiles2 tile $7b
-	lb bc, BANK(PokedexInfoPageGFX), 4
+	lb bc, BANK(PokedexBadgePermanentGFX), 3
 	call Get2bpp
 	ld a, 1
 	ldh [rVBK], a

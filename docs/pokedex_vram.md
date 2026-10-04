@@ -3,10 +3,11 @@
 For the current execution/ownership contract and adaptation to other owners,
 see [Selected animation scheduler](pokedex_animation_scheduler.md). The resource
 allocation below includes the Description border, buffered OBJ type badges
-and Info pages, including the 2026-10-03 heading/entry placement revision; the
+and Info/Move pages, including the 2026-10-03 shared buffered indicators; the
 animation slots remain unchanged.
 See [Description UI](pokedex_description_ui.md) and
-[Info pages](pokedex_info.md) for layout, palette ownership and exact budgets.
+[Info pages](pokedex_info.md) and [Moves pages](pokedex_moves.md) for layout,
+palette ownership and exact budgets.
 
 This document records the current Pokedex graphics ownership and the target
 permanent allocation for the listing, description, search, search-results,
@@ -80,8 +81,8 @@ dictionary up front.
 | `vTiles1 $4a-$4f,$57-$5e,$64-$65` | Shifted Info headings | 16 | Otherwise blank font gaps; signed IDs `$ca-$cf,$d7-$de,$e4-$e5`. Both titles share the identical final partial `s` at `$cf`. |
 | `vTiles2 $00-$30` | Selected static frontpic or unseen image | 49 | Area-map graphics temporarily overwrite `$00-$2f`. |
 | `vTiles2 $31-$70` | Shared Pokedex UI | 64 | Loaded from `pokedex.2bpp`. |
-| `vTiles2 $71-$7a` | Description border and page badge | 10 | Loaded once with permanent Dex graphics; the other screens retain their existing shell. |
-| `vTiles2 $7b-$7e` | Info P.3/P.4 digits | 4 | Upper/lower tiles from the standalone editable page-number sheet. |
+| `vTiles2 $71-$7a` | Description border and shared page badge | 10 | Digit buffers A=`$73/$78`, B=`$79/$7a`; prepare only the inactive pair, publish with the panel. |
+| `vTiles2 $7b-$7d` | Double-digit badge closing pair and level glyph | 3 | Closing pair at `$7b/$7c`, battle-level glyph at `$7d`; used by Moves/shared paging. |
 | `vTiles2 $54` and `$5b` | DMG Listing joined border | 2 | CGB uses the resident bank-1 copies instead. |
 | `vTiles2 $62-$65` | Standalone-entry/DMG footprint | 4 | The normal CGB Dex uses the resident bank-1 footprint. |
 | `vTiles2 $40-$5a` | DMG Unown glyphs and cursor | 27 | CGB uses the resident bank-1 copies instead. |
@@ -126,8 +127,8 @@ cells, which join the former 24 free BG cells to make Info atlas A. Atlas B
 temporarily borrows all 40 Listing frame-0 side-icon cells. It does not borrow
 the other side-icon frames, center-column minis, title/font storage or portrait slots.
 There is no unassigned bank-1 signed-BG tile with Info's allocations reserved.
-Bank 1 has 38 free OBJ-only tiles (`vTiles3 $5a-$7f`); bank 0 `vTiles2` has one
-free BG tile (`$7f`). Future mutually exclusive lower tabs should reuse Info's
+Bank 1 has 38 free OBJ-only tiles (`vTiles3 $5a-$7f`); bank 0 `vTiles2` has two
+free BG tiles (`$7e-$7f`). Future mutually exclusive lower tabs should reuse Info's
 atlases rather than budget new permanent BG storage. The CGB
 footprint, Unown overlays, joined border, and cursor-background tile are
 loaded into their permanent destinations when the Pokedex starts.
@@ -267,12 +268,15 @@ register ownership against lower-page publication. The Listing cache remains
 in the same union, and subsequent RAM symbols retain their addresses. Current
 telemetry runs in the host-side SameBoy observer, not in cartridge RAM.
 
-Info extends the mutually exclusive bank-3 Battle Tower/Dex overlay by 1,686
-bytes, including alignment and the committed-page B-return records. It ends
-at `$db38`, leaving 200 bytes before the asserted `$dc00`
+Info and Moves extend the mutually exclusive bank-3 Battle Tower/Dex overlay by
+1,731 bytes, including alignment and the committed-page B-return records. It ends
+at `$db65`, leaving 155 bytes before the asserted `$dc00`
 boundary. Its 640-byte glyph buffer, 256-byte mini buffer, 32-byte OAM buffer,
 80-byte glyph pointers, 53-byte state and 611-byte records/visible flag do not enlarge the overall union or
-use new WRAM0/HRAM. See [Info's exact workspace and budget](pokedex_info.md#ram-and-rom-budget).
+use new WRAM0/HRAM. Moves and the shared badge helper add 45 bytes of previously
+unused overlay padding at `$db38-$db64`, with no section-size growth.
+See [Info's exact workspace and budget](pokedex_info.md#ram-and-rom-budget) and
+[Moves/shared indicators](pokedex_moves.md#shared-page-indicators).
 
 The frame-plan ROM cost is 47,186 bytes of generated payload plus a 1,197-byte
 far-pointer table. The payload remains isolated in banks `$a1`-`$a3` (decimal

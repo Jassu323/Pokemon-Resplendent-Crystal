@@ -341,6 +341,27 @@ def run_case(driver, checkpoints, output, case, names, images):
         driver.run(frames=2)
         driver.run(frames=2, key='a')
         driver.run(frames=2)
+    if 'moves_page' in case:
+        # The frozen baseline has no Moves tab; compare its Description return.
+        if case.get('moves_supported', True):
+            from .info_ui import press
+            from .moves_ui import ready
+            for _ in range(2):
+                press(driver, 'right')
+            press(driver, 'a')
+            ready(driver, 0)
+            for page in range(1, case['moves_page'] + 1):
+                press(driver, 'a')
+                ready(driver, page)
+            for _ in range(case.get('moves_internal_pages', 0)):
+                driver.run(frames=2)
+                driver.run(('change_species',), key='down')
+                driver.run(('selected', 'animation_miss', 'audio_miss'))
+                ready(driver, 0)
+                settle(driver)
+            if 'moves_cancel_frames' in case:
+                driver.run(frames=1, key='a')
+                driver.run(frames=case['moves_cancel_frames'])
     if 'info_page' in case:
         from .info_ui import press, ready
         press(driver, 'right')

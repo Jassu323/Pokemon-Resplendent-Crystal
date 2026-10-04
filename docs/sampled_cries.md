@@ -38,6 +38,26 @@ startup-fill target. The Selected Mon scheduler now coordinates work and audio
 service locally; this is not a global change to battle, Party Stats or New Dex
 Entry scheduling. See [Selected Mon ownership](#selected-mon-scheduling-and-validation).
 
+### Timer Shutdown And Display-Clock Preservation
+
+Integrated 2026-10-03 with the Selected Moves pages. Both shutdown branches in
+`SampledCry_AsyncTimerTick` now use `StopSampledCryAsync_FromTimer`, stop sampled
+playback/timer/CH3, then join the existing saved timer/audio restoration without
+touching IF. The timer IRQ already acknowledged its request. Re-clearing it by
+reading/modifying/writing IF could erase a VBlank request arriving between the
+read and stale write. The exact-phase Dusclops-to-Dusknoir Info replay confirmed
+this: the software timeline reported 174 intervals while physical playback took
+175. The corrected replay takes 174, preserving all 557 cry blocks and frames.
+
+Manual cancellation retains `StopSampledCryAsync_NoInterruptControl` and its
+pending-timer clear; both entries share the saved register restoration tail.
+The decoder, normal/fainted block periods and 32-block prefill are unchanged.
+Cost is 14 ROM0 bytes in the existing $0063 gap, no RAM/VRAM or ROMX; IRQ shutdown
+is 56 T-cycles shorter. Host observers recognize both entries so natural
+completion is not mistaken for exhaustion. This does not make unrelated IF
+updates atomic or resolve the separate deferred battle cry underrun.
+See [Moves validation and clock correction](pokedex_moves.md#physical-clock-correction).
+
 ## Important Files
 
 Runtime code:

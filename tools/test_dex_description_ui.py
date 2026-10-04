@@ -49,7 +49,11 @@ class DescriptionUITests(unittest.TestCase):
         if page:
             tilemap[8 * 21 + 2] = 0x79
             tilemap[9 * 21 + 2] = 0x7a
-        return dict(page=page, types=types, map=tilemap.hex(), attrs=attrs.hex(),
+        lower = bytearray(8 * 21 * 16)
+        at = offset(repo.symbols['PokedexBadgeSingleGFX']) + (page + 1) * 32
+        lower[2*16:3*16] = repo.rom[at:at + 16]
+        lower[23*16:24*16] = repo.rom[at + 16:at + 32]
+        return dict(page=page, badge_active=page, lower_tiles=lower.hex(), types=types, map=tilemap.hex(), attrs=attrs.hex(),
                     palettes=palettes.hex(), obj_palettes=obj_palettes.hex(),
                     oam=oam.hex(), type_gfx=gfx.hex(),
                     border_gfx=linked(repo, 'PokedexDescriptionGFX', 160).hex())
@@ -99,8 +103,7 @@ class DescriptionUITests(unittest.TestCase):
         ui = self.fixture(page=0)
         ui['page'] = 1
         issues = audit(self.repo, ui)
-        self.assertIn('page_badge', issues)
-        self.assertIn('shell_2_8', issues)
+        self.assertIn('badge_pixels', issues)
 
     def test_page_badge_uses_standalone_sheet_without_growing_shell(self):
         sheet = (ROOT / 'gfx/pokedex/pokedex_page_numbers.2bpp').read_bytes()

@@ -184,8 +184,8 @@ class InfoLinkedTests(unittest.TestCase):
         self.assertEqual(cpu.read(repo.symbols['hVBlank'][1]), 0x87)
         self.assertEqual(cpu.ram[0xff70], 1)
         base = repo.symbols['wPokedexOwnerTilemapBuffer'][1] - 0xd000
-        self.assertEqual(cpu.wram[3][base + 8 * 32 + 2], 0x73)
-        self.assertEqual(cpu.wram[3][base + 9 * 32 + 2], 0x78)
+        self.assertEqual(cpu.wram[3][base + 8 * 32 + 2], 0x79)
+        self.assertEqual(cpu.wram[3][base + 9 * 32 + 2], 0x7a)
 
     def test_description_restore_rearms_publication_without_losing_quiet_mode(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
@@ -216,8 +216,8 @@ class InfoLinkedTests(unittest.TestCase):
                 if not caught:
                     self.assertEqual(cpu.read(repo.symbols['wPokedexOwnerTransition'][1]), 4)
                     self.assertEqual(cpu.read(repo.symbols['hVBlank'][1]), 0x87)
-                    self.assertEqual(cpu.read(base + 8 * 32 + 2), 0x73)
-                    self.assertEqual(cpu.read(base + 9 * 32 + 2), 0x78)
+                    self.assertEqual(cpu.read(base + 8 * 32 + 2), 0x79)
+                    self.assertEqual(cpu.read(base + 9 * 32 + 2), 0x7a)
 
     def test_ready_handoff_obeys_the_active_playback_budget(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')

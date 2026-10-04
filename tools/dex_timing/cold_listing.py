@@ -26,6 +26,7 @@ POINTS = {
     'change_species': 'PokedexSelectedMon_ChangeSpecies',
     'animation_miss': 'Pokedex_AnimationMiss',
     'audio_miss': '@audio_empty',
+    'footer_accept': 'PokedexSelectedMon_ActivateFooterView',
 }
 FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wMenuCursorPosition wJumptableIndex wPokedexSelectedState wPokedexSelectedIndex wPokedexAnimOwner
@@ -37,7 +38,8 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexInfoPage wPokedexInfoPageCount wPokedexInfoState wPokedexInfoActiveMiniCount
     wPokedexInfoTileCount wPokedexInfoCaught wPokedexInfoMiniBuffer wPokedexInfoRow wPokedexOwnerTransition
     wPokedexOwnerTilemapBuffer wPokedexOwnerAttrmapBuffer wPokedexInfoGFX wPokedexInfoTileSources
-    wDexArrowCursorPosIndex'''.split()
+    wDexArrowCursorPosIndex wPokedexMovesPage wPokedexMovesPageCount wPokedexMovesState
+    wPokedexBadgeActive wPokedexBadgePending wPokedexDescriptionTextState'''.split()
 
 
 def build_core(repo, source, output, extra_compile_flags=()):
@@ -65,6 +67,9 @@ def build_core(repo, source, output, extra_compile_flags=()):
                  UPLOAD=upload,
                  BEGIN=symbols['Pokedex_BeginDescriptionAnimation'],
                  AUDIO_STOP=symbols['StopSampledCryAsync_NoInterruptControl'])
+    if 'StopSampledCryAsync_FromTimer' in symbols:
+        pairs['AUDIO_TIMER_STOP'] = symbols['StopSampledCryAsync_FromTimer']
+    pairs['TIMER_IF_CLEAR'] = symbols['SampledCry_ClearTimerFlag']
     if 'Pokedex_VBlankInfoAssets' in symbols:
         pairs.update(INFO_ASSETS=symbols['Pokedex_VBlankInfoAssets'],
                      INFO_OAM=symbols['Pokedex_VBlankInfoAssets.oam'],
@@ -82,11 +87,11 @@ def build_core(repo, source, output, extra_compile_flags=()):
     # Derive the cache-empty branch from the linked labels and verify its bytes.
     bank, decoded = symbols['SampledCry_AsyncTimerTick.has_decoded_block']
     empty = decoded - 6
-    stop = pairs['AUDIO_STOP'][1]
+    stop = pairs.get('AUDIO_TIMER_STOP', pairs['AUDIO_STOP'])[1]
     if repo.rom[empty:decoded] != bytes((0xf1, 0xe0, 0x70, 0xc3, stop & 255, stop >> 8)):
         raise ValueError('Sampled-cry empty branch changed; update the host checkpoint')
     pairs['AUDIO_EMPTY'] = bank, empty
-    lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS]
+    lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS if name in symbols]
     for name, (bank, pc) in pairs.items():
         lines += [f'#define B_{name} {bank}', f'#define P_{name} 0x{pc:04x}']
     lines += ['static const struct { unsigned bank, pc; } points[] = {']

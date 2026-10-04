@@ -55,6 +55,11 @@ PokedexSelectedMon_Update:
 	call Pokedex_ServiceAnimationProducer
 	call Pokedex_CommitDescriptionAnimation
 	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_MOVES
+	jr nz, .not_moves
+	farcall PokedexMoves_Service
+	ret
+.not_moves
 	cp DEXSELECT_VIEW_INFO
 	jp nz, PokedexSelectedMon_ServiceDescriptionText
 	farcall PokedexInfo_Service
@@ -101,7 +106,7 @@ PokedexSelectedMon_ActivateFooterView:
 PokedexSelectedMon_ViewActionJumptable:
 	dw PokedexSelectedMon_ToggleDescriptionPage
 	dw PokedexSelectedMon_Info
-	dw PokedexSelectedMon_Unavailable
+	dw PokedexSelectedMon_Moves
 	dw PokedexSelectedMon_Area
 
 PokedexSelectedMon_Unavailable:
@@ -112,11 +117,16 @@ PokedexSelectedMon_Info:
 	farcall PokedexInfo_Activate
 	ret
 
+PokedexSelectedMon_Moves:
+	call PokedexSelectedMon_CancelDescriptionText
+	farcall PokedexMoves_Activate
+	ret
+
 PokedexSelectedMon_ToggleDescriptionPage:
 	call PokedexSelectedMon_CancelDescriptionText
 	ld a, [wPokedexSelectedView]
-	cp DEXSELECT_VIEW_INFO
-	jr nz, .description
+	and a
+	jr z, .description
 	farcall PokedexInfo_ReturnDescription
 	jr .queue_description
 .description
@@ -273,8 +283,8 @@ PokedexSelectedMon_StageDescription:
 	farcall Pokedex_DrawDescriptionScreenBG
 	farcall Pokedex_InitArrowCursor
 	ld a, [wPokedexSelectedView]
-	cp DEXSELECT_VIEW_INFO
-	jr nz, .footer_ready
+	and a
+	jr z, .footer_ready
 	ld [wDexArrowCursorPosIndex], a
 .footer_ready
 	farcall Pokedex_GetSelectedMon

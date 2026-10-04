@@ -3628,6 +3628,19 @@ wPokedexInfoLineSource:: dw
 wPokedexInfoReturnRecordA:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
 wPokedexInfoReturnRecordB:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
 wPokedexInfoVisible:: db
+wPokedexMovesState:: db
+wPokedexMovesPage:: db
+wPokedexMovesPageCount:: db
+wPokedexMovesRow:: db
+wPokedexMovesCategory:: db
+wPokedexMovesSourceBank:: db
+wPokedexMovesSource:: dw
+wPokedexMovesRemaining:: db
+wPokedexMovesScratch:: db
+wPokedexBadgeActive:: db
+wPokedexBadgePending:: db
+wPokedexBadgePage:: db
+wPokedexBadgeGFX:: ds 2 * TILE_SIZE
 wPokedexInfoWorkspaceEnd::
 ASSERT wPokedexInfoWorkspaceEnd <= $dc00
 ASSERT LOW(wPokedexInfoGFX) & $f == 0

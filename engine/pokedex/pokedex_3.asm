@@ -1260,9 +1260,26 @@ Pokedex_PublishOrStageDescriptionBacking::
 	jr z, .publish
 	call Pokedex_StageOwnerTransitionMaps
 	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_MOVES
+	jr nz, .not_moves
+	farcall PokedexMoves_PrepareInitial
+	jr .lower_ready
+.not_moves
 	cp DEXSELECT_VIEW_INFO
-	jr nz, .lower_ready
+	jr nz, .description_badge
 	farcall PokedexInfo_PrepareInitial
+	jr .lower_ready
+.description_badge
+	ldh a, [rSVBK]
+	push af
+	ld a, 3
+	ldh [rSVBK], a
+	ld a, [wPokedexDescriptionPage]
+	inc a
+	ld c, a
+	farcall PokedexBadge_Prepare
+	pop af
+	ldh [rSVBK], a
 .lower_ready
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_SWITCHING_SPECIES
@@ -1652,6 +1669,10 @@ Pokedex_VBlankDescriptionText:
 	ldh [rVDMA_LEN], a
 	ld a, [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 2]
 	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 2], a
+	ld a, [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 3]
+	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 3], a
+	ld a, [wPokedexBadgePending]
+	ld [wPokedexBadgeActive], a
 	xor a
 	ld [wPokedexDescriptionTextState], a
 	ld [wPokedexInfoVisible], a

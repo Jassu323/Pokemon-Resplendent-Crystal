@@ -504,7 +504,7 @@ class OwnerReplay:
                      "Pokedex_VBlankAnimationFrontpicMap.display_recorded",
                      "Pokedex_LoadAnimationDictionaryChunk", "Pokedex_GatherReadyAnimationTiles",
                      "Pokedex_FinalizePublishedAnimationStage.finished",
-                     "StopSampledCryAsync_NoInterruptControl")
+                     "StopSampledCryAsync_NoInterruptControl", "StopSampledCryAsync_FromTimer")
             for name in hooks:
                 if key == self.repo.symbols.get(name):
                     self.lifecycle.append(dict(self.snapshot(name), kind=name))

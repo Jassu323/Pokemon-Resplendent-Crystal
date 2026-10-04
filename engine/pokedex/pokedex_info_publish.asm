@@ -45,10 +45,13 @@ Pokedex_VBlankInfoReturn:
 Pokedex_VBlankInfo:
 	ld a, [wPokedexSelectedView]
 	cp DEXSELECT_VIEW_INFO
-	jp nz, .idle
+	jp c, .idle
+	cp DEXSELECT_VIEW_MOVES + 1
+	jp nc, .idle
+.active
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_ACTIVE
-	jr nz, .idle
+	jp nz, .idle
 	ldh a, [rSVBK]
 	push af
 	ldh a, [rVBK]
@@ -77,6 +80,8 @@ Pokedex_VBlankInfo:
 	call Pokedex_InfoTransferLowerRows
 	ld a, [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 2]
 	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 2], a
+	ld a, [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 3]
+	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 3], a
 	ld a, BANK(wBGPals2)
 	ldh [rSVBK], a
 	ld a, OBPI_AUTOINC palette 2
@@ -119,6 +124,18 @@ Pokedex_VBlankInfo:
 
 Pokedex_VBlankInfoAssets:
 ; Bank 3 already selected. Mainline has uploaded the inactive atlas and minis.
+	ld a, [wPokedexBadgePending]
+	ld [wPokedexBadgeActive], a
+	ld a, [wPokedexSelectedView]
+	cp DEXSELECT_VIEW_MOVES
+	jr nz, .info
+	xor a
+	ld [wPokedexMovesState], a
+	ld [wPokedexInfoState], a
+	ld [wPokedexInfoActiveMiniCount], a
+	ld [wPokedexInfoVisible], a
+	ret
+.info
 	ld a, [wPokedexInfoState]
 	cp POKEDEX_INFO_READY
 	jr nz, .not_info

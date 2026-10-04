@@ -65,10 +65,14 @@ def info_audit(compiler, data, name, page, ui, repo=None):
         return raw[start:start + 16]
     attrs = bytes.fromhex(ui['attrs'])
     tilemap = bytes.fromhex(ui['map'])
-    upper = (0x73, 0x79, 0x7b, 0x7d)[page]
-    lower = (0x78, 0x7a, 0x7c, 0x7e)[page]
-    if tilemap[8 * 21 + 2] != upper or tilemap[9 * 21 + 1:9 * 21 + 3] != bytes((0x77, lower)):
-        issues.append('page_badge')
+    if repo and 'PokedexBadgeSingleGFX' in repo.symbols:
+        from .moves_ui import badge_audit
+        issues += badge_audit(repo, ui, page + 1)
+    else:
+        upper = (0x73, 0x79, 0x7b, 0x7d)[page]
+        lower = (0x78, 0x7a, 0x7c, 0x7e)[page]
+        if tilemap[8 * 21 + 2] != upper or tilemap[9 * 21 + 1:9 * 21 + 3] != bytes((0x77, lower)):
+            issues.append('page_badge')
     if not ui['caught']:
         if ui['info_tiles'] or ui['info_minis'] or any(bytes.fromhex(ui['oam'])[32:64]):
             issues.append('uncaught_information')

@@ -197,6 +197,8 @@ class LinkedDescriptionTextTests(unittest.TestCase):
         cpu = CounterCPU(repo.rom, repo.symbols)
         cpu.ram[0xff70] = 3
         cpu.allowed_io.add(0xff44)
+        cpu.allowed_io.add(0xff41)
+        cpu.field('wPokedexBadgeActive', 1 - page)
         cpu.field('hCGB', 1)
         cpu.field('wPokemonIndexTableEntries', index + 1, 2)
         cpu.field('wPokedexSelectedSpecies', 1)
@@ -230,6 +232,9 @@ class LinkedDescriptionTextTests(unittest.TestCase):
                     cycles = cpu.run('PokedexSelectedMon_InitializeDescriptionText')
                     if cycles > maximum:
                         maximum, slowest = cycles, (name, page, 'initialize')
+                    cycles = cpu.run('PokedexSelectedMon_PrepareDescriptionBadge')
+                    if cycles > maximum:
+                        maximum, slowest = cycles, (name, page, 'badge')
                     for _ in range(32):
                         cycles = cpu.run('PokedexSelectedMon_RenderDescriptionTextChunk')
                         if cycles > maximum:
@@ -238,7 +243,10 @@ class LinkedDescriptionTextTests(unittest.TestCase):
                             break
                     else:
                         self.fail(f'Text renderer did not finish: {name}')
-                    self.assertEqual(self.lower(cpu), expected)
+                    main_expected = bytearray(expected)
+                    main_expected[2] = 0x73
+                    main_expected[22] = 0x78
+                    self.assertEqual(self.lower(cpu), main_expected)
                     self.assertEqual(self.lower(cpu, True), expected)
                     self.assertEqual(cpu.data(main, 160), upper)
                     self.assertEqual(cpu.data(main + 300, 60), footer)

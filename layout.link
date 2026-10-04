@@ -536,7 +536,9 @@ ROMX $b6
 	; Front/back pic overflow for chunked animated frontpics.
 	"Pics 31"
 ROMX $b7
+	"Pokedex Moves"
 ROMX $b8
+	"Pokedex Moves Index"
 ROMX $b9
 ROMX $ba
 ROMX $bb

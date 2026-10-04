@@ -68,7 +68,8 @@ def paired(task):
         reference = Driver(config['core'], config['rom'], BOOT, config['battery'],
                            output / (case['label'] + '-reference-core.log'))
         try:
-            result = run_case(driver, Path(config['checkpoints']), output, case, names, True)
+            actual_case = dict(case, moves_supported=config['variant'] == 'candidate')
+            result = run_case(driver, Path(config['checkpoints']), output, actual_case, names, True)
             result['follow_up'] = follow_up(driver, reference, Path(config['checkpoints']),
                 output / case['label'] / 'follow-up', len(names))
             result['preservation'] = preservation_audit(output / case['label'])
@@ -87,6 +88,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build', type=Path, required=True)
     parser.add_argument('--checkpoints', type=Path, required=True)
+    parser.add_argument('--baseline-checkpoints', type=Path, required=True)
     parser.add_argument('--candidate-rom', type=Path,
                         help='Override the preflight cartridge, e.g. the promoted production ROM')
     parser.add_argument('--output', type=Path, required=True)
@@ -110,6 +112,14 @@ def main():
     suite += [dict(label=f'chikorita-info-down{n}', start='chikorita', pages=0,
                    wait=None, description_page=False, info_page=0, info_internal_pages=n) for n in (1, 2)]
     suite += [dict(label='regigigas', start='regigigas', pages=0, wait=None, description_page=False)]
+    suite += [dict(label=f'{name}-moves{page + 1}-down{internal}', start=name, pages=0,
+                   wait=wait, description_page=False, moves_page=page, moves_internal_pages=internal)
+              for name, page, internal, wait in (
+                  ('chikorita', 0, 0, None), ('chikorita', 8, 0, None),
+                  ('mew', 9, 0, None), ('mew', 14, 0, None),
+                  ('chansey', 0, 0, None), ('tyrogue', 0, 0, None),
+                  ('dusknoir', 0, 0, 8), ('weavile', 0, 0, 8),
+                  ('chikorita', 0, 1, None), ('chikorita', 0, 2, None))]
     if args.cancel_sweep:
         suite = [dict(label=f'{name}-{kind}-cancel{age}', start=name, pages=0, wait=None,
                       description_page=False, info_page=page, **{kind + '_cancel_frames': age})
@@ -125,7 +135,7 @@ def main():
     baseline = Path(metadata['baseline'])
     diagnostic = args.candidate_rom or Path(metadata['diagnostic'])
     for variant, checkpoints, rom, sym in (
-        ('baseline', ROOT / 'build/dex-info-placement', baseline / 'pokecrystal.gbc', baseline / 'pokecrystal.sym'),
+        ('baseline', args.baseline_checkpoints, baseline / 'pokecrystal.gbc', baseline / 'pokecrystal.sym'),
         ('candidate', args.checkpoints, diagnostic, diagnostic.with_suffix('.sym'))):
         output = args.output / variant
         output.mkdir(exist_ok=True)
@@ -134,7 +144,7 @@ def main():
         if any(manifest[key] != value for key, value in repo.hashes.items()):
             raise ValueError(f'Checkpoints do not match {variant}')
         core = compile_observer(repo, Path.home() / 'Documents/GitHub/SameBoy', output)
-        configs.append(dict(core=str(core), rom=str(rom), sym=str(sym),
+        configs.append(dict(variant=variant, core=str(core), rom=str(rom), sym=str(sym),
                             battery=str(checkpoints / 'fixture.sav'), checkpoints=str(checkpoints), output=str(output)))
     rows = []
     with ProcessPoolExecutor(max_workers=args.jobs) as pool:

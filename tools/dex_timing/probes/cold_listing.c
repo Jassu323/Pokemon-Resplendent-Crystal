@@ -62,6 +62,9 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef DEX_DESCRIPTION_PAGING_TRACE
 #include "description_paging.c"
 #endif
+#ifdef DEX_CLOCK_TRACE
+#include "clock_trace.c"
+#endif
 
 static void snapshot(int hit)
 {
@@ -94,6 +97,9 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
      * Polling PC before GB_cpu_run would count that instruction twice. */
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
+#ifdef DEX_CLOCK_TRACE
+    clock_observe(bank, pc, now);
+#endif
 #ifdef DEX_LISTING_RESTORE_TRACE
     restoration_observe(bank, pc);
 #endif
@@ -167,7 +173,11 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
         printf("{\"event\":\"audio_miss\",\"t\":%" PRIu64 ",\"remaining\":%u}\n",
                now / 2, word(S_hSampledCryBlocks));
     }
-    if (bank == B_AUDIO_STOP && pc == P_AUDIO_STOP && byte(S_hSampledCryTimer)) {
+    bool audio_stop = bank == B_AUDIO_STOP && pc == P_AUDIO_STOP;
+#ifdef P_AUDIO_TIMER_STOP
+    audio_stop |= bank == B_AUDIO_TIMER_STOP && pc == P_AUDIO_TIMER_STOP;
+#endif
+    if (audio_stop && byte(S_hSampledCryTimer)) {
         printf("{\"event\":\"audio_stop\",\"t\":%" PRIu64 ",\"remaining\":%u}\n",
                now / 2, word(S_hSampledCryBlocks));
     }
@@ -274,6 +284,7 @@ int main(int argc, char **argv)
             printf(",\"palettes\":"); hex(gb.background_palettes_data, 64);
             printf(",\"obj_palettes\":"); hex(gb.object_palettes_data, 64);
             printf(",\"oam\":"); hex(gb.oam, sizeof(gb.oam));
+            printf(",\"description_state\":%u", gb.ram[3*4096+(S_wPokedexDescriptionTextState & 4095)]);
             printf(",\"lcdc\":%u,\"scx\":%u,\"scy\":%u,\"wx\":%u,\"wy\":%u,\"owner_transition\":%u",
                    byte(0xff40),byte(0xff43),byte(0xff42),byte(0xff4b),byte(0xff4a),
                    byte(S_wPokedexOwnerTransition));
@@ -285,6 +296,14 @@ int main(int argc, char **argv)
                    gb.ram[3*4096+(S_wPokedexInfoTileCount & 4095)],
                    gb.ram[3*4096+(S_wPokedexInfoCaught & 4095)]);
             printf(",\"border_gfx\":"); hex(gb.vram + 0x1710, 10 * 16);
+#ifdef S_wPokedexMovesState
+            printf(",\"moves_page\":%u,\"moves_pages\":%u,\"moves_state\":%u,\"badge_active\":%u,\"badge_pending\":%u",
+                   gb.ram[3*4096+(S_wPokedexMovesPage & 4095)],
+                   gb.ram[3*4096+(S_wPokedexMovesPageCount & 4095)],
+                   gb.ram[3*4096+(S_wPokedexMovesState & 4095)],
+                   gb.ram[3*4096+(S_wPokedexBadgeActive & 4095)],
+                   gb.ram[3*4096+(S_wPokedexBadgePending & 4095)]);
+#endif
             unsigned foot_cell = 21 + 18;
             unsigned type_address = 0x2000 + gb.oam[2] * 16;
             unsigned foot_address = 0x1000 + (int8_t)map[foot_cell] * 16;

@@ -32,7 +32,8 @@ def summarize(run, asset):
     events = run['lifecycle']
     publications = [p for p in events if p['kind'].endswith('.display_recorded')]
     misses = [p for p in events if p['kind'] in ('Pokedex_CountAnimationUnderflow', 'Pokedex_AnimationMiss')]
-    audio = [p for p in events if p['kind'] == 'StopSampledCryAsync_NoInterruptControl']
+    audio = [p for p in events if p['kind'] in
+             ('StopSampledCryAsync_NoInterruptControl', 'StopSampledCryAsync_FromTimer')]
     deadlines, due = [], 0
     for event in asset.events:
         deadlines.append(due)

@@ -30,7 +30,8 @@ FIELDS = '''wPokeAnimSceneIndex wPokeAnimIdleFlag wPokeAnimCommand wPokeAnimPara
 
 def audio_empty(repo):
     bank, decoded = repo.symbols['SampledCry_AsyncTimerTick.has_decoded_block']
-    stop = repo.symbols['StopSampledCryAsync_NoInterruptControl'][1]
+    stop = repo.symbols.get('StopSampledCryAsync_FromTimer',
+                            repo.symbols['StopSampledCryAsync_NoInterruptControl'])[1]
     assert bank == 0
     assert repo.rom[decoded - 6:decoded] == bytes((0xf1, 0xe0, 0x70, 0xc3,
                                                 stop & 255, stop >> 8))
@@ -108,6 +109,8 @@ def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
             SampledCry_FillRollingCache SampledCry_DecodePairBatch
             Decompress Request2bpp Pokedex_LoadGFX StartSampledCryAsync DisplayDexEntry'''.split()
         additional_events = []
+        if 'StopSampledCryAsync_FromTimer' in symbols:
+            additional_events.append(('audio_stop', ('StopSampledCryAsync_FromTimer', 0)))
         if 'NewDexEntry_DisplayPage2' in symbols:
             additional_events.append(('description', ('NewDexEntry_DisplayPage2', 8)))
             functions.append('NewDexEntry_DisplayPage2')

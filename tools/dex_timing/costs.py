@@ -40,6 +40,10 @@ def machine(repo, asset=None, cpu_class=CounterCPU):
     cpu = cpu_class(repo.rom, repo.symbols)
     # Frozen fixture registers: these routines only log LY; they must not poll it.
     cpu.allowed_io.add(0xFF44)
+    if 'PokedexBadge_Prepare' in repo.symbols:
+        # Isolated badge tests price the ready-VRAM path. Real wait/IRQ costs
+        # are covered by the SameBoy sweeps, not this frozen-register fixture.
+        cpu.allowed_io.add(0xFF41)
     cpu.field("hCGB", 1)
     cpu.field("wPokedexAnimFlags", 3)
     cpu.field("wPokedexAnimResidentFrameIDs", 0xFFFF, 2)

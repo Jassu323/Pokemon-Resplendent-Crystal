@@ -18,3 +18,4 @@ EggMovePointers::
 INCLUDE "data/pokemon/egg_moves_kanto.asm"
 INCLUDE "data/pokemon/egg_moves_johto.asm"
 INCLUDE "data/pokemon/egg_moves_custom.asm"
+INCLUDE "build/dex-moves-assets/egg_exports.asm"

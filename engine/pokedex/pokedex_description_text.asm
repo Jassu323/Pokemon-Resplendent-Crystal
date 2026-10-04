@@ -58,6 +58,13 @@ PokedexSelectedMon_ServiceDescriptionText:
 	ld a, [wPokedexDescriptionTextState]
 	and a
 	jr z, .done
+	cp POKEDEX_DESCRIPTION_TEXT_BADGE
+	jr nz, .not_badge
+	push bc
+	call PokedexSelectedMon_PrepareDescriptionBadge
+	pop bc
+	jr .next_slice
+.not_badge
 	cp POKEDEX_DESCRIPTION_TEXT_INITIALIZE
 	jr nz, .chunk
 	push bc
@@ -88,7 +95,7 @@ PokedexSelectedMon_InitializeDescriptionText:
 	ld [wPokedexDescriptionTextSource], a
 	ld a, d
 	ld [wPokedexDescriptionTextSource + 1], a
-	ld a, POKEDEX_DESCRIPTION_TEXT_CATEGORY
+	ld a, POKEDEX_DESCRIPTION_TEXT_BADGE
 	ld [wPokedexDescriptionTextState], a
 	xor a
 	ld [wPokedexDescriptionTextRow], a
@@ -110,22 +117,18 @@ REPT 5
 	ld e, l
 	pop hl
 ENDR
-	ld a, [PokedexDescriptionTilemap + 8 * SCREEN_WIDTH + 2]
-	ld b, POKEDEX_DESCRIPTION_GFX_TILE + 7
-	ld hl, wPokedexDescriptionTextPage
-	bit 0, [hl]
-	jr z, .badge
-	ld a, POKEDEX_DESCRIPTION_GFX_TILE + 8
-	ld b, POKEDEX_DESCRIPTION_GFX_TILE + 9
-.badge
-	ldcoord_a 2, 8
-	ld [wPokedexOwnerTilemapBuffer + 8 * TILEMAP_WIDTH + 2], a
-	ld a, b
-	ldcoord_a 2, 9
-	ld [wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH + 2], a
 	hlcoord 2, 10
 	ld de, wPokedexOwnerTilemapBuffer + 10 * TILEMAP_WIDTH + 2
-	jr PokedexSelectedMon_SaveDescriptionTextCursor
+	jp PokedexSelectedMon_SaveDescriptionTextCursor
+
+PokedexSelectedMon_PrepareDescriptionBadge:
+	ld a, [wPokedexDescriptionTextPage]
+	inc a
+	ld c, a
+	farcall PokedexBadge_Prepare
+	ld a, POKEDEX_DESCRIPTION_TEXT_CATEGORY
+	ld [wPokedexDescriptionTextState], a
+	ret
 
 PokedexSelectedMon_RenderDescriptionTextChunk:
 	ld hl, wPokedexDescriptionTextSource

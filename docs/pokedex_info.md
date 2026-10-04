@@ -9,9 +9,10 @@ The committed-page B-return fix is now integrated: the outgoing Info panel
 remains intact while Listing repairs its borrowed glyph cells. Its accepted
 timing/resource tradeoffs are recorded below and in the
 [three-way preflight comparison](pokedex_info_return_records_preflight.md).
-Incomplete gameplay evolution records remain deferred. Shared buffered page indicators are proposed for
-Info and future Moves but are not implemented; the current four-page guard
-still applies. The separate active-animation tab latency report remains open.
+Incomplete gameplay evolution records remain deferred. Shared buffered page
+indicators through page 19 are integrated with [Moves](pokedex_moves.md);
+Description and Info use the same inactive-buffer/publication contract.
+The separate active-animation tab latency report remains open.
 
 ## Behavior And Layout
 
@@ -82,12 +83,12 @@ Current generated data has 373 species, 123 distinct evolution records and
 bytes). A Stats page uses 39 of the 40 atlas cells. An evolution page uses at
 most 39 distinct tiles; repeated glyph occurrences share atlas entries.
 
-Build-time guards reject more than four Info pages, more than 40 distinct tiles
+Build-time guards reject more than 19 Info pages, more than 40 distinct tiles
 per page, unsupported evolution methods and a non-HP bar needing an endpoint
-past 99px. Eevee currently requires four pages total. The editable page-number
-sheet contains more digits, but only P.1-P.4 are resident. Adding another page
-requires extending that allocation rather than silently referencing a missing
-tile. Adding a new species or evolution regenerates the tables automatically;
+past 99px. Eevee currently requires four pages total. Page digits are prepared
+in the inactive shared buffer, including double-digit indicators for pages
+10-19; extra pages do not require extra resident digit tiles. Adding a new
+species or evolution regenerates the tables automatically;
 its data must still fit these explicit capacities.
 
 ## Preparation And Publication
@@ -137,7 +138,7 @@ three-slice/admission policy applies; no bulk interrupt-time record copy is
 required. READY stages OAM and raises owner transition 5. A due portrait
 publication has priority. Otherwise Info's IRQ publication admits at LY
 144-146 inclusive, transfers the lower attribute/tile rows, updates the upper
-half of the badge, commits mini palettes, and transfers shadow OAM. The map
+half of both badge columns, commits mini palettes, and transfers shadow OAM. The map
 work finishes in VBlank; the OAM handoff precedes the first badge scanline.
 The prepared panel, endpoint and minis therefore become visible as one page.
 Publication selects the atlas and its matching immutable record together,
@@ -235,7 +236,8 @@ tile scheme; OBJ allocations below are physical offsets in `vTiles3`.
 | Bank/range | Use | Tiles |
 | --- | --- | ---: |
 | Bank 0 signed `$ca-$cf,$d7-$de,$e4-$e5` | Shifted Info headings in reserved font gaps | 16 |
-| Bank 0 `vTiles2 $7b-$7e` | P.3/P.4 upper/lower digit tiles | 4 |
+| Bank 0 `vTiles2 $73/$78,$79/$7a` | Shared digit buffers A/B, borrowing badge cells | 4 |
+| Bank 0 `vTiles2 $7b-$7d` | Double-digit closing pair and level glyph | 3 |
 | Bank 1 `vTiles3 $00-$27` | Existing Listing center minis | 40 |
 | Bank 1 `vTiles3 $28-$37` | Two sets of two type badges | 16 |
 | Bank 1 `vTiles3 $38-$57` | Two sets of two animated evolution minis | 32 |
@@ -261,7 +263,7 @@ dual-type species needs eight same-scanline OBJs, below the hardware limit of
 ten. Minis have at most two OBJs on either of their own scanlines; the endpoint
 does not coexist with evolution entries. No text or numeric OAM is required.
 
-After these reservations, bank 0 has one unused BG cell (`$7f`), and bank 1
+After these reservations, bank 0 has two unused BG cells (`$7e-$7f`), and bank 1
 has 38 unused OBJ-only cells (`vTiles3 $5a-$7f`). There is no spare bank-1
 BG-addressable cell while both Info atlases are reserved. The next lower tabs
 can reuse Info's mutually exclusive atlases/workspace, not assume a new
@@ -283,26 +285,31 @@ union. It is not a new WRAMX section or a live Battle Tower allocation.
 | Committed atlas-A page record | `$d8d5-$da05` | 305 |
 | Committed atlas-B page record | `$da06-$db36` | 305 |
 | Actually-visible Info flag | `$db37` | 1 |
-| Total overlay extension | | 1,686 |
+| Moves state and shared badge workspace | `$db38-$db64` | 45 |
+| Total overlay extension | | 1,731 |
 
-The workspace ends at `$db38`; the conservative `$dc00` assertion leaves
-200 bytes before that boundary. The physical bank has more space after it,
+The workspace ends at `$db65`; the conservative `$dc00` assertion leaves
+155 bytes before that boundary. The physical bank has more space after it,
 but that is not a promise that all other union lifetimes permit using it.
-Move/Area should reuse this mutually exclusive lower-panel workspace.
+Area should reuse this mutually exclusive lower-panel workspace.
 
-Info-specific ROMX banks use 10,322 bytes in `$a6` (code/tables) and 8,352 in
-`$a7` (glyphs/titles), with 6,062 and 8,032 bytes free respectively. Small integration
+Info-specific ROMX banks use 10,297 bytes in `$a6` (code/tables) and 8,352 in
+`$a7` (glyphs/titles), with 6,087 and 8,032 bytes free respectively. Small integration
 and IRQ code is also in the existing Dex banks. The overall addition is about
 18KiB. A few existing Listing graphics moved from the tight shared Dex bank to
 `$77`; their callers already use the graphics' BANK labels. No ROM0 bridge,
 WRAM0 byte, HRAM byte, SRAM field or runtime instrumentation was added.
 
-Current linked cart: 2,313,880 used bytes out of 4,194,304 (55.17% used),
-1,880,424 bytes free (44.83%, about 1.79MiB). Eighty-seven ROMX banks remain
+Current linked cart, including Moves: 2,329,771 used bytes out of 4,194,304
+(55.55% used), 1,864,533 bytes free (44.45%, about 1.78MiB). Eighty-five ROMX banks remain
 completely unused (including fourteen empty banks listed in the linker map,
-not just the seventy-three beyond its last mapped bank). Premium free totals are ROM0 568 bytes, WRAM0 13 bytes,
+not just the seventy-one beyond its last mapped bank). Premium free totals are ROM0 554 bytes, WRAM0 13 bytes,
 HRAM 0 bytes; the union-wide WRAMX map reports 4,728 free bytes. Unused ROM0
 fragments are not necessarily one contiguous block.
+
+Info itself still requires no ROM0 bridge. The shared sampled-cry timer
+correction integrated alongside Moves adds 14 ROM0 bytes and prevents a natural
+cry shutdown from erasing VBlank. See [the measured correction](pokedex_moves.md#physical-clock-correction).
 
 ## Validation And Manual Checks
 

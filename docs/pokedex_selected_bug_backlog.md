@@ -26,10 +26,16 @@ Remaining Dex review queue:
   It preserves outgoing pixels with about 50ms common return overhead and
   two extra intervals of Info preparation, accepted for now and retained as
   measured baselines for `DEX-PERF-02`. `DEX-INFO-04` is a separately confirmed early-cancellation
-  Description badge defect, also present in production. Missing evolution
+  Description badge defect; revalidate it after the shared-indicator promotion
+  before closing its historical report. Missing evolution
   data (`DEX-INFO-02`) is deferred into the broader `DEX-DATA-02` species pass.
-  Shared pagination remains separate under `DEX-PAGE-01`. `DEX-INFO-03`,
+  Shared pagination is integrated under `DEX-PAGE-01`. `DEX-INFO-03`,
   delayed tab changes during frontpic playback, remains uninvestigated.
+- `DEX-INFO-05` records a phase-dependent physical display-interval loss during
+  Info-owned Dusclops-to-Dusknoir paging. Its timer-shutdown interrupt race is
+  corrected in production with the accepted Moves implementation. The exact
+  failing phase and all 746 Info cases pass physical-clock audits; the user
+  also reports no visual/audio/data errors or miss breakpoints in manual review.
 - `DEX-PERF-01` is a deferred optimization story for opening and closing the
   Dex. It includes the confirmed `DEX-EXIT-01` shell shift, now merged into
   that broader lifecycle work rather than scheduled as a standalone fix.
@@ -40,6 +46,10 @@ Remaining Dex review queue:
   reproduce in the current 448-return/746-viewport revalidation. Keep their
   individual historical reports pending manual revalidation rather than
   inventing another fix. See the [full revalidation](pokedex_backlog_revalidation.md).
+- `DEX-GRID-04` records a separate blocked BG palette write during Listing
+  follow-up navigation in both matched pre/post-egg prototypes. Visible content
+  remains correct in those sampled checks; investigate without conflating it
+  with return restoration or the timer-shutdown correction.
 - Keep `DEX-AREA-01` separate: its Area setup stall is reproduced, while the
   older transition-corruption report still needs presentation revalidation.
 - `DEX-SEARCH-01` remains a deferred Search palette report; recheck it before
@@ -354,34 +364,111 @@ and settled playback, and sampled/synthesized cries. Any fix must keep exact
 portrait deadlines and avoid sampled-cache exhaustion while making progress
 on the requested tab; the cause and acceptable latency are not yet measured.
 
+### DEX-INFO-05: Info-Owned Paging Can Lose One Physical Animation Interval
+
+Status: Solved and integrated 2026-10-03; private automated and manual review
+passed, followed by production regression
+
+The egg-inheritance regression passes 745 of 746 Info cases. The remaining
+case is settled Dusclops followed by an internal Down page to Dusknoir with
+Info owning the lower panel. All portrait maps/pixels and all 35 publications
+are correct, and the sampled cry finishes all 557 blocks naturally. Neither
+animation-miss nor sampled-cache-empty breakpoints fires. However, the host's
+physical-cycle audit finds an extra display interval from publication 29 onward.
+
+The authored sequence is 174 intervals; the game clock also reports 174.
+Physical elapsed time instead rounds to 175. Publication 1 is at tick 184,
+publication 29 is at tick 31 (103 elapsed byte-counter intervals) but 104
+physical intervals, and the final publication is at tick 102, about 175
+physical intervals after the first. This is distinct from incomplete work
+detected by an animation miss. The confirmed cause is a shared audio interrupt
+race, not insufficient decoder or transfer budget.
+
+Automated reproduction: use all-caught New Dex Listing checkpoints, cold-enter
+Dusclops, settle its animation/cry, select Info, cycle its one-page Stats panel
+and settle, then page Down to Dusknoir while retaining Info. The failing
+starting phase is preserved in the private prototype's
+`candidate/build/info-egg-regression/listing-states/` checkpoints and its
+`dusclops-settled.json` trace. An ordinary fresh-checkpoint control on the
+earlier cartridge passes, so reproducing the starting hardware/input phase
+matters; a single manual attempt is not sufficient to dismiss this report.
+
+The matched egg-inheritance before/after control loads the exact same Listing
+checkpoint into both private cartridges. Their code, symbols and memory layout are identical;
+the only ROM differences are the 112 family egg descriptors and checksum.
+Both produce the same seven `hardware_interval_event_29` through `_35`
+findings, identical readiness and identical playback measurements. Thus the
+egg-index change does not introduce this issue. Evidence is under ignored
+`build/dex-moves-prototype/candidate/build/info-egg-matched-before/` and
+`info-egg-matched-after/`; preserve the checkpoint phase during investigation.
+
+Instruction-level SameBoy observation identifies the lost request at natural
+sample completion. `SampledCry_ClearTimerFlag` begins its IF read at T=18,224,236;
+LY becomes 144 and VBlank raises IF from $f2 to $f3 before the routine writes
+its stale $f2 back at T=18,224,268. The timer ISR returns normally, but the
+VBlank handler never runs for that interval. Its byte counter is therefore one
+interval behind physical time. No amount of extra portrait work can recover
+an interrupt request which was erased.
+
+The integrated correction routes both timer-ISR shutdown branches
+(natural completion and actual cache exhaustion) to
+`StopSampledCryAsync_FromTimer`. That path disables sampled playback/timer,
+then joins the existing saved timer/audio restoration without touching IF.
+The IRQ already acknowledged its timer request; a second clear is redundant.
+Manual cancellation retains the existing flag-clear path. This does not
+redesign the scheduler, change authored durations, or weaken either miss or
+physical-clock auditing. It also does not claim to make every other IF
+read/modify/write elsewhere in the game atomic.
+
+Cost: 14 additional ROM0 bytes in the existing $0063 gap, leaving 554 ROM0
+bytes free overall; zero additional ROMX, WRAM0, WRAMX, HRAM, SRAM or VRAM.
+The timer shutdown path is 56 T-cycles shorter. No extra transition wait is
+introduced. Two explicit entry paths avoid a new flags/register protocol or
+stored mode byte. Both paths share restoration, so restored audio/timer
+state remains identical.
+
+The same failing checkpoint now publishes all 35 Dusknoir frames in exactly
+174 physical intervals and naturally consumes all 557 blocks. All 746 fresh
+Info cases pass, including early/settled playback and retained-Info internal
+paging; all 2,576 Moves pages and 1,323 rapid-input/tab-cancellation cases also
+pass. Four linked shutdown tests cover all pending-interrupt bit combinations,
+unchanged manual clearing, identical saved-state restoration, and both IRQ
+branch targets. Host observers recognize both shutdown entry points.
+The same-phase Moves comparison also replays all 373 species on both timer
+implementations: first-page readiness is identical to the T-cycle, so the
+correction does not add a page-opening wait. Description passes all 1,492
+cases; cry ownership passes 40 targeted cases, 14 navigation controls and
+1,492 all-species handoffs. The generated-context New Dex Entry sweep passes
+8,594 input-timing cases across 20 species. Sample lookup equivalence remains
+byte-exact across all 122 assets. Listing restoration passes all 96 cases;
+its separate three follow-up legality warnings remain under `DEX-GRID-04`.
+The user manually tested every prototype review entry and found no visual,
+audio or data errors and neither miss breakpoint fired. The clean production
+build is byte-identical to that accepted ROM and its symbols. Production
+regression repeats the all-species/tab/cancellation/entry suites, with the same
+known Listing follow-up and legacy-model warnings, not new failures.
+See [the production implementation and validation](pokedex_moves.md); private
+matched-phase evidence is retained in its historical prototype directory.
+The live save remains unchanged.
+
 ### DEX-PAGE-01: Shared Buffered Page Indicators For Lower Tabs
 
-Status: Proposed renderer work; independent of deferred species-data completion
+Status: Implemented and manually accepted 2026-10-03; integrated with Moves
 
-Support more than four lower-panel pages for Info and future Moves learnsets.
-Keep page counts owned by each tab, while sharing a bounded badge-preparation
-and atomic publication contract. Reuse `$7b-$7e` as two two-tile digit buffers;
-prepare the incoming digit in the unreferenced pair and switch its map references
-with the corresponding completed lower page. Keep resident P.1/P.2 and the
-editable source sheet. P.1-P.9 are the current single-digit asset scope; pages
-10+ require a separate wider-badge layout/assets decision, not silent wrap.
+Description, Info and Moves share bounded inactive-buffer preparation and
+deadline-controlled lower-panel publication. Digit pairs are `$73/$78` and
+`$79/$7a`; `$7b/$7c` is the permanent double-digit closing pair, `$7d` the
+battle-level glyph. Both editable source sheets remain authoritative. Pages
+1-19 are supported; over-limit data stops the build rather than wrapping or
+truncating. The Info compiler's four-page guard is replaced by the 19-page guard.
 
-Estimated 150-300 ROMX code bytes plus 160 net graphics bytes through P.9,
-zero additional VRAM; an independent selector may need one WRAMX byte.
-No new ROM0, WRAM0 or HRAM expected. Exact costs await implementation preflight.
-See [the proposed shared transaction](pokedex_info_return_evolution_investigation.md#shared-page-indicator-including-future-moves).
-
-Recommended sequencing: handle B-return correctness first and validate it
-independently, then integrate and validate shared pagination, followed by the
-combined regression. This can be one work pass with separate checkpoints;
-neither change requires the other or authorizes evolution-data edits.
-
-Validation must cover rapid A, canceled preparations, species paging,
-Info-to-Desc changes and B-return from both badge-buffer parities. Use private
-diagnostic page fixtures for P.5-P.9 until real content needs them; do not edit
-production species records solely to exercise pagination. Preserve exact
-portrait/audio timing and current P.1/P.2 graphics. Include the existing
-33-return visible-pixel/cache suite and all-species playback regression.
+Linked tests check every page and both buffer parities. All-species Moves,
+Info and Description sweeps cover real content, page 9/10 transitions, wrap,
+canceled preparations, cross-tab/species paging and B-return. No evolution
+records were invented to create test pages. The user's manual review passes.
+This closes renderer pagination only, not the deferred species-content pass
+or the separate historical early-cancellation badge revalidation.
+See [shared page indicators and resource accounting](pokedex_moves.md#shared-page-indicators).
 
 ## Description Paging
 
@@ -763,6 +850,33 @@ completion on cold entry and internal paging. That build's separate Drapion
 text overflow was subsequently corrected under `DEX-UI-02`. See the
 [implementation and evidence](pokedex_listing_restoration_investigation.md#presence-flag-correction).
 
+### DEX-GRID-04: Listing Navigation Can Attempt A Blocked BG Palette Write
+
+Status: Host-observed legality warning 2026-10-03; cause investigation deferred
+
+The private Moves regression's Selected-to-Listing restoration itself passes
+all 96 repeated cases. Three repetitions of the subsequent navigation sequence
+after a Dusknoir active-16 return each attempt one BG palette-data write in
+mode 3. The follow-up's strict legality audit therefore passes 93/96, not 96/96.
+All sampled cache, OAM, palette and visible-content comparisons remain correct;
+this report does not assert visible corruption that was not observed.
+
+Reproduction uses all-caught cold Listing checkpoints: enter Dusknoir, return
+with B after 16 display intervals, then Up, Down four times, Up three times,
+Right, with released inputs between navigation requests; re-enter and return
+as in the Listing follow-up harness. Preserve the saved phase for investigation.
+The rejected write is $35 to $ff69 at bank $21 PC $4f81, LY 129/mode 3,
+T=4,871,548 in the original traced follow-up.
+
+Matched before/after cartridges loaded from the same Listing checkpoint show
+identical return timing (9.254784689 intervals) and identical follow-up findings.
+The egg-index inheritance change therefore did not introduce it. Evidence:
+`build/dex-moves-prototype/candidate/build/listing-egg-matched-before/`,
+`listing-egg-matched-after/` and `listing-egg-regression/`.
+The cause and fix cost are not yet established. Trace the palette writer and
+any intervening interrupt before choosing an atomic write/admission correction;
+do not hide the warning by weakening the mode-3 audit.
+
 ## Secondary Pokedex Screens And Presentation
 
 ### DEX-UI-01: Footprint background uses pure black
@@ -965,6 +1079,36 @@ coordinate that content where appropriate without silently closing it.
 Shared pagination (`DEX-PAGE-01`) is renderer work and may proceed before this
 species pass without changing the data. No content implementation is approved
 by this deferral, and no completion date is assigned.
+
+### DEX-DATA-03: Revalidate Dex Moves Egg Inheritance During Species Updates
+
+Status: Deferred by the user 2026-10-03; coordinate with DEX-DATA-02
+
+The integrated Moves renderer shares each configured evolution family's existing
+egg-move list across all of its members. It uses actual gameplay evolution
+links, including branches and baby species, and does not infer missing links
+or change breeding behavior. Consequently, deferred families and newer branches
+such as Sneasel/Weavile and Eevee/Leafeon/Glaceon still need their real species
+data completed before they inherit the expected Breeding pages.
+
+During the species pass, complete evolution links and egg lists, rebuild, then
+verify every member's Breeding content, category-separated page count and wrap.
+The generator rejects different nonempty egg lists within one family rather
+than silently choosing or merging them; explicitly resolve any such content
+conflict. Retain the 19-page limit and review its build errors after learnset
+expansion. Do not close this story merely because existing configured families
+pass the renderer's regression suite.
+
+The Moves index is automatically regenerated from species constants, evolution/
+level-up pointer tables, egg pointers/lists and base-stat compatibility. Adding
+a fully configured species requires no manual Dex Moves index entry or family
+override. A new species and subsequent family-link edit are covered by an
+automated generator test. Normal game-wide species registration, source-table
+order/completeness and resource limits still apply. Each new species adds a
+17-byte Moves descriptor plus its generated TM/HM/tutor eligibility bytes;
+review bank capacity when expanding the roster. A new source-file partition,
+nonstandard species filename or future tutor schema needs generator review,
+not hand editing of its generated index.
 
 ## Dex Performance Optimization
 

@@ -87,18 +87,27 @@ def audit(repo, ui):
             expected = edge[y] if x == 20 else shell[y * 20 + x]
             if y == 8 and x == 2 and ui['page']:
                 expected = 0x79
+            if y == 8 and x == 2 and 'PokedexBadgeSingleGFX' in repo.symbols:
+                expected = (0x73, 0x79)[ui['badge_active']]
             if fixed and (tilemap[y * 21 + x] != expected or attrs[y * 21 + x]):
                 issues.append(f'shell_{x}_{y}')
-    if bytes.fromhex(ui['border_gfx']) != linked(repo, 'PokedexDescriptionGFX', 160):
+    border = bytes.fromhex(ui['border_gfx'])
+    expected_border = linked(repo, 'PokedexDescriptionGFX', 160)
+    fixed_cells = range(10) if 'PokedexBadgeSingleGFX' not in repo.symbols else (0, 1, 3, 4, 5, 6)
+    if any(border[i*16:i*16+16] != expected_border[i*16:i*16+16] for i in fixed_cells):
         issues.append('border_graphics')
     issues += audit_type_sprites(repo, ui)
     if palettes[16:18] != bytes((255, 127)) or palettes[22:24] != bytes((165, 20)):
         issues.append('footprint_palette')
     if any(attrs[y * 21 + x] != 10 for y in (1, 2) for x in (18, 19)):
         issues.append('footprint_attrs')
-    page_tiles = bytes((0x77, 0x7a if ui['page'] else 0x78))
-    if tilemap[9 * 21 + 1:9 * 21 + 3] != page_tiles:
-        issues.append('page_badge')
+    if 'PokedexBadgeSingleGFX' in repo.symbols:
+        from .moves_ui import badge_audit
+        issues += badge_audit(repo, ui, ui['page'] + 1)
+    else:
+        page_tiles = bytes((0x77, 0x7a if ui['page'] else 0x78))
+        if tilemap[9 * 21 + 1:9 * 21 + 3] != page_tiles:
+            issues.append('page_badge')
     return issues
 
 
@@ -128,9 +137,14 @@ def settle_description_text(driver, expected):
         state = driver.run(('selected', 'animation_miss', 'audio_miss'), frames=120)
         if state['hit'] != 'selected':
             raise RuntimeError(f'Description text stopped returning safely: {state}')
-        tilemap = bytes.fromhex(driver.command('ui')['map'])
+        ui = driver.command('ui')
+        tilemap = bytes.fromhex(ui['map'])
         actual = b''.join(tilemap[y * 21:y * 21 + 20] for y in range(8, 15))
-        if actual == expected:
+        if 'badge_active' in ui:
+            # Buffer IDs are not page numbers; pixel correctness is audited separately.
+            actual = bytearray(actual)
+            actual[2], actual[22] = expected[2], expected[22]
+        if actual == expected and not ui.get('description_state', 0) and not ui['owner_transition']:
             return
     raise RuntimeError('Requested Description text did not publish')
 

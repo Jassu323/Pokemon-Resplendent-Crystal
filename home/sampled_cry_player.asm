@@ -133,7 +133,7 @@ SampledCry_AsyncTimerTick::
 	jr nz, .has_remaining_block
 	pop af
 	ldh [rSVBK], a
-	jp StopSampledCryAsync_NoInterruptControl
+	jp StopSampledCryAsync_FromTimer
 
 .has_remaining_block
 	ld a, [wSampledCryCacheCount]
@@ -141,7 +141,7 @@ SampledCry_AsyncTimerTick::
 	jr nz, .has_decoded_block
 	pop af
 	ldh [rSVBK], a
-	jp StopSampledCryAsync_NoInterruptControl
+	jp StopSampledCryAsync_FromTimer
 
 .has_decoded_block
 	call SampledCry_CopyNextCachedBlock
@@ -343,6 +343,7 @@ StopSampledCryAsync_NoInterruptControl::
 	ldh [rAUD3ENA], a
 	call SampledCry_ClearTimerFlag
 
+.restore_timer
 	ldh a, [hSampledCrySavedTIMA]
 	ldh [rTIMA], a
 	ldh a, [hSampledCrySavedTMA]
@@ -367,6 +368,17 @@ StopSampledCryAsync_NoInterruptControl::
 	ldh a, [hSampledCrySavedAUDVOL]
 	ldh [rAUDVOL], a
 	ret
+
+StopSampledCryAsync_FromTimer::
+; The timer IRQ already acknowledged IF_TIMER. Do not read/modify/write IF:
+; a VBlank request arriving between the read and write would be discarded.
+	xor a
+	ldh [hSampledCryTimer], a
+	ldh [hSampledCryBlocks], a
+	ldh [hSampledCryBlocks + 1], a
+	ldh [rTAC], a
+	ldh [rAUD3ENA], a
+	jp StopSampledCryAsync_NoInterruptControl.restore_timer
 
 SampledCry_DecrementRemainingBlocks::
 	ldh a, [hSampledCryBlocks]

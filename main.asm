@@ -336,6 +336,12 @@ INCBIN "build/dex-info-assets/titles.2bpp"
 PokedexInfoTitleGFXEnd:
 ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
 
+SECTION "Pokedex Moves", ROMX
+INCLUDE "engine/pokedex/pokedex_moves.asm"
+
+SECTION "Pokedex Moves Index", ROMX
+INCLUDE "build/dex-moves-assets/tables.asm"
+
 
 SECTION "bank11", ROMX
 

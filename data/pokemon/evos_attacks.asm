@@ -26,3 +26,4 @@ EvosAttacksPointers::
 INCLUDE "data/pokemon/evos_attacks_kanto.asm"
 INCLUDE "data/pokemon/evos_attacks_johto.asm"
 INCLUDE "data/pokemon/evos_attacks_custom.asm"
+INCLUDE "build/dex-moves-assets/evos_exports.asm"

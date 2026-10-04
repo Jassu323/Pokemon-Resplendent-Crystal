@@ -339,7 +339,7 @@ class SchedulerContracts(unittest.TestCase):
         begin, end = (offset(self.repo.symbols[n]) for n in ('OAMDMACode', 'OAMDMACode.End'))
         cpu.block(self.repo.symbols['hTransferShadowOAM'][1], self.repo.rom[begin:end])
         prefix = run_to(cpu, 'VBlank', 'Pokedex_VBlankAnimationFrontpicMap.have_cutoff')
-        origin, stalls, transfers = cpu.cycles, 0, []
+        origin, stalls, transfers, last_hardware = cpu.cycles, 0, [], 0
         cpu.record_writes = True
         while cpu.pc != self.repo.symbols['VBlank_Normal.done_oam'][1]:
             start = len(cpu.writes)
@@ -349,12 +349,17 @@ class SchedulerContracts(unittest.TestCase):
                     self.assertFalse(value & 128)
                     transfers.append(value + 1)
                     stalls += (value + 1) * 32 + 4
+                if 0x8000 <= address < 0xa000 or address in (0xff46, 0xff55):
+                    last_hardware = cpu.cycles - origin + stalls
         critical = cpu.cycles - origin + stalls
         self.assertEqual(transfers, [14, 14, 14])
         self.assertEqual(self.value(cpu, 'wPokedexOwnerTransition'), 0)
         self.assertTrue(self.value(cpu, 'wPokedexAnimFlags') & 0x40)
-        self.assertLess(prefix + critical + 20, 4560)
-        print(f'Combined portrait/text publication: {prefix + critical + 20} T through VBlank VRAM work')
+        # Selector/owner cleanup is ordinary WRAM work and can finish after
+        # VBlank; every actual VRAM/DMA operation must finish before it ends.
+        self.assertLess(prefix + last_hardware + 20, 4560)
+        print(f'Combined portrait/text: hardware complete by {prefix + last_hardware + 20} T; '
+              f'owner cleanup complete by {prefix + critical + 20} T')
 
 
 if __name__ == '__main__':
