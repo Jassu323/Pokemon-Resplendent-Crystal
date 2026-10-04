@@ -1748,6 +1748,18 @@ INCLUDE "data/pokemon/palettes.asm"
 
 INCLUDE "data/trainers/palettes.asm"
 
+PokedexArea_LoadObjectPals::
+; Selected's type badges use the original red/blue OBJ slots.
+	ld a, [wTimeOfDayPal]
+	maskbits NUM_DAYTIMES
+	ld bc, 8 palettes
+	ld hl, MapObjectPals
+	call AddNTimes
+	ld de, wOBPals1
+	ld bc, 2 palettes
+	ld a, BANK(wOBPals1)
+	jp FarCopyWRAM
+
 LoadMapPals:
 	farcall LoadSpecialMapPalette
 	jr c, .got_pals

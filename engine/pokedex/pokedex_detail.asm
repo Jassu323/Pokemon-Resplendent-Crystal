@@ -239,6 +239,8 @@ PokedexSelectedMon_Leave:
 
 PokedexSelectedMon_Area:
 	call PokedexSelectedMon_CancelDescriptionText
+	ld a, [wPokedexSelectedView]
+	push af
 	farcall PokedexInfo_Cancel
 	ld a, DEXSELECT_STATE_SWITCHING_VIEW
 	ld [wPokedexSelectedState], a
@@ -248,9 +250,14 @@ PokedexSelectedMon_Area:
 	ld hl, wPokedexSelectedGeneration
 	inc [hl]
 	call Pokedex_CancelAnimationPrefetch
+	; Area uses ordinary tile requests, not Selected's publication dispatcher.
+	xor a
+	ldh [hVBlank], a
 	call PokedexSelectedMon_BeginHiddenTransition
 	xor a
 	ldh [hSCX], a
+	ldh [hSCY], a
+	ldh [rVBK], a
 	ld a, $7
 	ldh [hWX], a
 	ld a, $90
@@ -262,16 +269,17 @@ PokedexSelectedMon_Area:
 	ld e, a
 	predef Pokedex_GetArea
 
+.map_returned
+	pop af
+	ld [wPokedexSelectedView], a
 	call PokedexSelectedMon_BeginHiddenTransition
 	ld a, $90
 	ldh [hWY], a
 	ld a, POKEDEX_SCX
 	ldh [hSCX], a
-	ld a, DEXSELECT_VIEW_DESCRIPTION
-	ld [wPokedexSelectedView], a
 	call PokedexSelectedMon_StageDescription
 	call PokedexSelectedMon_Reveal
-	call Pokedex_BeginDescriptionAnimation
+.restored
 	ld a, DEXSELECT_STATE_ACTIVE
 	ld [wPokedexSelectedState], a
 	ret
@@ -321,8 +329,16 @@ PokedexSelectedMon_StageDescription:
 .selected_tiles_ready
 	call PokedexSelectedMon_DrawFootprint
 	farcall Pokedex_LoadDescriptionTypeGFX
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	jr nz, .prepare_animation
+	; The base loader arms a producer; Area return needs only the static portrait.
+	call Pokedex_CancelAnimationPrefetch
+	jr .animation_ready
+.prepare_animation
 	call Pokedex_StartAnimationPrefetch
 	call Pokedex_PrimeDescriptionAnimation
+.animation_ready
 	farcall Pokedex_GetSelectedMon
 	ld a, [wTempSpecies]
 	ld [wCurPartySpecies], a

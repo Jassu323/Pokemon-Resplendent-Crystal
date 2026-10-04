@@ -2361,13 +2361,18 @@ Pokedex_GetArea:
 	call TownMapPals
 	hlbgcoord 0, 0
 	call TownMapBGUpdate
-	ld b, SCGB_POKEGEAR_PALS
-	call GetSGBLayout
-	call SetDefaultBGPAndOBP
 	xor a
 	ldh [hBGMapMode], a
 	xor a ; JOHTO_REGION
 	call .GetAndPlaceNest
+	; Both region maps and the initial markers are complete before revealing.
+	farcall PokedexArea_LoadObjectPals
+	ld b, SCGB_POKEGEAR_PALS
+	call GetSGBLayout
+	call SetDefaultBGPAndOBP
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
 .loop
 	call JoyTextDelay
 	ld hl, hJoyPressed

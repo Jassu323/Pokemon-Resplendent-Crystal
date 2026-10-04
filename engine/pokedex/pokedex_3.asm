@@ -1284,6 +1284,8 @@ Pokedex_PublishOrStageDescriptionBacking::
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_SWITCHING_SPECIES
 	jr z, .internal
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	jr z, .internal
 	cp DEXSELECT_STATE_ENTERING
 	jr nz, .publish
 	ld a, [wPokedexSelectedReturnState]
@@ -1588,6 +1590,9 @@ Pokedex_VBlankOwnerTransition::
 	ld a, [wPokedexOwnerTransition]
 	cp POKEDEX_OWNER_TRANSITION_INTERNAL_DESCRIPTION
 	jr nz, .map_range
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	jr z, .map_range
 	ld a, [wPokedexSelectedView]
 	cp DEXSELECT_VIEW_INFO
 	jr nz, .map_range

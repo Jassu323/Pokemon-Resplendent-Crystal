@@ -13,7 +13,7 @@ import struct
 import subprocess
 
 from .assets import Repository, offset, sha256
-from .cold_listing import Driver, ROOT, audit as audit_animation, bootstrap, build_core, move, predecessor, prepare_states
+from .cold_listing import Driver, ROOT, FRAME, audit as audit_animation, bootstrap, build_core, move, predecessor, prepare_states
 from .description_ui import audit as audit_ui
 
 FIELDS = '''wPokedexSelectedPendingIndex hSampledCryBank hSampledCryAddress
@@ -105,7 +105,8 @@ def compile_observer(repo, source, output, extra_points=None):
     lines += ['};']
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, source, output, (
-        '-DDEX_CRY_OWNER_TRACE', f'-DDEX_CRY_OWNER_SYMBOLS="{header}"'))
+        '-DDEX_CRY_OWNER_TRACE', '-DDEX_BACKLOG_REVALIDATION_TRACE',
+        f'-DDEX_CRY_OWNER_SYMBOLS="{header}"'))
 
 
 def sparse_fixture(repo, source, destination, names=TARGETS):
@@ -360,6 +361,13 @@ def view_control(config, species, action):
                 raise RuntimeError('Area navigation did not reach Area owner')
             result['area_audio'] = driver.command('cry')
             if action == 'area-return':
+                # Area setup can exceed 32 intervals. Wait for its real input
+                # loop so a short B tap is not lost during map preparation.
+                repository = Repository(ROOT, config['rom'], config['sym'])
+                bank, pc = repository.symbols['Pokedex_GetArea.loop']
+                ready = driver.command(f'restorerun {bank} {pc} {600 * FRAME} 0')
+                if ready['hit'] < 0:
+                    raise RuntimeError(f'Area setup did not reach its input loop: {ready}')
                 driver.run(frames=2)
                 # Release B during preparation, not after a held key has
                 # already reached the Description page's input poll.
@@ -368,9 +376,15 @@ def view_control(config, species, action):
                 result['restored'] = restored
                 if restored['hit'] != 'selected' or restored['state'] != 1:
                     raise RuntimeError(f'Area return did not restore the Description owner: {restored}')
-                repository = Repository(ROOT, config['rom'], config['sym'])
                 result['ui_issues'] = audit_ui(repository, driver.command('ui'))
-                final = settle(driver)
+                static_return = 'PokedexSelectedMon_Area.restored' in repository.symbols
+                if static_return:
+                    driver.events.clear()
+                    final = driver.run(('animation_miss', 'audio_miss'), frames=120)
+                    if final['hit'] or final['playback'] or final['animation_flags'] or final['audio'] or final['sfx']:
+                        raise RuntimeError(f'Static Area return started playback: {final}')
+                else:
+                    final = settle(driver)
                 result['return_publications'] = [e for e in driver.events if e['event'] == 'publish']
             else:
                 final = entered
@@ -384,14 +398,15 @@ def view_control(config, species, action):
         cancellations = [r for r in trace if r['phase'] == 'cancel_entry']
         natural = [r for r in trace if r['phase'] == 'sample_stop' and r['audio'] and not r['remaining']]
         issues = []
-        expected_starts = 2 if action == 'area-return' else 1
+        replay = action == 'area-return' and not static_return
+        expected_starts = 2 if replay else 1
         if len(arms if species == 'dusknoir' else synths) != expected_starts:
             issues.append('unexpected_restart_count')
         if len(cancellations) != int(area):
             issues.append('wrong_cancellation_scope')
         if any(r['phase'] == 'sample_empty' for r in trace):
             issues.append('sample_empty')
-        if species == 'dusknoir' and len(natural) != int(action != 'area'):
+        if species == 'dusknoir' and len(natural) != int(not area or replay):
             issues.append('missing_natural_completion')
         if area and (result['area_audio']['audio'] or
                 any(flags & 0x21 == 0x21 for flags in result['area_audio']['sfx_flags'])):

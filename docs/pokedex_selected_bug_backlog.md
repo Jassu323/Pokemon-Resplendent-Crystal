@@ -50,8 +50,12 @@ Remaining Dex review queue:
   follow-up navigation in both matched pre/post-egg prototypes. Visible content
   remains correct in those sampled checks; investigate without conflating it
   with return restoration or the timer-shutdown correction.
-- Keep `DEX-AREA-01` separate: its Area setup stall is reproduced, while the
-  older transition-corruption report still needs presentation revalidation.
+- `DEX-AREA-01` is solved by the accepted vanilla-map integration. Its 15,130
+  production Area cases and standard regressions pass with +81 ROMX
+  bytes total and no new RAM/VRAM allocation. The user has now accepted it and
+  the exact runtime changes are integrated into production, preserving tab/page
+  restoration without frontpic/cry replay. See the
+  [integration report](pokedex_area.md).
 - `DEX-SEARCH-01` remains a deferred Search palette report; recheck it before
   changing that screen. `DEX-DATA-01` is content completion, not scheduling.
 
@@ -997,7 +1001,43 @@ battery unchanged; the live SameBoy save was not edited.
 
 ### DEX-AREA-01: Area transitions expose temporary corruption
 
-Status: Deferred
+Status: Solved; manually accepted and integrated into production 2026-10-03
+
+The current production integration uses ordinary VBlank for vanilla Area tile
+requests, retains hidden setup until both maps/initial nests are ready, restores
+the map's red/blue OBJ palette slots and returns through the existing atomic
+Selected publication. The map layouts, encounter lookup and original controls
+are retained. A/B return now restores the exact outgoing tab/page/cursor with
+a static base frontpic and no cry replay; evolution minis remain animated.
+Area return restores all 18 map rows even for Info, fixing a prototype shell/
+footer restoration defect found during screenshot review.
+
+All 15,130 Area cases pass, including all 373 species from three tabs during
+active/settled playback, every available page, seen-only visibility, both
+regions, A/B return, player icons, all four palette time settings, repeat Area,
+immediate Listing return and subsequent internal paging. Standard playback/UI,
+cry ownership, Listing and 8,568 New Entry input/phase cases also pass. The 406
+host tests and all 122 sampled cries pass; no new tested miss remains.
+
+Cost: +81 ROMX bytes in six existing banks, +33 beyond the first prototype;
+no ROM0, WRAM0, WRAMX, HRAM, SRAM or VRAM allocation increase. Remembering the
+outgoing tab uses two temporary stack bytes. Area input readiness is about
+578-653 ms. Matched return medians are Description 185.256 ms, Info 249.834 ms
+and Moves 199.601 ms. The old prototype forced Description on every return;
+Info's roughly 58 ms difference between medians pays for directly restoring
+Info instead. Area opening has no median timing change. The two-map vanilla
+preparation remains intentionally unoptimized. See the
+[full report, reproduction recipe and manual suite](pokedex_area.md).
+The user accepted the static-return prototype and requested production promotion.
+The clean production ROM, symbols and map match that accepted build exactly;
+historical prototype outputs remain separate from production evidence.
+The production-path repeat passes all 15,130 Area cases and the standard suite
+above; 536 matched opening/return timings have exactly zero difference from the
+accepted prototype. All four palette settings pass, and the twelve recorded
+roundtrips have no blocked palette writes, white frames or LCD toggles. No live
+save edits, test encounters or new runtime instrumentation were promoted.
+
+Historical evidence follows; these older runs do not describe the prototype:
 
 2026-10-01 buffered-icon integration: twelve focused Area roundtrips (six on
 icon set A and six on set B) retain correct returning footprint/type graphics.

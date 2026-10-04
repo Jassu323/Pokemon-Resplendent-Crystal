@@ -21,6 +21,8 @@ gfx/pokemon/*/frames.asm
 *.gbc
 *.gb
 *.patch
+!tools/dex_timing/probes/area_integration.patch
+!tools/dex_timing/probes/area_static_return.patch
 
 # rgbds extras
 *.map

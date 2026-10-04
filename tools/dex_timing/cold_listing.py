@@ -16,7 +16,7 @@ from .recovery_experiment import initial_asset_maps
 
 ROOT = Path(__file__).resolve().parents[2]
 FRAME = 70224
-KEY = dict(right=1, left=2, up=4, down=8, a=16, b=32, start=128)
+KEY = dict(right=1, left=2, up=4, down=8, a=16, b=32, select=64, start=128)
 POINTS = {
     'title': 'TitleScreenMain', 'continue': 'MainMenu_Continue',
     'new_game': 'MainMenu_NewGame', 'overworld': 'HandleMapTimeAndJoypad',
@@ -31,7 +31,7 @@ POINTS = {
 FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wMenuCursorPosition wJumptableIndex wPokedexSelectedState wPokedexSelectedIndex wPokedexAnimOwner
     wPokedexAnimDictionaryDestination wPokedexAnimUploadOffset
-    wPokedexAnimPlaybackState hSampledCryTimer hSampledCryBlocks hVBlankCounter
+    wPokedexAnimPlaybackState wPokedexAnimFlags hSampledCryTimer hSampledCryBlocks hVBlankCounter
     hJoyDown wPokedexAnimStageFrameID wPokedexAnimStageSlot
     wChannel5Flags1 wChannel6Flags1 wChannel7Flags1 wChannel8Flags1
     wPokedexDescriptionPage wPokedexSelectedView wBaseType1 wBaseType2
@@ -40,6 +40,11 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexOwnerTilemapBuffer wPokedexOwnerAttrmapBuffer wPokedexInfoGFX wPokedexInfoTileSources
     wDexArrowCursorPosIndex wPokedexMovesPage wPokedexMovesPageCount wPokedexMovesState
     wPokedexBadgeActive wPokedexBadgePending wPokedexDescriptionTextState'''.split()
+AREA_FIELDS = '''wTownMapCursorLandmark wTownMapPlayerIconLandmark wTilemap wShadowOAM
+    wRequested2bppSize wRequested2bppDest hVBlank hOAMUpdate hBGMapMode hCGBPalUpdate
+    wNamedObjectIndex wCurPartySpecies wStatusFlags wPlayerGender wTimeOfDayPal
+    wRoamMon1Species wRoamMon1MapGroup wRoamMon1MapNumber
+    wRoamMon2Species wRoamMon2MapGroup wRoamMon2MapNumber'''.split()
 
 
 def build_core(repo, source, output, extra_compile_flags=()):
@@ -70,6 +75,9 @@ def build_core(repo, source, output, extra_compile_flags=()):
     if 'StopSampledCryAsync_FromTimer' in symbols:
         pairs['AUDIO_TIMER_STOP'] = symbols['StopSampledCryAsync_FromTimer']
     pairs['TIMER_IF_CLEAR'] = symbols['SampledCry_ClearTimerFlag']
+    pairs['AREA_REVEAL'] = repo.symbols.get('PokedexSelectedMon_Area.restored') or call_site(
+        'PokedexSelectedMon_Area', 'PokedexSelectedMon_StageDescription',
+        'Pokedex_BeginDescriptionAnimation')
     if 'Pokedex_VBlankInfoAssets' in symbols:
         pairs.update(INFO_ASSETS=symbols['Pokedex_VBlankInfoAssets'],
                      INFO_OAM=symbols['Pokedex_VBlankInfoAssets.oam'],
@@ -91,7 +99,7 @@ def build_core(repo, source, output, extra_compile_flags=()):
     if repo.rom[empty:decoded] != bytes((0xf1, 0xe0, 0x70, 0xc3, stop & 255, stop >> 8)):
         raise ValueError('Sampled-cry empty branch changed; update the host checkpoint')
     pairs['AUDIO_EMPTY'] = bank, empty
-    lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS if name in symbols]
+    lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS + AREA_FIELDS if name in symbols]
     for name, (bank, pc) in pairs.items():
         lines += [f'#define B_{name} {bank}', f'#define P_{name} 0x{pc:04x}']
     lines += ['static const struct { unsigned bank, pc; } points[] = {']

@@ -35,6 +35,13 @@ static unsigned word(unsigned address)
     return byte(address) | byte(address + 1) << 8;
 }
 
+static unsigned area_byte(unsigned address)
+{
+    if (address >= 0xd000 && address < 0xe000)
+        return gb.ram[4096 + (address & 4095)];
+    return byte(address);
+}
+
 static bool at(unsigned bank, unsigned pc)
 {
     return gb.pc == pc && (pc < 0x4000 || gb.mbc_rom_bank == bank) && !gb.halted;
@@ -86,7 +93,26 @@ static void snapshot(int hit)
            upload_services, byte(S_wPokedexAnimPlaybackState),
            byte(S_hSampledCryTimer), word(S_hSampledCryBlocks), sfx & 1,
            byte(S_hVBlankCounter), byte(S_hJoyDown), byte(0xff44), gb.ime, gb.sp, gb.cgb_double_speed);
-    printf(",\"selected_index\":%u}\n", word(S_wPokedexSelectedIndex));
+    printf(",\"selected_index\":%u,\"animation_flags\":%u}\n", word(S_wPokedexSelectedIndex), byte(S_wPokedexAnimFlags));
+}
+
+static void frontpic(uint8_t map[98], uint8_t picture[49 * 16])
+{
+    for (unsigned y = 0; y < 7; y++) for (unsigned x = 0; x < 7; x++) {
+        unsigned i = y * 7 + x, cell = 0x1821 + y * 32 + x;
+        unsigned tile = gb.vram[cell], attr = gb.vram[0x2000 + cell];
+        unsigned address = 0x1000 + (int8_t)tile * 16 + ((attr & 8) ? 0x2000 : 0);
+        map[i] = tile; map[49 + i] = attr;
+        for (unsigned row = 0; row < 8; row++) for (unsigned plane = 0; plane < 2; plane++) {
+            uint8_t value = gb.vram[address + ((attr & 64) ? 7 - row : row) * 2 + plane];
+            if (attr & 32) {
+                value = (value & 0x55) << 1 | (value >> 1 & 0x55);
+                value = (value & 0x33) << 2 | (value >> 2 & 0x33);
+                value = value << 4 | value >> 4;
+            }
+            picture[i * 16 + row * 2 + plane] = value;
+        }
+    }
 }
 
 static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
@@ -142,24 +168,11 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     }
 #endif
     bool reveal = (bank == B_REVEAL && pc == P_REVEAL) ||
-        (bank == B_PAGE_REVEAL && pc == P_PAGE_REVEAL);
+        (bank == B_PAGE_REVEAL && pc == P_PAGE_REVEAL) ||
+        (bank == B_AREA_REVEAL && pc == P_AREA_REVEAL);
     if (reveal || (bank == B_PUBLISH && pc == P_PUBLISH)) {
         uint8_t map[98], picture[49 * 16];
-        for (unsigned y = 0; y < 7; y++) for (unsigned x = 0; x < 7; x++) {
-            unsigned i = y * 7 + x, cell = 0x1821 + y * 32 + x;
-            unsigned tile = gb.vram[cell], attr = gb.vram[0x2000 + cell];
-            unsigned address = 0x1000 + (int8_t)tile * 16 + ((attr & 8) ? 0x2000 : 0);
-            map[i] = tile; map[49 + i] = attr;
-            for (unsigned row = 0; row < 8; row++) for (unsigned plane = 0; plane < 2; plane++) {
-                uint8_t value = gb.vram[address + ((attr & 64) ? 7 - row : row) * 2 + plane];
-                if (attr & 32) {
-                    value = (value & 0x55) << 1 | (value >> 1 & 0x55);
-                    value = (value & 0x33) << 2 | (value >> 2 & 0x33);
-                    value = value << 4 | value >> 4;
-                }
-                picture[i * 16 + row * 2 + plane] = value;
-            }
-        }
+        frontpic(map, picture);
         printf("{\"event\":\"%s\",\"t\":%" PRIu64 ",\"tick\":%u,\"frame\":%u,"
                "\"slot\":%u,\"ordinal\":%u,\"ly\":%u,\"map\":", reveal ? "reveal" : "publish", now / 2,
                (byte(S_hVBlankCounter) + 1) & 255, byte(S_wPokedexAnimStageFrameID),
@@ -322,10 +335,36 @@ int main(int argc, char **argv)
                 unsigned address=0x1000+(int8_t)tile*16+((attrs[cell]&8)?0x2000:0);
                 memcpy(lower+((y-8)*21+x)*16,gb.vram+address,16);
             }
-            hex(lower,sizeof(lower)); puts("}");
+            hex(lower,sizeof(lower));
+            uint8_t frontmap[98], picture[49 * 16];
+            frontpic(frontmap, picture);
+            printf(",\"picture\":"); hex(picture, sizeof(picture)); puts("}");
         } else if (!strcmp(line, "rawcolor\n")) {
             GB_set_color_correction_mode(&gb, GB_COLOR_CORRECTION_DISABLED);
             puts("{\"event\":\"ok\"}");
+        } else if (!strcmp(line, "area\n")) {
+            printf("{\"event\":\"ok\",\"region\":%u,\"player\":%u,\"vblank\":%u,"
+                   "\"oam_hold\":%u,\"request\":%u,\"destination\":%u,\"bg_mode\":%u,"
+                   "\"pal_update\":%u,\"named\":%u,\"species\":%u,\"status\":%u,"
+                   "\"gender\":%u,\"time\":%u,\"roam\":[[%u,%u,%u],[%u,%u,%u]],\"nests\":",
+                   area_byte(S_wTownMapCursorLandmark), area_byte(S_wTownMapPlayerIconLandmark),
+                   byte(S_hVBlank), byte(S_hOAMUpdate), byte(S_wRequested2bppSize),
+                   word(S_wRequested2bppDest), byte(S_hBGMapMode), byte(S_hCGBPalUpdate),
+                   area_byte(S_wNamedObjectIndex), area_byte(S_wCurPartySpecies), area_byte(S_wStatusFlags),
+                   area_byte(S_wPlayerGender), area_byte(S_wTimeOfDayPal),
+                   gb.ram[4096+(S_wRoamMon1Species&4095)], gb.ram[4096+(S_wRoamMon1MapGroup&4095)],
+                   gb.ram[4096+(S_wRoamMon1MapNumber&4095)],
+                   gb.ram[4096+(S_wRoamMon2Species&4095)], gb.ram[4096+(S_wRoamMon2MapGroup&4095)],
+                   gb.ram[4096+(S_wRoamMon2MapNumber&4095)]);
+            hex(gb.ram + S_wTilemap - 0xc000, 160);
+            printf(",\"shadow_oam\":"); hex(gb.ram + S_wShadowOAM - 0xc000, 160);
+            printf(",\"town_tiles\":"); hex(gb.vram+0x1000,48*16);
+            printf(",\"map0\":"); hex(gb.vram+0x1800,18*32);
+            printf(",\"map1\":"); hex(gb.vram+0x1c00,18*32);
+            printf(",\"attrs0\":"); hex(gb.vram+0x3800,18*32);
+            printf(",\"attrs1\":"); hex(gb.vram+0x3c00,18*32);
+            printf(",\"icons\":"); hex(gb.vram+0x0780,8*16);
+            puts("}");
         } else if (sscanf(line, "audit %u", &keys) == 1) {
             auditing = keys != 0;
             puts("{\"event\":\"ok\"}");

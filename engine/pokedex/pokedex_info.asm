@@ -132,8 +132,12 @@ PokedexInfo_PrepareInitial:
 	push af
 	ld a, BANK(wPokedexInfoState)
 	ldh [rSVBK], a
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	jr z, .page_ready
 	xor a
 	ld [wPokedexInfoPage], a
+.page_ready
 	call PokedexInfo_Initialize
 .build
 	call PokedexInfo_Step

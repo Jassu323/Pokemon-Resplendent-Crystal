@@ -34,8 +34,12 @@ PokedexMoves_PrepareInitial:
 	push af
 	ld a, 3
 	ldh [rSVBK], a
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_AREA_ACTIVE
+	jr z, .page_ready
 	xor a
 	ld [wPokedexMovesPage], a
+.page_ready
 	ld a, 1
 	ld [wPokedexMovesState], a
 .step
