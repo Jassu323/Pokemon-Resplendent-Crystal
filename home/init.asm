@@ -92,6 +92,13 @@ Init::
 	ld a, -1
 	ldh [hSRAMBank], a
 
+; The stack and hardware flags are valid. Set the world clock before ordinary
+; audio initializes, while interrupts and the LCD are still off.
+	ldh a, [hCGB]
+	and a
+	jr z, .cpu_speed_ready
+	call DoubleSpeed
+.cpu_speed_ready
 	call ClearWRAM
 	ld a, 1
 	ldh [rWBK], a
@@ -148,11 +155,6 @@ Init::
 	ld [rRTCLATCH], a
 	ld [rRAMG], a
 
-	ldh a, [hCGB]
-	and a
-	jr z, .no_double_speed
-	call NormalSpeed
-.no_double_speed
 
 	xor a
 	ldh [rIF], a

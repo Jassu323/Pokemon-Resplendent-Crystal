@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     GB_init(&gb, GB_MODEL_CGB_E);
     GB_set_turbo_mode(&gb, true, true);
     if (GB_load_rom(&gb, argv[1]) || GB_load_state(&gb, argv[2])) return 3;
-    if (gb.pc != P_ENTRY || gb.mbc_rom_bank != B_ENTRY || gb.cgb_double_speed) return 4;
+    if (gb.pc != P_ENTRY || gb.mbc_rom_bank != B_ENTRY || gb.cgb_double_speed != EXPECTED_CPU_SPEED) return 4;
     uint16_t registers[GB_REGISTERS_16_BIT];
     memcpy(registers, gb.registers, sizeof(registers));
     unsigned sp = gb.sp, bank = gb.mbc_rom_bank, wram_bank = gb.cgb_ram_bank;

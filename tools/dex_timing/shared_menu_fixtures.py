@@ -8,7 +8,7 @@ from .assets import Repository, offset, sha256
 from .cry_ownership import validate_output
 
 
-def make_fixture(repo, source, output, location=None, capture=False):
+def make_fixture(repo, source, output, location=None, capture=False, extra_fields=None):
     output = validate_output(output, (source, repo.root / 'pokecrystal.gbc'))
     symbols = repo.symbols
     before = source.read_bytes()
@@ -120,6 +120,8 @@ def make_fixture(repo, source, output, location=None, capture=False):
         write('wObject1Struct', bytes(40 * 12))
         write('wObjectMasks', bytes(16))
 
+    for name, data in (extra_fields or {}).items():
+        write(name, bytes(data))
     for prefix in ('s', 'sBackup'):
         start, end, checksum = (sram(prefix + name) for name in ('SaveData', 'SaveDataEnd', 'Checksum'))
         after[checksum:checksum + 2] = (sum(after[start:end]) & 65535).to_bytes(2, 'little')

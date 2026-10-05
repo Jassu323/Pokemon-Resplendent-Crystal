@@ -1,6 +1,12 @@
 # Selected Pokedex Animation Scheduler
 
-Living implementation reference, updated 2026-10-02.
+Living implementation reference, updated 2026-10-05.
+
+The production Dex now inherits the double-speed world clock. Physical event
+deadlines, the two-slot producer and 32-block prefill are unchanged. Bounded
+active Info admission, quiet batching and Area/cache optimizations are detailed
+in the [production clock policy](production_clock_policy.md); costs and test
+results from older revisions below remain historical measurements.
 
 This describes the **linked game implementation**, not an experimental host
 policy. It supersedes the runtime direction in the earlier micro-schedule
@@ -322,9 +328,11 @@ Current thresholds require 14-17 cached blocks. The extra horizon covers the
 chain and the subsequent refill opportunity; the 8,192-T finishing reserve is
 additional time margin, not a persistent allocation or an injected delay.
 
-Admission accepts normal speed, the short LCD handler and the measured timer
-classes only. Active sampled playback must have the normal 200-count block
-period (`TAC=6`, `TMA=56`). Unsupported pitch/timer settings, double speed,
+Admission accepts the short LCD handler and measured timer classes only.
+Normal-speed active playback uses the 200-count block period (`TAC=6`,
+`TMA=56`); the production double-speed path checks KEY1 and its matching
+ordinary timer (`TAC=7`, `TMA=156`). The physical block period and conservative
+finishing reserve remain the same. Unsupported pitch/timer settings,
 LCD-off use and another LCD handler reject the optional finish. Regular work
 continues, and misses remain observable. Do not copy these constants to another
 owner or a fainted-cry path without measuring its timer configuration.

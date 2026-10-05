@@ -26,8 +26,8 @@ static void shared_snapshot(FILE *out, const char *event)
             event, shared_now(), gb.pc, gb.mbc_rom_bank, gb.sp, gb.ime,
             gb.registers[GB_REGISTER_AF], gb.registers[GB_REGISTER_BC],
             gb.registers[GB_REGISTER_DE], gb.registers[GB_REGISTER_HL]);
-    fprintf(out, ",\"lcdc\":%u,\"ly\":%u,\"bgp\":%u,\"bg_rgb0\":%u",
-            byte(0xff40), byte(0xff44), byte(0xff47), gb.background_palettes_rgb[0]);
+    fprintf(out, ",\"lcdc\":%u,\"ly\":%u,\"bgp\":%u,\"bg_rgb0\":%u,\"double_speed\":%u",
+            byte(0xff40), byte(0xff44), byte(0xff47), gb.background_palettes_rgb[0], gb.cgb_double_speed);
     for (unsigned i=0; i<sizeof(shared_fields)/sizeof(*shared_fields); i++) {
         unsigned value=0;
         for (unsigned n=0; n<shared_fields[i].size; n++)

@@ -236,7 +236,8 @@ class Asset:
 class Repository:
     def __init__(self, root, rom_path, sym_path):
         self.root = Path(root).resolve()
-        self.rom = Path(rom_path).read_bytes()
+        self.rom_path = Path(rom_path).resolve()
+        self.rom = self.rom_path.read_bytes()
         self.symbols = read_symbols(sym_path)
         self.hashes = {"rom_sha256": sha256(self.rom), "sym_sha256": sha256(Path(sym_path).read_bytes())}
         if len(self.rom) != 4*1024*1024:

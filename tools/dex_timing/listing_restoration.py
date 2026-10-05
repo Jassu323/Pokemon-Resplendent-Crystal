@@ -128,6 +128,10 @@ def summarize(trace, reference):
     frames = [e for e in trace if e['event'] == 'frame']
     writes = [e for e in trace if e['event'] == 'write']
     leave = next(e for e in phases if e['phase'] == 'leave')
+    # A follow-up trace can include an earlier species-owner publication.
+    # Only the B-return transaction owns the Listing timing/palette checks.
+    phases = [e for e in phases if e['t'] >= leave['t']]
+    frames = [e for e in frames if e['t'] >= leave['t']]
     reveal = next(e for e in phases if e['phase'] == 'listing_revealed')
     wx = next(e for e in phases if e['phase'] == 'owner_wx')
     commit = next(e for e in reversed(phases) if e['phase'] == 'owner_dispatch' and e['t'] < wx['t'])
@@ -258,7 +262,7 @@ def check_listing_snapshot(actual, expected, count, all_rows=True):
     return problems
 
 
-def follow_up(driver, reference_driver, checkpoints, output, count):
+def follow_up(driver, reference_driver, checkpoints, output, count, *, require_lookahead=True):
     """Normal-input cache, scroll/wrap and re-entry checks after a B return."""
     output.mkdir(parents=True, exist_ok=True)
     checks = []
@@ -272,7 +276,7 @@ def follow_up(driver, reference_driver, checkpoints, output, count):
         checks.append(dict(step=label, index=actual['index'], scroll=actual['listing_scroll'],
                            metadata_warnings=['grid_indices'] if actual.get('grid_indices') != expected.get('grid_indices') else [],
                            issues=check_listing_snapshot(actual, expected, count,
-                                all_rows=label in ('returned', 'reopened-and-returned'))))
+                                all_rows=require_lookahead and label in ('returned', 'reopened-and-returned'))))
     check('returned')
     driver.command(f'restoretrace {output / "navigation"} 0')
     for n, direction in enumerate(('up', 'down', 'down', 'down', 'down', 'up', 'up', 'up', 'left', 'right')):

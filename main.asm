@@ -324,6 +324,10 @@ INCLUDE "engine/gfx/new_dex_entry_pics.asm"
 
 SECTION "Pokedex Info", ROMX
 INCLUDE "engine/pokedex/pokedex_info.asm"
+INCLUDE "engine/pokedex/performance_queue.asm"
+INCLUDE "engine/pokedex/performance_admission.asm"
+INCLUDE "engine/pokedex/performance_retained.asm"
+INCLUDE "engine/pokedex/performance_idle.asm"
 INCLUDE "build/dex-info-assets/tables.asm"
 
 SECTION "Pokedex Info Glyphs", ROMX
@@ -335,6 +339,11 @@ PokedexInfoTitleGFX:
 INCBIN "build/dex-info-assets/titles.2bpp"
 PokedexInfoTitleGFXEnd:
 ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
+
+INCLUDE "engine/pokedex/performance_fast.asm"
+
+SECTION "Dex Performance Index", ROMX, BANK[$b9]
+INCLUDE "engine/pokedex/performance_indexed.asm"
 
 SECTION "Pokedex Moves", ROMX
 INCLUDE "engine/pokedex/pokedex_moves.asm"
@@ -943,6 +952,7 @@ SECTION "bank77", ROMX
 INCLUDE "engine/rtc/print_hours_mins.asm"
 INCLUDE "engine/events/diploma.asm"
 INCLUDE "engine/pokedex/pokedex_3.asm"
+INCLUDE "engine/pokedex/performance_no_lookahead.asm"
 INCLUDE "engine/pokedex/pokedex_info_publish.asm"
 INCLUDE "engine/events/catch_tutorial_input.asm"
 INCLUDE "engine/pokegear/townmap_convertlinebreakcharacters.asm"

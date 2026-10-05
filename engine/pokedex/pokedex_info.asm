@@ -49,6 +49,7 @@ PokedexInfo_Cancel:
 	ldh [rSVBK], a
 	xor a
 	ld [wPokedexInfoState], a
+	ld [wPokedexInfoPendingPage], a
 	ld [wPokedexMovesState], a
 	ld [wPokedexInfoActiveMiniCount], a
 	pop af
@@ -98,6 +99,8 @@ ENDR
 	ret
 
 PokedexInfo_Activate:
+	call PokedexPerf_QueueInfo
+	ret c
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -138,6 +141,8 @@ PokedexInfo_PrepareInitial:
 	xor a
 	ld [wPokedexInfoPage], a
 .page_ready
+	call PokedexPerf_RestoreInfoAcrossArea
+	jr c, .restored
 	call PokedexInfo_Initialize
 .build
 	call PokedexInfo_Step
@@ -146,6 +151,7 @@ PokedexInfo_PrepareInitial:
 	jr nz, .build
 	call PokedexInfo_StagePalettes
 	call PokedexInfo_StageOAM
+.restored
 	pop af
 	ldh [rSVBK], a
 	ret
@@ -158,6 +164,7 @@ PokedexInfo_Service:
 	push af
 	ld a, BANK(wPokedexInfoState)
 	ldh [rSVBK], a
+	call PokedexPerf_BeginPendingInfo
 	ld a, [wPokedexOwnerTransition]
 	cp POKEDEX_OWNER_TRANSITION_INFO
 	jr z, .request
@@ -175,20 +182,22 @@ PokedexInfo_Service:
 	ld a, [wPokedexOwnerTransition]
 	and a
 	jr nz, .done
-	ld b, POKEDEX_INFO_SERVICE_SLICES
+	ld b, 12
 .slice
 	ld a, [wPokedexInfoState]
 	and a
 	jr z, .done
 	ld a, [wPokedexAnimPlaybackState]
 	cp POKEDEX_ANIM_PLAYBACK_PLAYING
-	jr nz, .admit
-	ldh a, [hVBlankCounter]
-	ld hl, wPokedexAnimLoopTick
-	cp [hl]
-	jr nz, .done
+	jr nz, .quiet_gate
+	push bc
+	call PokedexPerf_AdmitInfo
+	pop bc
+	jr nc, .done
+	jr .admit
+.quiet_gate
 	ldh a, [rLY]
-	cp POKEDEX_INFO_LATEST_LY
+	cp 96
 	jr nc, .done
 .admit
 	ld a, [wPokedexInfoState]
@@ -969,6 +978,9 @@ PokedexInfo_PrepareMiniOAM:
 	ret
 
 PokedexInfo_CopyTiles:
+	farcall PokedexPerf_FastCopyTiles
+	ret
+PokedexInfo_CopyTiles_Legacy:
 	ld b, 8
 .tile
 	ld a, [wPokedexInfoCopyTile]

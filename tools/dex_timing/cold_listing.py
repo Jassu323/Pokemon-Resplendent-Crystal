@@ -39,7 +39,8 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexInfoTileCount wPokedexInfoCaught wPokedexInfoMiniBuffer wPokedexInfoRow wPokedexOwnerTransition
     wPokedexOwnerTilemapBuffer wPokedexOwnerAttrmapBuffer wPokedexInfoGFX wPokedexInfoTileSources
     wDexArrowCursorPosIndex wPokedexMovesPage wPokedexMovesPageCount wPokedexMovesState
-    wPokedexBadgeActive wPokedexBadgePending wPokedexDescriptionTextState'''.split()
+    wPokedexBadgeActive wPokedexBadgePending wPokedexDescriptionTextState wPokedexInfoPendingPage
+    wFXAnimID hBattleTurn'''.split()
 AREA_FIELDS = '''wTownMapCursorLandmark wTownMapPlayerIconLandmark wTilemap wShadowOAM
     wRequested2bppSize wRequested2bppDest hVBlank hOAMUpdate hBGMapMode hCGBPalUpdate
     wNamedObjectIndex wCurPartySpecies wStatusFlags wPlayerGender wTimeOfDayPal
@@ -135,7 +136,10 @@ class Driver:
             line = self.process.stdout.readline()
             if not line:
                 raise RuntimeError(f'Headless core exited: {self.process.poll()}')
-            event = json.loads(line)
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError as error:
+                raise RuntimeError(f'Non-JSON headless output during {text!r}: {line!r}') from error
             if event['event'] in ('stop', 'ok'):
                 if event.get('error'):
                     raise RuntimeError(f'Headless command failed: {text}: {event}')
@@ -267,12 +271,12 @@ def expected_picture(asset, frame):
     return b''.join(result)
 
 
-def audit(asset, accepted, events, final, cold=True):
+def audit(asset, accepted, events, final, cold=True, expected_double_speed=0):
     issues = []
     if cold and (accepted['loaded'] != asset.width ** 2 or accepted['dictionary_services']
             or accepted['upload_services'] or accepted.get('upload', 0)):
         issues.append('not_cold')
-    if accepted.get('double_speed') or final.get('double_speed'):
+    if accepted.get('double_speed', 0) != expected_double_speed or final.get('double_speed', 0) != expected_double_speed:
         issues.append('unexpected_double_speed')
     reveals = [e for e in events if e['event'] == 'reveal']
     if len(reveals) != 1:

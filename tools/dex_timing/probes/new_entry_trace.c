@@ -395,7 +395,7 @@ int main(int argc,char **argv)
     GB_init(&gb,GB_MODEL_CGB_E);GB_set_turbo_mode(&gb,true,true);
     GB_set_pixels_output(&gb,pixels);GB_set_rgb_encode_callback(&gb,rgb);
     if (GB_load_rom(&gb,argv[1]) || GB_load_state(&gb,argv[2])) return 4;
-    if (gb.pc!=P_ENTRY || gb.mbc_rom_bank!=B_ENTRY || gb.cgb_double_speed) return 5;
+    if (gb.pc!=P_ENTRY || gb.mbc_rom_bank!=B_ENTRY || gb.cgb_double_speed!=EXPECTED_CPU_SPEED) return 5;
     return_pc=word(gb.sp);return_sp=gb.sp+2;
     GB_set_key_mask(&gb,0);
     GB_set_vblank_callback(&gb,vblank);GB_set_execution_callback(&gb,observe);

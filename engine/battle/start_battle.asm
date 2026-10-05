@@ -34,6 +34,7 @@ FindFirstAliveMonAndStartBattle:
 	ld a, [hl]
 	ld [wBattleMonLevel], a
 	predef DoBattleTransition
+	call BattleSpeed_EnterNormal
 	farcall _LoadBattleFontsHPBar
 	ld a, 1
 	ldh [hBGMapMode], a
@@ -200,4 +201,56 @@ ClearBattleRAM:
 	xor a ; LOW(vBGMap0)
 	ld [hli], a
 	ld [hl], HIGH(vBGMap0)
+	ret
+
+; The battle transition has already made the BG
+; black. Nested battle menus, catching and registration inherit normal speed.
+BattleSpeed_EnterNormal::
+	ldh a, [hCGB]
+	and a
+	ret z
+	ldh a, [rKEY1]
+	bit 7, a
+	ret z
+	call WaitSFX
+	call DisableLCD
+	di
+	ldh a, [rIE]
+	push af
+	ldh a, [hSampledCryTimer]
+	and a
+	call nz, StopSampledCryAsync_NoInterruptControl
+	xor a
+	ldh [rNR52], a
+	call NormalSpeed
+	call InitSound
+	pop af
+	ldh [rIE], a
+	call EnableLCD
+	ei
+; The pre-wipe battle track is deliberately restarted at this hidden handoff.
+	jp PlayBattleMusic
+
+; Called only by map setup after its existing DisableLCD. Leave the LCD off
+; for the original graphics reload. No switch occurs on a visible battlefield.
+BattleSpeed_LeaveNormal::
+	ldh a, [hCGB]
+	and a
+	ret z
+	ldh a, [rKEY1]
+	bit 7, a
+	ret nz
+	di
+	ldh a, [rIE]
+	push af
+	ldh a, [hSampledCryTimer]
+	and a
+	call nz, StopSampledCryAsync_NoInterruptControl
+	xor a
+	ldh [rNR52], a
+	call DoubleSpeed
+	call InitSound
+	pop af
+	ldh [rIE], a
+	ei
 	ret

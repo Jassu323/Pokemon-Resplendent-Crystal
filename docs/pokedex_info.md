@@ -1,6 +1,6 @@
 # Selected Pokedex Info Pages
 
-Updated 2026-10-03. This is the Start-menu Dex's lower-panel implementation,
+Updated 2026-10-05. This is the Start-menu Dex's lower-panel implementation,
 not the party Stats Screen or New Dex Entry. It extends the existing Selected
 owner; it does not replace the portrait scheduler, timeline, dictionary plans,
 sampled-cry decoder, 32-block prefill, or cry ownership rules.
@@ -13,6 +13,15 @@ Incomplete gameplay evolution records remain deferred. Shared buffered page
 indicators through page 19 are integrated with [Moves](pokedex_moves.md);
 Description and Info use the same inactive-buffer/publication contract.
 The separate active-animation tab latency report remains open.
+
+Production now includes the accepted double-speed performance changes: bounded
+active work, quiet batching, coalesced page requests, committed Info retention
+across Area and faster glyph/Area transfers. The renderer finishes an admitted
+page rather than restarting it on every A press; newer requests are coalesced
+and cleared on true owner cancellation. Historical cost/timing tables below
+describe their recorded revisions; the current link has 523 ROM0 bytes free
+with unchanged aggregate RAM/VRAM. See the
+[production integration](production_clock_policy.md) for the current contract.
 
 ## Behavior And Layout
 

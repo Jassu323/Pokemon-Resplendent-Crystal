@@ -93,7 +93,7 @@ int main(int argc, char **argv)
     GB_set_rgb_encode_callback(&gb, rgb);
     GB_set_execution_callback(&gb, observe);
     if (GB_load_rom(&gb, argv[1]) || GB_load_state(&gb, argv[2])) return 3;
-    if (gb.pc != P_START || gb.mbc_rom_bank != B_START || gb.cgb_double_speed) return 4;
+    if (gb.pc != P_START || gb.mbc_rom_bank != B_START || gb.cgb_double_speed != EXPECTED_CPU_SPEED) return 4;
     unsigned id = ram(0, S_wWildMon);
     unsigned table = S_wPokemonIndexTableEntries - 2 + id * 2;
     unsigned species = ram(2, table) | ram(2, table + 1) << 8;

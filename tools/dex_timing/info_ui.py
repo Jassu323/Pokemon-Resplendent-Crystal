@@ -158,9 +158,11 @@ def press(driver, key):
 def ready(driver, page):
     for _ in range(240):
         ui = driver.command('ui')
-        if ui['view'] == 1 and (page is None or ui['info_page'] == page) and ui['info_state'] == 0 and not ui['owner_transition']:
+        if ui['view'] == 1 and (page is None or ui['info_page'] == page) and ui['info_state'] == 0 and not ui['owner_transition'] and not ui.get('info_pending_page', 0):
             driver.run(('animation_miss', 'audio_miss'), frames=1)
-            return driver.command('ui')
+            check = driver.command('ui')
+            if check['info_state'] == 0 and not check['owner_transition'] and not check.get('info_pending_page', 0):
+                return check
         state = driver.run(('animation_miss', 'audio_miss'), frames=1)
         if state['hit']:
             raise RuntimeError(f'Playback miss preparing Info: {state}')

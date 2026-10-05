@@ -2350,17 +2350,21 @@ Pokedex_GetArea:
 	ld hl, vTiles0 tile $78
 	ld c, 4
 	call Request2bpp
-	call LoadTownMapGFX
+	farcall PokedexPerf_FastTownGFX
 	call FillKantoMap
 	call .PlaceString_MonsNest
-	call TownMapPals
+	farcall PokedexPerf_FastTownPals
 	hlbgcoord 0, 0, vBGMap1
-	call TownMapBGUpdate
+	ld d, h
+	ld e, l
+	farcall PokedexPerf_FastTownMap
 	call FillJohtoMap
 	call .PlaceString_MonsNest
-	call TownMapPals
+	farcall PokedexPerf_FastTownPals
 	hlbgcoord 0, 0
-	call TownMapBGUpdate
+	ld d, h
+	ld e, l
+	farcall PokedexPerf_FastTownMap
 	xor a
 	ldh [hBGMapMode], a
 	xor a ; JOHTO_REGION
@@ -2479,7 +2483,7 @@ Pokedex_GetArea:
 .GetAndPlaceNest:
 	ld [wTownMapCursorLandmark], a
 	ld e, a
-	farcall FindNest ; load nest landmarks into wTilemap[0,0]
+	farcall PokedexPerf_FastNests ; generated landmarks + live roamers
 	decoord 0, 0
 	ld hl, wShadowOAMSprite00
 .nestloop

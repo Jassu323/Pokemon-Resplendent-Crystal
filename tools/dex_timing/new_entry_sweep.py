@@ -138,10 +138,15 @@ def audit(asset, trace, case):
                      and start['t'] < e['start'] < e['end'] <= stop['t']]
             produced = sum(e['cache_end'] - e['cache_start'] + e['remaining_start'] - e['remaining_end']
                            for e in fills)
-            check(stop['remaining'] == 0 and start['cache'] == 32 and
-                  start['remaining'] == asset.sample_blocks and produced + 32 == asset.sample_blocks,
+            cancelled = any(e['event'] == 'owned_cry_cancel' and 0 <= stop['t'] - e['t'] <= 32
+                            for e in trace)
+            accounted = produced + 32 + stop['remaining'] - stop['cache']
+            check((stop['remaining'] == 0 or cancelled) and start['cache'] == 32 and
+                  start['remaining'] == asset.sample_blocks and
+                  (accounted == asset.sample_blocks if cancelled else produced + 32 == asset.sample_blocks),
                   'sampled cry accounting', dict(start=start, stop=stop, produced=produced))
-            audio = dict(blocks=start['remaining'], refilled=produced, remaining=stop['remaining'])
+            audio = dict(blocks=start['remaining'], refilled=produced, remaining=stop['remaining'],
+                         cancelled_at_owner_exit=cancelled)
     return dict(species=asset.name, case=case['name'], family=case['family'],
                 status='fail' if errors else 'pass', errors=errors,
                 authored_intervals=sum(e.duration for e in asset.events),
@@ -191,6 +196,8 @@ def main():
     parser.add_argument('--species', nargs='+')
     parser.add_argument('--smoke', action='store_true', help='Only baseline and representative inputs')
     parser.add_argument('--jobs', type=int, default=8)
+    parser.add_argument('--expected-double-speed',action='store_true',
+                        help='Explicitly require double-speed matching-link entry checkpoints')
     args = parser.parse_args()
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
@@ -210,8 +217,8 @@ def main():
                for i, n in enumerate(order_names)}
     report = dict(**repo.hashes, structural=audit_resident_layout(repo), publication=audit_publication(repo),
                   authentic_catches=prior['catches'], fixtures={}, runs=[], baseline=[])
-    trace = compile_core(repo, args.sameboy, args.output, 'trace')
-    factory = compile_core(repo, args.sameboy, args.output, 'fixture')
+    trace = compile_core(repo, args.sameboy, args.output, 'trace',expected_speed=args.expected_double_speed)
+    factory = compile_core(repo, args.sameboy, args.output, 'fixture',expected_speed=args.expected_double_speed)
     config = dict(rom=str(args.rom), binary=str(trace), output=str(args.output), states={}, references={})
     for name in names:
         asset = assets[name]

@@ -211,35 +211,6 @@ Pokedex_EnsureGridCache:
 	ld [wPokedexGridTopPhysicalRow], a
 	ld [wDexTempCounter], a
 
-	; Validate the row above the viewport.
-	and a
-	jr nz, .got_previous_physical
-	ld a, POKEDEX_GRID_CACHE_ROWS
-.got_previous_physical
-	dec a
-	ld b, a
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld a, d
-	and a
-	jr nz, .subtract_previous
-	ld a, e
-	cp POKEDEX_GRID_WIDTH
-	jr nc, .subtract_previous
-	ld de, -1
-	jr .check_previous
-.subtract_previous
-	ld a, e
-	sub POKEDEX_GRID_WIDTH
-	ld e, a
-	jr nc, .check_previous
-	dec d
-.check_previous
-	call .CheckRowTag
-	jr nc, .repair
-
 	; Validate the top row and the three rows after it.
 	ld hl, wDexListingScrollOffset
 	ld e, [hl]
@@ -247,7 +218,7 @@ Pokedex_EnsureGridCache:
 	ld d, [hl]
 	ld a, [wDexTempCounter]
 	ld b, a
-	ld c, 4
+	ld c, POKEDEX_GRID_HEIGHT
 .check_forward
 	call .CheckRowTag
 	jr nc, .repair
@@ -303,42 +274,13 @@ Pokedex_EnsureGridCache:
 	ret
 
 Pokedex_RepairGridCache:
-; Retain the ring alignment found by EnsureGridCache. Only replace slots
-; whose tags do not match the destination viewport; publish tags after DMA.
-	ld a, [wPokedexGridTopPhysicalRow]
-	and a
-	jr nz, .got_previous_physical
-	ld a, POKEDEX_GRID_CACHE_ROWS
-.got_previous_physical
-	dec a
-	ld b, a
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld a, d
-	and a
-	jr nz, .subtract_previous
-	ld a, e
-	cp POKEDEX_GRID_WIDTH
-	jr nc, .subtract_previous
-	ld de, -1
-	jr .ensure_previous
-.subtract_previous
-	ld a, e
-	sub POKEDEX_GRID_WIDTH
-	ld e, a
-	jr nc, .ensure_previous
-	dec d
-.ensure_previous
-	call .EnsureRow
 	ld hl, wDexListingScrollOffset
 	ld e, [hl]
 	inc hl
 	ld d, [hl]
 	ld a, [wPokedexGridTopPhysicalRow]
 	ld b, a
-	ld c, POKEDEX_GRID_CACHE_ROWS - 1
+	ld c, POKEDEX_GRID_HEIGHT
 .ensure_forward
 	call .EnsureRow
 	inc b
@@ -385,56 +327,13 @@ Pokedex_PrimeGridCache:
 	ret
 
 .prime
-	ld a, 1
-	ld [wPokedexGridTopPhysicalRow], a
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld a, d
-	and a
-	jr nz, .prime_previous
-	ld a, e
-	cp POKEDEX_GRID_WIDTH
-	jr nc, .prime_previous
-	ld de, -1
-	jr .stage_previous
-.prime_previous
-	ld a, e
-	sub POKEDEX_GRID_WIDTH
-	ld e, a
-	jr nc, .stage_previous
-	dec d
-.stage_previous
-	xor a
-	call Pokedex_PrepareGridCacheRow
-	call Pokedex_UploadPendingGridCacheRow
-
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld b, 1
-.prime_forward
-	ld a, b
-	push bc
-	push de
-	call Pokedex_PrepareGridCacheRow
-	call Pokedex_UploadPendingGridCacheRow
-	pop de
-	pop bc
-	ld a, e
-	add POKEDEX_GRID_WIDTH
-	ld e, a
-	jr nc, .no_prime_carry
-	inc d
-.no_prime_carry
-	inc b
-	ld a, b
-	cp POKEDEX_GRID_CACHE_ROWS
-	jr c, .prime_forward
-	scf
-	ret
+    ld hl, wPokedexGridCacheRowOffsets
+    ld bc, POKEDEX_GRID_CACHE_ROWS * 2
+    ld a, $ff
+    call ByteFill
+    ld a, 1
+    ld [wPokedexGridTopPhysicalRow], a
+    jp Pokedex_RepairGridCache
 
 Pokedex_CacheGridIconPalette:
 ; Input: c = freshly resolved species ID, wDexTempCounter = visible position.
@@ -889,6 +788,8 @@ Pokedex_UploadWrappedBottomRow:
 	jp Pokedex_UploadPendingGridCacheRow
 
 Pokedex_FinalizeWrappedGridCache:
+	ret
+PokedexPerf_LegacyFinalizeWrappedGridCache:
 ; Refill the one real neighbor row and invalidate the opposite endpoint row.
 	call Pokedex_PrepareGridCacheRefill
 	call Pokedex_UploadPendingGridCacheRow

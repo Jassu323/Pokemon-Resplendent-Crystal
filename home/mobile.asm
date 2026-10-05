@@ -1,8 +1,17 @@
 SampledCryTimer::
 	push af
 	ldh a, [hSampledCryTimer]
-	and a
-	jr nz, .sampled_cry_timer
+; Active value 1 takes the original normal/even-period IRQ budget.
+	dec a
+	jr z, .sampled_cry_timer
+	inc a
+	jr z, .inactive
+	push bc
+	push de
+	push hl
+	call SampledCry_AsyncTimerTickAlternating
+	jr .restore
+.inactive
 	pop af
 	reti
 
@@ -13,6 +22,7 @@ SampledCryTimer::
 
 	call SampledCry_AsyncTimerTick
 
+.restore
 	pop hl
 	pop de
 	pop bc

@@ -238,6 +238,7 @@ PokedexSelectedMon_Leave:
 	ret
 
 PokedexSelectedMon_Area:
+	farcall PokedexPerf_CacheInfoAcrossArea
 	call PokedexSelectedMon_CancelDescriptionText
 	ld a, [wPokedexSelectedView]
 	push af

@@ -3641,6 +3641,8 @@ wPokedexBadgeActive:: db
 wPokedexBadgePending:: db
 wPokedexBadgePage:: db
 wPokedexBadgeGFX:: ds 2 * TILE_SIZE
+wPokedexInfoPendingPage:: db
+wPokedexPerfRetainedInfo:: db
 wPokedexInfoWorkspaceEnd::
 ASSERT wPokedexInfoWorkspaceEnd <= $dc00
 ASSERT LOW(wPokedexInfoGFX) & $f == 0
@@ -3665,6 +3667,8 @@ wSampledCryCompressedBlocks:: dw
 wSampledCryCompressedAddress:: dw
 wSampledCryCacheWriteAddress:: dw
 wSampledCryBlockPeriod:: db
+; Odd-period sampled timer alternation reuses bank-4 tail padding.
+wSampledCryTimerStep:: db
 	ds $1000 - (@ - w4_d000)
 
 

@@ -42,6 +42,7 @@ Pokedex_UpdateScrolledGrid:
 	farcall Pokedex_PrintSelectedName
 	farcall Pokedex_PrepareSelectedMonTiles
 .selection_prepared
+	farcall PokedexPerf_PrepareIncomingGridRow
 	; Finish every WRAM and shadow-state update before streaming the selection.
 	; The grid reveal can then follow the frontpic transfer in the same frame.
 	farcall Pokedex_SyncGridIconAnimationFrame
@@ -56,10 +57,7 @@ Pokedex_UpdateScrolledGrid:
 	call Pokedex_CommitScrolledGridReveal
 	farcall Pokedex_RecordRenderedSelectionKey
 
-	; The incoming row was already resident. Refill the newly offscreen cache
-	; row only after the complete visible state has been revealed.
-	farcall Pokedex_PrepareGridCacheRefill
-	farcall Pokedex_UploadPendingGridCacheRow
+	; Only visible rows are resident; prepare the next row on demand.
 	call Pokedex_StartAnimationPrefetch
 	ret
 

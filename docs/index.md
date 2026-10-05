@@ -6,6 +6,7 @@ addresses and proposed fixes are not mistaken for current instructions.
 
 ## Current Systems
 
+- [Production CPU clock and Dex performance](production_clock_policy.md): double-speed world, normal-speed battle envelope, retained Dex optimizations, generated Area index, audio timer contract, current resource budget and fresh qualification.
 - [Selected Pokedex animation scheduler](pokedex_animation_scheduler.md): runtime architecture, timing/admission contract, resource costs and adaptation to other owners.
 - [Selected Pokedex Info pages](pokedex_info.md): stats/evolution pages, build-time glyphs, bounded preparation, OBJ types, palettes, memory budgets and regression/manual checks.
 - [New Dex Entry animation scheduler](new_dex_entry_animation_scheduler.md): resident dictionary, exact publication timing, local batch uploader and reusable owner contracts.
@@ -15,6 +16,9 @@ addresses and proposed fixes are not mistaken for current instructions.
 
 ## Testing And Open Work
 
+- [Normal-speed battle prototype](battle_normal_speed_prototype.md): historical manually accepted trial now promoted byte-for-byte; 100-move comparisons, all-species/UI/gameplay/switch regressions, timer-overhead correction, costs and retained ROM/save/videos.
+- [Polished battle animation comparison](polished_battle_animation_comparison.md): fresh upstream native six-move/both-side timing and motion against production and unretimed double speed, retained comparison/audio videos, implementation differences and next-trial recommendation.
+- [Expanded private battle retiming](battle_animation_expanded_motion_prototype.md): Surf teardown correction, full 80-move phase/motion review, costs, native regressions, retained comparisons and review-save guide. Not promoted to production.
 - [Dex instrumentation cleanup](dex_instrumentation_cleanup.md): runtime removal, host-only observers, clean-link regression results and current breakpoints.
 - [Selected scheduler validation](dex_scheduler_validation.md): accepted ROM identity, miss breakpoints, regression suite and deferred cleanup.
 - [All-species cold Listing acceptance](dex_cold_listing_results.md): normal-input SameBoy methodology, reproducible setup, historical results and category-data regression follow-up.
@@ -29,7 +33,15 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [Listing restoration investigation](pokedex_listing_restoration_investigation.md): normal-input reproductions, skipped/late palette commits, LCD-off cache flashes and scoped fix directions.
 - [Historical return and exit revalidation](pokedex_backlog_revalidation.md): current-link results for the four older Listing/exit reports, confirmed viewport/white-mask ordering defect and measured private fix costs.
 - [Dex opening and closing optimization story](pokedex_selected_bug_backlog.md#dex-perf-01-optimize-pokedex-opening-and-closing): deferred lifecycle work including the merged `DEX-EXIT-01` shift, timing measurements and regression requirements.
-- [Whole-Dex performance optimization story](pokedex_selected_bug_backlog.md#dex-perf-02-profile-and-optimize-the-completed-dex): deferred until Moves, Area and other Dex modes are implemented; profile tab/paging/cache work while preserving exact playback and presentation.
+- [Selected-tab performance investigation](pokedex_selected_performance.md): historical current/vanilla timings, separate first-response/completion measurements, Area/Info/Listing candidates, exact costs, rapid-input correction and all-species regressions. Only the later accepted components are promoted; the component-repair return was rejected.
+- [Selected performance round two](pokedex_selected_performance_round2.md): whole-Dex double speed, retained Info, bounded active preparation, no eager lookahead, return-history measurements, expanded post-switch audio/New Entry regressions, upstream speed-use audit and hardware qualifications. Private prototype only.
+- [Whole game double speed qualification](global_double_speed.md): private global clock policy, double-speed ablations, exact costs, broad menu/gameplay/audio acceptance and the post-catch cancellation correction.
+- [Double speed animation measurements](global_double_speed_animation_measurements.md): observed durations for 79 moves on both sides, paired physical-frame/ms differences and multi-stage qualifications. No animation retiming applied.
+- [Double speed animation pacing investigation](global_double_speed_animation_pacing.md): primary-effect versus wrapper timing, Dragon Dance, read-only tick/OAM/cost traces, Polished Crystal audit, corrected review saves and proposed pacing options. No production retiming applied.
+- [Battle animation phase pacing prototype](battle_animation_phase_pacing_prototype.md): private selected-move gate, exact costs, paired timings, rendered-state caveats, common-charge target limitations, full regressions and three-arm manual review files. Production remains unchanged.
+- [Targeted battle motion prototype](battle_animation_targeted_motion_prototype.md): production per-object/phase references, continuous local motion and charge rates instead of a shared gate, both Caustic sound sequences, exact costs, final regressions, known presentation differences and a separate manual-review ROM/save.
+- [Thunderbolt three-way comparison](thunderbolt_three_way_comparison.md): retail-matching Emerald/headless mGBA versus production and accepted double-speed Crystal; native both-side captures, exact script/visible-pose timings, OAM/affine traces, observer parity and synchronized review videos. No animation retiming applied.
+- [Whole-Dex performance optimization story](pokedex_selected_bug_backlog.md#dex-perf-02-profile-and-optimize-the-completed-dex): accepted Selected-tab performance is integrated and freshly qualified; additional modes and entry/exit work remain deferred. Preserve exact playback and presentation while optimizing tab/paging/cache work.
 - [Cry ownership investigation](pokedex_cry_ownership_investigation.md): Dex-local cancellation, synth resumption/outgoing exhaustion/header-race fixes, exact resource costs and all-species transition regressions.
 - [Internal transition investigation and fix](pokedex_internal_transition_investigation.md): delayed blackout, atomic internal reveal, final-link costs/timing/regressions and historical prototype evidence.
 - [Direction change investigation](pokedex_direction_change_investigation.md): held/new-axis conflicts, accepted shared-menu correction, exact costs, 57-state menu regressions and animation/overworld acceptance.

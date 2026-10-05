@@ -22,6 +22,13 @@ NewPokedexEntry:
 	farcall NewDexEntry_DisplayPage2
 	call .WaitPressAorB_AnimateFrontpic
 	farcall NewDexEntry_CancelAnimation
+; The page owns its nonblocking sampled cry. A faster post-catch return can
+; reach naming/other waits before it ends, so cancel it at this handoff.
+	di
+	ldh a, [hSampledCryTimer]
+	and a
+	call nz, StopSampledCryAsync_NoInterruptControl
+	ei
 	pop af
 	ld [wPokedexStatus], a
 	call MaxVolume

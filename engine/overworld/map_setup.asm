@@ -198,3 +198,13 @@ ForceMapMusic:
 .notbiking
 	call TryRestartMapMusic
 	ret
+
+; All post-battle reload/whiteout paths use
+; map setup. Ordinary map transitions already run double speed and return fast.
+BattleSpeed_MapDisableLCD::
+	call DisableLCD
+	ld a, [wBattleMode]
+	and a
+	ret nz
+	farcall BattleSpeed_LeaveNormal
+	ret

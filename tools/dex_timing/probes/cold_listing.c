@@ -72,6 +72,9 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef DEX_CLOCK_TRACE
 #include "clock_trace.c"
 #endif
+#ifdef DEX_PERFORMANCE_TRACE
+#include "performance.c"
+#endif
 
 static void snapshot(int hit)
 {
@@ -123,6 +126,9 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
      * Polling PC before GB_cpu_run would count that instruction twice. */
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
+#ifdef DEX_PERFORMANCE_TRACE
+    perf_observe(bank, pc);
+#endif
 #ifdef DEX_CLOCK_TRACE
     clock_observe(bank, pc, now);
 #endif
@@ -196,14 +202,29 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
     }
 }
 
+static void host_log(GB_gameboy_t *g, const char *message, GB_log_attributes_t attributes)
+{
+    fputs(message, stderr);
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 4) { fprintf(stderr, "Usage: cold-listing ROM BOOT_ROM BATTERY_COPY\n"); return 2; }
     GB_init(&gb, GB_MODEL_CGB_E);
+    GB_set_log_callback(&gb, host_log);
+#ifdef DEX_PERFORMANCE_TRACE
+    /* Configure the host audio sink before execution, not after STOP has
+     * accumulated APU work. Recording itself remains an optional host action. */
+    GB_set_sample_rate(&gb, 44100);
+    GB_apu_set_sample_callback(&gb, perf_audio_sample);
+#endif
     GB_set_turbo_mode(&gb, true, true);
     GB_set_pixels_output(&gb, pixels);
     GB_set_rgb_encode_callback(&gb, rgb);
     GB_set_execution_callback(&gb, observe);
+#ifdef DEX_PERFORMANCE_TRACE
+    GB_set_vblank_callback(&gb, perf_frame);
+#endif
 #ifdef DEX_LISTING_RESTORE_TRACE
     GB_set_vblank_callback(&gb, restoration_frame);
     GB_set_write_memory_callback(&gb, restoration_write);
@@ -253,6 +274,11 @@ int main(int argc, char **argv)
                 ticks += (unsigned)(gb.cycles_since_run - before);
             } while (!at(target_bank, target_pc) && ticks - start < budget * 2);
             snapshot(at(target_bank, target_pc) ? 0 : -1);
+        }
+#endif
+#ifdef DEX_PERFORMANCE_TRACE
+        else if (perf_command(line)) {
+            /* Display hashes and routine costs are host-only observations. */
         }
 #endif
 #ifdef DEX_LISTING_RESTORE_TRACE
@@ -308,6 +334,9 @@ int main(int argc, char **argv)
                    gb.ram[3*4096+(S_wPokedexInfoActiveMiniCount & 4095)],
                    gb.ram[3*4096+(S_wPokedexInfoTileCount & 4095)],
                    gb.ram[3*4096+(S_wPokedexInfoCaught & 4095)]);
+#ifdef S_wPokedexInfoPendingPage
+            printf(",\"info_pending_page\":%u", gb.ram[3*4096+(S_wPokedexInfoPendingPage & 4095)]);
+#endif
             printf(",\"border_gfx\":"); hex(gb.vram + 0x1710, 10 * 16);
 #ifdef S_wPokedexMovesState
             printf(",\"moves_page\":%u,\"moves_pages\":%u,\"moves_state\":%u,\"badge_active\":%u,\"badge_pending\":%u",

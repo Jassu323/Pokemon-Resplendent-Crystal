@@ -514,8 +514,11 @@ SECTION "timer", ROM0[$0050]
 
 - checks `hSampledCryTimer`
 - if zero, restores `af` and returns with `reti`
-- if nonzero, calls the ROM0 `SampledCry_AsyncTimerTick`, which selects WRAMX 4
-  and restores the caller's WRAM bank before returning
+- if one, calls the ROM0 `SampledCry_AsyncTimerTick`, which selects WRAMX 4
+  and restores the caller's WRAM bank before returning; this preserves the
+  original normal-speed active interrupt cost
+- if two, calls the bank-preserving `SampledCry_AsyncTimerTickAlternating`
+  to alternate the next timer reload before streaming the block
 - streams the next decoded block
 - returns via `reti`
 
@@ -526,7 +529,7 @@ DEF SAMPLED_CRY_BLOCK_PERIOD_NORMAL EQU 200
 DEF SAMPLED_CRY_TIMER_RELOAD EQU 256 - SAMPLED_CRY_BLOCK_PERIOD_NORMAL
 ```
 
-The timer uses 65,536 Hz mode:
+At normal CPU speed, the timer uses 65,536 Hz mode:
 
 ```text
 256 - 56 = 200 timer ticks per block
@@ -549,10 +552,27 @@ SampledCry_RestartCH3:
     rAUD3LOW/HIGH = 2048 - wSampledCryBlockPeriod with restart
 ```
 
-`SampledCry_StartBlockTimer` uses `256 - wSampledCryBlockPeriod` for `rTMA`
-and `rTIMA`. The timer period and CH3 period must always use the same
-`wSampledCryBlockPeriod`; otherwise the player will swap wave RAM blocks out
-of step with the hardware playback rate.
+`SampledCry_StartBlockTimer` delegates to ROMX. At normal speed it uses
+`256 - wSampledCryBlockPeriod` for `rTMA` and `rTIMA`, with TAC 6. At double
+speed it selects TAC 7 and halves the reload count, maintaining the same
+physical block duration. For odd periods it alternates floor/ceil counts:
+period 213 uses 106/107 timer clocks, averaging the original 13,632 normal
+T-cycles per block. TIMA starts with the floor count and TMA with the ceil;
+the interrupt changes the *following* reload because TIMA already reloaded.
+The alternating step uses existing bank-4 padding at `$dffc`.
+
+CH3 frequency still uses the original `wSampledCryBlockPeriod`, not the
+CPU-dependent timer count. Ordinary cries retain 12,800 normal T-cycles per
+block at either speed. Codec, cache layout and 32-block prefill are unchanged.
+All readers of `hSampledCryTimer` must treat both 1 and 2 as active; owner
+cancellation clears it to zero. Do not add odd-period reload work to every
+normal-speed interrupt: 64 extra T-cycles previously regressed Vibrava.
+
+The production clock policy is double speed outside battle and normal speed
+throughout battle ownership, including its nested Stats/Pack, catching and
+New Dex Entry. Speed handoffs stop owned sampled playback with the LCD and
+APU disabled; timer conversion is not performed on a running cry. See the
+[production integration](production_clock_policy.md) for ownership and tests.
 
 Output routing:
 

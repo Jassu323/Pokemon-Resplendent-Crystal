@@ -97,7 +97,7 @@ DisableMobile:
 	assert VBLANK_NORMAL == 0
 	xor a
 	ldh [hVBlank], a
-	call NormalSpeed
+	call DoubleSpeed
 	xor a
 	ldh [rIF], a
 	ld a, [wBGMapBuffer]

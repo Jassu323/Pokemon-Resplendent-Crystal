@@ -48,7 +48,7 @@ MENUS = {
 }
 
 
-def compile_observer(repo, source, output):
+def compile_observer(repo, source, output, extra_flags=()):
     output.mkdir(parents=True, exist_ok=True)
     header = (output / 'shared-menu-symbols.h').resolve()
     lines = [f'#define M_{name} 0x{repo.symbols[name][1]:04x}'
@@ -61,7 +61,7 @@ def compile_observer(repo, source, output):
     lines.append('};')
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, source, output, (
-        '-DSHARED_MENU_INPUT_TRACE', f'-DSHARED_MENU_INPUT_SYMBOLS="{header}"'))
+        '-DSHARED_MENU_INPUT_TRACE', f'-DSHARED_MENU_INPUT_SYMBOLS="{header}"', *extra_flags))
 
 
 def run(driver, repo, label=None, frames=1, keys=0):
@@ -85,7 +85,7 @@ def boot_overworld(driver, repo):
 
 
 def smoke(output, repo, core, battery):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'smoke.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'smoke.log')
     try:
         driver.command(f'mtrace {output / "smoke.jsonl"}')
         start = boot_overworld(driver, repo)
@@ -177,7 +177,7 @@ def settle_map_input(driver, repo):
 
 
 def extra_menu_states(output, repo, core, battery):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'extra-menu-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'extra-menu-setup.log')
     rows = {}
     try:
         driver.command(f'load {output / "party.s0"}')
@@ -279,7 +279,7 @@ def extra_menu_states(output, repo, core, battery):
 
 
 def menu_states(output, repo, core, battery):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'menu-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'menu-setup.log')
     rows = {}
     try:
         for name, (row, label) in MENUS.items():
@@ -293,7 +293,7 @@ def menu_states(output, repo, core, battery):
 
 
 def expanded_menu_states(output, repo, core, battery):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'expanded-menu-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'expanded-menu-setup.log')
     rows = {}
     try:
         driver.command(f'load {output / "pack-pocket-2.s0"}')
@@ -371,7 +371,7 @@ def expanded_menu_states(output, repo, core, battery):
 
 
 def location_menu_states(output, repo, core, battery, location):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'location-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'location-setup.log')
     rows = {}
     try:
         boot_overworld(driver, repo)
@@ -420,6 +420,13 @@ def location_menu_states(output, repo, core, battery, location):
                 run(driver, repo, frames=8)
             else:
                 raise RuntimeError(f'Could not begin a grass battle: {state}')
+            # Encounter movement may remain held into the first menu frame.
+            # Choose Fight through real input before assuming a cursor origin.
+            run(driver, repo, frames=40)
+            tap(driver, repo, 'up')
+            tap(driver, repo, 'left')
+            if driver.command('m')['wBattleMenuCursorPosition'] != 1:
+                raise RuntimeError('Native battle cursor did not reach Fight')
             rows['battle-main'] = save_menu(driver, repo, output, 'battle-main', 'LoadBattleMenuGraphic.loop')
             press_until(driver, repo, 'MoveSelectionScreen.menu_loop')
             rows['battle-moves'] = save_menu(driver, repo, output, 'battle-moves', 'MoveSelectionScreen.menu_loop')
@@ -440,7 +447,7 @@ def location_menu_states(output, repo, core, battery, location):
 
 
 def menu_inputs(output, repo, core, battery, names):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'menu-inputs.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'menu-inputs.log')
     rows = []
     try:
         for name in names:
@@ -482,7 +489,7 @@ MOVEMENT_FIELDS = '''wXCoord wYCoord wPlayerDirection wMapGroup wMapNumber
 
 
 def bicycle_state(output, repo, core, battery):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'bicycle-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'bicycle-setup.log')
     try:
         driver.command(f'load {output / "pack-pocket-2.s0"}')
         for _ in range(3):
@@ -502,7 +509,7 @@ def bicycle_state(output, repo, core, battery):
 
 
 def area_state(output, repo, core, battery, listing):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'area-setup.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'area-setup.log')
     try:
         driver.command(f'load {listing}')
         state = run(driver, repo, 'Pokedex_UpdateSelectedMon', 600, KEY['a'])
@@ -521,7 +528,7 @@ def area_state(output, repo, core, battery, listing):
 
 def overworld_inputs(output, repo, core, battery, mode='walk'):
     prefix = 'movement' if mode == 'walk' else 'bicycle-movement'
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / (prefix + '.log'))
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / (prefix + '.log'))
     rows = []
     sequences = {}
     for direction in ('up', 'down', 'left', 'right'):
@@ -562,7 +569,7 @@ def overworld_inputs(output, repo, core, battery, mode='walk'):
 
 
 def menu_controls(output, repo, core, battery, names):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'menu-controls.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'menu-controls.log')
     rows = []
     controls = {
         **{f'hold-{key}': [(60, KEY[key]), (12, 0)] for key in ('up', 'down', 'left', 'right')},
@@ -598,7 +605,7 @@ def menu_controls(output, repo, core, battery, names):
 
 
 def menu_returns(output, repo, core, battery, names):
-    driver = Driver(core, repo.root / 'pokecrystal.gbc', BOOT, battery, output / 'menu-returns.log')
+    driver = Driver(core, repo.rom_path, BOOT, battery, output / 'menu-returns.log')
     rows = []
     try:
         for menu in names:

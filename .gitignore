@@ -38,6 +38,9 @@ gfx/pokemon/*/frames.asm
 # local build outputs, test reports, and emulator artifacts
 /build/
 
+# explicitly retained local research evidence, separate from disposable builds
+/research_artifacts/
+
 # save game files
 *.sgm
 *.sav

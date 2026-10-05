@@ -1,12 +1,19 @@
 # New Dex Entry Animation Scheduler
 
-Living implementation reference, 2026-09-21. This describes the linked game,
+Living implementation reference, updated 2026-10-05. This describes the linked game,
 not the earlier private preflight prototype. Update it when the owner contract,
 resident layout, timeline format, linked costs, or validation results change.
 
 Companions: [test procedure and build identity](dex_new_entry_testing.md),
 [Selected Description scheduler](pokedex_animation_scheduler.md),
 [sampled cries](sampled_cries.md), [host tools](dex_timing_model.md).
+
+The [production clock policy](production_clock_policy.md) keeps the entire
+catch/registration/post-battle owner at normal speed, although ordinary gameplay
+and the Start-menu Dex are double-speed. On final registration exit, after
+animation cancellation, a guarded sampled-cry stop prevents outgoing playback
+leaking into naming/post-catch waits. Internal description-page changes do not
+cancel playback. This adds no RAM or VRAM and does not change authored timing.
 
 ## Scope
 

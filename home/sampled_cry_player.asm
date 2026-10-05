@@ -119,6 +119,17 @@ SampledCry_ArmCachedPlayback:
 	ldh [rSVBK], a
 	ret
 
+; Only double-speed odd-period cries need the extra timer reload work.
+SampledCry_AsyncTimerTickAlternating::
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wSampledCryCacheCount)
+	ldh [rSVBK], a
+	call SampledCry_AlternateBlockTimer
+	pop af
+	ldh [rSVBK], a
+	jp SampledCry_AsyncTimerTick
+
 SampledCry_AsyncTimerTick::
 	ldh a, [rSVBK]
 	push af
@@ -398,18 +409,24 @@ SampledCry_DecrementCacheCount::
 	ret
 
 SampledCry_StartBlockTimer::
-; WRAMX bank 4 must be selected.
-	xor a
-	ldh [rTAC], a
-	ld a, [wSampledCryBlockPeriod]
+	farcall SampledCry_StartBlockTimerROMX
+	ret
+
+; Odd periods alternate floor/ceil reloads. TIMA already loaded the previous
+; TMA at IRQ entry, so this write selects the following interval's reload.
+; Standard cries take only the zero-step path; no ROMX call occurs in the IRQ.
+SampledCry_AlternateBlockTimer:
+	ld a, [wSampledCryTimerStep]
+	and a
+	ret z
 	ld c, a
-	xor a
-	sub c
+	ldh a, [rTMA]
+	add c
 	ldh [rTMA], a
-	ldh [rTIMA], a
-	call SampledCry_ClearTimerFlag
-	ld a, TAC_START | TAC_65KHZ
-	ldh [rTAC], a
+	ld a, c
+	cpl
+	inc a
+	ld [wSampledCryTimerStep], a
 	ret
 
 SampledCry_ClearTimerFlag::

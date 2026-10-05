@@ -365,7 +365,8 @@ def run_case(job):
             if ui['view'] or ui['page'] != prior_ui['page'] or ui['footer_cursor']:
                 result['issues'].append('return_description_state')
             final = settle(driver)
-            playback = audit(repo.load([name])[0], accepted, driver.events, final, cold=False)
+            playback = audit(repo.load([name])[0], accepted, driver.events, final, cold=False,
+                             expected_double_speed=config.get('expected_double_speed', 0))
             result['playback'] = playback
             result['issues'] += ['playback:' + s for s in playback['issues']]
         if config.get('images'):
@@ -406,7 +407,8 @@ def run_case(job):
             next_state = driver.run(('selected', 'animation_miss', 'audio_miss'), frames=600)
             next_index = next_state['selected_index']
             final = settle(driver)
-            check = audit(repo.load([config['names'][next_index]])[0], switched, driver.events, final, cold=False)
+            check = audit(repo.load([config['names'][next_index]])[0], switched, driver.events, final, cold=False,
+                          expected_double_speed=config.get('expected_double_speed', 0))
             result['follow_up_playback'] = check
             result['issues'] += ['following_species:' + s for s in check['issues']]
             index = next_index
@@ -457,6 +459,7 @@ def main():
     parser.add_argument('--player-map', nargs=3, metavar=('MAP', 'X', 'Y'))
     parser.add_argument('--hour-offset', type=int, choices=range(24))
     parser.add_argument('--jobs', type=int, default=8)
+    parser.add_argument('--expected-double-speed', action='store_true')
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     repo = Repository(ROOT, args.rom, args.sym)
@@ -525,7 +528,8 @@ def main():
         (args.output / 'provenance.json').write_text(json.dumps(provenance, indent=2))
     config = dict(core=str(core), rom=str(args.rom), sym=str(args.sym), battery=str(battery),
                   states=str(states), names=names, output=str(args.output), images=args.images,
-                  follow_up=args.follow_up, repeat_area=args.repeat_area, direct_listing=args.direct_listing)
+                  follow_up=args.follow_up, repeat_area=args.repeat_area, direct_listing=args.direct_listing,
+                  expected_double_speed=int(args.expected_double_speed))
     _, data, manifest = info_data()
     tasks = []
     for n in (args.species or names):

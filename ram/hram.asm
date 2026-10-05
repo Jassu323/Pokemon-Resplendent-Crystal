@@ -171,7 +171,7 @@ hClockResetTrigger:: db
 	ds 2
 hSampledCryBank:: db
 hSampledCryAddress:: dw
-hSampledCryTimer:: db
+hSampledCryTimer:: db ; 0 inactive, 1 normal/even, 2 double-speed odd period
 hSampledCryBlocks:: dw
 hSampledCrySavedAUDVOL:: db
 hSampledCrySavedAUDTERM:: db

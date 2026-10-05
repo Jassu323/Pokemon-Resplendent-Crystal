@@ -213,31 +213,45 @@ Pokedex_TryFinishAnimationStage::
 Pokedex_AdmitAnimationFinish::
 ; d = complete ready remainder, 1..20. IME must be enabled by caller contract.
 ; These exact hardware checks intentionally reject unmodeled timer settings.
-	ldh a, [rKEY1]
-	bit 7, a
-	jr nz, .reject
 	ldh a, [hLCDCPointer]
 	and a
-	jr nz, .reject
+	jp nz, .reject
 	ldh a, [rLCDC]
 	bit 7, a
-	jr z, .reject
+	jp z, .reject
 	ldh a, [rTAC]
 	and 7
 	bit 2, a
 	jr z, .timer_off
+	cp 7
+	jr z, .double_timer
 	cp 6
 	jr z, .fast_timer
 	cp 4
-	jr nz, .reject
+	jp nz, .reject
 	ldh a, [rTMA]
 	and a
-	jr nz, .reject
+	jp nz, .reject
 	ldh a, [hSampledCryTimer]
 	and a
-	jr nz, .reject
+	jp nz, .reject
 	ld e, 20
 	jr .time_gate
+.double_timer
+    ldh a, [rKEY1]
+    bit 7, a
+    jp z, .reject
+    ldh a, [rTMA]
+    cp 156
+    jp nz, .reject
+    ldh a, [hSampledCryTimer]
+    and a
+    ld e, 20
+    jr z, .time_gate
+    call Pokedex_CheckAnimationAudioRunway
+    jr nc, .reject
+    ld e, 40
+    jr .time_gate
 .fast_timer
 	ldh a, [rTMA]
 	cp 57
@@ -248,7 +262,7 @@ Pokedex_AdmitAnimationFinish::
 	jr z, .time_gate
 	ldh a, [rTMA]
 	cp 56
-	jr nz, .reject
+	jp nz, .reject
 	call Pokedex_CheckAnimationAudioRunway
 	jr nc, .reject
 	ld e, 40
@@ -256,7 +270,7 @@ Pokedex_AdmitAnimationFinish::
 .timer_off
 	ldh a, [hSampledCryTimer]
 	and a
-	jr nz, .reject
+	jp nz, .reject
 	ld e, 0
 .time_gate
 ; Compute threshold before sampling the coarse hardware clock.
@@ -274,11 +288,11 @@ Pokedex_AdmitAnimationFinish::
 	ld a, [wPokedexAnimDeadline]
 	sub c
 	bit 7, a
-	jr nz, .reject
+	jp nz, .reject
 	ldh a, [rSTAT]
 	and 3
 	cp 1
-	jr z, .reject
+	jp z, .reject
 	ldh a, [rLY]
 	cp b
 	ret

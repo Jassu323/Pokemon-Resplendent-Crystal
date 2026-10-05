@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-03. This is the live issue/status list, not the chronological
+Updated 2026-10-05. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -39,8 +39,17 @@ Remaining Dex review queue:
 - `DEX-PERF-01` is a deferred optimization story for opening and closing the
   Dex. It includes the confirmed `DEX-EXIT-01` shell shift, now merged into
   that broader lifecycle work rather than scheduled as a standalone fix.
-- `DEX-PERF-02` defers broader Dex profiling/optimization until Moves, Area
-  and the remaining Dex modes have been implemented.
+- `DEX-PERF-02` has an integrated, manually accepted Selected-tab baseline: double
+  speed, faster Area/Info paths, bounded active Info work, coalesced page requests
+  and no eager Listing lookahead. The rejected round-one component-repair return
+  is not the selected implementation. See the [current accepted clock policy and
+  qualification](battle_normal_speed_prototype.md) and [measured Dex benefits](global_double_speed.md).
+  See the [production integration and fresh qualification](production_clock_policy.md).
+  Other modes and lifecycle optimization remain deferred.
+- `DEX-INFO-06` confirms rapid A restart starvation on multi-page Info.
+  The private finish/coalesce fix passes accepted-request/final-page checks and
+  is manually accepted and now promoted/solved in production, with fresh
+  all-species and 400-case Info input-stress qualification.
 - Historical reports `DEX-RETURN-02` (vertical displacement), `DEX-RETURN-04`
   (placeholder Listing state) and `DEX-GRID-02` (caught-ball OBJ palette) do not
   reproduce in the current 448-return/746-viewport revalidation. Keep their
@@ -174,7 +183,8 @@ metadata race `DEX-CRY-05` for this owner. See the
 
 ### DEX-CRY-03: Dusknoir also underruns on the party Stats Screen
 
-Status: Confirmed adjacent issue
+Status: Historical normal-speed owner issue; standalone double-speed Stats
+passes the fresh qualification, nested battle Stats remains deferred
 
 After Dusknoir's Stats Screen cry stopped, `hSampledCryTimer` and the decoded
 cache count were both zero while 78 compressed blocks remained. This proves
@@ -182,6 +192,21 @@ that the failure is not exclusive to the new Pokedex animation producer. The
 Dex still has its own concurrent-workload pressure, but any eventual audio
 solution should account for this shared failure mode rather than assuming the
 Selected-Mon controller is its sole cause.
+
+2026-10-04 paired performance/audio revalidation reproduces the failure in
+unchanged production and all private double-speed Dex variants. Native Stats
+plays 488 of 557 Dusknoir blocks, with **69 remaining**, before and after one
+or four Dex speed roundtrips. Additional Stats failures reproduce for Vibrava
+(41), Groudon (254), Kyogre (250) and Yanmega (405 remaining). These are existing
+owner/refill issues, not speed regressions; fixes remain deferred. See the
+[cross-owner evidence](pokedex_selected_performance_round2.md#expanded-cross-owner-audio-suite).
+
+2026-10-05 production promotion: all four standalone Stats offsets complete
+Dusknoir, Vibrava, Groudon, Kyogre and Yanmega naturally. This matches the
+accepted double-speed trial and is confirmed against the old normal-speed
+production link, not inferred from a clock switch alone. Keep the original
+refill investigation for normal-speed nested battle Stats; no generic refill
+fix was added. See [fresh results](production_clock_policy.md#differences-and-limits).
 
 ### DEX-CRY-04: Outgoing sampled cry can exhaust during species preparation
 
@@ -454,6 +479,37 @@ known Listing follow-up and legacy-model warnings, not new failures.
 See [the production implementation and validation](pokedex_moves.md); private
 matched-phase evidence is retained in its historical prototype directory.
 The live save remains unchanged.
+
+### DEX-INFO-06: Rapid A Restarts Unfinished Info Page Preparation
+
+Status: Solved in production 2026-10-05; manually accepted and freshly qualified
+
+Reproduction: on Chikorita, Eevee or Tyrogue, enter Info and settle Stats,
+leave the footer cursor on Info, then repeatedly press/release A at approximately
+two display intervals on/two off. The visible lower panel remains unchanged
+until the presses stop. The same behavior occurs during portrait/cry playback.
+
+Cause: every accepted activation cancels the current lower-page job and starts
+another. Repeated inputs arrive faster than a job can prepare/publish, so the
+work is continually discarded. This is distinct from unaccepted input and the
+opposite-direction tab-delay report in `DEX-INFO-03`.
+
+The integrated candidate finishes the current page, coalesces newer inputs into
+one pending target, then prepares that target after the prior VBlank publication.
+It clears pending state on real cancellation/tab exit/species reset. All 216
+rapid cases accept 15 activations and end on the correct modulo-page target;
+new pages publish during the pressing sequence. The final queued/idle guard
+also corrects a prototype-only race immediately after publication.
+
+Cost: one byte in the existing bank-3 lower-panel overlay, no larger WRAMX
+allocation and no ROM0/WRAM0/HRAM/VRAM/OAM growth; local ROMX code. It is part
+of the measured +3,717-byte private package, not permission to integrate that
+package without visual review. Risks are queued-state lifetime and cancellation,
+covered by all-species and input stress regressions. Fresh production passes
+400 Info stress cases and all 373 species; see
+[production qualification](production_clock_policy.md). Historical costs and
+trial evidence are in
+[measurements, exact candidate identity and tests](pokedex_selected_performance.md).
 
 ### DEX-PAGE-01: Shared Buffered Page Indicators For Lower Tabs
 
@@ -1217,13 +1273,66 @@ Acceptance and regression requirements:
 
 ### DEX-PERF-02: Profile And Optimize The Completed Dex
 
-Status: Deferred story; start after Moves, Area and other Dex modes are implemented
+Status: Selected-tab performance iteration integrated and qualified 2026-10-05.
+Other modes and lifecycle work remain deferred.
 
 Requested 2026-10-03 after the Info return/evolution investigation. Optimize
 the completed Dex as a whole using measured headless normal-input traces,
 not assumptions about heavy operations or isolated synthetic throughput.
 Coordinate entry/exit work with `DEX-PERF-01`; retain that story's merged
 `DEX-EXIT-01` acceptance requirements rather than duplicating or closing them.
+
+The first measured pass is now documented in
+[Selected Pokedex performance](pokedex_selected_performance.md). It includes
+2,416 baseline and 2,416 final timing cases, fresh built-vanilla comparison,
+6,182 standard candidate regressions, 613 actual Listing-cache checks and
+expanded Area/roamer contexts. The private package improves Area entry by about
+21 intervals and settled Stats by five, with +3,717 ROMX bytes and one reused
+overlay byte. No production gameplay source or linked ROM is changed.
+Round one's Area -> Info is essentially unchanged and active heavy-playback
+Stats remains budget-limited. Its component-repair B-return first-response
+tradeoff was rejected in manual review; preserve that ROM as the Area/settled
+Info benchmark, not the preferred return implementation.
+
+[Round two](pokedex_selected_performance_round2.md) now tests retained Info
+across Area, bounded active work, whole-Dex double speed and removal of eager
+Listing lookahead. Final private timing matrix: 3,280 passes; standard all-species
+regressions: 6,182 passes; expanded post-switch audio: 1,920 runs with no paired
+changes; New Entry: 8,890 animation/input passes. Active Stats is about five/six
+intervals, settled Stats 4.54, Area 9.5, Area -> Info 8.42. Exact linked cost
+is +3,821 ROMX bytes, -14 ROM0 bytes and two reused overlay fields. Production
+is unchanged. First-response tails, fresh active Moves -> Listing, slightly
+slower whole-Dex exit and SameBoy's untested APU speed-switch qualification
+still require review. Normal-only admitted Info was rejected after Garchomp
+misses. No permanent Stats VRAM pool or physical Listing-ring shrink was added.
+
+The subsequent [whole-game double-speed qualification](global_double_speed.md)
+retains only the options with a useful double-speed path (approximately one
+display interval or more). The private final candidate passes 6,182 Dex
+regressions, 816 latency cases, 8,254 New Entry input cases, 960 cross-owner audio
+cases, custom inventory/menu controls, 79 moves on both sides and native gameplay
+round-trips. No animation scripts, waits or motion code were retimed; the
+[exact animation differences](global_double_speed_animation_measurements.md)
+are retained for manual assessment. Production and its open defect statuses
+remain unchanged pending approval/promotion.
+
+The initial global-speed candidate exposed nine post-registration cry misses
+under early exit input (Metagross seven, Milotic two). Its final version explicitly
+cancels the page-owned sampled cry at the final New Entry handoff. This is distinct
+from normal owned playback, which must exhaust naturally; the accepted input
+sweep has no misses or accounting failures. Existing normal-speed battle/Stats
+reports are not closed merely because they pass in the private faster candidate.
+
+The user accepted the [normal-speed battle prototype](battle_normal_speed_prototype.md)
+on 2026-10-05. Its Selected Dex remains double-speed and retains the measured
+Area, Info, coalesced paging and no-eager-lookahead improvements. The final
+6,182-case Selected regression passes, alongside the broader clock/audio/gameplay
+qualification. It is now promoted byte-for-byte with a clean rebuild and fresh
+6,182-case Selected/8,592-case New Entry qualification; see
+[the production policy and results](production_clock_policy.md). This completes
+the present Selected-tab iteration, not the entire optimization story. Opening/
+closing and future modes remain separate work; existing correctness/data stories
+are not automatically closed by this acceptance.
 
 Scope:
 
@@ -1246,8 +1355,10 @@ Scope:
   atlas-A returns are effectively unchanged, and settled Info Stats activation
   adds about 33.49ms/two intervals. Preserve the outgoing panel and immutable
   visible-page ownership when optimizing either preparation or Listing repair.
-  The records reuse 611 overlay bytes, leaving 200 bytes before `$dc00`;
-  future mutually exclusive lower tabs should share the workspace. See the
+  The original records preflight reused 611 overlay bytes and left 200 bytes
+  before `$dc00` at that stage; the completed-tab baseline has less slack,
+  and the current private performance package leaves 154 bytes. Future
+  mutually exclusive lower tabs should share the workspace. See the
   [measured comparison and production acceptance](pokedex_info_return_records_preflight.md).
 - Cost each candidate and explicitly flag ROM0, WRAM0, WRAMX, HRAM and VRAM
   additions. Prefer existing owner scratch and ROMX trades where justified.
@@ -1365,6 +1476,27 @@ specific battle trigger has not yet been recorded. Keep this separate from
 the Stats Screen issue (`DEX-CRY-03`) and Selected paging cancellation
 (`DEX-CRY-04`); passing New Dex Entry tests does not close it.
 
+2026-10-04 normal-input headless revalidation identifies wild appearance as a
+reliable current trigger: Dusknoir plays 512 of 557 blocks and exhausts with
+**45 remaining**. Production and all prototype arms match, including after one
+or four Dex speed roundtrips. In these same generated species contexts its
+player send-out, enemy fainting cry and New Entry cry complete. This narrows
+the observed trigger, not the introducing change or complete refill cause.
+Wild-appearance misses also reproduce for Groudon (198 remaining), Kyogre
+(226) and Yanmega (405); keep these under the same adjacent battle-owner
+investigation. See the [expanded audio tests](pokedex_selected_performance_round2.md#expanded-cross-owner-audio-suite).
+
+2026-10-05: the private [normal-battle clock trial](battle_normal_speed_prototype.md)
+reproduces the same four appearance failures as production. Its first revision
+also exposed a new Vibrava miss due to unnecessary inherited timer work; that
+specific prototype regression is corrected and the final four-offset/six-context
+suite completes Vibrava. This does not close the deferred original battle issue.
+
+The 2026-10-05 production promotion repeats all 960 cross-owner cases. The same
+four initial wild-appearance failures remain with identical remaining block
+counts; no new battle cry failure is introduced. Do not mark this issue solved
+because standalone Stats improves at double speed.
+
 ### BATTLE-MOVE-01: String Shot reports or applies an Attack drop
 
 Status: Deferred investigation
@@ -1383,6 +1515,204 @@ experience is awarded. The user requested reviewing that presentation even
 though it was not a regression. This is about the capture animation's ball,
 not the small HUD caught indicator or trainer party-ball palette; the earlier
 backlog wording incorrectly described a caught indicator remaining visible.
+
+### BATTLE-UI-01: Battle menu glyph corruption after a party Stats visit and switch
+
+Status: User-reported in production and double-speed prototype; investigation deferred
+
+Reported 2026-10-04. Reproduce by starting a battle, choosing Pokemon, selecting
+a party member and opening Stats, waiting for its animation to finish, returning
+to the party, selecting the same Pokemon and choosing Switch. Let the turn
+finish. The restored battle menu has corrupted glyphs/graphics along the Fight
+and Run button edges. The supplied screenshot is from
+`pokecrystal-animation-double.gbc`; the user also confirms production is affected.
+
+Investigate battle-menu tile residency, font/button ownership and restoration
+after Stats. No underlying cause is established. Record the same route without
+the Stats visit as a control, exact species, return/switch path, VRAM banks,
+tilemap/attrmap and affected tiles before and after restoration. This is not
+currently attributed to the whole-game double-speed change.
+
+### BATTLE-UI-02: Font glyphs flash in the battle-menu area during switching
+
+Status: User-reported in production and double-speed prototype; investigation deferred
+
+Reported 2026-10-04. Select a party Pokemon to switch into during battle. A brief
+font-glyph flash appears where the battle menu should be before the switch
+presentation continues. Capture every display interval around confirmation,
+menu masking, VRAM uploads and map publication. Premature tilemap/attribute or
+VRAM-bank changes are a hypothesis, not a confirmed diagnosis. Keep this
+transient defect separate from persistent `BATTLE-UI-01` until evidence links them.
+
+### BATTLE-ANIM-01: Glacial Slam slices the opposing Pokemon sprite
+
+Status: User-reported in production and double-speed prototype; investigation deferred
+
+Reported 2026-10-04 during move-animation review. Glacial Slam visibly slices
+the opposing Pokemon sprite. Incomplete BG-to-OAM replacement coverage is the
+user's suggested explanation; it has not been verified. Capture the affected
+opponent species, animation phase, BG map/tile banks, shadow/hardware OAM and
+per-scanline sprite occupancy. Compare both attack directions and different
+frontpic sizes before deciding whether this is replacement coverage, clipping,
+scanline pressure or another presentation problem. No fix is approved here.
+
+### BATTLE-INTRO-01: Double-speed battle slide repeats and jumps
+
+Status: Private prototype correction passes automated tests and manual review; not promoted to production
+
+Reported 2026-10-04 after the targeted-motion trial. Start a wild battle in the
+whole-game double-speed prototype and watch the opposing picture slide in.
+The picture occasionally holds its position and then jumps four pixels rather
+than advancing two pixels per display interval. Normal-speed production is
+smooth. A native Joey trainer intro also reproduces the same defect.
+
+Confirmed cause: `BattleIntroSlidingPics.loop2` checks only `LY >= $60`.
+VBlank lines 144-153 also pass. Faster producer work at double speed sometimes
+reaches the check in VBlank, so the live per-scanline BG scroll table is changed
+before the intended visible-line window. Its publication cadence can then
+disagree with the already committed trainer OAM. Total duration alone misses
+the defect: both builds still take approximately 74 display intervals.
+
+The private `surf-intro` revision adds an upper-bound check, admitting the
+scroll/OAM staging only on visible lines 96-143. It does not change the slide
+distance, two-pixel increment, iteration count, producer budget or CPU speed.
+Cost: four ROMX bytes in `bank13_2`; zero ROM0 code, WRAM0, WRAMX, HRAM, VRAM
+or OAM allocation. The existing final/startup holds are retained.
+
+Eight wild species at four starting offsets, plus a native trainer intro, pass
+rendered-pixel translation checks in the revised build. The uncorrected
+double-speed arm reproduces 648 irregular wild displays and 30 irregular trainer
+displays across these tests; production and the correction have zero. The
+existing battle-cry ownership issue is separate and is not closed by this fix.
+Nothing has been promoted to production. See the
+[Surf/intro revision](battle_animation_targeted_motion_prototype.md#surf-and-battle-intro-revision).
+
+### BATTLE-ANIM-02: Revised Surf leaves scanline scrolling enabled after completion
+
+Status: Corrected in the private expanded-motion prototype; not promoted to production
+
+Reported 2026-10-04 in `pokecrystal-animation-surf-intro.gbc`. The motion timing
+now visually matches production, but the scene is sliced/wrapped after Surf's
+wave retreats. Leaving battle repairs the scene. Caustic is unaffected from a
+clean entry. Both attack directions reproduce the ownership violation in the
+headless runner, at all four tested starting offsets.
+
+Cause: the revised retreat's last update advances Y from 111 to 113. Surf tests
+for terminal Y before the step, so its cleanup requires one further update.
+The script ends on that final step. `hLCDCPointer` remains `$42` (per-scanline
+SCY writes), even after animation WRAM is cleared and bank 1 is restored.
+The LCD interrupt then reads unrelated bank-1 data as scroll offsets instead
+of the bank-5 override table. A later effect's own cleanup can mask the defect;
+animation timing and a single final screenshot are insufficient assertions.
+
+Forty-eight read-only native comparisons: 8/8 Surf cleanup violations in the
+broken Surf/intro prototype, 0/8 in production, 0/8 in the earlier intermediate trial;
+Caustic has 0/8 in each. All 48 invocation timings exactly match existing
+captures. A native Surf-last turn followed by fleeing confirms pointer `$42`
+before exit and zero in the restored overworld.
+
+Recommended local correction: after storing the final retreat Y, branch to
+the existing Surf cleanup immediately when Y reaches `$70`. Projected cost:
+four ROMX bytes; no ROM0, RAM, VRAM, OAM or table allocation changes. Retain
+the accepted motion/SFX timings and intro guard. Adding one final script wait
+also admits cleanup, but remains dependent on a spare future update and is
+less robust. The same-update local correction has now been applied only to the
+private prototype. It adds four ROMX bytes and no new RAM or graphics storage.
+
+The earlier test suite lacked this post-animation lifecycle assertion. The
+host-only observer now checks it explicitly; the broken revision was not
+qualified for promotion. The corrected comparison
+has zero cleanup violations, zero wrong-bank reads and exact observer timing
+parity across both sides and four phases. A Surf-last native turn also returns
+to the battle menu and overworld with the scroll handler disabled. Production
+is unchanged. The expanded move retiming still requires manual review. See the
+[expanded private qualification](battle_animation_expanded_motion_prototype.md)
+for final-build results and the
+[Surf teardown diagnosis](battle_animation_targeted_motion_prototype.md#surf-teardown-diagnosis)
+for exact state captures, alternatives, risks and retained evidence.
+
+### BATTLE-ANIM-03: Superpower target shake may appear less intense
+
+Status: Unconfirmed visual difference; future investigation, not an acceptance blocker
+
+Reported 2026-10-05 while reviewing the accepted normal-speed battle prototype.
+The target's shake during Superpower appears slightly less intense in the
+production/prototype comparison video, but the user finds it acceptable in-game.
+Do not increase vibration amplitude or reintroduce animation retiming on this
+observation alone.
+
+Reference: `build/battle-normal-speed-20261004/visuals/superpower-player-comparison.mp4`
+and `superpower-foe-comparison.mp4`. Production SHA-256 is
+`7e8525b279a5a748f876d3fdc09a0e519a2f09c5283b8070adc1e86bd2a92666`;
+the accepted private trial is
+`94ca7887537a378e036f9b5bfd5e771ef8989ec0c20854e32da13bf100d53aec`.
+The observer found matching logical motion, BG-effect and sound sequences; that
+does not establish identical physical pose holds or perceived shake intensity.
+
+When revisited, capture both sides and compare the target's actual per-display
+offset, amplitude, hold duration and vibration phase under matching circumstances.
+Distinguish publication/music/interrupt phase from an altered effect function,
+fixture artwork, or comparison-video presentation. Reproduce before choosing a
+fix; cause and cost are not yet established. Coordinate with `BATTLE-PERF-01`.
+
+### BATTLE-PERF-01: Targeted move-animation performance and display cadence
+
+Status: Deferred research/optimization story; no broad retiming approved
+
+Requested 2026-10-04 after rejecting the expanded double-speed motion trial.
+The next private baseline uses double speed outside battles and normal speed
+for battle-owned execution. Reclaim worthwhile faster/smoother presentation
+through individual, measured changes rather than reconstructing every move
+with shared pacing gates or separately interpolated object curves.
+
+The [2026-10-05 normal-battle trial](battle_normal_speed_prototype.md) records
+the 100-move native baseline, separate review ROM/save and final regression
+coverage. It is not promoted to production and is not authorization to retime
+any individual move as part of this deferred story.
+
+This story includes the earlier **Emerald Thunderbolt research**, not a separate
+duplicate task. See [Thunderbolt three-way comparison](thunderbolt_three_way_comparison.md)
+and the retained [evidence package](archived/thunderbolt-reference.md).
+`research_artifacts/thunderbolt-comparison-20261004/` contains the individual
+and compiled videos, raw traces, state holds, ROM/ELF/symbol identities and
+replay inputs. It must survive ordinary disposable-build cleanup.
+
+Research and implementation candidates:
+
+- Improve animation publication cadence toward one meaningful display update
+  per hardware interval where feasible. Emerald and Crystal can have the same
+  authored script length but different displayed pose holds. Do not equate
+  interpreter calls, completed CPU work and newly published pixels.
+- Optimize native object/BG/OAM work, particularly distorted water backgrounds,
+  scanline-table transfer, trig work and flipped opponent motion. Opponent-side
+  CPU stalls are inefficiencies to remove, **not timing targets to reproduce**.
+- Consider Polished's dedicated scanline-override request/copy and cutscene
+  OAM publication despite palette updates. Its native faster animations do not
+  themselves provide normal-speed presentation compensation. See the
+  [six-move comparison](polished_battle_animation_comparison.md).
+- Assess faster Petal Dance and powder effects individually. Replacing the
+  custom powder controller may reclaim code, but needs its own visual and
+  sound qualification before changing/removing it.
+- Preserve impact overlap, continuous motion, native vibration amplitude,
+  simultaneous effect relationships and SFX rhythm. Caustic requires checking
+  **both launch and pop/impact sounds**, plus the ten-objects-per-scanline limit.
+  The rejected trial's Waterfall, Leaf Blade/Razor Leaf/Magical Leaf and wind
+  effects are specific negative controls; total-duration matching did not
+  protect their presentation.
+
+Use production normal-speed captures as a reference, not an obligation to
+retain every wasted interval. Establish visual targets per move/phase, capture
+both sides, compare actual published OAM/BG and audio, and obtain manual
+acceptance. Profile and test a bounded native implementation before deciding
+whether that move benefits from more ROMX data, targeted function optimization,
+an explicit local rate, or a safely scoped clock change. Cost ROM0/WRAM0/HRAM
+separately and make all ownership/scheduler contracts explicit.
+
+Acceptance includes sustained battles, catches/New Entry, nested Party/Stats/
+Pack, return to overworld, animation/audio miss checks, cleanup of scanline
+handlers and resource ownership. Keep existing battle UI/Glacial Slam defects
+separate unless a demonstrated cause links them. No implementation is authorized
+by logging this future story.
 
 ### OW-MOVE-01: Research faster player turning without changing walking behavior
 

@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import subprocess
 
-from .assets import Repository, sha256
+from .assets import Repository, offset, sha256
 from .cold_listing import expected_picture
 from .cpu import CounterCPU
 
@@ -38,9 +38,10 @@ def audio_empty(repo):
     return bank, decoded - 6
 
 
-def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
+def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c), expected_speed=0):
     symbols = {**repo.symbols, '@audio_empty': audio_empty(repo)}
-    lines = [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS]
+    lines = [f'#define EXPECTED_CPU_SPEED {int(expected_speed)}']
+    lines += [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS]
     lines += [f'#define B_{name} {symbols[name][0]}' for name in FIELDS]
     external_misses = 'NewDexEntryAnimationMiss' not in symbols
     if external_misses:
@@ -109,6 +110,13 @@ def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c)):
             SampledCry_FillRollingCache SampledCry_DecodePairBatch
             Decompress Request2bpp Pokedex_LoadGFX StartSampledCryAsync DisplayDexEntry'''.split()
         additional_events = []
+        bank, address = symbols['NewPokedexEntry']
+        body = repo.rom[offset((bank, address)):offset(symbols['NewPokedexEntry.ReturnFromDexRegistration'])]
+        target = symbols['StopSampledCryAsync_NoInterruptControl'][1]
+        call = bytes((0xc4, target & 255, target >> 8))
+        if body.count(call) == 1:
+            symbols['@owned_cry_cancel'] = bank, address + body.index(call)
+            additional_events.append(('owned_cry_cancel', ('@owned_cry_cancel', 0)))
         if 'StopSampledCryAsync_FromTimer' in symbols:
             additional_events.append(('audio_stop', ('StopSampledCryAsync_FromTimer', 0)))
         if 'NewDexEntry_DisplayPage2' in symbols:
