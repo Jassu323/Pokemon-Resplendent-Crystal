@@ -58,6 +58,13 @@ EXPORT DEF POKEDEX_SCX EQU 5
 DEF POKEDEX_GRID_WIDTH  EQU 3
 DEF POKEDEX_GRID_HEIGHT EQU 3
 DEF POKEDEX_GRID_SIZE   EQU POKEDEX_GRID_WIDTH * POKEDEX_GRID_HEIGHT
+DEF DEXLIST_MODERN EQU 0
+DEF DEXLIST_LEGACY EQU 1
+DEF POKEDEX_LEGACY_HEIGHT EQU 7
+DEF POKEDEX_LEGACY_JUNCTION_TILE EQU $62
+DEF POKEDEX_LEGACY_CAP_TILE EQU $63
+DEF POKEDEX_LEGACY_DIVIDER_TILE EQU $64
+DEF POKEDEX_LEGACY_ARROW_TILE EQU $7e
 DEF POKEDEX_GRID_CACHE_ROWS EQU POKEDEX_GRID_HEIGHT + 2
 
 DEF POKEDEX_GRID_SEEN_F   EQU 0
@@ -212,6 +219,8 @@ Pokedex:
 	call ClearSprites
 	ld a, [wCurDexMode]
 	ld [wLastDexMode], a
+	ld a, [wPokedexListingPresentation]
+	ld [wLastDexPresentation], a
 	call Pokedex_ClearLockedIDs
 
 	pop af
@@ -252,9 +261,18 @@ InitPokedex:
 
 	ld a, [wLastDexMode]
 	ld [wCurDexMode], a
+	ld a, [wLastDexPresentation]
+	cp DEXLIST_LEGACY + 1
+	jr c, .presentation_valid
+	xor a
+.presentation_valid
+	ld [wPokedexListingPresentation], a
 
 	farcall Pokedex_OrderMonsByMode
-	call Pokedex_InitGridCursorPosition
+	farcall Pokedex_InitListingPresentation
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr nz, .grid_cache_ready
 	ldh a, [hCGB]
 	and a
 	jr z, .grid_cache_ready
@@ -462,6 +480,12 @@ Pokedex_Exit:
 	ret
 
 Pokedex_InitMainScreen:
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr z, .modern
+	farcall PokedexLegacy_InitMainScreen
+	ret
+.modern
 	xor a
 	ldh [hVBlank], a
 	ldh [hBGMapMode], a
@@ -490,7 +514,7 @@ Pokedex_InitMainScreen:
 	farcall DrawPokedexListWindow
 	call Pokedex_PrintSelectedName
 	hlcoord 0, 17
-	ld de, String_START_SEARCH
+	ld de, String_START_OPTION
 	call Pokedex_PlaceString
 	ldh a, [hCGB]
 	and a
@@ -554,7 +578,7 @@ Pokedex_InitMainScreen:
 	farcall DrawPokedexListWindow
 	call Pokedex_PrintSelectedName
 	hlcoord 0, 17
-	ld de, String_START_SEARCH
+	ld de, String_START_OPTION
 	call Pokedex_PlaceString
 	farcall Pokedex_StartAnimationPrefetch
 	ldh a, [hCGB]
@@ -593,6 +617,12 @@ Pokedex_UpdateMainScreen:
 	ld a, [hl]
 	and PAD_START
 	jp nz, .start
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr z, .modern
+	farcall PokedexLegacy_UpdateMainScreen
+	ret
+.modern
 	call Pokedex_GridHandleDPadInput
 	jr c, .selection_changed
 	farcall Pokedex_ServiceAnimationProducer
@@ -665,6 +695,10 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .select
+	farcall Pokedex_CancelAnimationPrefetch
+	call Pokedex_GetSelectedMon
+	call Pokedex_SaveListingViewport
+	farcall PokedexSelectedMon_CaptureListingSelection
 	call Pokedex_StopGridIconAnimation
 	call Pokedex_BlackOutBG
 	ld a, DEXSTATE_OPTION_SCR
@@ -719,104 +753,11 @@ DexEntryScreen_ArrowCursorData:
 	dwcoord 15, 17 ; AREA
 
 Pokedex_InitOptionScreen:
-	xor a
-	ldh [hBGMapMode], a
-	call ClearSprites
-	call Pokedex_DrawOptionScreenBG
-	call Pokedex_InitArrowCursor
-	; point cursor to the current dex mode (modes == menu item indexes)
-	ld a, [wCurDexMode]
-	ld [wDexArrowCursorPosIndex], a
-	call Pokedex_DisplayModeDescription
-	call WaitBGMap
-	ld a, SCGB_POKEDEX_SEARCH_OPTION
-	call Pokedex_GetSGBLayout
-	call Pokedex_IncrementDexPointer
+	farcall PokedexListing_InitModeScreen
 	ret
 
 Pokedex_UpdateOptionScreen:
-	ld a, [wUnlockedUnownMode]
-	and a
-	jr nz, .okay
-	ld de, .NoUnownModeArrowCursorData
-	jr .okay2
-.okay
-	ld de, .ArrowCursorData
-.okay2
-	call Pokedex_MoveArrowCursor
-	call c, Pokedex_DisplayModeDescription
-	ld hl, hJoyPressed
-	ld a, [hl]
-	and PAD_SELECT | PAD_B
-	jr nz, .return_to_main_screen
-	ld a, [hl]
-	and PAD_A
-	jr nz, .do_menu_action
-	ret
-
-.do_menu_action
-	ld a, [wDexArrowCursorPosIndex]
-	ld hl, .MenuActionJumptable
-	call Pokedex_LoadPointer
-	jp hl
-
-.return_to_main_screen
-	call Pokedex_BlackOutBG
-	ld a, DEXSTATE_MAIN_SCR
-	ld [wJumptableIndex], a
-	ret
-
-.NoUnownModeArrowCursorData:
-	db PAD_UP | PAD_DOWN, 3
-	dwcoord 2,  4 ; NEW
-	dwcoord 2,  6 ; OLD
-	dwcoord 2,  8 ; ABC
-
-.ArrowCursorData:
-	db PAD_UP | PAD_DOWN, 4
-	dwcoord 2,  4 ; NEW
-	dwcoord 2,  6 ; OLD
-	dwcoord 2,  8 ; ABC
-	dwcoord 2, 10 ; UNOWN
-
-.MenuActionJumptable:
-	dw .MenuAction_NewMode
-	dw .MenuAction_OldMode
-	dw .MenuAction_ABCMode
-	dw .MenuAction_UnownMode
-
-.MenuAction_NewMode:
-	ld b, DEXMODE_NEW
-	jr .ChangeMode
-
-.MenuAction_OldMode:
-	ld b, DEXMODE_OLD
-	jr .ChangeMode
-
-.MenuAction_ABCMode:
-	ld b, DEXMODE_ABC
-
-.ChangeMode:
-	ld a, [wCurDexMode]
-	cp b
-	jr z, .skip_changing_mode ; Skip if new mode is same as current.
-
-	ld a, b
-	ld [wCurDexMode], a
-	farcall Pokedex_OrderMonsByMode
-	call Pokedex_DisplayChangingModesMessage
-	call Pokedex_InitGridCursorPosition
-
-.skip_changing_mode
-	call Pokedex_BlackOutBG
-	ld a, DEXSTATE_MAIN_SCR
-	ld [wJumptableIndex], a
-	ret
-
-.MenuAction_UnownMode:
-	call Pokedex_BlackOutBG
-	ld a, DEXSTATE_UNOWN_MODE
-	ld [wJumptableIndex], a
+	farcall PokedexListing_UpdateModeScreen
 	ret
 
 Pokedex_InitSearchScreen:
@@ -1622,7 +1563,7 @@ Pokedex_DrawMainScreenBG:
 	ld bc, SCREEN_WIDTH
 	call ByteFill
 	hlcoord 1, 17
-	ld de, String_SELECT_OPTION
+	ld de, String_SELECT_MODE
 	call Pokedex_PlaceString
 	hlcoord 8, 1
 	ld b, 7
@@ -1660,11 +1601,11 @@ String_SEEN:
 	db "Seen", -1
 String_OWN:
 	db "Own", -1
-String_SELECT_OPTION:
-	db $3b, $48, $49, $4a, $44, $45, $46, $47 ; SELECT > OPTION
+String_SELECT_MODE:
+	db $3b, $48, $49, $4a, $4b, $4c, $4d, $4e ; SELECT > MODE
 	; fallthrough
-String_START_SEARCH:
-	db $3c, $3b, $41, $42, $43, $4b, $4c, $4d, $4e, $3c, -1 ; START > SEARCH
+String_START_OPTION:
+	db $3c, $3b, $41, $42, $43, $44, $45, $46, $47, $3c, -1 ; START > OPTION
 
 Pokedex_DrawDexEntryScreenBG:
 	call Pokedex_FillBackgroundColor2
@@ -3361,7 +3302,7 @@ Pokedex_InvertTiles:
 	ret
 
 PokedexLZ:
-INCBIN "gfx/pokedex/pokedex.2bpp.lz"
+INCBIN "gfx/pokedex/pokedex_core.2bpp.lz"
 
 PokedexSlowpokeLZ:
 INCBIN "gfx/pokedex/slowpoke.2bpp.lz"

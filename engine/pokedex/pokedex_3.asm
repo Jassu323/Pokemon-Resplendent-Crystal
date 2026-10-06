@@ -151,7 +151,14 @@ Pokedex_NormalizeListingAfterSelectedMon:
 	ret
 
 Pokedex_RestoreListingAfterSelectedMon:
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr z, .modern
+	farcall PokedexSelectedMon_NormalizeLinearReturn
+	jr .footprint
+.modern
 	call Pokedex_NormalizeListingAfterSelectedMon
+.footprint
 	ldh a, [hCGB]
 	and a
 	ret z
@@ -1696,6 +1703,9 @@ Pokedex_VBlankAnimationFrontpicMap:
 	ret
 
 Pokedex_VBlankGridIconAnimation::
+	ld a, [wPokedexListingPresentation]
+	and a
+	ret nz
 ; A full-grid wrap publishes its portrait, palettes, and shadow OAM as one
 ; VBlank-owned transaction. Mainline code has already replaced each target
 ; grid row after its outgoing pixels passed.

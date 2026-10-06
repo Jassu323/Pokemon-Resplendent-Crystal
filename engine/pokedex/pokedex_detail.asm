@@ -206,8 +206,12 @@ PokedexSelectedMon_Leave:
 	ld [wPokedexSelectedState], a
 	call PokedexSelectedMon_CancelCry
 	call Pokedex_CancelAnimationPrefetch
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr nz, .listing_cache_ready
 	farcall PokedexInfo_PreserveReturnPanel
 	farcall PokedexInfo_RestoreListingCache
+.listing_cache_ready
 	ld a, [wPokedexSelectedReturnState]
 	cp DEXSTATE_MAIN_SCR
 	jr z, .restore_volume

@@ -501,7 +501,9 @@ CGB_PokedexBuildListLayout:
 	ld de, wBGPals1 palette 0
 	call LoadHLPaletteIntoDE
 	call CGB_PokedexLoadFrontpicPalette
-	call CGB_PokedexLoadListIconPalettes
+	ld a, [wPokedexListingPresentation]
+	and a
+	call z, CGB_PokedexLoadListIconPalettes
 
 	ld hl, PokedexListCursorPalette
 	ld de, wOBPals1 palette 0
@@ -525,8 +527,18 @@ CGB_PokedexBuildListLayout:
 	call FillBoxCGB
 	hlcoord 0, 8, wAttrmap
 	lb bc, 1, 7
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr z, .joined_width_ready
+	inc c
+.joined_width_ready
 	ld a, BG_BANK1
 	call FillBoxCGB
+	ld a, [wPokedexListingPresentation]
+	and a
+	ret z
+	hlcoord 8, 16, wAttrmap
+	ld [hl], BG_YFLIP
 	ret
 
 CGB_PokedexStageListLayout::

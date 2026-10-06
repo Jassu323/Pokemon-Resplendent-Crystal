@@ -345,6 +345,9 @@ INCLUDE "engine/pokedex/performance_fast.asm"
 SECTION "Dex Performance Index", ROMX, BANK[$b9]
 INCLUDE "engine/pokedex/performance_indexed.asm"
 
+SECTION "Pokedex Legacy", ROMX, BANK[$ba]
+INCLUDE "engine/pokedex/pokedex_legacy.asm"
+
 SECTION "Pokedex Moves", ROMX
 INCLUDE "engine/pokedex/pokedex_moves.asm"
 

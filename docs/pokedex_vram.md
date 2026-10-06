@@ -84,7 +84,8 @@ dictionary up front.
 | `vTiles2 $71-$7a` | Description border and shared page badge | 10 | Digit buffers A=`$73/$78`, B=`$79/$7a`; prepare only the inactive pair, publish with the panel. |
 | `vTiles2 $7b-$7d` | Double-digit badge closing pair and level glyph | 3 | Closing pair at `$7b/$7c`, battle-level glyph at `$7d`; used by Moves/shared paging. |
 | `vTiles2 $54` and `$5b` | DMG Listing joined border | 2 | CGB uses the resident bank-1 copies instead. |
-| `vTiles2 $62-$65` | Standalone-entry/DMG footprint | 4 | The normal CGB Dex uses the resident bank-1 footprint. |
+| `vTiles2 $62-$65` | Standalone-entry/DMG footprint; Legacy borders | 4 | Normal CGB Dex reuses `$62-$64` for permanent Legacy junction/cap/divider. Its footprint is resident in bank 1. |
+| `vTiles2 $7e` | Legacy one-tile arrow | 1 | Loaded from the appended shared UI sheet; `$7f` remains space. |
 | `vTiles2 $40-$5a` | DMG Unown glyphs and cursor | 27 | CGB uses the resident bank-1 copies instead. |
 
 The footprint, joined-border, and Unown writes explain why those screens

@@ -541,6 +541,7 @@ ROMX $b8
 	"Pokedex Moves Index"
 ROMX $b9
 ROMX $ba
+	"Pokedex Legacy"
 ROMX $bb
 ROMX $bc
 ROMX $bd

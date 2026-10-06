@@ -40,7 +40,7 @@ FIELDS = '''wDexListingScrollOffset wDexListingCursor wDexListingEnd wCurDexMode
     wPokedexOwnerTilemapBuffer wPokedexOwnerAttrmapBuffer wPokedexInfoGFX wPokedexInfoTileSources
     wDexArrowCursorPosIndex wPokedexMovesPage wPokedexMovesPageCount wPokedexMovesState
     wPokedexBadgeActive wPokedexBadgePending wPokedexDescriptionTextState wPokedexInfoPendingPage
-    wFXAnimID hBattleTurn'''.split()
+    wFXAnimID hBattleTurn wPokedexListingPresentation'''.split()
 AREA_FIELDS = '''wTownMapCursorLandmark wTownMapPlayerIconLandmark wTilemap wShadowOAM
     wRequested2bppSize wRequested2bppDest hVBlank hOAMUpdate hBGMapMode hCGBPalUpdate
     wNamedObjectIndex wCurPartySpecies wStatusFlags wPlayerGender wTimeOfDayPal
@@ -344,6 +344,9 @@ def run_case(job):
             moved = settled
         else:
             moved = move(driver, direction, index)
+        warm = config.get('warm', False)
+        if warm:
+            driver.run(('animation_miss', 'audio_miss'), frames=120)
         driver.events.clear()
         driver.command('audit 1')
         accepted = driver.run(('change_species' if paging else 'accept',), frames=120, key=direction if paging else 'a')
@@ -361,10 +364,10 @@ def run_case(job):
                 break
         else:
             raise RuntimeError('Animation or cry did not finish within the bounded test')
-        result = audit(asset, accepted, driver.events, final, cold=not paging)
+        result = audit(asset, accepted, driver.events, final, cold=not paging and not warm)
         if paging and final['selected_index'] != index:
             result['issues'].append('wrong_paging_destination')
-        result['path'] = 'internal_paging' if paging else 'cold_listing'
+        result['path'] = 'internal_paging' if paging else 'warm_listing' if warm else 'cold_listing'
         if paging:
             result['cold'] = None
         row.update(result, status='fail' if result['issues'] else 'pass',

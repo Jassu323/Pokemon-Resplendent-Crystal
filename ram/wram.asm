@@ -812,6 +812,7 @@ wPokedexNameBuffer:: ds MON_NAME_LENGTH
 wPokedexAnimLoopTick:: db
 wPokedexAnimWorkTick:: db
 wPokedexAnimSchedulerControl:: db
+wPokedexListingPresentation:: db
 
 NEXTU
 ; pokegear
@@ -3058,7 +3059,7 @@ wPokegearFlags::
 	db
 wRadioTuningKnob:: db
 wLastDexMode:: db
-	ds 1
+wLastDexPresentation:: db ; reuses saved padding; 0 Modern, 1 Legacy
 wWhichRegisteredItem:: db
 wRegisteredItem:: db
 

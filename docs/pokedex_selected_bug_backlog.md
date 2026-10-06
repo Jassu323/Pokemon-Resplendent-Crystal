@@ -46,6 +46,10 @@ Remaining Dex review queue:
   qualification](battle_normal_speed_prototype.md) and [measured Dex benefits](global_double_speed.md).
   See the [production integration and fresh qualification](production_clock_policy.md).
   Other modes and lifecycle optimization remain deferred.
+- `DEX-PERF-03` defers removal of idle Listing animation cache warming until
+  after Legacy Dex Mode is implemented. This is separate from the already
+  removed speculative minisprite scrolling lookahead; keep current behavior
+  during the Legacy implementation and qualify cold-only preparation later.
 - `DEX-INFO-06` confirms rapid A restart starvation on multi-page Info.
   The private finish/coalesce fix passes accepted-request/final-page checks and
   is manually accepted and now promoted/solved in production, with fresh
@@ -1373,6 +1377,56 @@ Acceptance:
   Listing-cache/navigation, supported-mode and menu/overworld exit regressions.
 - Manual presentation confirmation before promotion. Preserve separately
   logged correctness fixes; this story is not permission to defer INFO-01/02.
+
+### DEX-PERF-03: Remove Idle Listing Animation Cache Warming
+
+Status: Deferred 2026-10-05; implement after Legacy Dex Mode
+
+The user requests removal of the selected-species animation warming performed
+while a Listing is idle. Modern currently calls `Pokedex_StartAnimationPrefetch`
+after revealing a selection, then services `Pokedex_ServiceAnimationProducer`
+from otherwise-idle `Pokedex_UpdateMainScreen` iterations. This can decode
+toward the startup target and complete the first hidden animation stage before
+A-button entry. `Pokedex_PrimeDescriptionAnimation` retains that work and fills
+only the remaining startup deficit.
+
+This is not the Modern minisprite lookahead removed by the accepted performance
+work. Three visible grid rows and five physical staging slots remain; no
+speculative neighboring frontpic cache needs to be removed. Legacy integration
+must not silently include this separate behavior change.
+
+Scope:
+
+- Remove idle Listing dictionary decoding and hidden-frame preparation from
+  Modern and any equivalent Legacy Listing path introduced before this story.
+- Preserve the static selected portrait, colored palette, resident footprint,
+  normal grid icon animation and on-demand scrolling uploads. They are not
+  speculative animation warming.
+- Retain the Selected owner's startup initialization/priming, fixed 96-tail-tile
+  runway and first complete frame, both animation slots, generated timelines
+  and plans, display deadlines, finishing admission and cry ownership/refill.
+  `Pokedex_StartAnimationPrefetch` is also used during Selected preparation:
+  removing or disabling it globally would not be a correctly scoped change.
+- Remove only obsolete Listing-specific calls/state or misleading naming after
+  auditing remaining users; do not discard shared decoder/scheduler machinery.
+- Measure input-to-first-response and input-to-complete entry before/after in
+  both Listing presentations, including immediate A after cursor movement,
+  short/long hover, cold entry, internal paging and rapid cancellation.
+- Update scheduler, VRAM and qualification documentation so hover duration no
+  longer implies prepared animation work once the change is implemented.
+
+Acceptance:
+
+- Long Listing hovers perform no animation-dictionary decode or hidden-frame
+  upload, while normal static selection and Modern icon rendering remain correct.
+- All 373 species retain exact authored Selected animation timing, complete
+  uninterrupted sampled cries and correct synthesized-cry cancellation on cold
+  entry and internal paging. Include the known heavy dictionaries and early
+  A/B/Area/tab changes at multiple physical display phases.
+- No stale owner, palette/OAM corruption, missed animation deadline or premature
+  sampled-cache exhaustion occurs on entry/return or Legacy/Modern switching.
+- Quantify any loss of warmed-entry latency and obtain manual acceptance. Keep
+  the resource delta and reproducible evidence with the existing headless suite.
 
 ## Adjacent Deferred Work
 

@@ -96,6 +96,9 @@ static void snapshot(int hit)
            upload_services, byte(S_wPokedexAnimPlaybackState),
            byte(S_hSampledCryTimer), word(S_hSampledCryBlocks), sfx & 1,
            byte(S_hVBlankCounter), byte(S_hJoyDown), byte(0xff44), gb.ime, gb.sp, gb.cgb_double_speed);
+#ifdef S_wPokedexListingPresentation
+    printf(",\"presentation\":%u", byte(S_wPokedexListingPresentation));
+#endif
     printf(",\"selected_index\":%u,\"animation_flags\":%u}\n", word(S_wPokedexSelectedIndex), byte(S_wPokedexAnimFlags));
 }
 
@@ -308,6 +311,18 @@ int main(int argc, char **argv)
 #endif
         else if (!strcmp(line, "peek\n")) {
             snapshot(-1);
+        } else if (sscanf(line, "instructions %u", &keys) == 1 && keys <= 1000) {
+            for (unsigned i = 0; i < keys; i++) {
+                printf("{\"event\":\"instruction\",\"bank\":%u,\"pc\":%u,\"opcode\":%u,"
+                       "\"af\":%u,\"bc\":%u,\"de\":%u,\"hl\":%u,\"sp\":%u}\n",
+                       gb.pc < 0x4000 ? 0 : gb.mbc_rom_bank, gb.pc, GB_read_memory(&gb, gb.pc),
+                       gb.af, gb.bc, gb.de, gb.hl, gb.sp);
+                unsigned before = gb.cycles_since_run;
+                step_origin = before;
+                GB_cpu_run(&gb);
+                ticks += (unsigned)(gb.cycles_since_run - before);
+            }
+            printf("{\"event\":\"ok\"}\n");
         } else if (!strcmp(line, "ui\n")) {
             uint8_t map[21 * 18], attrs[21 * 18];
             for (unsigned y = 0; y < 18; y++) for (unsigned x = 0; x < 21; x++) {
@@ -320,6 +335,17 @@ int main(int argc, char **argv)
                    gb.ram[0x1000 + (S_wBaseType1 & 4095)],
                    gb.ram[0x1000 + (S_wBaseType2 & 4095)]);
             hex(map, sizeof(map)); printf(",\"attrs\":"); hex(attrs, sizeof(attrs));
+            uint8_t window[20 * 18], window_attrs[20 * 18];
+            for (unsigned y = 0; y < 18; y++) for (unsigned x = 0; x < 20; x++) {
+                window[y * 20 + x] = gb.vram[0x1c00 + y * 32 + x];
+                window_attrs[y * 20 + x] = gb.vram[0x3c00 + y * 32 + x];
+            }
+            printf(",\"window\":"); hex(window, sizeof(window));
+            printf(",\"window_attrs\":"); hex(window_attrs, sizeof(window_attrs));
+            uint8_t legacy[4 * 16];
+            memcpy(legacy, gb.vram + 0x1620, 3 * 16);
+            memcpy(legacy + 3 * 16, gb.vram + 0x17e0, 16);
+            printf(",\"legacy_gfx\":"); hex(legacy, sizeof(legacy));
             printf(",\"palettes\":"); hex(gb.background_palettes_data, 64);
             printf(",\"obj_palettes\":"); hex(gb.object_palettes_data, 64);
             printf(",\"oam\":"); hex(gb.oam, sizeof(gb.oam));

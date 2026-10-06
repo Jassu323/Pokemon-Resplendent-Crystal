@@ -18,13 +18,22 @@ def run(job):
     expected = task[0].get('expected_double_speed', 0)
     for module in (cold_listing, info_ui, moves_ui, area_ui):
         module.audit = partial(BASE_AUDIT, expected_double_speed=expected)
+        if task[0].get('listing_style') == 'legacy':
+            module.predecessor = partial(legacy_predecessor, count=len(task[0]['names']))
     function = {'info': info_ui.run_case, 'info-stress': info_ui.run_stress,
                 'moves': moves_ui.run_case, 'moves-stress': moves_ui.run_stress,
-                'cold': cold_listing.run_case, 'paging': cold_listing.run_case,
+                'cold': cold_listing.run_case, 'paging': cold_listing.run_case, 'warm': cold_listing.run_case,
                 'area': area_ui.run_case}[suite]
     result = function(task)
     return dict(suite=suite, result=result,
-                passed=not result.get('issues') and result.get('status', 'pass') == 'pass')
+                passed=not result.get('issues') and result.get('status', 'pass') == 'pass'
+                and result.get('return_to_listing', 'pass') == 'pass')
+
+
+def legacy_predecessor(index, count=373):
+    if index == count - 1 and count > 1:
+        return (0, 'up')
+    return ((index - 1) % count, 'down')
 
 
 def main():
@@ -48,11 +57,11 @@ def main():
         output = (args.output / suite).resolve()
         output.mkdir(parents=True, exist_ok=True)
         local = dict(config, output=str(output), boot=str(BOOT), uncaught=False, paging=suite == 'paging',
-                     follow_up=True, repeat_area=True)
-        if suite in ('cold', 'paging'):
+                     warm=suite == 'warm', follow_up=True, repeat_area=True)
+        if suite in ('cold', 'paging', 'warm'):
             (output / 'listing-states').symlink_to(config['states'], target_is_directory=True)
         for index, name in enumerate(config['names']):
-            if suite in ('cold', 'paging'):
+            if suite in ('cold', 'paging', 'warm'):
                 tasks.append((suite, (local, index, assets[name])))
             elif suite in ('info', 'moves'):
                 for phase in (('0', '8', '32', 'settled') if suite == 'info' else ('0', 'settled')):
