@@ -276,7 +276,8 @@ def navigation_tests(output, jobs):
     return int(bool(summary['failures']))
 
 
-def private_battery(config, target, *, presentation=1, unseen=(), uncaught=()):
+def private_battery(config, target, *, presentation=1, unseen=(), uncaught=(),
+                    order_mode=None, unown_unlocked=None):
     """Change only private fixture records, preserving offsets and checksums."""
     symbols = read_symbols(Path(config['sym']))
     data = bytearray(Path(config['battery']).read_bytes())
@@ -289,6 +290,17 @@ def private_battery(config, target, *, presentation=1, unseen=(), uncaught=()):
     for prefix in ('s', 'sBackup'):
         at = address(prefix + 'PlayerData') + ram('wLastDexPresentation') - ram('wPlayerData')
         data[at] = presentation
+        if order_mode is not None:
+            at = address(prefix + 'PlayerData') + ram('wLastDexMode') - ram('wPlayerData')
+            data[at] = order_mode
+        if unown_unlocked is not None:
+            at = address(prefix + 'PlayerData') + ram('wStatusFlags') - ram('wPlayerData')
+            data[at] = (data[at] | 2) if unown_unlocked else (data[at] & ~2)
+            if unown_unlocked:
+                at = address(prefix + 'PokemonData') + ram('wUnownDex') - ram('wPokemonData')
+                data[at:at + 26] = bytes(range(1, 27))
+                at = address(prefix + 'PokemonData') + ram('wFirstUnownSeen') - ram('wPokemonData')
+                data[at] = 1
         for field, entries in (('Seen', unseen), ('Caught', (*unseen, *uncaught))):
             at = address(prefix + 'PokemonData') + ram('wPokedex' + field) - ram('wPokemonData')
             for index in entries:
@@ -352,27 +364,6 @@ def mode_tests(output):
         if driver.command('peek')['presentation'] != 1:
             raise RuntimeError('Listing preference did not survive closing the Dex')
         records.append(dict(test='reopen_preference', issues=[]))
-        # Retained sorting modes are smoke-tested on both presentations. Full
-        # New-order playback is separately audited for every species.
-        for presentation in (0, 1):
-            for order_mode in (0, 1, 2):
-                driver.command(f'load {config["states"]}/listing-000.s0')
-                select_presentation(driver, presentation)
-                open_mode_screen(driver)
-                cursor = driver.command('ui')['footer_cursor']
-                for _ in range(2 + order_mode - cursor):
-                    press(driver, 'down')
-                press(driver, 'a')
-                state = driver.run(('listing',), frames=600)
-                if state['hit'] != 'listing' or state['mode'] != order_mode or state['presentation'] != presentation:
-                    raise RuntimeError(f'Sort selection failed: {state}')
-                driver.run(('end_loop',))
-                driver.run(('selected', 'animation_miss', 'audio_miss'), key='a')
-                final = settle(driver)
-                if final['selected_index'] != 0:
-                    raise RuntimeError('Sort entry opened the wrong row')
-                driver.run(('listing', 'animation_miss', 'audio_miss'), key='b')
-                records.append(dict(test='sort_smoke', presentation=presentation, order=order_mode, issues=[]))
     finally:
         driver.close()
     control = output / 'seen-control.sav'
@@ -475,7 +466,7 @@ def menu_tests(output):
             select_presentation(driver, presentation)
             open_mode_screen(driver)
             current = driver.command('ui')['footer_cursor']
-            for _ in range(5 - current):
+            for _ in range(2 - current):
                 press(driver, 'down')
             press(driver, 'a')
             reach(driver, repo, 'Pokedex_UpdateUnownMode')

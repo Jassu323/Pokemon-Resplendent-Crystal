@@ -6,10 +6,10 @@ import unittest
 from PIL import Image
 
 from dex_timing.assets import Repository, offset, decompress
-from dex_timing.costs import machine
+from dex_timing.costs import machine, run_to
 
 ROOT = Path(__file__).resolve().parents[1]
-BUILD = Path(os.environ.get('DEX_LEGACY_BUILD', ROOT / 'build/dex-legacy-borders-prototype'))
+BUILD = Path(os.environ.get('DEX_LEGACY_BUILD', ROOT / 'build/dex-modes-transitions-final'))
 
 
 @unittest.skipUnless((BUILD / 'pokecrystal-dex-legacy.gbc').exists(), 'private Legacy link required')
@@ -126,6 +126,56 @@ class LegacyContracts(unittest.TestCase):
                 actual = tuple(''.join(colors[image.getpixel((tile * 8 + x, 32 + y))]
                                        for x in range(8)) for y in range(8))
                 self.assertEqual(actual, rows)
+
+    def test_modes_use_stable_ids_in_both_unlock_states(self):
+        for unlocked, expected in ((0, (0, 1, 3, 4)), (1, (0, 1, 2, 3, 4))):
+            for row, mode in enumerate(expected):
+                cpu = machine(self.repo)
+                cpu.field('wUnlockedUnownMode', unlocked)
+                cpu.field('wDexArrowCursorPosIndex', row)
+                cpu.run('PokedexListing_GetModeID')
+                self.assertEqual(cpu.r[7], mode)
+
+    def test_mode_descriptions_fit_exactly_and_use_the_special_glyph(self):
+        from dex_timing.dex_modes import DESCRIPTIONS, encode
+        for mode, label in enumerate(('Modern', 'Legacy', 'Unown', 'Moves', 'Types')):
+            at = offset(self.repo.symbols['PokedexListing_ModeDescription.' + label])
+            end = self.repo.rom.index(b'\x50', at)
+            actual = self.repo.rom[at:end].split(b'\x4e')
+            expected = [encode(line) for line in DESCRIPTIONS[mode]]
+            self.assertEqual(actual, expected)
+            self.assertTrue(all(len(line) <= 18 for line in actual))
+        for mode in (0, 1, 4):
+            self.assertIn(b'\xe1\xe2', b''.join(encode(line) for line in DESCRIPTIONS[mode]))
+
+    def test_menu_hide_preserves_sources_and_masks_bg_and_obj_targets(self):
+        cpu = machine(self.repo)
+        cpu.ram[0xff70] = 5
+        source = self.repo.symbols['wBGPals1'][1]
+        target = self.repo.symbols['wBGPals2'][1]
+        cpu.block(source, bytes([0x55]) * 128)
+        cpu.block(target, bytes([0x33]) * 128)
+        cpu.ram[0xff70] = 7
+        cpu.field('hBGMapMode', 1)
+        run_to(cpu, 'PokedexListing_BeginMenuTransition', 'PokedexListing_BeginMenuTransition.hide')
+        self.assertEqual(cpu.ram[0xff70], 7)
+        self.assertEqual(cpu.read(self.repo.symbols['hCGBPalUpdate'][1]), 1)
+        self.assertEqual(cpu.read(self.repo.symbols['hBGMapMode'][1]), 0)
+        self.assertEqual(cpu.read(self.repo.symbols['hOAMUpdate'][1]), 1)
+        cpu.ram[0xff70] = 5
+        self.assertEqual(cpu.data(source, 128), bytes([0x55]) * 128)
+        self.assertEqual(cpu.data(target, 128), bytes(128))
+
+    def test_initial_menu_arrow_is_written_locally_before_map_publication(self):
+        for row in (0, 1, 2):
+            cpu = machine(self.repo)
+            cpu.r[7] = row
+            cpu.field('wPokedexSelectedState', 7)
+            run_to(cpu, 'PokedexListing_InitModeScreen.cursor', 'PokedexListing_ModeDescription')
+            at = self.repo.symbols['wTilemap'][1] + (3 + 2 * row) * 20 + 2
+            self.assertEqual(cpu.read(at), 0xed)
+            self.assertEqual(cpu.read(self.repo.symbols['wDexArrowCursorPosIndex'][1]), row)
+            self.assertEqual(cpu.read(self.repo.symbols['wPokedexSelectedState'][1]), 0)
 
 
 if __name__ == '__main__':

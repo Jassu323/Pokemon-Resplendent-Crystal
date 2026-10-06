@@ -1,9 +1,9 @@
 # Legacy And Modern Dex Listings
 
-2026-10-05. Private Legacy Listing prototype on top of
-`d0d84822e` (Double Speed and Dex Optimizations). Production ROM outputs and the
-installed SameBoy battery are unchanged. Manual visual acceptance and production
-promotion are still pending.
+2026-10-05. The Legacy Listing implementation and border corrections have been
+visually accepted and committed. The private Modes menu follow-up described
+below awaits visual acceptance; its builds leave production ROM outputs and
+the installed SameBoy battery unchanged.
 
 ## Scope And Controls
 
@@ -19,9 +19,9 @@ promotion are still pending.
   SELECT and START never open it from Description, Info or Moves. Search-result
   Selected pages have the same restriction. Area retains its vanilla controls.
 - Modern/Legacy selection preserves the absolute selected entry. Temporary
-  New/Old/ABC ordering remains independent of presentation, with unlocked Unown
-  mode still reachable. Removing those older modes and redesigning this menu
-  remain later work.
+  New/Old/ABC ordering remains independent of presentation. The Modes menu
+  prototype removes these exposed ordering choices while preserving existing
+  save/order compatibility. The future Sort interface is separate work.
 - START still opens existing Search. The authored footer now correctly pairs
   SELECT with MODE and START with OPTION; the future Sort/Search popup is not
   implemented in this change.
@@ -147,7 +147,286 @@ by 16px and corner sprites occupy the active row's boundaries. Modern's grid
 icon VBlank animation is disabled while Legacy owns Listing. Selected restores
 its normal type-badge, evolution-mini and tab palette/OAM ownership.
 
-## Exact Linked Cost
+## Modes Menu Prototype
+
+The Modes menu reuses the existing font, arrow cursor, title caps, panel borders
+and palette. Five rows occupy tile rows 3, 5, 7, 9 and 11, starting at column 3;
+the arrow occupies column 2. Both description lines use 18 cells at column 1,
+rows 14 and 16. Tile `$31` fills the surrounding red shell, correcting the
+previous controller's inherited gray area above the panel. No artwork changes
+are needed.
+
+| Row | Before Unown unlock | After Unown unlock |
+| --- | --- | --- |
+| 1 | Modern Dex Mode | Modern Dex Mode |
+| 2 | Legacy Dex Mode | Legacy Dex Mode |
+| 3 | Moves Dex Mode | Unown Dex Mode |
+| 4 | Type Matchups | Moves Dex Mode |
+| 5 | Blank, not selectable | Type Matchups |
+
+`PokedexListing_GetModeID` maps visible row positions through separate ROMX
+tables to stable IDs: Modern 0, Legacy 1, Unown 2, Moves 3, Types 4. Actions and
+description lookup use these IDs, not shifted row positions. The cursor remains
+bounded and uses four or five rows according to the existing unlock flag.
+The shared 12-byte cursor-coordinate table is copied into the already-owned
+WRAM0 scratch; no new scratch allocation is made.
+
+Unown still requires `ENGINE_UNOWN_DEX`, backed by
+`wStatusFlags:STATUSFLAGS_UNOWN_DEX_F` and set by the existing Ruins of Alph
+Research Center quest script. This change does not modify the quest or Unown
+viewer. Moves and Type Matchups can be highlighted and show their descriptions,
+but A is deliberately inactive until those screens are implemented. B or SELECT
+returns to the same Listing. Modern/Legacy preserve the selected entry and
+existing internal ordering; no placeholder action writes an ordering or
+presentation field. Entry remains prohibited from Selected pages.
+
+| Mode | First description line | Second description line |
+| --- | --- | --- |
+| Modern | `Displays <PKMN> in a` | `visual grid.` |
+| Legacy | `Displays <PKMN> in the` | `classic text list.` |
+| Unown | `Displays all Unown` | `forms caught.` |
+| Moves | `Move descriptions` | `and stats.` |
+| Types | `<PKMN> Type weaknesses` | `and resistances.` |
+
+The source uses `<PK><MN>` to place the two special glyph cells directly.
+Legacy uses all 18 cells on both lines; Types uses all 18 on the first line.
+Native map checks include the panel's right border to detect overflow.
+
+The original private build was `build/dex-modes-prototype-final/`, with exported
+`pokecrystal-dex-modes.gbc`, matching symbols/map, and all-caught test batteries.
+`pokecrystal-dex-modes.sav` unlocks Unown and contains all 26 forms;
+`pokecrystal-dex-modes-locked.sav` clears only the unlock flag in the equivalent
+test fixture. An identical `pokecrystal-dex-modes-locked.gbc` and matching symbols
+are exported beside that battery for automatic filename-based save loading.
+These are private copies, not edits of the installed save. Both ROM variants
+have SHA-256 `a382fb6ff297a5fc089f7faff05190f0593dff576914fe18a694e53043afd7f8`.
+
+That first Modes link cost **+49 ROMX bytes** over the accepted border build.
+Its dedicated bank `$ba` section was 1,656 bytes, leaving 14,728 bytes.
+ROM0, WRAM0, WRAMX, HRAM, SRAM, VRAM, palettes and OAM counts are unchanged.
+Total linked ROM use is 2,335,403 bytes; the 4 MiB cartridge has 1,858,901 bytes
+free, including unused banks.
+
+Qualification uses `tools/dex_timing/dex_modes.py` for 54 real-input cases:
+every selectable row in both unlock states, both presentations and all three
+retained internal orderings. It checks exact labels/descriptions, cursor
+placement and boundaries, inactive-A behavior, cancellation, Unown roundtrips,
+selection/order preservation and subsequent playback. Screenshots are captured
+for every row in both unlock states/presentations.
+
+Its **8,516 matching-link native checks passed**, with zero animation deadline
+or uninterrupted sampled-cry completion failures. Those checks validated settled
+menu screens, not every display frame during mode transitions; the visual bugs
+reported afterward exposed this coverage gap:
+
+- 6,555 Legacy standard playback/tab/stress cases across all 373 species.
+- 1,119 Modern all-species cold/warm/internal-paging playback cases.
+- 373 Listing/Selected cases, including all 492 Info-page B-returns.
+- 399 frame-by-frame navigation cases with zero mixed-selection frames.
+- 54 new Modes cases, ten preference/warmed-menu cancellation cases and six
+  Search/Unown roundtrips.
+
+The 72 focused host tests pass. Broader historical host-test limitations remain
+as documented in the original qualification; this is not an all-host-tests claim
+or physical-hardware certification. Matching summaries are under
+`regression-{legacy,modern}/`, `listing-qualification/`, `navigation/` and
+`modes-qualification/`, plus `mode-tests.json` and `menu-tests.json` in the
+private build directory.
+
+The existing private build/prepare/navigation/playback commands below can use
+`build/dex-modes-prototype-final` as their output directory. Then run:
+
+```sh
+PYTHONPATH=tools python3 -B -m tools.dex_timing.dex_modes --output build/dex-modes-prototype-final --jobs 10
+DEX_LEGACY_BUILD=build/dex-modes-prototype-final PYTHONPATH=tools python3 -B -m unittest test_legacy_listing test_dex_cold_listing test_dex_target_regression test_new_dex_entry test_dex_performance test_pokedex_area_assets
+```
+
+Manual review remains the acceptance gate for the new menu's appearance. Check
+both unlock layouts, all descriptions, Modern/Legacy selection preservation,
+Unown entry/return and inactive-A behavior on the two future-mode placeholders.
+
+## Modes Transition Follow-Up
+
+2026-10-05: four user-reported issues were reproduced in the original Modes
+prototype, then corrected privately. Production ROM outputs and the installed
+SameBoy save remain unchanged. The updated prototype is
+`build/dex-modes-transitions-final/pokecrystal-dex-modes.gbc`, SHA-256
+`d53736afb6a6098f6c5b0ed228c9e5ba5efbd9d1cb4e28f169c9fed60a55a34b`.
+Matching symbols, map, all-caught/unlocked battery and equivalent locked variant
+are exported beside it. Visual acceptance is still required before promotion.
+
+### Reproductions And Causes
+
+1. **Listing to Modes:** open either Listing and press SELECT. The original
+   frontpic shifts horizontally, grid/cursor colors flash green, and partial
+   menu rows appear. `Pokedex_BlackOutBG` zeros only the *source* BG palettes,
+   without copying them to the hardware targets or requesting their publication.
+   OBJ colors remain live too. SELECT changes SCX from 5 to 0 and hides the
+   Listing Window before any completed hide. The menu's four-frame tilemap and
+   attrmap uploads consequently replace an exposed screen piecemeal.
+2. **Modes to Listing:** select Modern/Legacy with A, or cancel with B/SELECT.
+   The ordinary cold Listing initializer calls `ClearPalettes`, producing a
+   full white frame. Legacy to Modern may additionally miss its grid row tags
+   and enter `Pokedex_PrimeGridCache`, which disables/re-enables the LCD. Neither
+   operation is appropriate for an already-open Dex owner transition.
+3. **Modes/Unown handoffs:** highlight unlocked Unown and press A; leave its
+   viewer with A or B. These routes used the same ineffective blackout. Unown
+   also replaced shared portrait tiles while outgoing menu/map palettes were
+   visible, and its return exposed the new menu map/attributes in several steps.
+   This is publication order, not a shortage of tiles or a new cry failure.
+4. **Wrong return row:** after leaving Unown, the Modes initializer always
+   chose `wPokedexListingPresentation`, forcing Modern or Legacy. It did not
+   distinguish first entry from Unown return.
+
+The baseline frame captures reproduce the artifacts from both presentations.
+All 16 baseline input-phase cases fail the new transition audit, including full
+white frames on Listing returns and an LCD-off frame on Legacy-to-Modern cache
+rebuilding. Evidence is under the original build's `transition-baseline/`.
+
+### Scoped Fix And Ownership
+
+`PokedexListing_BeginMenuTransition` is a Dex-local hide barrier:
+
+1. Stop the grid VBlank owner and automatic BG-map/palette work. Freeze shadow
+   OAM publication before clearing it.
+2. Preserve `wBGPals1`/`wOBPals1`, but fill all 16 BG/OBJ hardware-target palettes
+   in `wBGPals2`/`wOBPals2` with black. Request publication and release the empty
+   OAM for that VBlank.
+3. Wait for that completed VBlank before resetting SCX/SCY/WY and hiding Window.
+   Hold OAM again while building the incoming screen. Shared tiles, maps and
+   attributes may now change without displaying any partial work.
+4. Modes and Unown finish their existing map/attrmap uploads and final palette
+   conversion, then `PokedexListing_RevealMenu` waits for the finished reveal.
+   Modes places its initial BG arrow locally before uploading its map; it does
+   not dereference a ROMX coordinate table through another bank.
+
+Two new enum values reuse `wPokedexSelectedState`; no byte is allocated:
+
+- `DEXSELECT_STATE_MENU_RETURN` routes both Listing initializers around the
+  white cold-start clear. They still rebuild the correct frontpic, Window and
+  palette targets, then reuse the staged owner-map/Listing commit. Grid cache
+  misses use the existing LCD-on repair path, not cold LCD-off priming.
+- `DEXSELECT_STATE_UNOWN_RETURN` is a short-lived return reason. Modes chooses
+  row 2, stages its Unown description and arrow, then clears this state. First
+  entry still highlights the current Modern/Legacy presentation. Returning
+  through Unown does not change that preference or the selected species.
+
+The menu-to-Listing reveal restores *all* BG/OBJ palettes, since all were masked.
+It uses the existing bulk `ForceUpdateCGBPals` in the protected early-VBlank
+owner commit. An initial trial used the guarded partial palette copier; the
+frame audit detected one frame of incomplete top Legacy cursor corners because
+OAM transfer started too late. The bulk copy removes that late-OAM reveal.
+Ordinary Selected-to-Listing returns retain their existing guarded partial
+palette path. Animation scheduling, cry playback, scrolling and Search are not
+redesigned by this change.
+
+### Cost And Qualification
+
+The correction adds **161 ROMX bytes** over the first Modes prototype, or
+**210 ROMX bytes** over the accepted Legacy border build. Bank `$ba` now uses
+1,776 bytes, leaving 14,608. ROM0, WRAM0, WRAMX, HRAM, SRAM, VRAM, palettes and
+OAM allocations do not grow. Linked totals:
+
+| Resource | Used | Free |
+| --- | ---: | ---: |
+| ROM0 | 15,861 | 523 |
+| ROMX, occupied banks | 2,319,703 | 727,721 |
+| WRAM0 | 4,083 | 13 |
+| WRAMX | 23,944 | 4,728 |
+| HRAM | 127 | 0 |
+
+Total linked cartridge use is 2,335,564 bytes; 1,858,740 bytes remain across
+the 4 MiB cartridge, including unused banks.
+
+The new `tools/dex_timing/mode_transitions.py` boots a private battery and uses
+only real controls. It records every visible frame for six routes: Listing to
+Modes, Modes cancellation, presentation switch, Modes to Unown, Unown to Modes,
+and that Modes screen back to Listing. After the roundtrip it verifies the
+species' complete animation timeline, actual picture/map bytes and sampled-cry
+completion. Eight sub-frame button phases cover both presentations at twelve
+species/index positions, including 255/256, the list end, Seviper and the known
+heavy frontpics. Only pixels which actually animate/blink on the two settled
+owners are excluded from old/new matching. Every other pixel must show the
+intact source, full black mask or intact destination, with no reversed reveal,
+LCD shutdown or white flash. Temporary raw frames are removed after PNG export.
+
+Rebuild and reproduce on fresh matching states:
+
+```sh
+python3 -B -m tools.dex_timing.legacy_listing build --output build/dex-modes-transitions-final --jobs 10
+python3 -B -m tools.dex_timing.legacy_listing prepare --output build/dex-modes-transitions-final --jobs 10
+PYTHONPATH=tools python3 -B -m tools.dex_timing.dex_modes --output build/dex-modes-transitions-final --jobs 8
+PYTHONPATH=tools python3 -B -m tools.dex_timing.mode_transitions --output build/dex-modes-transitions-final --indices 0,255,256,296,315,333,337,339,341,351,360,372 --phases 8 --jobs 8
+DEX_LEGACY_BUILD=build/dex-modes-transitions-final PYTHONPATH=tools python3 -B -m unittest test_legacy_listing test_dex_cold_listing test_dex_target_regression test_new_dex_entry test_dex_performance test_pokedex_area_assets
+```
+
+The linked host contracts now additionally check that hiding preserves source
+palettes, masks all BG/OBJ targets, freezes OAM during preparation, restores
+the WRAM bank, and places the first menu arrow before publication.
+
+### Final Results And Timing
+
+All **8,736 matching-link native cases pass**, with zero animation deadline or
+uninterrupted sampled-cry completion failures:
+
+- 6,555 Legacy all-species playback/tab/stress cases and 1,119 Modern
+  all-species cold/warm/internal-paging cases.
+- 373 Listing/Selected cases, including all 492 Info-page B-returns; 399
+  frame-by-frame Legacy navigation cases.
+- 54 locked/unlocked Modes cases, ten preference/warmed-menu cases and six
+  Search/Unown roundtrips.
+- 192 new input-phase/species transition cases, twelve A-return/SELECT-cancel
+  variants, eight post-Info and eight post-Moves transition histories. These
+  cover **1,320 frame-audited transitions**, plus 220 post-menu complete
+  animation/cry replays. No mixed frame, white flash or LCD-off frame occurs.
+
+All 74 focused host tests pass. These are SameBoy and linked host results, not
+physical-hardware certification. Only the final directory's matching summaries
+are acceptance evidence; the intermediate palette/OAM trial and a superseded
+Modern test-navigation fixture remain separate historical diagnostics.
+
+The transition timing below is the median of eight sub-frame input phases for
+Chikorita, measured from button assertion to the completed display-frame
+boundary. First response is the first changed frame (now the black hide), not
+the input handler's acceptance; Complete is the first intact destination frame.
+Fractions are elapsed physical display intervals, not producer calls. The
+existing baseline may respond first with an artifact, so its First value is
+not proof of a clean transition.
+
+| Route | Before First, intervals / ms | After First | Before Complete | After Complete |
+| --- | ---: | ---: | ---: | ---: |
+| Modern Listing to Modes | 2.52 / 42.3 | 2.53 / 42.4 | 11.52 / 192.9 | 13.53 / 226.6 |
+| Legacy Listing to Modes | 2.52 / 42.1 | 2.53 / 42.3 | 11.52 / 192.8 | 13.53 / 226.5 |
+| Modes cancel to either Listing | 3.91 / 65.5 | 2.91 / 48.7 | 13.91 / 232.9 | 8.91 / 149.1 |
+| Modern to Legacy selection | 3.89 / 65.2 | 2.92 / 48.9 | 13.89 / 232.6 | 8.92 / 149.3 |
+| Legacy to Modern selection | 3.92 / 65.7 | 2.92 / 48.9 | 16.15 / 270.4 | 10.92 / 182.9 |
+| Modes to Unown, from Modern | 3.92 / 65.7 | 2.92 / 48.9 | 19.92 / 333.6 | 20.92 / 350.3 |
+| Unown to Modes, from Modern | 5.91 / 98.9 | 2.91 / 48.7 | 11.91 / 199.4 | 14.91 / 249.6 |
+| Unown's Modes to Modern Listing | 3.91 / 65.5 | 2.91 / 48.6 | 13.91 / 232.9 | 8.91 / 149.1 |
+
+The corresponding Legacy-origin Unown entry completes in 20.92 intervals /
+350.3ms; return to Modes in 14.87 / 248.9ms; cancel back to Listing in
+8.91 / 149.1ms. Species/cache rebuilding can vary Listing completion time;
+the twelve-position transition sweep remains clean throughout. Exact per-case
+cycles and rendered frames are retained in `mode-transitions/summary.json` and
+its PNG subdirectories. `return-button-variants/`, `after-info/` and
+`after-moves/` contain the additional histories.
+
+The hide adds about two display intervals to complete Modes entry, one to
+Unown entry and three to the Unown-to-Modes rebuild. Listing returns complete
+about five intervals earlier, with an earlier first visible response too.
+This is the explicit tradeoff for withholding unfinished menu/map work.
+Ordinary Selected-to-Listing returns retain their previous reveal policy;
+their all-Info-page control-return median is unchanged at 5.994 intervals /
+100.37ms from the original Modes prototype.
+
+Manual acceptance should check SELECT entry from both Listings; B/SELECT
+cancellation; same-mode A reselection; Modern/Legacy switching; Unown entry
+and A/B exit; the restored Unown row/description; and the hidden locked row.
+The two supplied private batteries allow both unlock layouts without editing
+the installed battery.
+
+## Exact Linked Legacy Cost
 
 Against the unchanged production map:
 

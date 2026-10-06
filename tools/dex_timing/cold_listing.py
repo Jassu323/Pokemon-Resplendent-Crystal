@@ -171,7 +171,7 @@ class Driver:
         return self.command('peek')
 
 
-def bootstrap(driver):
+def bootstrap(driver, *, expected_mode=0):
     """Continue the copy, open the start menu, and select its first (Dex) item."""
     stages = []
     for _ in range(180):
@@ -195,8 +195,8 @@ def bootstrap(driver):
     else:
         raise RuntimeError('Could not select the Dex menu item')
     state = driver.run(('listing',), 600, 'a')
-    if state['hit'] != 'listing' or state['mode'] != 0:
-        raise RuntimeError(f'Expected New Dex Listing, got {state}')
+    if state['hit'] != 'listing' or state['mode'] != expected_mode:
+        raise RuntimeError(f'Expected Dex Listing order {expected_mode}, got {state}')
     driver.run(('end_loop',), key=None)
     driver.run(('end_loop',), key=None)
     return stages, driver.command('peek')

@@ -28,6 +28,8 @@
 	const DEXSELECT_STATE_SWITCHING_VIEW
 	const DEXSELECT_STATE_AREA_ACTIVE
 	const DEXSELECT_STATE_LEAVING
+	const DEXSELECT_STATE_MENU_RETURN
+	const DEXSELECT_STATE_UNOWN_RETURN
 
 	const_def
 	const POKEDEX_OWNER_TRANSITION_NONE
@@ -498,6 +500,8 @@ Pokedex_InitMainScreen:
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
 	jr z, .stage_listing
+	cp DEXSELECT_STATE_MENU_RETURN
+	jr z, .stage_listing
 	ld a, $a7
 	ldh [hWX], a
 	call ClearPalettes
@@ -547,7 +551,10 @@ Pokedex_InitMainScreen:
 	jr z, .sgb_layout
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
+	jr z, .stage_return_layout
+	cp DEXSELECT_STATE_MENU_RETURN
 	jr nz, .cgb_cold_layout
+.stage_return_layout
 	farcall CGB_PokedexStageListLayout
 	jr .layout_ready
 
@@ -700,14 +707,9 @@ Pokedex_UpdateMainScreen:
 	call Pokedex_SaveListingViewport
 	farcall PokedexSelectedMon_CaptureListingSelection
 	call Pokedex_StopGridIconAnimation
-	call Pokedex_BlackOutBG
+	farcall PokedexListing_BeginMenuTransition
 	ld a, DEXSTATE_OPTION_SCR
 	ld [wJumptableIndex], a
-	xor a
-	ldh [hSCX], a
-	ld a, $a7
-	ldh [hWX], a
-	call DelayFrame
 	ret
 
 .start
@@ -971,6 +973,7 @@ Pokedex_InitUnownMode:
 	call WaitBGMap
 	ld a, SCGB_POKEDEX_UNOWN_MODE
 	call Pokedex_GetSGBLayout
+	farcall PokedexListing_RevealMenu
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -983,7 +986,9 @@ Pokedex_UpdateUnownMode:
 	ret
 
 .a_b
-	call Pokedex_BlackOutBG
+	farcall PokedexListing_BeginMenuTransition
+	ld a, DEXSELECT_STATE_UNOWN_RETURN
+	ld [wPokedexSelectedState], a
 	ld a, DEXSTATE_OPTION_SCR
 	ld [wJumptableIndex], a
 	call DelayFrame

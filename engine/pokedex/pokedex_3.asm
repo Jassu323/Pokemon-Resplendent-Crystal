@@ -250,6 +250,8 @@ Pokedex_EnsureGridCache:
 .repair
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
+	jp z, Pokedex_RepairGridCache
+	cp DEXSELECT_STATE_MENU_RETURN
 	jp nz, Pokedex_PrimeGridCache
 	jp Pokedex_RepairGridCache
 
@@ -1218,12 +1220,17 @@ Pokedex_PublishOrStageListingBacking::
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
 	jp z, Pokedex_StageOwnerTransitionMaps
+	cp DEXSELECT_STATE_MENU_RETURN
+	jp z, Pokedex_StageOwnerTransitionMaps
 	jp Pokedex_CopyBackingToBG
 
 Pokedex_RevealOrCommitListing::
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
+	jr z, .stage
+	cp DEXSELECT_STATE_MENU_RETURN
 	jr nz, .cold
+.stage
 	ld a, POKEDEX_SELECTED_EXTENDED_BG_PALS
 	ld [wPokedexSelectedBGPaletteDirty], a
 	ld a, POKEDEX_LISTING_OBJ_PALS
@@ -1404,6 +1411,14 @@ Pokedex_VBlankOwnerTransition::
 	jr .palettes_ready
 
 .listing_palettes
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_MENU_RETURN
+	jr nz, .selected_return_palettes
+; Menus hid every palette. The bulk VBlank copy also leaves OAM ready before
+; line 0; the guarded partial copies are for retained Selected-page returns.
+	call ForceUpdateCGBPals
+	jr .palettes_ready
+.selected_return_palettes
 	call .CommitListingBGPals
 	call .CommitListingOBPals
 	jr .palettes_ready

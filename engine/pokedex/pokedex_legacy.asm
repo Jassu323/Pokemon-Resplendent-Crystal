@@ -46,6 +46,8 @@ PokedexLegacy_InitMainScreen:
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_LEAVING
 	jr z, .stage
+	cp DEXSELECT_STATE_MENU_RETURN
+	jr z, .stage
 	ld a, $a7
 	ldh [hWX], a
 	call ClearPalettes
@@ -63,6 +65,9 @@ PokedexLegacy_InitMainScreen:
 	cp DEXSELECT_STATE_LEAVING
 	jr z, .return_layout
 	farcall Pokedex_PrepareAndCommitSelectedMonGFX
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_MENU_RETURN
+	jr z, .return_layout
 	farcall Pokedex_GetDexSGBLayout
 	jr .layout_ready
 .return_layout
@@ -484,11 +489,72 @@ PokedexLegacy_UpdateOAM:
 	inc de
 	ret
 
+DEF DEXMENU_MODERN EQU 0
+DEF DEXMENU_LEGACY EQU 1
+DEF DEXMENU_UNOWN EQU 2
+DEF DEXMENU_MOVES EQU 3
+DEF DEXMENU_TYPES EQU 4
+ASSERT DEXMENU_MODERN == DEXLIST_MODERN
+ASSERT DEXMENU_LEGACY == DEXLIST_LEGACY
+
+PokedexListing_BeginMenuTransition:
+; Hide both BG and OBJ before changing scroll, Window, maps or shared tiles.
+; Preserve source palettes; only the hardware targets become a black mask.
+	xor a
+	ldh [hVBlank], a
+	ldh [hBGMapMode], a
+	ldh [hCGBPalUpdate], a
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	call ClearSprites
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rSVBK], a
+	ld hl, wBGPals2
+	ld bc, 16 palettes
+	xor a
+	call ByteFill
+	pop af
+	ldh [rSVBK], a
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	jr .hide
+.dmg
+	ld a, $ff
+	ldh [rBGP], a
+.hide
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
+	ld a, TRUE
+	ldh [hOAMUpdate], a
+	xor a
+	ldh [hSCX], a
+	ldh [hSCY], a
+	ldh [hWY], a
+	ld a, $a7
+	ldh [hWX], a
+	ret
+
+PokedexListing_RevealMenu:
+; Called only after map/attrmap uploads and the final palette targets exist.
+	xor a
+	ldh [hOAMUpdate], a
+	call DelayFrame
+	ret
+
 PokedexListing_InitModeScreen:
 	xor a
 	ldh [hBGMapMode], a
 	call ClearSprites
-	farcall Pokedex_FillBackgroundColor2
+	hlcoord 0, 0
+	ld a, $31
+	ld bc, SCREEN_AREA
+	call ByteFill
 	hlcoord 0, 2
 	lb bc, 9, 18
 	call PokedexLegacy_PlaceBorder
@@ -505,58 +571,73 @@ PokedexListing_InitModeScreen:
 	ld de, .Legacy
 	call PlaceString
 	hlcoord 3, 7
-	ld de, .New
-	call PlaceString
-	hlcoord 3, 8
-	ld de, .Old
-	call PlaceString
-	hlcoord 3, 9
-	ld de, .ABC
-	call PlaceString
 	ld a, [wUnlockedUnownMode]
 	and a
-	jr z, .cursor
-	hlcoord 3, 11
+	jr z, .moves
 	ld de, .Unown
 	call PlaceString
-.cursor
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+.moves
+	ld de, .Moves
+	call PlaceString
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	ld de, .Types
+	call PlaceString
 	farcall Pokedex_InitArrowCursor
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_UNOWN_RETURN
+	ld a, DEXMENU_UNOWN
+	jr z, .cursor
 	ld a, [wPokedexListingPresentation]
+.cursor
 	ld [wDexArrowCursorPosIndex], a
+	ld b, a
+	hlcoord 2, 3
+	and a
+	jr z, .arrow_ready
+	ld de, 2 * SCREEN_WIDTH
+.arrow_row
+	add hl, de
+	dec b
+	jr nz, .arrow_row
+.arrow_ready
+	ld [hl], '▶'
+	xor a
+	ld [wPokedexSelectedState], a
 	call PokedexListing_ModeDescription
 	call WaitBGMap
 	ld b, SCGB_POKEDEX_SEARCH_OPTION
 	call GetSGBLayout
 	farcall Pokedex_ApplyUsualPals
+	call PokedexListing_RevealMenu
 	farcall Pokedex_IncrementDexPointer
 	ret
 .Title:
-	db $3b, " Mode ", $3c, -1
+	db $3b, " Modes ", $3c, -1
 .Modern:
 	db "Modern Dex Mode@"
 .Legacy:
 	db "Legacy Dex Mode@"
-.New:
-	db "New Order@"
-.Old:
-	db "Old Order@"
-.ABC:
-	db "A to Z Order@"
 .Unown:
-	db "Unown Mode@"
+	db "Unown Dex Mode@"
+.Moves:
+	db "Moves Dex Mode@"
+.Types:
+	db "Type Matchups@"
 
 PokedexListing_UpdateModeScreen:
+	ld hl, .Cursor
+	ld de, wPokedexWRAM0Scratch
+	ld bc, 12
+	call CopyBytes
 	ld a, [wUnlockedUnownMode]
 	and a
-	ld de, .NoUnown
-	jr z, .cursor
-	ld de, .WithUnown
+	jr nz, .cursor
+	ld hl, wPokedexWRAM0Scratch + 1
+	dec [hl]
 .cursor
-	ld h, d
-	ld l, e
-	ld de, wPokedexWRAM0Scratch
-	ld bc, 14
-	call CopyBytes
 	ld de, wPokedexWRAM0Scratch
 	farcall Pokedex_MoveArrowCursor
 	call c, PokedexListing_ModeDescription
@@ -566,9 +647,9 @@ PokedexListing_UpdateModeScreen:
 	ldh a, [hJoyPressed]
 	and PAD_A
 	ret z
-	ld a, [wDexArrowCursorPosIndex]
-	cp 2
-	jr nc, .order
+	call PokedexListing_GetModeID
+	cp DEXMENU_UNOWN
+	jr nc, .other
 	ld hl, wPokedexListingPresentation
 	cp [hl]
 	jr z, .return
@@ -591,41 +672,50 @@ PokedexListing_UpdateModeScreen:
 	ld [wDexListingHeight], a
 	farcall PokedexSelectedMon_NormalizeLinearReturn
 	jr .return
-.order
-	cp 5
-	jr z, .unown
-	sub 2
-	ld hl, wCurDexMode
-	cp [hl]
-	jr z, .return
-	ld [hl], a
-	farcall Pokedex_OrderMonsByMode
-	call Pokedex_InitListingPresentation
 .return
-	farcall Pokedex_BlackOutBG
+	call PokedexListing_BeginMenuTransition
+	ld a, DEXSELECT_STATE_MENU_RETURN
+	ld [wPokedexSelectedState], a
 	ld a, DEXSTATE_MAIN_SCR
 	ld [wJumptableIndex], a
 	ret
+.other
+; Future modes can be highlighted without changing the Listing or its order.
+	cp DEXMENU_UNOWN
+	ret nz
+	ld a, [wUnlockedUnownMode]
+	and a
+	ret z
 .unown
-	farcall Pokedex_BlackOutBG
+	call PokedexListing_BeginMenuTransition
 	ld a, DEXSTATE_UNOWN_MODE
 	ld [wJumptableIndex], a
 	ret
-.NoUnown:
+.Cursor:
 	db PAD_UP | PAD_DOWN, 5
 	dwcoord 2, 3
 	dwcoord 2, 5
 	dwcoord 2, 7
-	dwcoord 2, 8
-	dwcoord 2, 9
-.WithUnown:
-	db PAD_UP | PAD_DOWN, 6
-	dwcoord 2, 3
-	dwcoord 2, 5
-	dwcoord 2, 7
-	dwcoord 2, 8
 	dwcoord 2, 9
 	dwcoord 2, 11
+
+PokedexListing_GetModeID:
+	ld a, [wUnlockedUnownMode]
+	and a
+	ld hl, .Locked
+	jr z, .index
+	ld hl, .Unlocked
+.index
+	ld a, [wDexArrowCursorPosIndex]
+	ld e, a
+	ld d, 0
+	add hl, de
+	ld a, [hl]
+	ret
+.Locked:
+	db DEXMENU_MODERN, DEXMENU_LEGACY, DEXMENU_MOVES, DEXMENU_TYPES
+.Unlocked:
+	db DEXMENU_MODERN, DEXMENU_LEGACY, DEXMENU_UNOWN, DEXMENU_MOVES, DEXMENU_TYPES
 
 PokedexListing_ModeDescription:
 	xor a
@@ -633,7 +723,7 @@ PokedexListing_ModeDescription:
 	hlcoord 0, 13
 	lb bc, 3, 18
 	call PokedexLegacy_PlaceBorder
-	ld a, [wDexArrowCursorPosIndex]
+	call PokedexListing_GetModeID
 	ld hl, .Descriptions
 	ld e, a
 	ld d, 0
@@ -650,19 +740,22 @@ PokedexListing_ModeDescription:
 	ldh [hBGMapMode], a
 	ret
 .Descriptions:
-	dw .Modern, .Legacy, .New, .Old, .ABC, .Unown
+	dw .Modern, .Legacy, .Unown, .Moves, .Types
 .Modern:
-	db "Animated icon grid.@"
+	db   "Displays <PK><MN> in a"
+	next "visual grid.@"
 .Legacy:
-	db "Classic text list.@"
-.New:
-	db "Evolution order.@"
-.Old:
-	db "Numerical order.@"
-.ABC:
-	db "Alphabetical order.@"
+	db   "Displays <PK><MN> in the"
+	next "classic text list.@"
 .Unown:
-	db "Unown catching order.@"
+	db   "Displays all Unown"
+	next "forms caught.@"
+.Moves:
+	db   "Move descriptions"
+	next "and stats.@"
+.Types:
+	db   "<PK><MN> Type weaknesses"
+	next "and resistances.@"
 
 PokedexLegacy_FillColumn:
 	push de
