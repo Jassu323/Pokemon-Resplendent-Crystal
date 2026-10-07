@@ -1,9 +1,23 @@
 # Legacy And Modern Dex Listings
 
 2026-10-05. The Legacy Listing implementation and border corrections have been
-visually accepted and committed. The private Modes menu follow-up described
-below awaits visual acceptance; its builds leave production ROM outputs and
-the installed SameBoy battery unchanged.
+visually accepted and committed. The Modes menu and its transition follow-up
+are now manually accepted and committed as `79cdd3ae9` (Dex Modes Page).
+The private qualification builds left production ROM outputs and the installed
+SameBoy battery unchanged. Further Unown entry/return optimization is deferred
+under `DEX-PERF-04` in the [live backlog](pokedex_selected_bug_backlog.md).
+
+The next [private Modern/Legacy Options/Sort prototype](pokedex_listing_options_prototype.md)
+is separately built; it is not integrated into production. Both main Listings
+open Sort/Search popups in that trial, with shared generated ordering records
+and changed-sort selection reset to the beginning. Production still opens Search
+directly on START. Legacy popup placement has been manually accepted. The latest
+private build shifts the whole Modern Sort popup 3px right using the user's
+additional border sheet; the user accepted that final alignment on 2026-10-06.
+The subsequent [Search investigation](pokedex_search_investigation.md) keeps
+five palette/OAM/Results presentation repairs in a separate qualified trial,
+pending review before the Options prototype is promoted. Compact Search type
+icons and National Results number mapping are scoped, not implemented.
 
 ## Scope And Controls
 

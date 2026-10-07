@@ -70,17 +70,18 @@ def select_presentation(driver, target):
         raise RuntimeError('Wrong Listing presentation after mode selection')
 
 
-def layout_audit(repo, state, ui, unseen=(), uncaught=()):
+def layout_audit(repo, state, ui, unseen=(), uncaught=(), order=None):
     issues = []
     window = bytes.fromhex(ui['window'])
     attrs = bytes.fromhex(ui['window_attrs'])
     names = offset(repo.symbols['PokemonNames'])
-    order = offset(repo.symbols['NewPokedexOrder'])
+    family = offset(repo.symbols['NewPokedexOrder'])
     for row in range(7):
         index = state['scroll'] + row
         text = b''
         if index < state['end']:
-            species = int.from_bytes(repo.rom[order + 2 * index:order + 2 * index + 2], 'little')
+            species = order[index] if order is not None else int.from_bytes(
+                repo.rom[family + 2 * index:family + 2 * index + 2], 'little')
             text = repo.rom[names + 10 * (species - 1):names + 10 * species].split(b'\x50')[0]
             if index in unseen:
                 from pokedex_info_assets import Compiler

@@ -22,6 +22,18 @@ static unsigned byte(unsigned address)
     return GB_read_memory(&gb, address);
 }
 
+static unsigned word(unsigned address)
+{
+    return byte(address) | byte(address + 1) << 8;
+}
+
+static void hex(const uint8_t *data, unsigned size)
+{
+    putchar('"');
+    for (unsigned i = 0; i < size; i++) printf("%02x", data[i]);
+    putchar('"');
+}
+
 #include "performance.c"
 
 static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)

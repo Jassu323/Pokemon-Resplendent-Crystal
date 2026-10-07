@@ -55,7 +55,7 @@ POINTS = {
 }
 
 
-def core(repo, output, extra_points=None):
+def core(repo, output, extra_points=None, extra_flags=()):
     output.mkdir(parents=True, exist_ok=True)
     header = (output / 'performance-symbols.h').resolve()
     lines = ['static const struct { unsigned bank, pc; const char *name; bool span; } perf_points[] = {']
@@ -67,7 +67,7 @@ def core(repo, output, extra_points=None):
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, Path.home() / 'Documents/GitHub/SameBoy', output,
                       ('-DDEX_PERFORMANCE_TRACE', '-DDEX_BACKLOG_REVALIDATION_TRACE',
-                       f'-DDEX_PERFORMANCE_SYMBOLS="{header}"'))
+                       f'-DDEX_PERFORMANCE_SYMBOLS="{header}"', *extra_flags))
 
 
 def names():

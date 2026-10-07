@@ -19,7 +19,8 @@ def compile_core(source, output):
     header = output / 'symbols.h'
     lines = [f'#define S_{name} {symbols[name][1]}' for name in
              ('wDexListingScrollOffset', 'wDexListingCursor', 'wCurDexMode',
-              'wMenuCursorPosition', 'wDexArrowCursorPosIndex', 'wCurPartySpecies')]
+              'wMenuCursorPosition', 'wDexArrowCursorPosIndex', 'wCurPartySpecies',
+              'wFXAnimID', 'hBattleTurn')]
     lines += ['static const struct { unsigned bank, pc; } points[] = {']
     for name, label in POINTS.items():
         bank, pc = symbols.get(aliases.get(name, label), (0, 65535))

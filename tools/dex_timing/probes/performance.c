@@ -14,6 +14,12 @@ static struct {
 } perf_spans[64];
 static unsigned perf_span_count;
 static FILE *perf_audio_file;
+#ifdef DEX_SEARCH_ICON_TRACE
+static unsigned perf_search_last_ly = 255;
+#endif
+#ifdef DEX_SEARCH_RESULTS_TRACE
+static unsigned perf_results_last_ly = 255;
+#endif
 #ifdef DEX_BATTLE_SPEED_TRACE
 static bool perf_speed_valid, perf_last_speed;
 #endif
@@ -129,6 +135,57 @@ static void perf_observe(unsigned bank, unsigned pc)
 {
     if (!perf_enabled) return;
     uint64_t now = perf_now();
+#ifdef DEX_SEARCH_RESULTS_TRACE
+    unsigned results_ly = gb.io_registers[0x44];
+    if (byte(S_wJumptableIndex) == 10 && bank == RESULTS_DMA_BANK && pc == RESULTS_DMA_PC) {
+        printf("{\"event\":\"results_dma_start\",\"t\":%" PRIu64
+               ",\"ly\":%u,\"length\":%u}\n", now, results_ly, gb.af >> 8);
+    }
+    if (results_ly == 0 && perf_results_last_ly != 0 && byte(S_wJumptableIndex) == 10) {
+        unsigned position = word(S_wDexListingScrollOffset) + byte(S_wDexListingCursor);
+        const uint8_t *entry = gb.ram + 5 * 4096 + RESULTS_ORDER_OFFSET + position * 2;
+        printf("{\"event\":\"results_scanout\",\"t\":%" PRIu64
+               ",\"position\":%u,\"permanent\":%u,\"oam\":", now, position,
+               entry[0] | entry[1] << 8);
+        hex(gb.oam, 160);
+        printf(",\"palettes\":");
+        hex(gb.object_palettes_data, 32);
+        printf(",\"bgpal\":");
+        hex(gb.background_palettes_data + 8, 8);
+        printf(",\"portrait\":");
+        hex(gb.vram + 0x1000, 49 * 16);
+        printf(",\"name\":");
+        unsigned visible_row = (gb.oam[0] - 24) / 16;
+        hex(gb.vram + 0x1c00 + (2 + visible_row * 2) * 32 + 1, 10);
+        puts("}");
+    }
+    perf_results_last_ly = results_ly;
+#endif
+#ifdef DEX_SEARCH_ICON_TRACE
+    unsigned search_ly = gb.io_registers[0x44];
+    if (search_ly == 0 && perf_search_last_ly != 0) {
+        /* Observe the completed VBlank transaction before visible scanout,
+         * not a mid-interrupt palette/OAM snapshot at the VBlank boundary. */
+        printf("{\"event\":\"search_icon_scanout\",\"t\":%" PRIu64 ",\"oam\":", now);
+        hex(gb.oam + 36, 32);
+        printf(",\"palettes\":");
+        hex(gb.object_palettes_data + 8, 16);
+        printf(",\"tiles\":");
+        hex(gb.vram + 8192 + 0x280, 256);
+        printf(",\"fields\":\"");
+        for (unsigned row = 4; row <= 6; row += 2)
+            for (unsigned column = 9; column < 17; column++)
+                printf("%02x", gb.vram[0x1800 + row * 32 + column]);
+        printf("\",\"committed\":");
+        hex(gb.ram + 3 * 4096 + 0xc05, 2);
+        puts("}");
+    }
+    perf_search_last_ly = search_ly;
+#endif
+    unsigned sampled_blocks = 0;
+#ifdef S_hSampledCryBlocks
+    sampled_blocks = word(S_hSampledCryBlocks);
+#endif
 #ifdef DEX_BATTLE_SPEED_TRACE
     if (!perf_speed_valid || perf_last_speed != gb.cgb_double_speed) {
         printf("{\"event\":\"speed_change\",\"t\":%" PRIu64
@@ -185,7 +242,7 @@ static void perf_observe(unsigned bank, unsigned pc)
                perf_points[i].name, now, gb.io_registers[0x44], gb.bc, gb.de, gb.hl,
                gb.cgb_ram_bank, gb.cgb_vram_bank, gb.cgb_double_speed,
                gb.io_registers[0x40], gb.io_registers[0x06], gb.io_registers[0x07],
-               word(S_hSampledCryBlocks), word(S_wFXAnimID), byte(S_hBattleTurn));
+               sampled_blocks, word(S_wFXAnimID), byte(S_hBattleTurn));
 #ifdef DEX_BATTLE_TIMING_TRACE
         if (!strcmp(perf_points[i].name, "anim_ready")) {
             unsigned peak = 0, over = 0, height = gb.io_registers[0x40] & 4 ? 16 : 8;
@@ -231,7 +288,7 @@ static void perf_observe(unsigned bank, unsigned pc)
             GB_get_apu_wave_table(&gb, wave);
             printf("{\"event\":\"wave_block\",\"t\":%" PRIu64 ",\"speed\":%u,"
                    "\"remaining\":%u,\"tma\":%u,\"tac\":%u,\"frequency\":%u,\"wave\":",
-                   now, gb.cgb_double_speed, word(S_hSampledCryBlocks),
+                   now, gb.cgb_double_speed, sampled_blocks,
                    gb.io_registers[6], gb.io_registers[7],
                    gb.io_registers[0x1d] | (gb.io_registers[0x1e] & 7) << 8);
             hex(wave, sizeof(wave));
@@ -250,6 +307,24 @@ static void perf_observe(unsigned bank, unsigned pc)
 
 static bool perf_command(const char *line)
 {
+    if (!strcmp(line, "searchui\n")) {
+        printf("{\"event\":\"ok\",\"bg_palettes\":");
+        hex(gb.background_palettes_data, 64);
+        printf(",\"obj_palettes\":");
+        hex(gb.object_palettes_data, 64);
+        printf(",\"oam\":");
+        hex(gb.oam, sizeof(gb.oam));
+        printf(",\"map\":");
+        hex(gb.vram + 0x1800, 18 * 32);
+        printf(",\"attrs\":");
+        hex(gb.vram + 0x3800, 18 * 32);
+        printf(",\"bgp\":%u,\"obp0\":%u,\"obp1\":%u,\"lcdc\":%u,"
+               "\"scx\":%u,\"scy\":%u,\"wx\":%u,\"wy\":%u,\"speed\":%u}\n",
+               byte(0xff47), byte(0xff48), byte(0xff49), byte(0xff40),
+               byte(0xff43), byte(0xff42), byte(0xff4b), byte(0xff4a),
+               gb.cgb_double_speed);
+        return true;
+    }
     char battery_path[768];
     if (sscanf(line, "perfbattery %767s", battery_path) == 1) {
         printf("{\"event\":\"ok\",\"error\":%u}\n", GB_save_battery(&gb, battery_path));
@@ -302,9 +377,27 @@ static bool perf_command(const char *line)
         puts("{\"event\":\"ok\"}");
         return true;
     }
+    unsigned count;
+    if (sscanf(line, "inspect %u %u %u", &bank, &address, &count) == 3 &&
+        bank < 8 && count <= 4096 && (address & 4095) + count <= 4096) {
+        printf("{\"event\":\"ok\",\"svbk\":%u,\"bytes\":", gb.cgb_ram_bank);
+        hex(gb.ram + bank * 4096 + (address & 4095), count);
+        puts("}");
+        return true;
+    }
+    if (sscanf(line, "inspectvram %u %u %u", &bank, &address, &count) == 3 &&
+        bank < 2 && count <= 8192 && (address & 8191) + count <= 8192) {
+        printf("{\"event\":\"ok\",\"bytes\":");
+        hex(gb.vram + bank * 8192 + (address & 8191), count);
+        puts("}");
+        return true;
+    }
     if (sscanf(line, "perf %u", &enabled) == 1) {
         perf_enabled = enabled != 0;
         perf_frames = perf_span_count = 0;
+#ifdef DEX_SEARCH_ICON_TRACE
+        perf_search_last_ly = 255;
+#endif
         printf("{\"event\":\"ok\",\"t\":%" PRIu64 ",\"full\":%u,\"lower\":%u,\"stable\":%u}\n",
                ticks / 2, perf_hash(0), perf_hash(1), perf_hash(2));
         return true;
