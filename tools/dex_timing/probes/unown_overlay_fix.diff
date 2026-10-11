@@ -1,0 +1,43 @@
+diff --git a/engine/pokedex/pokedex.asm b/engine/pokedex/pokedex.asm
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -1795,6 +1795,23 @@
+ 	ld [hl], $3e
+ 	hlcoord 6, 5
+ 	call Pokedex_PlaceFrontpicAtHL
++	ldh a, [hCGB]
++	and a
++	jr z, .letters
++	; Every resident-font overlay cell needs the bank-1 dark-gray blank.
++	ld de, UnownModeLetterAndCursorCoords
++	ld b, NUM_UNOWN * 2
++.blank_overlay
++	ld a, [de]
++	inc de
++	ld l, a
++	ld a, [de]
++	inc de
++	ld h, a
++	ld [hl], $32
++	dec b
++	jr nz, .blank_overlay
++.letters
+ 	ld de, 0
+ 	ld b, 0
+ 	ld c, NUM_UNOWN
+@@ -1813,6 +1830,7 @@
+ 	ld h, [hl]
+ 	ld l, a
+ 	pop af
++	push bc
+ 	ld c, a
+ 	ldh a, [hCGB]
+ 	and a
+@@ -1825,6 +1843,7 @@
+ 	add FIRST_UNOWN_CHAR - 1
+ .place_letter
+ 	ld [hl], a
++	pop bc
+ 	inc de
+ 	inc b
+ 	dec c

@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-08. This is the live issue/status list, not the chronological
+Updated 2026-10-11. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -21,6 +21,15 @@ Listing/exit presentation reports.
 
 Remaining Dex review queue:
 
+- `DEX-UNOWN-01/02/03` are corrected in the private no-warming-based
+  [Unown prototype](pokedex_unown_fix_prototype.md), pending manual review and
+  promotion. Resident blank tiles and the bounded form count now pass native
+  content/pixel checks, different catch orders and all 26 forms. The latest
+  revision restores the fully red outer backdrop and passes full Pokemon/Moves
+  Dex requalification.
+- `DEX-UNOWN-04` makes Unown's framed panels solid black and corrects the
+  portrait palette boundary in the latest private revision. Full Unown and
+  Pokemon/Moves Dex requalification passes; manual review/promotion remain pending.
 - `DEX-PREF-01` defers robust position remembrance for the Modern/Legacy
   Pokemon listings. `DEX-PREF-02` separately defers Moves Mode position
   remembrance. These are not part of Moves sort-preference persistence.
@@ -53,10 +62,9 @@ Remaining Dex review queue:
   qualification](battle_normal_speed_prototype.md) and [measured Dex benefits](global_double_speed.md).
   See the [production integration and fresh qualification](production_clock_policy.md).
   Other modes and lifecycle optimization remain deferred.
-- `DEX-PERF-03` defers removal of idle Listing animation cache warming until
-  after Legacy Dex Mode is implemented. This is separate from the already
-  removed speculative minisprite scrolling lookahead; keep current behavior
-  during the Legacy implementation and qualify cold-only preparation later.
+- `DEX-PERF-03` has a qualified private no-warming prototype, pending manual
+  acceptance and promotion. It is separate from the already removed speculative
+  minisprite lookahead and the newly confirmed production Unown defects.
 - `DEX-PERF-04` defers optimization of Modes-to-Unown entry and Unown-to-Modes
   return. The clean hidden preparation and restored Unown menu selection are
   manually accepted; reduce their completion latency without exposing partial
@@ -1008,6 +1016,81 @@ is still private; production promotion remains pending manual review.
 
 ## Secondary Pokedex Screens And Presentation
 
+### DEX-UNOWN-01: Unused Overlay Positions Display White Blocks
+
+Status: Corrected in the private prototype 2026-10-11; manual review/promotion pending
+
+The CGB Unown layout assigns bank 1 to full letter/cursor strips. Unused `$7f`
+spaces remain in the map but select an uninitialized bank-1 tile, rendering
+white instead of the panel background. The resident dark-gray background and
+all 27 font/cursor tiles are already present; no artwork is required.
+Correct the blank references/attribute ownership without changing intended
+letter/cursor placement or portrait/word rendering. Independently audit sparse
+and full layouts, both Listing origins, mode returns and subsequent owners.
+The private drawing routine now initializes every letter/cursor overlay cell
+with existing resident bank-1 `$32` before placing glyphs. All 141,568 tested
+overlay cells have correct tiles, bank attributes and displayed pixels, including
+sparse collections and prior Info/Moves visits. No graphics are changed.
+See the [native vanilla comparison](pokedex_unown_investigation.md) and
+[repair qualification](pokedex_unown_fix_prototype.md).
+
+### DEX-UNOWN-02: Form Drawing Clobbers The Remaining Count
+
+Status: Corrected in the private prototype 2026-10-11; manual review/promotion pending
+
+`Pokedex_DrawUnownModeBG` uses C as its 26-form remaining count, then overwrites
+C with the form ID during graphics-bank selection. When A is first, decrement
+ends the loop after one form. An all-26 A-Z fixture reports only one displayed
+form and cannot advance Right, while vanilla displays/counts all 26.
+Preserve the loop bound and correctly count every caught form. Add native
+content/navigation checks for zero/one/sparse/full counts, different catch
+orders, A in different positions, both origins and bounded last-form behavior.
+The existing transition tests alone do not cover this content defect.
+The repair preserves BC during tile conversion. Its 136 normal-input fixtures
+pass 2,212 forward/backward form selections; another 126 isolated native calls
+cover both code branches, zero/full capacity and the following-byte guard.
+Negative controls independently reproduce both original faults in the rollback.
+See the [repair qualification](pokedex_unown_fix_prototype.md).
+Keep this separate from deferred `DEX-PERF-04` optimization.
+
+### DEX-UNOWN-03: Outer Backdrop Retains Dark Gray Fill
+
+Status: Corrected and qualified privately 2026-10-11; manual review/promotion pending
+
+The user identified a further mismatch after reviewing the first correctness
+prototype: Unown's entire outer backdrop should be red, as in vanilla, but
+the legacy full-screen `$32` fill now selects dark gray in the project. Red
+border pixels made the outer area look split. This is not missing artwork.
+
+The latest private routine fills CGB's outer canvas with existing red `$31`,
+then draws the same panels and overlays. DMG retains its previous fill.
+Expanded normal-input checks validate 298,620 outer cells/pixel areas; six
+native captures match every outside pixel to vanilla and preserve every inside
+pixel from the first repair. A negative control rejects that repair's backdrop
+without unrelated content failures. See the
+[red-backdrop revision](pokedex_unown_fix_prototype.md#red-backdrop-revision).
+Full Pokemon/Moves Dex regressions and ordinary Save/Continue pass; production,
+the previous review prototype, graphics and existing memory addresses remain
+unchanged. Production promotion awaits the user's manual review.
+
+### DEX-UNOWN-04: Gray Panels Contrast With Black Glyph Backgrounds
+
+Status: Corrected and qualified privately 2026-10-11; manual review/promotion pending
+
+The user requested solid black for this screen rather than changing the glyph
+artwork. Unown's inverted font uses black, while the ordinary Dex palette's
+color 2 made panel fills and unused overlays gray. A one-tile-right portrait
+attribute rectangle exposed the mon palette's different gray beside the image.
+
+The private revision uses a dedicated Unown-only white/red/black/black palette
+through the existing bank-preserving loader and corrects the portrait origin
+from `(7,5)` to `(6,5)`. The red outer canvas, white portrait field, shared Dex
+palette, graphics and save data are unchanged. Native checks pass all 2,212
+form selections, including 151,734 black-background and 108,388 portrait-cell
+pixel checks. The full Pokemon/Moves Dex suites also pass. A negative control
+rejects the prior revision's gray backgrounds and displaced palette boundary.
+See the [black-panel revision](pokedex_unown_fix_prototype.md#black-panel-revision).
+
 ### DEX-UI-01: Footprint background uses pure black
 
 Status: Solved for Selected Description; automated UI audit and manual confirmation passed
@@ -1605,7 +1688,25 @@ Acceptance:
 
 ### DEX-PERF-03: Remove Idle Listing Animation Cache Warming
 
-Status: Deferred 2026-10-05; implement after Legacy Dex Mode
+Status: Private prototype qualified 2026-10-11; manual review/promotion pending
+
+The [no-warming prototype](pokedex_no_warming_prototype.md) removes seven
+Listing startup calls and two idle-service calls across Modern/Legacy scroll,
+entry and popup-return paths. Selected startup, scheduling, cry ownership,
+static portraits and visible icons remain unchanged. Cost is -58 ROMX bytes
+with no RAM/save/asset changes. Production remains unchanged.
+
+All 746 long-hover idle checks perform zero animation decode/upload. Fresh
+Pokemon Dex, Moves UI/Search, all-species playback, 100-move battle, sampled
+cries, menus and adjacent gameplay regressions pass. Immediate Selected entry
+changes by less than 0.47 ms; long-hover median entry changes from 77.83 to
+103.36 ms in Modern and 76.56 to 102.18 ms in Legacy. The worst paired increase
+is 50.68 ms on Spheal. Older timing-model failures are identical to production,
+not new runtime failures. Retained evidence and review files are linked in the
+guide; manual acceptance of the small startup tradeoff is still required.
+
+Original scope and acceptance criteria follow. The production callers described
+below remain in place until this private revision is accepted and promoted.
 
 The user requests removal of the selected-species animation warming performed
 while a Listing is idle. Modern currently calls `Pokedex_StartAnimationPrefetch`

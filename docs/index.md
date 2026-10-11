@@ -23,6 +23,9 @@ addresses and proposed fixes are not mistaken for current instructions.
 - [Dex instrumentation cleanup](dex_instrumentation_cleanup.md): runtime removal, host-only observers, clean-link regression results and current breakpoints.
 - [Selected scheduler validation](dex_scheduler_validation.md): accepted ROM identity, miss breakpoints, regression suite and deferred cleanup.
 - [All-species cold Listing acceptance](dex_cold_listing_results.md): normal-input SameBoy methodology, reproducible setup, historical results and category-data regression follow-up.
+- [Listing without idle animation warming](pokedex_no_warming_prototype.md): private Modern/Legacy caller removal, zero idle decode/upload, -58 ROMX bytes, paired Selected-entry timing, fresh Dex/Moves/battle/audio/gameplay regressions and production-preserving review ROM/save. Manual acceptance pending.
+- [Unown Mode vanilla comparison](pokedex_unown_investigation.md): matched production/prototype white-overlay and caught-form-count defects, fresh upstream screenshots, verified resident artwork and the settled-content regression gap.
+- [Unown Mode correctness prototype](pokedex_unown_fix_prototype.md): private repair on the no-warming base, preserved form-loop bound, correct resident blank tiles, red backdrop and Unown-only black-panel follow-up, form/content/pixel checks, passed Dex regressions and review ROM/saves. Manual acceptance pending.
 - [Host timing tools](dex_timing_model.md): current checks versus historical models, fixtures and limits.
 - [New Dex Entry testing](dex_new_entry_testing.md): current miss breakpoints, focused manual checks, eight catch fixtures and headless validation.
 - [New Dex Entry input-timing regression](new_dex_entry_regression_results.md): 20-species acceptance, timer-phase stress, the acknowledged Mewtwo text-refresh fix and historical failure evidence.
