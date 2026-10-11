@@ -45,7 +45,9 @@ def compile(root=ROOT):
     moves = constants(root / 'constants/move_constants.asm')
     move_names = re.findall(r'^\s*li "([^"]+)"', (root / 'data/moves/names.asm').read_text(), re.M)
     machine = re.findall(r'^\s*add_(tm|hm|mt)\s+(\w+)', (root / 'constants/item_constants.asm').read_text(), re.M)
-    if len(machine) != 60 or moves.get('LEEK_SLAP') != len(move_names):
+    move_indices = sorted(value for name, value in moves.items()
+                          if value > 0 and not name.startswith('ANIM_'))
+    if len(machine) != 60 or move_indices != list(range(1, len(move_names) + 1)):
         raise ValueError('Move/name or machine cardinality changed')
     levels, eggs, level_pointer, egg_pointer = {}, {}, {}, {}
     for suffix in ('kanto', 'johto', 'custom'):

@@ -3073,7 +3073,8 @@ wMooMooBerries:: db
 wUndergroundSwitchPositions:: db
 wFarfetchdPosition:: db
 
-	ds 13
+wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
+	ds 12
 
 ; map scene ids
 wPokecenter2FSceneID::                            db
@@ -3497,6 +3498,12 @@ SECTION "16-bit WRAM tables", WRAMX
 	wram_conversion_table wPokemonIndexTable, MON_TABLE
 	wram_conversion_table wMoveIndexTable, MOVE_TABLE
 
+
+SECTION "Move Discovery Flags", WRAMX, BANK[2]
+wMoveDiscoverySeen:: ds 64
+wMoveDiscoveryStatus:: db
+wMoveDiscoveryWriteBlocked:: db
+wMoveDiscoveryEnd::
 
 SECTION "Bug Contest WRAM", WRAMX, BANK[2]
 

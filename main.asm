@@ -210,6 +210,10 @@ INCLUDE "engine/rtc/rtc.asm"
 INCLUDE "engine/overworld/overworld.asm"
 INCLUDE "engine/overworld/tile_events.asm"
 INCLUDE "engine/menus/save.asm"
+INCLUDE "engine/pokedex/move_discovery.asm"
+INCLUDE "engine/pokedex/move_acquisition.asm"
+INCLUDE "engine/pokedex/move_battle_use.asm"
+INCLUDE "engine/pokedex/move_pokedex_gift.asm"
 INCLUDE "engine/overworld/spawn_points.asm"
 INCLUDE "engine/overworld/map_setup.asm"
 INCLUDE "engine/events/pokecenter_pc.asm"
@@ -347,6 +351,10 @@ INCLUDE "engine/pokedex/performance_indexed.asm"
 
 SECTION "Pokedex Legacy", ROMX, BANK[$ba]
 INCLUDE "engine/pokedex/pokedex_legacy.asm"
+INCLUDE "engine/pokedex/pokedex_popover.asm"
+INCLUDE "engine/pokedex/pokedex_search.asm"
+INCLUDE "engine/pokedex/pokedex_moves_mode.asm"
+INCLUDE "engine/pokedex/pokedex_search_results.asm"
 
 SECTION "Pokedex Moves", ROMX
 INCLUDE "engine/pokedex/pokedex_moves.asm"
@@ -950,7 +958,7 @@ INCLUDE "data/moves/names.asm"
 INCLUDE "engine/overworld/landmarks.asm"
 
 
-SECTION "bank77", ROMX
+SECTION FRAGMENT "bank77", ROMX
 
 INCLUDE "engine/rtc/print_hours_mins.asm"
 INCLUDE "engine/events/diploma.asm"

@@ -82,8 +82,9 @@ def icons_audit(driver, repo, ui=None):
         tile = 0x28 + buffer + field * 4
         if bytes.fromhex(driver.command(f'inspectvram 1 {0x8000 + tile * 16} 64')['bytes']) != expected:
             raise RuntimeError('Search icon differs from the existing compact artwork')
+        icon_x = 88 if 'PokedexSearch_AlignedFields' in repo.symbols else 96
         expected_oam = bytes(value for i in range(4)
-                             for value in (48 + field * 16, 96 + i * 8, tile + i, 9 + field))
+                             for value in (48 + field * 16, icon_x + i * 8, tile + i, 9 + field))
         if sprites != expected_oam:
             raise RuntimeError('Search icon OAM position/ownership is incorrect')
         address = int.from_bytes(repo.rom[pals + actual_type * 2:pals + actual_type * 2 + 2], 'little')

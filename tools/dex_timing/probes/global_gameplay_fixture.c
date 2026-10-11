@@ -18,11 +18,23 @@ int main(int argc, char **argv)
     GB_set_sample_rate(&gb, 44100);
     GB_apu_set_sample_callback(&gb, discard);
     if (GB_load_rom(&gb, argv[1]) || GB_load_state(&gb, argv[2])) return 3;
+#ifdef S_wMoveDiscoverySeen
+    if (!strcmp(argv[3], "level") || !strcmp(argv[3], "egg") ||
+        !strcmp(argv[3], "full-party") || !strcmp(argv[3], "discovery-empty") ||
+        !strcmp(argv[3], "postbattle-bulbasaur-level"))
+        for (unsigned i = 0; i < 64; i++)
+            put(B_wMoveDiscoverySeen, S_wMoveDiscoverySeen + i, 0);
+#endif
     if (!strcmp(argv[3], "phone")) {
         put(B_wReceiveCallDelay_MinsRemaining, S_wReceiveCallDelay_MinsRemaining, 0);
         put(B_wTimeCyclesSinceLastCall, S_wTimeCyclesSinceLastCall, 3);
         for (unsigned i = 0; i < 10; i++)
             put(B_wPhoneList, S_wPhoneList + i, i == 0 ? 15 : (i == 1 ? 16 : 0));
+    } else if (!strcmp(argv[3], "postbattle-bulbasaur-level")) {
+        put(B_wPartyMon1Level, S_wPartyMon1Level, 6);
+        put(B_wPartyMon1Exp, S_wPartyMon1Exp, 0);
+        put(B_wPartyMon1Exp, S_wPartyMon1Exp + 1, 0);
+        put(B_wPartyMon1Exp, S_wPartyMon1Exp + 2, 235);
     } else if (!strcmp(argv[3], "postbattle-level")) {
         put(B_wPartyMon1Level, S_wPartyMon1Level, 6);
         put(B_wPartyMon1Exp, S_wPartyMon1Exp, 0);
@@ -67,7 +79,7 @@ int main(int argc, char **argv)
         put(B_wBattleMonHP, S_wBattleMonHP + 1, 1);
         put(B_wBattleMonStatus, S_wBattleMonStatus, 3);
 #endif
-    } else return 4;
+    } else if (strcmp(argv[3], "discovery-empty")) return 4;
     if (GB_save_state(&gb, argv[4])) return 5;
     printf("{\"fixture\":\"%s\",\"speed\":%u}\n", argv[3], gb.cgb_double_speed);
     GB_free(&gb);

@@ -57,6 +57,10 @@ GiveDratini:
 	ld h, a
 	call GetMoveIDFromIndex
 	ld [de], a ; give the Pokémon the new move
+	push bc
+	ld c, a
+	move_discovery_hook MoveDiscovery_MarkLiveID
+	pop bc
 
 	; get the PP of the new move
 	ld l, a

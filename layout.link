@@ -638,6 +638,7 @@ WRAMX 2
 	"Pic Animations"
 	align 8
 	"16-bit WRAM tables"
+	"Move Discovery Flags"
 WRAMX 3
 	"Battle Tower RAM"
 WRAMX 4

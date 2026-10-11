@@ -78,6 +78,7 @@ CheckPartyFullAfterContest:
 	ld b, LANDMARK_NATIONAL_PARK
 	or b
 	ld [hl], a
+	move_discovery_hook MoveDiscovery_LastParty
 	farcall BugContest_ClearContestMon
 	xor a ; BUGCONTEST_CAUGHT_MON
 	ld [wScriptVar], a
@@ -120,6 +121,7 @@ CheckPartyFullAfterContest:
 	ld bc, MON_NAME_LENGTH
 	call CopyBytes
 	call CloseSRAM
+	move_discovery_hook MoveDiscovery_FirstBox
 
 .BoxFull:
 	ld a, BANK(sBoxMon1Level)

@@ -282,6 +282,7 @@ def private_battery(config, target, *, presentation=1, unseen=(), uncaught=(),
     """Change only private fixture records, preserving offsets and checksums."""
     symbols = read_symbols(Path(config['sym']))
     data = bytearray(Path(config['battery']).read_bytes())
+    before = bytes(data)
     ram = lambda name: symbols[name][1]
     def address(name):
         bank, at = symbols[name]
@@ -310,7 +311,8 @@ def private_battery(config, target, *, presentation=1, unseen=(), uncaught=(),
         start, end = address(prefix + 'SaveData'), address(prefix + 'SaveDataEnd')
         at = address(prefix + 'Checksum')
         data[at:at + 2] = (sum(data[start:end]) & 65535).to_bytes(2, 'little')
-    target.write_bytes(data)
+    from move_discovery_assets import rebind_fixture
+    target.write_bytes(rebind_fixture(before, data, symbols))
 
 
 def mode_tests(output):

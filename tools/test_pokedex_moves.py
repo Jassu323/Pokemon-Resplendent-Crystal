@@ -82,7 +82,8 @@ class MovesTests(unittest.TestCase):
         repo = self.repo
         self.assertEqual(repo.symbols['wPokedexMovesState'][0], 3)
         self.assertLessEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1], 0xdc00)
-        self.assertEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1] - repo.symbols['wPokedexMovesState'][1], 45)
+        self.assertEqual(repo.symbols['wPokedexInfoPendingPage'][1] - repo.symbols['wPokedexMovesState'][1], 45)
+        self.assertEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1] - repo.symbols['wPokedexInfoPendingPage'][1], 2)
 
     def test_deferred_evolution_links_are_not_invented(self):
         for name in ('WEAVILE', 'LEAFEON', 'GLACEON'):

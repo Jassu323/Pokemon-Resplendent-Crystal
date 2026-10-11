@@ -108,6 +108,7 @@ LearnMove:
 	ret
 
 .learned
+	move_discovery_hook MoveDiscovery_Learned
 	ld hl, LearnedMoveText
 	call PrintText
 	ld b, 1

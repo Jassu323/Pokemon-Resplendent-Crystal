@@ -101,7 +101,19 @@ def row_case(task):
             driver.run(frames=3)
             issues += audit_menu(driver.command('ui'), unlocked, row)
         mode = mode_ids(unlocked)[row]
-        if mode in (3, 4):
+        if mode == 3 and 'PokedexMovesMode_Update' in repo.symbols:
+            from .moves_mode import audit as moves_audit
+            press(driver, 'a')
+            reach(driver, repo, 'PokedexMovesMode_Update')
+            driver.run(frames=3)
+            manifest = json.loads((Path(config['rom']).parent / 'moves-mode-manifest.json').read_text())
+            moves_audit(driver, repo, manifest)
+            press(driver, 'select' if row & 1 else 'b')
+            reach(driver, repo, 'Pokedex_UpdateOptionScreen')
+            driver.run(frames=3)
+            issues += audit_menu(driver.command('ui'), unlocked, row)
+            press(driver, 'b')
+        elif mode in (3, 4):
             press(driver, 'a')
             driver.run(frames=20, key='a')
             driver.run(frames=3)
@@ -173,7 +185,7 @@ def qualify(output, jobs):
     (target / 'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     for stem in ('pokecrystal-dex-modes', 'pokecrystal-dex-modes-locked'):
         for suffix in ('gbc', 'sym', 'map'):
-            shutil.copy2(output / f'pokecrystal-dex-legacy.{suffix}', output / f'{stem}.{suffix}')
+            shutil.copy2(Path(config['rom']).with_suffix('.' + suffix), output / f'{stem}.{suffix}')
     private_battery(config, output / 'pokecrystal-dex-modes.sav', presentation=0, unown_unlocked=True)
     locked = dict(config, battery=str(output / 'pokecrystal-dex-modes.sav'))
     private_battery(locked, output / 'pokecrystal-dex-modes-locked.sav', presentation=0, unown_unlocked=False)

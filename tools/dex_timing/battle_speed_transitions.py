@@ -160,7 +160,7 @@ def loss(quarter):
     output = BASE / 'transitions' / f'loss-q{quarter}'
     output.mkdir(parents=True, exist_ok=True)
     binary = compiler(repo, output)
-    source = speed.BASE / 'menus/battle-normal/battle'
+    source = Path(local.get('battle_menu_fixture', speed.BASE / 'menus/battle-normal/battle'))
     driver = Driver(binary, local['rom'], menu.BOOT, source / 'private.sav', output / 'run.log')
     row = dict(quarter=quarter, kind='whiteout', issues=[])
     try:
@@ -214,7 +214,8 @@ def level(quarter):
     source = output / 'level-party.sav'
     # A learn-move prompt can replace the first move. Do not fill that slot
     # with an undeletable HM or an A-only driver will correctly remain there.
-    party = (('CATERPIE', 'EVOLVE', ('BODY_SLAM', 'THUNDERBOLT', 'WATER_PULSE', 'POISON_GAS')), *review.PARTY[1:])
+    species = local.get('learning_species', 'CATERPIE')
+    party = ((species, 'EVOLVE', ('BODY_SLAM', 'THUNDERBOLT', 'WATER_PULSE', 'POISON_GAS')), *review.PARTY[1:])
     review.create(repo, speed.BATTERY, source, party, level=6)
     battery = output / 'private.sav'
     make_fixture(repo, source, battery, ('ROUTE_30', 13, 49))
@@ -223,7 +224,7 @@ def level(quarter):
     try:
         menu.boot_overworld(driver, repo)
         menu.settle_map_input(driver, repo)
-        gameplay.generated(driver, repo, output, 'postbattle-level')
+        gameplay.generated(driver, repo, output, 'postbattle-bulbasaur-level' if species == 'BULBASAUR' else 'postbattle-level')
         menu.run(driver, repo, frames=quarter/FRAME)
         driver.command('perf 1')
         driver.command('audit 1')
@@ -231,18 +232,23 @@ def level(quarter):
         encounter(driver, repo)
         audio.until(driver, repo, 'BattleMenu.loop')
         audio.until(driver, repo, 'MoveSelectionScreen.menu_loop')
-        audio.until(driver, repo, 'EvolutionAnimation')
+        audio.until(driver, repo, 'LearnMove.learned' if species == 'BULBASAUR' else 'EvolutionAnimation')
         row['evolution'] = driver.command('m')
         if row['evolution']['double_speed'] != 0:
-            row['issues'].append('Post-battle evolution left normal speed')
+            row['issues'].append('Post-battle learning/evolution left normal speed')
         row['returned'] = world(driver, repo)
         row['level'] = audio.value(driver, repo, 'wPartyMon1Level')
         id_ = audio.value(driver, repo, 'wPartyMon1Species')
         bank, address = repo.symbols['wPokemonIndexTableEntries']
         row['species_index'] = int.from_bytes(bytes.fromhex(driver.command(
             f'perfram {bank} {address + 2*(id_-1)} 2')['bytes']), 'little')
-        if row['level'] != 7 or row['species_index'] != 11:
+        if row['level'] != 7 or row['species_index'] != (1 if species == 'BULBASAUR' else 11):
             row['issues'].append('Native level-up/evolution did not complete')
+        if species == 'BULBASAUR':
+            learned = gameplay.permanent_moves(driver, repo, 'wPartyMon1Moves')
+            if 73 not in learned:
+                row['issues'].append('Real post-battle learning did not retain Leech Seed')
+            gameplay.check_discovery(driver, repo, row, [73])
     except Exception as error:
         row['issues'].append(str(error))
     finally:

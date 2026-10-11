@@ -16,7 +16,7 @@ from .legacy_listing import open_mode_screen, private_battery
 from .area_ui import reach
 
 
-def capture(driver, output, name, key, finish):
+def capture(driver, output, name, key, finish, ignore_regions=()):
     folder = output / name
     folder.mkdir(exist_ok=True)
     before = []
@@ -48,7 +48,8 @@ def capture(driver, output, name, key, finish):
         path.unlink()
     # Ignore only pixels that actually animate/blink on the settled owners.
     # The remaining pixels must be wholly old, wholly new, or a black mask.
-    stable = [i for i in range(160 * 144) if all(
+    stable = [i for i in range(160 * 144) if not any(
+        x0 <= i % 160 < x1 and y0 <= i // 160 < y1 for x0, y0, x1, y1 in ignore_regions) and all(
         sample[i*3:i*3+3] == before[0][i*3:i*3+3] for sample in before)
         and all(sample[i*3:i*3+3] == after[0][i*3:i*3+3] for sample in after)]
     old = bytes(v for i in stable for v in before[0][i*3:i*3+3])
@@ -80,6 +81,7 @@ def capture(driver, output, name, key, finish):
         return (events[at]['boundary_t'] - start) / 70224 if at is not None else None
     first_frames, complete_frames = intervals(first), intervals(complete)
     return dict(issues=issues, displayed=observations, stable_pixels=len(stable),
+                unchanged_static_owner=old == new,
                 key=key,
                 first_display_index=first + 1 if first is not None else None,
                 complete_display_index=complete + 1 if complete is not None else None,

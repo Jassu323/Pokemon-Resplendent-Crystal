@@ -52,6 +52,7 @@ POINTS = {
     'get_base': ('GetBaseData', True),
     'selected_loop': ('PokedexSelectedMon_Update', False),
     'listing_reveal': ('Pokedex_InitMainScreen.revealed', False),
+    'discovery_use': ('MoveDiscovery_BattleUse', True),
 }
 
 
@@ -64,6 +65,10 @@ def core(repo, output, extra_points=None, extra_flags=()):
             bank, pc = repo.symbols[label]
             lines.append(f'{{{bank}, {pc}, "{name}", {str(span).lower()}}},')
     lines.append('};')
+    if 'MoveDiscovery_BattleUse' in repo.symbols:
+        for label in ('wPlayerMoveStruct', 'wEnemyMoveStruct', 'wMoveIndexTableEntries'):
+            bank, address = repo.symbols[label]
+            lines += [f'#define BD_{label}_bank {bank}', f'#define BD_{label} {address}']
     header.write_text('\n'.join(lines) + '\n')
     return build_core(repo, Path.home() / 'Documents/GitHub/SameBoy', output,
                       ('-DDEX_PERFORMANCE_TRACE', '-DDEX_BACKLOG_REVALIDATION_TRACE',
@@ -167,6 +172,8 @@ def run_case(job):
     try:
         index = config['names'].index(name)
         prior, direction = predecessor(index)
+        if config.get('listing_style') == 'legacy':
+            prior, direction = (index - 1) % len(config['names']), 'down'
         driver.command(f'load {config["states"]}/listing-{prior:03}.s0')
         driver.command('rawcolor')
         move(driver, direction, index)

@@ -62,6 +62,8 @@ def scenario_factory(repo, output):
         wPartyMon1Level wPartyMon1Exp wPartyMon1Happiness wPartySpecies wPartyCount
         wPartyMon1Species wPartyMon1 wPartyMon2 wPartyMon1Nickname wPartyMon1OT
         wStepCount wRepelEffect'''.split()
+    if 'wMoveDiscoverySeen' in repo.symbols:
+        labels.append('wMoveDiscoverySeen')
     header = output / 'scenario-symbols.h'
     header.write_text('\n'.join(f'#define B_{n} {repo.symbols[n][0]}\n#define S_{n} {repo.symbols[n][1]}' for n in labels) + '\n')
     sameboy = Path.home() / 'Documents/GitHub/SameBoy'
@@ -80,6 +82,34 @@ def generated(driver, repo, output, kind):
     subprocess.run([str(scenario_factory(repo, output)), str(repo.rom_path),
                     str(donor), kind, str(state)], check=True, capture_output=True)
     driver.command(f'load {state}')
+
+
+def discovery(driver, repo):
+    bank, address = repo.symbols['wMoveDiscoverySeen']
+    flags = bytes.fromhex(driver.command(f'perfram {bank} {address} 64')['bytes'])
+    return [n for n in range(1, 334) if flags[(n - 1) // 8] & 1 << ((n - 1) % 8)]
+
+
+def permanent_moves(driver, repo, name):
+    bank, address = repo.symbols[name]
+    ids = bytes.fromhex(driver.command(f'perfram {bank} {address} 4')['bytes'])
+    bank, address = repo.symbols['wMoveIndexTableEntries']
+    table = bytes.fromhex(driver.command(f'perfram {bank} {address} 508')['bytes'])
+    return sorted({int.from_bytes(table[(n - 1) * 2:n * 2], 'little') for n in ids if n})
+
+
+def check_discovery(driver, repo, row, expected):
+    if 'wMoveDiscoverySeen' not in repo.symbols:
+        return
+    actual = discovery(driver, repo)
+    expected = sorted(set(expected)) if 'MoveDiscovery_Learned' in repo.symbols else []
+    presented = sorted({e['index'] for e in driver.events if e['event'] == 'battle_discovery'
+                        and 1 <= e['index'] <= 333})
+    if 'MoveDiscovery_BattleUse' in repo.symbols:
+        expected = sorted(set(expected) | set(presented))
+    row['discovery'] = dict(actual=actual, expected=expected, fixture_started_empty=True)
+    row['discovery']['presented_battle_moves'] = presented
+    checked(row, actual == expected, 'Acquired/learned moves do not match permanent discovery flags')
 
 
 def phone(driver, repo, row, output):
@@ -106,6 +136,7 @@ def party_scenario(driver, repo, row, output, variant, kind):
     folder = Path(configuration(variant).get('audio_fixture_dir', BASE / 'audio' / f'{variant}-q0-v0'))
     driver.command(f'load {folder / "caterpie-party.s0"}')
     generated(driver, repo, output, 'egg' if kind == 'egg' else 'level')
+    old_moves = permanent_moves(driver, repo, 'wPartyMon1Moves') if 'wMoveDiscoverySeen' in repo.symbols else []
     driver.command('perf 1')
     driver.events.clear()
     audio.until(driver, repo, 'StartMenu.loop', key='b')
@@ -150,6 +181,9 @@ def party_scenario(driver, repo, row, output, variant, kind):
         index = audio.value(driver, repo, 'wPokemonIndexTableEntries' , 1024).to_bytes(1024, 'little')
         row['evolved_index'] = int.from_bytes(index[(species - 1)*2:species*2], 'little')
         checked(row, row['evolved_index'] == 11, 'Caterpie did not evolve to Metapod')
+    if 'wMoveDiscoverySeen' in repo.symbols:
+        final_moves = permanent_moves(driver, repo, 'wPartyMon1Moves')
+        check_discovery(driver, repo, row, final_moves if kind == 'egg' else set(final_moves) - set(old_moves))
     row['final'] = driver.command('m')
 
 
@@ -324,10 +358,11 @@ def trainer(driver, repo, row):
     row['final'] = driver.command('m')
 
 
-def pc_catch(driver, repo, row, output, variant):
+def pc_catch(driver, repo, row, output, variant, full_party=True):
     source = Path(configuration(variant).get('audio_fixture_dir', BASE / 'audio' / f'{variant}-q0-v0'))
     driver.command(f'load {source / "dusknoir-encounter.s0"}')
-    generated(driver, repo, output, 'full-party')
+    generated(driver, repo, output, 'full-party' if full_party else 'discovery-empty')
+    count_before = audio.value(driver, repo, 'wPartyCount')
     driver.command('perf 1')
     driver.command('audit 1')
     driver.events.clear()
@@ -343,15 +378,19 @@ def pc_catch(driver, repo, row, output, variant):
     audio.until(driver, repo, 'NewPokedexEntry.WaitPressAorB_AnimateFrontpic', key=None)
     menu.run(driver, repo, frames=240)
     audio.until(driver, repo, 'NewPokedexEntry.ReturnFromDexRegistration')
-    audio.until(driver, repo, 'PokeBallEffect.SendToPC', key='b')
-    row['sent_to_pc'] = True
+    if full_party:
+        audio.until(driver, repo, 'PokeBallEffect.SendToPC', key='b')
+    row['sent_to_pc'] = full_party
     for _ in range(80):
         menu.tap(driver, repo, 'b', released=40)
         if not audio.value(driver, repo, 'wBattleMode'):
             break
     checked(row, audio.value(driver, repo, 'wBattleMode') == 0, 'full-party catch did not return')
-    checked(row, audio.value(driver, repo, 'wPartyCount') == 6, 'full-party catch changed party count')
+    checked(row, audio.value(driver, repo, 'wPartyCount') == count_before + int(not full_party), 'catch changed party count incorrectly')
     menu.run(driver, repo, frames=240)
+    if 'wMoveDiscoverySeen' in repo.symbols:
+        name = 'sBoxMon1Moves' if full_party else f'wPartyMon{count_before + 1}Moves'
+        check_discovery(driver, repo, row, permanent_moves(driver, repo, name))
     row['final'] = driver.command('m')
 
 
@@ -427,8 +466,8 @@ def scenario(item):
         if kind in ('navigation', 'purchase', 'puzzle'):
             {'navigation': navigation, 'purchase': purchase, 'puzzle': solve_puzzle}[kind](
                 driver, repo, row, variant) if kind != 'navigation' else navigation(driver, repo, row)
-        elif kind == 'pc-catch':
-            pc_catch(driver, repo, row, output, variant)
+        elif kind in ('pc-catch', 'party-catch'):
+            pc_catch(driver, repo, row, output, variant, full_party=kind == 'pc-catch')
         elif kind == 'heal-save':
             heal_save(driver, repo, row, output, cfg)
         elif kind in ('phone', 'level', 'egg'):

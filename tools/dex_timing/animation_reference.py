@@ -49,10 +49,11 @@ def prepare(variant, moves, purpose='standard', coherent=False):
     cfg['core'] = str(menu.compile_observer(repo, Path.home() / 'Documents/GitHub/SameBoy', folder,
         ('-DDEX_PERFORMANCE_TRACE', '-DDEX_BACKLOG_REVALIDATION_TRACE', '-DDEX_BATTLE_TIMING_TRACE',
          '-DDEX_ANIMATION_REFERENCE_TRACE', f'-DDEX_PERFORMANCE_SYMBOLS="{header.resolve()}"')))
-    if variant == 'battle-normal' or variant in ('targeted', 'surf-production', 'surf-intro', 'surf-cleanup') or variant.startswith('expanded'):
+    if cfg.get('fresh_battle_fixture') or variant == 'battle-normal' or variant in ('targeted', 'surf-production', 'surf-intro', 'surf-cleanup') or variant.startswith('expanded'):
         from .shared_menu_fixtures import make_fixture
+        configured_battery = cfg.get('battery', speed.BATTERY)
         cfg['battery'] = str(folder / 'private.sav')
-        make_fixture(repo, speed.BATTERY, Path(cfg['battery']), ('ROUTE_30', 13, 49))
+        make_fixture(repo, Path(configured_battery), Path(cfg['battery']), ('ROUTE_30', 13, 49))
         stamp = folder/'checkpoint-rom.sha256'
         identity = sha256(repo.rom)
         if not (folder / 'battle-main.s0').exists() or not stamp.exists() or stamp.read_text().strip()!=identity:

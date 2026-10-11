@@ -90,7 +90,8 @@ sBackupConversionTableChecksum:: dw
 
 sBackupSaveDataEnd::
 
-	ds $88
+sBackupMoveDiscovery:: ds 72
+	ds $88 - 72
 
 sBackupChecksum:: dw
 
@@ -127,7 +128,8 @@ sConversionTableChecksum:: dw
 
 sSaveDataEnd::
 
-	ds $88
+sMoveDiscovery:: ds 72
+	ds $88 - 72
 
 sChecksum:: dw
 

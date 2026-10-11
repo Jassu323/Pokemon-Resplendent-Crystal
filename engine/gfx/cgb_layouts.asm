@@ -470,6 +470,15 @@ CGB_PokedexBuildSelectedMonLayout:
 	ld bc, 1 palettes
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
+	ld a, [wJumptableIndex]
+	sub DEXSTATE_SEARCH_RESULTS_SCR
+	cp 2
+	ret nc
+	ld hl, PokedexListDarkGray
+	ld de, wOBPals1 palette 7 + 3 colors
+	ld bc, 1 colors
+	ld a, BANK(wOBPals1)
+	call FarCopyWRAM
 	ret
 
 CGB_PokedexApplyLayout:
@@ -1441,6 +1450,9 @@ _CGB_BetaPikachuMinigame:
 	ret
 
 _CGB_PokedexSearchOption:
+	ld hl, PartyMenuOBPals
+	ld de, wOBPals1
+	call LoadHLPaletteIntoDE
 	ld hl, PokedexUIPalette
 	ld de, wBGPals1
 	call LoadHLPaletteIntoDE
@@ -1601,3 +1613,27 @@ _CGB_TrainerOrMonFrontpicPals:
 	call ApplyAttrmap
 	call ApplyPals
 	ret
+
+CGB_PokedexResultsAttributes:
+    xor a
+    hlcoord 0, 0, wAttrmap
+    ld bc, SCREEN_AREA
+    call ByteFill
+    hlcoord 1, 1, wAttrmap
+    lb bc, 7, 7
+    ld a, 1
+    call FillBoxCGB
+    ret
+
+CGB_PokedexResultsStagePalettes:
+    call ResetBGPals
+    ld hl, PokedexUIPalette
+    ld de, wBGPals1 palette 0
+    call LoadHLPaletteIntoDE
+    call CGB_PokedexLoadFrontpicPalette
+    ld hl, PokedexListCursorPalette
+    ld de, wOBPals1 palette 0
+    call LoadHLPaletteIntoDE
+    ld hl, PokedexListCaughtBallPalette
+    ld de, wOBPals1 palette 1
+    jp LoadHLPaletteIntoDE

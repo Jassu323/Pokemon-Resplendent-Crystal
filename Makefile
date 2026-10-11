@@ -139,6 +139,12 @@ preinclude_deps := includes.asm $(shell tools/scan_includes includes.asm)
 info_asset_inputs := tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/item_constants.asm constants/charmap.asm data/pokemon/names.asm data/items/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font.1bpp gfx/font/font_battle_extra.2bpp gfx/pokedex/dex_stat_bar.2bpp
 move_asset_inputs := tools/pokedex_moves_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/move_constants.asm constants/item_constants.asm data/moves/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/egg_moves_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font_battle_extra.2bpp
 area_asset_inputs := tools/pokedex_area_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/map_constants.asm constants/landmark_constants.asm data/maps/maps.asm $(wildcard data/wild/*_grass.asm) $(wildcard data/wild/*_water.asm) gfx/pokegear/town_map_palette_map.asm
+sort_asset_inputs := tools/pokedex_sort_assets.py constants/pokemon_constants.asm data/pokemon/names.asm data/pokemon/dex_order_new.asm
+moves_mode_asset_inputs := tools/pokedex_moves_mode_assets.py tools/pokedex_info_assets.py constants/move_constants.asm data/moves/names.asm data/moves/moves.asm
+build/dex-sort-assets/tables.asm: $(sort_asset_inputs)
+	python3 -B tools/pokedex_sort_assets.py --output build/dex-sort-assets
+build/dex-moves-mode-assets/tables.asm: $(moves_mode_asset_inputs)
+	python3 -B tools/pokedex_moves_mode_assets.py
 build/dex-area-assets/tables.asm: $(area_asset_inputs)
 	python3 -B tools/pokedex_area_assets.py
 build/dex-area-assets/town-pals.bin: build/dex-area-assets/tables.asm

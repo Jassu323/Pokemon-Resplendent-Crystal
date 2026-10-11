@@ -132,7 +132,7 @@ class SchedulerContracts(unittest.TestCase):
             self.assertEqual(bool(cpu.f & 0x10), delta < 128)
 
     def test_unsupported_hardware_and_short_tail_fail_closed(self):
-        for port, value in ((0xff4d, 0x80), (0xff40, 0), (0xff07, 5),
+        for port, value in ((0xff40, 0), (0xff07, 5),
                             (0xff07, 7), (0xff06, 57), (0xff06, 55),
                             (0xff41, 1)):
             cpu = self.admission()
@@ -150,6 +150,25 @@ class SchedulerContracts(unittest.TestCase):
             cpu.field('wSampledCryCacheCount', remaining)
             cpu.run('Pokedex_AdmitAnimationFinish')
             self.assertTrue(cpu.f & 0x10)
+
+    def test_double_speed_timer_profile_and_mismatches(self):
+        for speed, reload, sampled in product((0, 0x80), (155, 156, 157), (False, True)):
+            cpu = self.admission()
+            cpu.ram[0xff4d] = speed
+            cpu.ram[0xff07] = 7
+            cpu.ram[0xff06] = reload
+            cpu.field('hSampledCryTimer', int(sampled))
+            cpu.ram[0xff70] = 6
+            cpu.run('Pokedex_AdmitAnimationFinish')
+            self.assertEqual(bool(cpu.f & 0x10), speed == 0x80 and reload == 156)
+            self.assertEqual(cpu.ram[0xff70], 6)
+        cpu = self.admission()
+        cpu.ram[0xff4d] = 0x80
+        cpu.ram[0xff07] = 7
+        cpu.ram[0xff06] = 156
+        cpu.field('wSampledCryCacheCount', 0)
+        cpu.run('Pokedex_AdmitAnimationFinish')
+        self.assertFalse(cpu.f & 0x10)
 
     def test_quiet_acquisition_and_release(self):
         requests = ('hVBlank', 'hBGMapUpdate', 'hCGBPalUpdate', 'hDMATransfer',

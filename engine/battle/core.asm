@@ -1071,6 +1071,7 @@ Battle_FocusPunchMessageEnemy:
 	jp Battle_PlayFocusPunchTightenAnim
 
 Battle_PlayFocusPunchTightenAnim:
+	farcall MoveDiscovery_BattleUse
 	xor a
 	ld [wBattleAfterAnim], a
 	inc a

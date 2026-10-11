@@ -587,6 +587,16 @@ PokedexListing_InitModeScreen:
 	call PlaceString
 	farcall Pokedex_InitArrowCursor
 	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_MOVES_RETURN
+	jr nz, .ordinary_return
+	ld a, [wUnlockedUnownMode]
+	and a
+	ld a, 3
+	jr nz, .cursor
+	dec a
+	jr .cursor
+.ordinary_return
+	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_UNOWN_RETURN
 	ld a, DEXMENU_UNOWN
 	jr z, .cursor
@@ -680,7 +690,13 @@ PokedexListing_UpdateModeScreen:
 	ld [wJumptableIndex], a
 	ret
 .other
-; Future modes can be highlighted without changing the Listing or its order.
+	cp DEXMENU_MOVES
+	jr nz, .unown_check
+	call PokedexListing_BeginMenuTransition
+	ld a, DEXSTATE_MOVES_MODE_INIT
+	ld [wJumptableIndex], a
+	ret
+.unown_check
 	cp DEXMENU_UNOWN
 	ret nz
 	ld a, [wUnlockedUnownMode]
@@ -815,3 +831,7 @@ PokedexLegacy_PlaceBorder:
 	ld [hli], a
 	dec e
 	jr .row_loop
+
+PokedexResults_GetRowSpecies:
+	ld a, c
+	jp PokedexLegacy_GetRowSpecies

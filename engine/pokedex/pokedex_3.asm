@@ -577,6 +577,12 @@ Pokedex_InvalidatePendingGridCacheRow:
 	ret
 
 Pokedex_UploadPendingGridCacheRow:
+    ld a, [wJumptableIndex]
+    cp DEXSTATE_POPOVER
+    jr nz, .ordinary
+    farcall PokedexPopover_StageCacheRow
+    ret c
+.ordinary
 ; Upload both frames of the staged icon row and publish its ownership tag only
 ; after every BG and OBJ chunk has reached VRAM bank 1.
 	ldh a, [rVBK]
@@ -1283,6 +1289,29 @@ Pokedex_BlackOutSelectedMonBG::
 	ret
 
 Pokedex_VBlankDispatch::
+    ld a, [wJumptableIndex]
+    cp DEXSTATE_MOVES_TEXT_ENTRY
+    jr nz, .not_moves_text
+    scf
+    ret
+.not_moves_text
+    cp DEXSTATE_MOVES_SEARCH
+    jr z, .moves_search
+    sub DEXSTATE_SEARCH_SCR
+    cp 2
+    jr nc, .not_search
+.moves_search
+    call PokedexSearch_VBlank
+    scf
+    ret
+.not_search
+    ld a, [wJumptableIndex]
+    cp DEXSTATE_POPOVER
+    jr nz, .ordinary
+    call PokedexPopover_VBlank
+    scf
+    ret
+.ordinary
 	call Pokedex_VBlankOwnerTransition
 	ret c
 	ld a, [wPokedexOwnerTransition]
@@ -2564,9 +2593,11 @@ DrawPokedexSearchResultsWindow:
 	ld bc, 11
 	call ByteFill
 	hlcoord 5, 0
-	ld [hl], $3f
+	ld [hl], POKEDEX_LEGACY_ARROW_TILE
 	hlcoord 5, 10
-	ld [hl], $40
+	ld [hl], POKEDEX_LEGACY_ARROW_TILE
+	hlcoord 5, 10, wAttrmap
+	ld [hl], BG_YFLIP
 	hlcoord 11, 0
 	ld [hl], $66
 	ld a, $67
@@ -2599,10 +2630,10 @@ DrawPokedexSearchResultsWindow:
 
 .esults_D
 ; (SEARCH R)
-	db   "Esults"
+	db   "esults"
 	next ""
 ; (### FOUN)
-	next "D!@"
+	next "d!@"
 
 DrawDexEntryScreenRightEdge:
 	ldh a, [hBGMapAddress]

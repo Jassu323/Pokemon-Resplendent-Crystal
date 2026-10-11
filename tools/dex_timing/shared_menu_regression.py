@@ -233,7 +233,13 @@ def extra_menu_states(output, repo, core, battery):
         press_until(driver, repo, 'Pokedex_UpdateOptionScreen', 'select')
         rows['dex-options'] = save_menu(driver, repo, output, 'dex-options', 'Pokedex_UpdateOptionScreen')
         driver.command(f'load {output / "dex.s0"}')
-        press_until(driver, repo, 'Pokedex_UpdateSearchScreen', 'start')
+        if 'PokedexPopover_Update' in repo.symbols:
+            press_until(driver, repo, 'PokedexPopover_Update', 'start')
+            run(driver, repo, frames=12)
+            tap(driver, repo, 'down')
+            press_until(driver, repo, 'Pokedex_UpdateSearchScreen')
+        else:
+            press_until(driver, repo, 'Pokedex_UpdateSearchScreen', 'start')
         rows['dex-search'] = save_menu(driver, repo, output, 'dex-search', 'Pokedex_UpdateSearchScreen')
 
         driver.command(f'load {output / "overworld.s0"}')
@@ -321,7 +327,7 @@ def expanded_menu_states(output, repo, core, battery):
             raise RuntimeError('Radio fixture did not settle on the radio card')
 
         driver.command(f'load {output / "dex-options.s0"}')
-        for _ in range(3):
+        for _ in range(2 if 'PokedexPopover_Update' in repo.symbols else 3):
             tap(driver, repo, 'down')
         press_until(driver, repo, 'Pokedex_UpdateUnownMode')
         rows['dex-unown'] = save_menu(driver, repo, output, 'dex-unown', 'Pokedex_UpdateUnownMode')

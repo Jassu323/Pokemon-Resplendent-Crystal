@@ -298,6 +298,7 @@ FindStackTop:
 	jr .loop
 
 ErasePreviousSave:
+	farcall MoveDiscovery_Invalidate
 	call EraseBoxes
 	call EraseHallOfFame
 	call EraseLinkBattleStats
@@ -508,6 +509,9 @@ SaveChecksum:
 	ld hl, sSaveData
 	ld bc, sSaveDataEnd - sSaveData
 	call Checksum
+	push de
+	farcall MoveDiscovery_SavePrimary
+	pop de
 	ld a, e
 	ld [sChecksum + 0], a
 	ld a, d
@@ -595,6 +599,9 @@ SaveBackupChecksum:
 	ld hl, sBackupSaveData
 	ld bc, sBackupSaveDataEnd - sBackupSaveData
 	call Checksum
+	push de
+	farcall MoveDiscovery_SaveBackup
+	pop de
 	ld a, e
 	ld [sBackupChecksum + 0], a
 	ld a, d
@@ -603,12 +610,15 @@ SaveBackupChecksum:
 	ret
 
 TryLoadSaveFile:
+	farcall MoveDiscovery_Clear
 	call VerifyChecksum
 	jr nz, .backup
 	call LoadPlayerData
 	call LoadPokemonData
 	call LoadIndexTables
+	farcall MoveDiscovery_LoadPrimary
 	call LoadBox
+	move_discovery_hook MoveDiscovery_BootstrapPrimary
 	farcall RestorePartyMonMail
 	farcall RestoreGSBallFlag
 	call ValidateBackupSave
@@ -626,7 +636,9 @@ TryLoadSaveFile:
 	call LoadBackupPlayerData
 	call LoadBackupPokemonData
 	call LoadBackupIndexTables
+	farcall MoveDiscovery_LoadBackup
 	call LoadBox
+	move_discovery_hook MoveDiscovery_BootstrapBackup
 	farcall RestorePartyMonMail
 	farcall RestoreGSBallFlag
 	call ValidateSave

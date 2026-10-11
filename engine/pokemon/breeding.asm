@@ -268,6 +268,7 @@ HatchEggs:
 	ld a, [wCurPartySpecies]
 	dec de
 	ld [de], a
+	move_discovery_hook MoveDiscovery_CurrentParty
 	ld [wNamedObjectIndex], a
 	ld [wCurSpecies], a
 	call GetPokemonName

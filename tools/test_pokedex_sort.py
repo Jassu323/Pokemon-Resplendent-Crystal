@@ -164,8 +164,14 @@ class SortTests(unittest.TestCase):
         before = (ROOT / 'pokecrystal.map').read_text().split('\n\n')[0].splitlines()
         after = (self.output / 'pokecrystal-dex-options.map').read_text().split('\n\n')[0].splitlines()
         for label in ('ROM0', 'WRAM0', 'WRAMX', 'HRAM', 'SRAM'):
-            self.assertEqual(next(line for line in before if label + ':' in line),
-                             next(line for line in after if label + ':' in line))
+            first = next(line for line in before if label + ':' in line)
+            last = next(line for line in after if label + ':' in line)
+            if label == 'WRAMX' and 'wMoveDiscoverySeen' in self.repo.symbols:
+                self.assertEqual(int(last.split()[1]) - int(first.split()[1]), 66)
+                self.assertEqual(self.repo.symbols['wMoveDiscoverySeen'], (2, 0xd500))
+                self.assertEqual(self.repo.symbols['wMoveDiscoveryEnd'], (2, 0xd542))
+            else:
+                self.assertEqual(first, last)
 
     def test_grid_oracle_rejects_stale_tiles_with_valid_tags_and_palettes(self):
         constants = list(self.manifest['national'])

@@ -556,6 +556,9 @@ PokeBallEffect:
 	call ClearSprites
 
 	predef TryAddMonToParty
+	jr nc, .discovery_party_done
+	move_discovery_hook MoveDiscovery_LastParty
+.discovery_party_done
 
 	farcall SetCaughtData
 
@@ -612,6 +615,9 @@ PokeBallEffect:
 	call ClearSprites
 
 	predef SendMonIntoBox
+	jr nc, .discovery_box_done
+	move_discovery_hook MoveDiscovery_FirstBox
+.discovery_box_done
 
 	farcall SetBoxMonCaughtData
 

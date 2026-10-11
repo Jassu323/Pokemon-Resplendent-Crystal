@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-06. This is the live issue/status list, not the chronological
+Updated 2026-10-08. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -21,6 +21,9 @@ Listing/exit presentation reports.
 
 Remaining Dex review queue:
 
+- `DEX-PREF-01` defers robust position remembrance for the Modern/Legacy
+  Pokemon listings. `DEX-PREF-02` separately defers Moves Mode position
+  remembrance. These are not part of Moves sort-preference persistence.
 - `DEX-GRID-05` is corrected in the private Listing Options prototype, pending
   manual review/promotion. Changed-sort cursor reset left old row tags valid
   on portrait replacement; both branches now invalidate ownership before
@@ -1698,6 +1701,76 @@ Acceptance:
 - Locked/unlocked layouts and all available Unown forms remain correct;
   post-menu all-species animation/sample-cry regressions remain clean.
 - Manual visual approval before promoting a faster transition.
+
+## Dex Preference Follow-Ups
+
+### DEX-PREF-01: Remember Position In Pokemon Dex Modes
+
+Status: Deferred by the user 2026-10-08; no position implementation approved
+
+Remember the actual last-highlighted Pokemon and its listing viewport when
+closing/reopening the Dex, for both Modern and Legacy. Modern currently resets
+its grid on entry. Legacy's inherited `Pokedex_InitCursorPosition` reconstructs
+a viewport from `wPrevDexEntry`, which is updated by Selected entry and the
+Options popup rather than every highlighted row. It is temporary shared menu
+memory, not a reliable saved position.
+
+Relevant owners: `engine/pokedex/pokedex.asm` (`InitPokedex`,
+`Pokedex_InitGridCursorPosition`, `Pokedex_InitCursorPosition`),
+`engine/pokedex/pokedex_legacy.asm` (`Pokedex_InitListingPresentation`, mode
+switch normalization), the private `engine/pokedex/pokedex_popover.asm`
+(changed-sort reset), and `ram/wram.asm` (dedicated saved preference fields).
+
+Scope and acceptance:
+
+- Define shared-species versus independent Modern/Legacy bookmarks before
+  implementation. Retain position during gameplay and across normal
+  Save/Continue, without relying on shared Dex/menu scratch surviving.
+- Use permanent species identity with a validated presentation/sort association;
+  restore/clamp the viewport and cursor for each layout. Do not allocate or
+  retain transient Pokemon IDs merely for remembrance.
+- Preserve the accepted rule that selecting a different sort starts at the
+  beginning. Confirming the current sort or canceling a popup preserves position.
+- Temporary Search Results, Selected internal paging, Unown/Moves visits and
+  mode switches must have explicit bookmark semantics; temporary result-list
+  positions must not overwrite the ordinary listing's bookmark accidentally.
+- Handle sparse/changed seen sets, authored order changes, future species
+  additions, invalid/old saved values and New Game with safe defaults.
+- Qualify exact selected identity, viewport/cursor and icon/palette ownership
+  through close/reopen, other menus, battles, Save/Continue, backup recovery,
+  both presentations and all supported sorts. Cost reserved saved padding
+  explicitly and keep existing save offsets unchanged where possible.
+
+### DEX-PREF-02: Remember Position In Moves Dex Mode
+
+Status: Deferred by the user 2026-10-08; separate from approved sort remembrance
+
+Remember the last-highlighted move and its viewport when leaving/reentering
+Moves Mode or closing/reopening the Dex, and across normal Save/Continue.
+Currently `PokedexMovesMode_Initialize` clears cursor and scroll along with
+its shared Info workspace. The current sort-remembrance work restores only
+the Type/Alphabet preference and deliberately leaves this reset intact.
+
+Relevant owners: private `engine/pokedex/pokedex_moves_mode.asm`
+(`PokedexMovesMode_Initialize`, navigation, `PokedexMovesMode_SortUpdate`),
+`tools/dex_timing/probes/pokedex_moves_mode.asm`,
+`tools/pokedex_moves_mode_assets.py` (generated Type/Alphabet orders), and
+`ram/wram.asm` (dedicated saved preference fields).
+
+Scope and acceptance:
+
+- Keep the durable bookmark outside shared Info/Dex scratch. Use a permanent
+  move identity and validated sort/viewport state, independent of discovery.
+- Preserve changed-sort reset-to-first and same-sort/cancel position retention.
+  Decide whether each sort gets its own bookmark before implementation.
+- Unknown moves remain valid list positions; do not reveal their names/details
+  while restoring. Handle future move additions, regenerated orders, invalid
+  saved values, legacy saves and New Game safely.
+- Keep future move-search results separate from the unfiltered list bookmark;
+  returning from search must not silently lose or replace the prior position.
+- Test both orders, every cursor row, top/bottom/wrap/page boundaries, known
+  and unseen entries, other Dex modes, menus/battles, normal Save/Continue and
+  primary/backup recovery. Retain accepted scrollbar and popup alignment.
 
 ## Adjacent Deferred Work
 

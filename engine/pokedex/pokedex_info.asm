@@ -1322,6 +1322,10 @@ PokedexInfo_LoadTypeSprites:
 	jr nz, .remap
 	ret
 
+PokedexInfo_CopyCompactTypeTilesByC:
+	ld a, c
+	jp PokedexInfo_LoadTypeSprites.CopyType
+
 PokedexInfo_StageTypePalettes:
 	ldh a, [rSVBK]
 	push af

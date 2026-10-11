@@ -1,6 +1,7 @@
 DisplayUsedMoveText:
 	ld hl, UsedMoveText
 	call BattleTextbox
+	move_discovery_hook MoveDiscovery_BattleUse
 	jp WaitBGMap
 
 UsedMoveText:

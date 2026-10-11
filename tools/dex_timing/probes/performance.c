@@ -233,6 +233,22 @@ static void perf_observe(unsigned bank, unsigned pc)
             already_active |= perf_spans[j].id == i && perf_spans[j].sp == gb.sp;
         }
         if (already_active) continue;
+#ifdef BD_wPlayerMoveStruct
+        if (!strcmp(perf_points[i].name, "discovery_use")) {
+            unsigned actor = byte(S_hBattleTurn);
+            unsigned address = actor ? BD_wEnemyMoveStruct : BD_wPlayerMoveStruct;
+            unsigned ram_bank = actor ? BD_wEnemyMoveStruct_bank : BD_wPlayerMoveStruct_bank;
+            unsigned live = gb.ram[ram_bank * 4096 + (address & 4095)];
+            unsigned index = 0;
+            if (live && live <= 254) {
+                unsigned at = (BD_wMoveIndexTableEntries & 4095) + (live - 1) * 2;
+                const uint8_t *table = gb.ram + BD_wMoveIndexTableEntries_bank * 4096;
+                index = table[at] | table[at + 1] << 8;
+            }
+            printf("{\"event\":\"battle_discovery\",\"t\":%" PRIu64
+                   ",\"turn\":%u,\"live_id\":%u,\"index\":%u}\n", now, actor, live, index);
+        }
+#endif
 #ifdef DEX_SURF_CLEANUP_TRACE
         if (!strncmp(perf_points[i].name, "surf_", 5)) perf_surf_cleanup(perf_points[i].name);
 #endif
@@ -353,7 +369,9 @@ static bool perf_command(const char *line)
         for (unsigned i = 0; i < size; i++) {
             unsigned at = address + i;
             unsigned value = at >= 0xc000 && at < 0xe000 ?
-                gb.ram[(at < 0xd000 ? 0 : bank) * 4096 + (at & 4095)] : GB_read_memory(&gb, at);
+                gb.ram[(at < 0xd000 ? 0 : bank) * 4096 + (at & 4095)] :
+                at >= 0xa000 && at < 0xc000 && bank * 8192 + at - 0xa000 < gb.mbc_ram_size ?
+                gb.mbc_ram[bank * 8192 + at - 0xa000] : GB_read_memory(&gb, at);
             printf("%02x", value);
         }
         printf("\",\"apu_enabled\":%u,\"apu_lf_div\":%u,\"speed\":%u}\n",

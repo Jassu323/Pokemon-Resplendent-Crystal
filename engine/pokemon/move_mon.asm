@@ -914,6 +914,7 @@ RetrieveBreedmon:
 	ld [hli], a
 	ldh a, [hMultiplicand + 2]
 	ld [hl], a
+	move_discovery_hook MoveDiscovery_LastParty
 	and a
 	ret
 
@@ -1805,6 +1806,7 @@ GivePoke::
 .skip_nickname
 	pop bc
 	pop de
+	move_discovery_hook MoveDiscovery_Gift
 	ld a, b
 	and a
 	ret z

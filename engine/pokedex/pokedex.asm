@@ -14,6 +14,13 @@
 	const DEXSTATE_UNOWN_MODE
 	const DEXSTATE_UPDATE_UNOWN_MODE
 	const DEXSTATE_EXIT
+	const DEXSTATE_POPOVER
+	const DEXSTATE_MOVES_MODE_INIT
+	const DEXSTATE_MOVES_MODE_UPDATE
+	const DEXSTATE_MOVES_MODE_SORT
+	const DEXSTATE_MOVES_OPTIONS
+	const DEXSTATE_MOVES_SEARCH
+	const DEXSTATE_MOVES_TEXT_ENTRY
 
 	const_def
 	const DEXSELECT_VIEW_DESCRIPTION
@@ -30,6 +37,7 @@
 	const DEXSELECT_STATE_LEAVING
 	const DEXSELECT_STATE_MENU_RETURN
 	const DEXSELECT_STATE_UNOWN_RETURN
+	const DEXSELECT_STATE_MOVES_RETURN
 
 	const_def
 	const POKEDEX_OWNER_TRANSITION_NONE
@@ -468,6 +476,37 @@ Pokedex_RunJumptable:
 	dw Pokedex_InitUnownMode
 	dw Pokedex_UpdateUnownMode
 	dw Pokedex_Exit
+	dw Pokedex_UpdatePopover
+	dw Pokedex_InitMovesMode
+	dw Pokedex_UpdateMovesMode
+	dw Pokedex_UpdateMovesModeSort
+	dw Pokedex_UpdateMovesOptions
+	dw Pokedex_UpdateMovesSearch
+	dw Pokedex_UpdateMovesTextEntry
+
+Pokedex_InitMovesMode:
+	farcall PokedexMovesMode_Initialize
+	ret
+Pokedex_UpdateMovesMode:
+	farcall PokedexMovesMode_Update
+	ret
+Pokedex_UpdateMovesModeSort:
+	farcall PokedexMovesMode_SortUpdate
+	ret
+
+Pokedex_UpdateMovesOptions:
+	farcall PokedexMovesSearch_OptionsUpdate
+	ret
+Pokedex_UpdateMovesSearch:
+	farcall PokedexMovesSearch_Update
+	ret
+Pokedex_UpdateMovesTextEntry:
+	farcall PokedexMovesSearch_TextUpdate
+	ret
+
+Pokedex_UpdatePopover:
+	farcall PokedexPopover_Update
+	ret
 
 Pokedex_IncrementDexPointer:
 	ld hl, wJumptableIndex
@@ -713,15 +752,7 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .start
-	call Pokedex_StopGridIconAnimation
-	call Pokedex_BlackOutBG
-	ld a, DEXSTATE_SEARCH_SCR
-	ld [wJumptableIndex], a
-	xor a
-	ldh [hSCX], a
-	ld a, $a7
-	ldh [hWX], a
-	call DelayFrame
+	farcall PokedexPopover_Open
 	ret
 
 .b
@@ -763,12 +794,13 @@ Pokedex_UpdateOptionScreen:
 	ret
 
 Pokedex_InitSearchScreen:
+	farcall PokedexSearch_Initialize
 	xor a
 	ldh [hBGMapMode], a
 	call ClearSprites
 	call Pokedex_DrawSearchScreenBG
 	call Pokedex_InitArrowCursor
-	ld a, NORMAL + 1
+	ld a, 1 ; Bug starts the alphabetical selector
 	ld [wDexSearchMonType1], a
 	xor a
 	ld [wDexSearchMonType2], a
@@ -779,6 +811,7 @@ Pokedex_InitSearchScreen:
 	call WaitBGMap
 	ld a, SCGB_POKEDEX_SEARCH_OPTION
 	call Pokedex_GetSGBLayout
+	farcall PokedexListing_RevealMenu
 	call Pokedex_IncrementDexPointer
 	ret
 
@@ -803,15 +836,16 @@ Pokedex_UpdateSearchScreen:
 	jp hl
 
 .cancel
-	call Pokedex_BlackOutBG
+	farcall PokedexSearch_Leave
+	farcall PokedexListing_BeginMenuTransition
 	ld a, DEXSTATE_MAIN_SCR
 	ld [wJumptableIndex], a
 	ret
 
 .ArrowCursorData:
 	db PAD_UP | PAD_DOWN, 4
-	dwcoord 2, 4  ; TYPE 1
-	dwcoord 2, 6  ; TYPE 2
+	dwcoord 1, 4  ; TYPE 1
+	dwcoord 1, 6  ; TYPE 2
 	dwcoord 2, 13 ; BEGIN SEARCH
 	dwcoord 2, 15 ; CANCEL
 
@@ -864,51 +898,22 @@ Pokedex_UpdateSearchScreen:
 	ld [wDexListingScrollOffset], a
 	ld [wDexListingScrollOffset + 1], a
 	ld [wDexListingCursor], a
-	call Pokedex_BlackOutBG
+	farcall PokedexSearch_Leave
+	farcall PokedexListing_BeginMenuTransition
 	ld a, DEXSTATE_SEARCH_RESULTS_SCR
 	ld [wJumptableIndex], a
 	ret
 
 .MenuAction_Cancel:
-	call Pokedex_BlackOutBG
+	farcall PokedexSearch_Leave
+	farcall PokedexListing_BeginMenuTransition
 	ld a, DEXSTATE_MAIN_SCR
 	ld [wJumptableIndex], a
 	ret
 
 Pokedex_InitSearchResultsScreen:
-	xor a
-	ldh [hBGMapMode], a
-	xor a
-	hlcoord 0, 0, wAttrmap
-	ld bc, SCREEN_AREA
-	call ByteFill
-	call Pokedex_SetBGMapMode4
-	call Pokedex_ResetBGMapMode
-	farcall DrawPokedexSearchResultsWindow
-	call Pokedex_PlaceSearchResultsTypeStrings
-	ld a, 4
-	ld [wDexListingHeight], a
-	call Pokedex_PrintListing
-	call Pokedex_SetBGMapMode3
-	call Pokedex_ResetBGMapMode
-	call Pokedex_DrawSearchResultsScreenBG
-	ld a, POKEDEX_SCX
-	ldh [hSCX], a
-	ld a, $4a
-	ldh [hWX], a
-	xor a
-	ldh [hWY], a
-	call WaitBGMap
-	call Pokedex_ResetBGMapMode
-	farcall DrawPokedexSearchResultsWindow
-	call Pokedex_PlaceSearchResultsTypeStrings
-	call Pokedex_UpdateSearchResultsCursorOAM
-	ld a, -1
-	ld [wCurPartySpecies], a
-	ld a, SCGB_POKEDEX
-	call Pokedex_GetSGBLayout
-	call Pokedex_IncrementDexPointer
-	ret
+	farcall PokedexResults_Initialize
+	jp Pokedex_IncrementDexPointer
 
 Pokedex_UpdateSearchResultsScreen:
 	ld hl, hJoyPressed
@@ -920,12 +925,7 @@ Pokedex_UpdateSearchResultsScreen:
 	jr nz, .go_to_dex_entry
 	call Pokedex_ListingHandleDPadInput
 	ret nc
-	call Pokedex_UpdateSearchResultsCursorOAM
-	xor a
-	ldh [hBGMapMode], a
-	call Pokedex_PrintListing
-	call Pokedex_SetBGMapMode3
-	call Pokedex_ResetBGMapMode
+	farcall PokedexResults_Scroll
 	ret
 
 .go_to_dex_entry
@@ -949,8 +949,7 @@ Pokedex_UpdateSearchResultsScreen:
 	ld [wPrevDexEntry], a
 	ld a, [wPrevDexEntryBackup + 1]
 	ld [wPrevDexEntry + 1], a
-	call Pokedex_BlackOutBG
-	call ClearSprites
+	farcall PokedexListing_BeginMenuTransition
 	farcall Pokedex_OrderMonsByMode
 	ld a, DEXSTATE_SEARCH_SCR
 	ld [wJumptableIndex], a
@@ -1688,19 +1687,24 @@ Pokedex_DrawOptionScreenBG:
 
 Pokedex_DrawSearchScreenBG:
 	call Pokedex_FillBackgroundColor2
+.Header
+	hlcoord 0, 0
+	ld a, $31
+	ld bc, 2 * SCREEN_WIDTH
+	call ByteFill
 	hlcoord 0, 2
 	lb bc, 14, 18
 	call Pokedex_PlaceBorder
 	hlcoord 0, 1
 	ld de, .Title
 	call Pokedex_PlaceString
-	hlcoord 8, 4
+	hlcoord 7, 4
 	ld de, .TypeLeftRightArrows
 	call Pokedex_PlaceString
-	hlcoord 8, 6
+	hlcoord 7, 6
 	ld de, .TypeLeftRightArrows
 	call Pokedex_PlaceString
-	hlcoord 3, 4
+	hlcoord 2, 4
 	ld de, .Types
 	call PlaceString
 	hlcoord 3, 13
@@ -2251,6 +2255,13 @@ Pokedex_DrawFootprintWithTile:
 	ret
 
 Pokedex_GetSelectedMon:
+	ld hl, wDexListingEnd
+	ld a, [hli]
+	or [hl]
+	jr nz, .nonempty
+	ld hl, CHIKORITA
+	jp Pokedex_ResolveSpeciesIndex
+.nonempty
 ; Gets the species of the currently selected Pokémon. This corresponds to the
 ; position owned by the active Pokédex section.
 	ld a, [wJumptableIndex]
@@ -2289,6 +2300,7 @@ Pokedex_GetMonAtOrderIndex:
 	ld l, a
 	pop af
 	ldh [rSVBK], a
+Pokedex_ResolveSpeciesIndex:
 	push hl
 	call GetPokemonIDFromIndex
 	ld l, LOCKED_MON_ID_DEX_SELECTED
@@ -2462,21 +2474,30 @@ Pokedex_NextSearchMonType:
 	ret
 
 Pokedex_PlaceSearchScreenTypeStrings:
-	xor a
-	ldh [hBGMapMode], a
-	hlcoord 9, 3
-	lb bc, 4, 8
-	ld a, ' '
-	call Pokedex_FillBox
-	ld a, [wDexSearchMonType1]
-	hlcoord 9, 4
-	call Pokedex_PlaceTypeString
-	ld a, [wDexSearchMonType2]
-	hlcoord 9, 6
-	call Pokedex_PlaceTypeString
-	ld a, $1
+	farcall PokedexSearch_DrawFields
+	farcall PokedexSearch_UpdateIcons
+	ld a, 1
 	ldh [hBGMapMode], a
 	ret
+
+PokedexSearch_DrawFieldText:
+	ldh a, [hCGB]
+	and a
+	jr nz, .second
+	ld a, [wDexSearchMonType1]
+	hlcoord 8, 4
+	call Pokedex_PlaceTypeString
+.second
+	ldh a, [hCGB]
+	and a
+	jr z, .text
+	ld a, [wDexSearchMonType2]
+	and a
+	ret nz
+.text
+	ld a, [wDexSearchMonType2]
+	hlcoord 8, 6
+	jp Pokedex_PlaceTypeString
 
 Pokedex_PlaceTypeString:
 	push hl
@@ -2495,120 +2516,7 @@ endr
 INCLUDE "data/types/search_strings.asm"
 
 Pokedex_SearchForMons:
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
-	ld a, [wDexSearchMonType2]
-	and a
-	call nz, .Search
-	ld a, [wDexSearchMonType1]
-	and a
-	call nz, .Search
-	pop af
-	ldh [rSVBK], a
-	ret
-
-.Search:
-	ld e, a
-	xor a
-	ld hl, wDexSearchResultCount
-	ld [hli], a
-	ld [hl], a
-	ld d, a
-	ld hl, PokedexTypeSearchConversionTable - 1
-	add hl, de
-	ld a, [hl]
-	ld [wDexConvertedMonType], a
-	ld hl, wDexListingEnd
-	ld a, [hli]
-	ld c, a
-	ld b, [hl]
-	ld hl, wPokedexOrder
-	ld d, h
-	ld e, l
-
-.loop
-	push bc
-	ld a, [hli]
-	ld c, a
-	ld a, [hli]
-	push hl
-	ld b, a
-	or c
-	jr z, .next_mon
-	ld a, b
-	and c
-	inc a
-	jr z, .next_mon
-	push bc
-	push de
-	ld d, b
-	ld e, c
-	ld a, BANK(wPokedexSeen)
-	ldh [rSVBK], a
-	call CheckSeenMonIndex
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
-	pop de
-	pop bc
-	jr z, .next_mon
-	; instead of going through an index conversion and GetBaseData (which would end up GC'ing the
-	; index table several times!), just load the base data pointer directly and do a far read
-	ld a, BANK(BaseData)
-	ld hl, BaseData
-	push bc
-	call LoadIndirectPointer
-	ld bc, BASE_TYPES
-	add hl, bc
-	pop bc
-	jr z, .next_mon
-	call GetFarWord ;load both types in hl
-	ld a, [wDexConvertedMonType]
-	cp h
-	jr z, .match_found
-	cp l
-	jr nz, .next_mon
-
-.match_found
-	ld a, c
-	ld [de], a
-	inc de
-	ld a, b
-	ld [de], a
-	inc de
-	ld hl, wDexSearchResultCount
-	inc [hl]
-	jr nz, .next_mon
-	inc hl
-	inc [hl]
-
-.next_mon
-	pop hl
-	pop bc
-	dec bc
-	ld a, b
-	or c
-	jr nz, .loop
-
-	ld hl, wDexSearchResultCount
-	ld bc, -(NUM_POKEMON + 1)
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	add hl, bc ;hl = minus the number of entries to clear
-	ld c, l
-	ld b, h
-	ld l, e
-	ld h, d
-	ld a, -1
-.clear_remaining_mons
-	ld [hli], a
-	ld [hli], a
-	inc c
-	jr nz, .clear_remaining_mons
-	inc b
-	jr nz, .clear_remaining_mons
+	farcall PokedexSearch_Filter
 	ret
 
 INCLUDE "data/types/search_types.asm"
@@ -3439,3 +3347,98 @@ Pokedex_ResetBGMapMode:
 	xor a
 	ldh [hBGMapMode], a
 	ret
+
+PokedexResults_PrintNames:
+; Prints the list of Pokémon on the main Pokédex screen.
+
+	ld c, 11
+; Clear (2 * [wDexListingHeight] + 1) by 11 box starting at 0,1
+	hlcoord 0, 1
+	ld a, [wDexListingHeight]
+	add a
+	inc a
+	ld b, a
+	ld a, ' '
+	call Pokedex_FillBox
+
+; Load de with a pointer to the first mon on the list
+	ld hl, wDexListingScrollOffset
+	ld a, [hli]
+	ld h, [hl]
+	ld l, a
+	add hl, hl
+	ld de, wPokedexOrder
+	add hl, de
+	ld e, l
+	ld d, h
+	hlcoord 0, 2
+	ldh a, [rSVBK]
+	push af
+	ld a, [wDexListingHeight]
+.loop
+	push af
+	ld a, BANK(wPokedexOrder)
+	ldh [rSVBK], a
+	ld a, [de]
+	ld c, a
+	inc de
+	ld a, [de]
+	inc de
+	push de
+	ld d, a
+	ld e, c
+	or e
+	push hl
+	call nz, .PrintEntry
+	pop hl
+	ld de, 2 * SCREEN_WIDTH
+	add hl, de
+	pop de
+	pop af
+	dec a
+	jr nz, .loop
+	pop af
+	ldh [rSVBK], a
+	ret
+
+.PrintEntry:
+	ld a, d
+	and e
+	inc a
+	ret z
+	ld a, BANK(wPokedexSeen)
+	ldh [rSVBK], a
+	call Pokedex_PrintNumberIfOldMode
+	call Pokedex_PlaceDefaultStringIfNotSeen
+	ret c
+	inc hl
+	push hl
+	; hl = de * 10 (length of a Pokémon name)
+	ld h, d
+	ld l, e
+	add hl, hl
+	add hl, hl
+	add hl, de
+	add hl, hl
+	ld de, PokemonNames - (MON_NAME_LENGTH - 1) ;correct for the one-based indexing
+	add hl, de
+	ld a, BANK(PokemonNames)
+	ld bc, MON_NAME_LENGTH - 1
+	ld de, wPokedexNameBuffer
+	push de
+	call FarCopyBytes
+	ld a, '@'
+	ld [wPokedexNameBuffer + MON_NAME_LENGTH - 1], a
+	pop de
+	pop hl
+	jp PlaceString
+
+
+PokedexResults_DrawBG:
+    call Pokedex_DrawSearchResultsScreenBG
+    hlcoord 0, 9
+    lb bc, 2, 8
+    ld a, $31
+    call Pokedex_FillBox
+    farcall CGB_PokedexResultsAttributes
+    ret
