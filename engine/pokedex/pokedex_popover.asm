@@ -1247,13 +1247,6 @@ PokedexPopover_Finish:
     ldh [hOAMUpdate], a
     ld a, DEXSTATE_UPDATE_MAIN_SCR
     ld [wJumptableIndex], a
-    ldh a, [rSVBK]
-    push af
-    ld a, BANK(wPokedexSeen)
-    ldh [rSVBK], a
-    farcall Pokedex_StartAnimationPrefetch
-    pop af
-    ldh [rSVBK], a
     ret
 
 PokedexPopover_ResetWorkspace:

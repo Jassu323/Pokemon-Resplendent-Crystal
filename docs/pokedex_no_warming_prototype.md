@@ -2,7 +2,8 @@
 
 2026-10-11. Private prototype for `DEX-PERF-03`, based on committed production
 `7d97fd111ef5c57f05ff90e9e4acce2ab0679be3` (Moves Dex). Native qualification
-is complete; manual review and production promotion remain pending.
+is complete. The user accepted the combined no-warming/Unown revision, now
+integrated into production on 2026-10-11; see [Production Integration](#production-integration).
 
 ## Review Files
 
@@ -193,3 +194,27 @@ The dedicated final action, `listing_warming qualify --output ...`, verifies
 all expected suite counts, hashes, paired playback/menu/battle evidence, current
 host acceptance and the historical comparison. Its report preserves the
 intentional index/backlog status-note changes separately from protected inputs.
+
+## Production Integration
+
+2026-10-11. The accepted caller removal is now in production together with the
+four Unown repairs described in the
+[Unown integration](pokedex_unown_fix_prototype.md#production-integration).
+Only the four caller owners above and `engine/gfx/cgb_layouts.asm` change.
+Production ROM/symbols/map exactly match the final reviewed black-panel link;
+the original no-warming prototype and its baseline are preserved as evidence.
+
+The combined production ROM is
+`591d2075b0c986846b94bc92288d1fa4f9d2918fccc680a83928fd8fdcf59bee`,
+with 12 fewer ROMX bytes than the prior production build and no other resource,
+memory-address, graphics or save changes. The original paired entry-time and
+idle-work results remain the retained warming-removal evidence. The final
+Unown revision passed fresh full Dex regression before promotion, and the
+production binary is identical to that qualified link.
+
+Integration evidence and previous-production rollback are under
+`build/dex-production-integration-20261011/`. Current scheduler contracts and
+normal-input Unown entry/navigation checks pass on production. Historical
+prototype qualification reports retain their original protection snapshots;
+the current host guard permits only the exact verified production integration.
+Source edits are ready for the user's commit; no commit or push is made here.

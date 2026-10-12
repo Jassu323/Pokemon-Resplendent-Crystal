@@ -751,14 +751,14 @@ BillsPCOrangePalette:
 INCLUDE "gfx/pc/orange.pal"
 
 _CGB_PokedexUnownMode:
-	ld hl, PokedexUIPalette
+	ld hl, PokedexUnownUIPalette
 	ld de, wBGPals1
 	call LoadHLPaletteIntoDE
 	ld a, [wCurPartySpecies]
 	call GetMonPalettePointer
 	call LoadPalette_White_Col1_Col2_Black
 	call WipeAttrmap
-	hlcoord 7, 5, wAttrmap
+	hlcoord 6, 5, wAttrmap
 	lb bc, 7, 7
 	ld a, $1 ; mon palette
 	call FillBoxCGB
@@ -804,6 +804,13 @@ _CGB_PokedexUnownMode:
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+PokedexUnownUIPalette:
+	; Unown's inverted glyphs and panel fill share a solid black background.
+	RGB 31, 31, 31
+	RGB 26, 10, 06
+	RGB 00, 00, 00
+	RGB 00, 00, 00
 
 _CGB_SlotMachine:
 	ld hl, SlotMachinePals

@@ -80,7 +80,6 @@ PokedexLegacy_InitMainScreen:
 	farcall Pokedex_RecordRenderedSelectionKey
 	call PokedexLegacy_UpdateOAM
 	call PokedexLegacy_DrawWindow
-	farcall Pokedex_StartAnimationPrefetch
 	farcall Pokedex_RevealOrCommitListing
 .revealed
 	ld a, VBLANK_POKEDEX
@@ -93,7 +92,6 @@ PokedexLegacy_InitMainScreen:
 PokedexLegacy_UpdateMainScreen:
 	call PokedexLegacy_HandleDPadInput
 	jr c, .changed
-	farcall Pokedex_ServiceAnimationProducer
 	ret
 .changed
 	farcall Pokedex_CancelAnimationPrefetch
@@ -136,7 +134,6 @@ PokedexLegacy_UpdateMainScreen:
 	ld a, [wCurPartySpecies]
 	ld [wPokedexResidentFootprintSpecies], a
 .footprint_ready
-	farcall Pokedex_StartAnimationPrefetch
 	ret
 
 PokedexLegacy_HandleDPadInput:

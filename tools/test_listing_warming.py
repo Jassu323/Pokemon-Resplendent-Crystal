@@ -61,12 +61,28 @@ class ListingWarmingTests(unittest.TestCase):
 
     def test_production_and_review_batteries_are_unchanged(self):
         manifest = json.loads((OUTPUT / 'no-warming-manifest.json').read_text())
+        promoted = ROOT / 'build/dex-production-integration-20261011/integration.json'
+        overrides = {}
+        if promoted.exists():
+            integration = json.loads(promoted.read_text())
+            if sha256((ROOT / 'pokecrystal.gbc').read_bytes()) == integration['rom_sha256']:
+                self.assertFalse(integration['issues'])
+                self.assertTrue(integration['byte_identical_to_accepted_rom'])
+                review = Path(integration['qualification']).parent
+                qualification = json.loads(Path(integration['qualification']).read_text())
+                self.assertFalse(qualification['issues'])
+                self.assertEqual(qualification['rom_sha256'], integration['rom_sha256'])
+                for name in integration['changed_sources']:
+                    overrides[str(ROOT / name)] = sha256((review / 'candidate' / name).read_bytes())
+                for suffix in ('gbc', 'sym', 'map'):
+                    overrides[str(ROOT / f'pokecrystal.{suffix}')] = sha256(
+                        (review / f'pokecrystal-dex-unown-fix.{suffix}').read_bytes())
         for path, expected in manifest['protected_inputs'].items():
             if Path(path).relative_to(ROOT).as_posix() in (
                 'docs/index.md', 'docs/pokedex_selected_bug_backlog.md'
             ):
                 continue
-            self.assertEqual(sha256(Path(path).read_bytes()), expected, path)
+            self.assertEqual(sha256(Path(path).read_bytes()), overrides.get(path, expected), path)
         self.assertEqual((OUTPUT / 'pokecrystal-dex-no-warming.sav').read_bytes(),
                          (OUTPUT / 'baseline/pokecrystal-dex-no-warming.sav').read_bytes())
 

@@ -1,11 +1,11 @@
 # Unown Mode Correctness Prototype
 
 2026-10-11. Private repair of `DEX-UNOWN-01/02`, based on the current
-no-warming prototype. Automated qualification passed; manual acceptance and
-production promotion remain pending.
+no-warming prototype. The user accepted the combined revision and authorized
+production integration on 2026-10-11; see [Production Integration](#production-integration).
 
 The [black-panel revision](#black-panel-revision) below is the latest review
-build. The red-backdrop revision is preserved as its rollback.
+build and now matches production. The red-backdrop revision is preserved as its rollback.
 
 ## Review Files
 
@@ -188,7 +188,7 @@ unused overlays were dark gray. The portrait palette also covered `(7,5)` to
 `(13,11)`, one tile right of the actual picture at `(6,5)` to `(12,11)`; its
 second gray could therefore color the empty strip alongside the portrait.
 
-Status: full native qualification passed; manual acceptance/promotion pending.
+Status: full native qualification passed; manually accepted and integrated into production 2026-10-11.
 
 Latest review files are under `build/dex-unown-black-20261011/`. The ROM stem
 remains `pokecrystal-dex-unown-fix`; the ordinary save is unchanged from the
@@ -269,3 +269,32 @@ Repeat the same preparation and Unown/Pokemon/Moves suites described above.
 The original testing limits still apply: this is native emulator visual and
 Dex regression coverage, not a new full battle, sampled-cry or interrupted-save
 campaign. Manual review and production promotion remain separate.
+
+## Production Integration
+
+2026-10-11. The user accepts the final solid-black Unown layout and requests
+production promotion. The reviewed no-warming removal and all four Unown
+correctness/presentation fixes are integrated into the working production tree.
+The five assembly owners match the accepted private source exactly; no unrelated
+game source, graphics or saves are copied.
+
+The rebuilt `pokecrystal.gbc`, `pokecrystal.sym` and `pokecrystal.map` are
+byte-identical to the accepted black-panel prototype. Production ROM SHA-256:
+`591d2075b0c986846b94bc92288d1fa4f9d2918fccc680a83928fd8fdcf59bee`.
+The previous production ROM/symbols/map and a source archive of `af1d0b41c`
+are retained in `build/dex-production-integration-20261011/rollback/`.
+
+Fresh normal-input checks boot the actual production ROM for single/full form
+collections from Modern and Legacy, covering 104 forward/backward selections,
+panel/frontpic pixels, boundaries, return menus and subsequent Selected playback.
+All pass. All 21 current scheduler/preservation host tests also pass. The extensive accepted
+Dex qualification remains applicable by exact ROM/link identity; it is not
+represented as another full run after promotion. Net production cost is
+**12 fewer ROMX bytes**, with all RAM addresses and allocations unchanged.
+
+`build/dex-production-integration-20261011/integration.json` records the exact
+output identity, scoped source changes, protected inputs, rollback, resource
+delta and native production results. The prototype preservation host guard
+recognizes only this verified exact integration; unrelated protected changes
+still fail. Historical private reports retain their pre-promotion protection
+snapshots. No commit or push is performed by the integration.

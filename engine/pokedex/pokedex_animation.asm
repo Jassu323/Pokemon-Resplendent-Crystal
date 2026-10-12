@@ -58,7 +58,6 @@ Pokedex_UpdateScrolledGrid:
 	farcall Pokedex_RecordRenderedSelectionKey
 
 	; Only visible rows are resident; prepare the next row on demand.
-	call Pokedex_StartAnimationPrefetch
 	ret
 
 Pokedex_UpdateWrappedGrid:
@@ -119,7 +118,6 @@ Pokedex_UpdateWrappedGrid:
 	farcall Pokedex_FinalizeWrappedGridCache
 	xor a
 	ld [wPokedexGridScrollDirection], a
-	call Pokedex_StartAnimationPrefetch
 	ret
 
 Pokedex_CommitWrappedGridReveal:

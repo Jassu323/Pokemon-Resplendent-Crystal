@@ -626,7 +626,6 @@ Pokedex_InitMainScreen:
 	hlcoord 0, 17
 	ld de, String_START_OPTION
 	call Pokedex_PlaceString
-	farcall Pokedex_StartAnimationPrefetch
 	ldh a, [hCGB]
 	and a
 	jr z, .reveal_dmg
@@ -671,7 +670,6 @@ Pokedex_UpdateMainScreen:
 .modern
 	call Pokedex_GridHandleDPadInput
 	jr c, .selection_changed
-	farcall Pokedex_ServiceAnimationProducer
 	ret
 .selection_changed
 	ld a, [wPokedexGridScrollDirection]
@@ -703,7 +701,6 @@ Pokedex_UpdateMainScreen:
 	xor a
 	ldh [hOAMUpdate], a
 	call Pokedex_RecordRenderedSelectionKey
-	farcall Pokedex_StartAnimationPrefetch
 	ret
 
 .dmg_selection
@@ -1781,7 +1778,15 @@ Pokedex_PlaceSearchResultsTypeStrings:
 	ret
 
 Pokedex_DrawUnownModeBG:
-	call Pokedex_FillBackgroundColor2
+	hlcoord 0, 0
+	ld bc, SCREEN_AREA
+	ldh a, [hCGB]
+	and a
+	ld a, $32
+	jr z, .fill_background
+	ld a, $31 ; CGB outer backdrop is red; keep panel interiors dark gray.
+.fill_background
+	call ByteFill
 	hlcoord 2, 1
 	lb bc, 10, 13
 	call Pokedex_PlaceBorder
@@ -1794,6 +1799,23 @@ Pokedex_DrawUnownModeBG:
 	ld [hl], $3e
 	hlcoord 6, 5
 	call Pokedex_PlaceFrontpicAtHL
+	ldh a, [hCGB]
+	and a
+	jr z, .letters
+	; Every resident-font overlay cell needs the bank-1 dark-gray blank.
+	ld de, UnownModeLetterAndCursorCoords
+	ld b, NUM_UNOWN * 2
+.blank_overlay
+	ld a, [de]
+	inc de
+	ld l, a
+	ld a, [de]
+	inc de
+	ld h, a
+	ld [hl], $32
+	dec b
+	jr nz, .blank_overlay
+.letters
 	ld de, 0
 	ld b, 0
 	ld c, NUM_UNOWN
@@ -1812,6 +1834,7 @@ endr
 	ld h, [hl]
 	ld l, a
 	pop af
+	push bc
 	ld c, a
 	ldh a, [hCGB]
 	and a
@@ -1823,6 +1846,7 @@ endr
 	add FIRST_UNOWN_CHAR - 1
 .place_letter
 	ld [hl], a
+	pop bc
 	inc de
 	inc b
 	dec c
