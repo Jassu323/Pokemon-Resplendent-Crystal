@@ -23,6 +23,10 @@ gfx/pokemon/*/frames.asm
 *.patch
 !tools/dex_timing/probes/area_integration.patch
 !tools/dex_timing/probes/area_static_return.patch
+!tools/dex_timing/probes/type_matchups_mode.patch
+!tools/dex_timing/probes/type_mode7_runtime.patch
+!tools/dex_timing/probes/type_mode7_precomputed.patch
+!tools/dex_timing/probes/type_mode7_precomputed_fallback.patch
 
 # rgbds extras
 *.map

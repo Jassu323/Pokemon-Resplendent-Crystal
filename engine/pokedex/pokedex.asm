@@ -21,6 +21,8 @@
 	const DEXSTATE_MOVES_OPTIONS
 	const DEXSTATE_MOVES_SEARCH
 	const DEXSTATE_MOVES_TEXT_ENTRY
+	const DEXSTATE_TYPES_INIT
+	const DEXSTATE_TYPES_UPDATE
 
 	const_def
 	const DEXSELECT_VIEW_DESCRIPTION
@@ -38,6 +40,7 @@
 	const DEXSELECT_STATE_MENU_RETURN
 	const DEXSELECT_STATE_UNOWN_RETURN
 	const DEXSELECT_STATE_MOVES_RETURN
+	const DEXSELECT_STATE_TYPES_RETURN
 
 	const_def
 	const POKEDEX_OWNER_TRANSITION_NONE
@@ -483,6 +486,15 @@ Pokedex_RunJumptable:
 	dw Pokedex_UpdateMovesOptions
 	dw Pokedex_UpdateMovesSearch
 	dw Pokedex_UpdateMovesTextEntry
+	dw Pokedex_InitTypes
+	dw Pokedex_UpdateTypes
+
+Pokedex_InitTypes:
+	farcall PokedexTypes_Initialize
+	ret
+Pokedex_UpdateTypes:
+	farcall PokedexTypes_Update
+	ret
 
 Pokedex_InitMovesMode:
 	farcall PokedexMovesMode_Initialize
@@ -2822,8 +2834,7 @@ Pokedex_InitArrowCursor:
 	xor a
 	ld [wDexArrowCursorPosIndex], a
 	ld [wDexArrowCursorDelayCounter], a
-	ld [wDexArrowCursorBlinkCounter], a
-	ret
+	jp Pokedex_ResetArrowCursorBlink
 
 Pokedex_MoveArrowCursor:
 ; bc = [de] - 1
@@ -2886,8 +2897,7 @@ Pokedex_MoveArrowCursor:
 	ld [hl], '▶'
 	ld a, 12
 	ld [wDexArrowCursorDelayCounter], a
-	xor a
-	ld [wDexArrowCursorBlinkCounter], a
+	call Pokedex_ResetArrowCursorBlink
 	scf
 	ret
 
@@ -2919,18 +2929,28 @@ Pokedex_GetArrowCursorPos:
 	ret
 
 Pokedex_BlinkArrowCursor:
+	call Pokedex_AdvanceArrowCursorBlink
+	ld a, ' '
+	jr nz, .tile
+	ld a, '▶'
+.tile
+	push af
+	call Pokedex_GetArrowCursorPos
+	pop af
+	ld [hl], a
+	ret
+
+Pokedex_ResetArrowCursorBlink::
+	xor a
+	ld [wDexArrowCursorBlinkCounter], a
+	ret
+
+; Shared by BG, shifted BG, and OBJ arrows. Z means visible for this update.
+Pokedex_AdvanceArrowCursorBlink::
 	ld hl, wDexArrowCursorBlinkCounter
 	ld a, [hl]
 	inc [hl]
 	and $8
-	jr z, .blink_on
-	call Pokedex_GetArrowCursorPos
-	ld [hl], ' '
-	ret
-
-.blink_on
-	call Pokedex_GetArrowCursorPos
-	ld [hl], '▶'
 	ret
 
 Pokedex_ArrowCursorDelay:

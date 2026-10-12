@@ -1,0 +1,733 @@
+--- a/home/lcd.asm
++++ b/home/lcd.asm
+@@ -12,8 +12,6 @@
+ 	ldh a, [hLCDCPointer]
+ 	and a
+ 	jr z, .done
+-	cp $ff
+-	jp z, PokedexTypes_LCD
+ 
+ ; At this point it's assumed we're in BANK(wLYOverrides)!
+ 	push bc
+@@ -31,35 +29,6 @@
+ .done
+ 	pop af
+ 	reti
+-
+-; This owner reads only unbanked Dex scratch. AF is already saved by LCD.
+-PokedexTypes_LCD::
+-	ldh a, [rLY]
+-	cp SCREEN_HEIGHT_PX
+-	jr nc, LCD.done
+-	push hl
+-	ld l, a
+-	ld h, HIGH(wPokedexWRAM0Scratch + $100)
+-	ld a, [hl]
+-	and a
+-	jr z, .idle
+-	ld l, a
+-	ldh a, [hLYOverrideStart]
+-	ld h, a
+-	push bc
+-	ld c, LOW(rBCPD)
+-FOR palette_id, 1, 5
+-	ld a, $80 | palette_id * 8 + 4
+-	ldh [rBCPS], a
+-	ld a, [hli]
+-	ldh [c], a
+-	ld a, [hli]
+-	ldh [c], a
+-ENDR
+-	pop bc
+-.idle
+-	pop hl
+-	jp LCD.done
+ 
+ DisableLCD::
+ ; Turn the LCD off
+--- a/home/vblank.asm
++++ b/home/vblank.asm
+@@ -32,6 +32,7 @@
+ 	pop de
+ 	pop bc
+ 	pop af
++.return
+ 	reti
+ 
+ VBlankHandlers:
+@@ -48,6 +49,10 @@
+ 	assert_table_length NUM_VBLANK_HANDLERS
+ 
+ VBlank_Pokedex:
++	; Bit 4 tags the Type-only use of existing mode 7. No other IRQ pays this.
++	ldh a, [hVBlank]
++	bit 4, a
++	jr nz, .types
+ ; Let the Listing animate its resident mini-sprites while synchronous
+ ; frontpic preparation is running. Selection and scrolling transactions lock
+ ; OAM and perform their own final frame synchronization.
+@@ -61,6 +66,37 @@
+ 	pop af
+ 	rst Bankswitch
+ 	jp VBlank_Normal
++.types
++	ldh a, [hROMBank]
++	push af
++	ld a, BANK(PokedexTypes_VBlank)
++	rst Bankswitch
++	call PokedexTypes_VBlank
++	pop af
++	rst Bankswitch
++	ret
++
++PokedexTypes_UpdateSound::
++	ldh a, [hROMBank]
++	push af
++	ld a, BANK(PokedexTypes_AudioUpdate)
++	rst Bankswitch
++	call PokedexTypes_AudioUpdate
++	pop af
++	rst Bankswitch
++	ret
++
++PokedexTypes_AudioYield::
++	push af
++	ldh a, [hROMBank]
++	push af
++	ld a, BANK(PokedexTypes_Yield)
++	rst Bankswitch
++	call PokedexTypes_Yield
++	pop af
++	rst Bankswitch
++	pop af
++	ret
+ 
+ VBlank_Normal::
+ ; normal operation
+@@ -143,12 +179,6 @@
+ .done_oam
+ 	; Type Matchups' ROM0 raster handler is bank-independent and preserves
+ 	; every register. Let it run during the non-graphics VBlank work.
+-	ldh a, [hLCDCPointer]
+-	cp $ff
+-	jr nz, .raster_ready
+-	ei
+-.raster_ready
+-
+ 	; vblank-sensitive operations are done
+ 
+ 	xor a
+--- a/main.asm
++++ b/main.asm
+@@ -360,7 +360,9 @@
+ INCLUDE "engine/pokedex/pokedex_moves.asm"
+ 
+ SECTION "Pokedex Type Matchups", ROMX
++INCLUDE "engine/pokedex/pokedex_types_mode7_config.asm"
+ INCLUDE "engine/pokedex/pokedex_types.asm"
++INCLUDE "engine/pokedex/pokedex_types_mode7.asm"
+ 
+ SECTION "Pokedex Moves Index", ROMX
+ INCLUDE "build/dex-moves-assets/tables.asm"
+--- a/engine/pokedex/pokedex_types.asm
++++ b/engine/pokedex/pokedex_types.asm
+@@ -35,6 +35,18 @@
+ DEF TYPES_SIDE EQU $29
+ DEF TYPES_DIVIDER EQU $2a
+ DEF TYPES_ARROW EQU $5a
++DEF TYPES_ACTIVE EQUS "TYPES_STATE + $180"
++DEF TYPES_SAVED_IE EQUS "TYPES_STATE + $181"
++DEF TYPES_SAVED_STAT EQUS "TYPES_STATE + $182"
++DEF TYPES_SAVED_LYC EQUS "TYPES_STATE + $183"
++DEF TYPES_NEXT_LINE EQUS "TYPES_STATE + $184"
++DEF TYPES_EVENT EQUS "TYPES_STATE + $185"
++DEF TYPES_FRAME_READY EQUS "TYPES_STATE + $186"
++DEF TYPES_PENDING EQUS "TYPES_STATE + $187"
++DEF TYPES_EXIT EQUS "TYPES_STATE + $188"
++ASSERT TYPES_SHIFTED + 8 tiles <= TYPES_RASTER
++ASSERT TYPES_RASTER + 128 <= TYPES_ACTIVE
++ASSERT TYPES_STATE + $189 <= TYPES_COLORS
+ ASSERT LOW(TYPES_RASTER) == 0
+ ASSERT LOW(TYPES_COLORS) == $a0
+ ASSERT TYPES_I_LIST + NUM_TYPES <= TYPES_EFFECTS
+@@ -63,6 +75,12 @@
+ 	ld bc, $460
+ 	xor a
+ 	call ByteFill
++	ldh a, [rIE]
++	ld [TYPES_SAVED_IE], a
++	ldh a, [rSTAT]
++	ld [TYPES_SAVED_STAT], a
++	ldh a, [rLYC]
++	ld [TYPES_SAVED_LYC], a
+ 	ld hl, .Alphabetical
+ 	ld de, TYPES_IDS
+ 	ld bc, NUM_TYPES
+@@ -76,7 +94,13 @@
+ 	call .LoadPalettes
+ 	call .DrawShell
+ 	call .DrawTop
++IF DEF(TYPE_PANEL_PRECOMPUTED)
++	call PokedexTypes_StageColours
++	call PokedexTypes_LoadRecord
++ELSE
++	call PokedexTypes_CacheChart
+ 	call PokedexTypes_DrawSelection
++ENDC
+ 	farcall Pokedex_StageOwnerTransitionMaps
+ .near_vblank
+ 	ldh a, [rLY]
+@@ -94,12 +118,19 @@
+ 	call hTransferShadowOAM
+ 	xor a
+ 	ldh [hOAMUpdate], a
+-	ld a, $ff
+-	ldh [hLCDCPointer], a
+ 	ld a, DEXSTATE_TYPES_UPDATE
+ 	ld [wJumptableIndex], a
++	ld a, TRUE
++	ld [TYPES_ACTIVE], a
++	ld a, $ff
++	ld [TYPES_NEXT_LINE], a
++	ld a, VBLANK_POKEDEX | (1 << 4)
++	ldh [hVBlank], a
++	ld a, [TYPES_SAVED_IE]
++	res B_IE_STAT, a
++	ldh [rIE], a
+ 	ei
+-	ret
++	jp PokedexTypes_Update
+ 
+ .RasterTable:
+ 	ld hl, .EventLines
+@@ -340,9 +371,25 @@
+ .TransferTile:
+ 	push af
+ .wait
++	ldh a, [rLY]
++	cp 144
++	jr nc, .try_vblank
+ 	ldh a, [rSTAT]
+-	and 2
++	and 3
++	cp 3
+ 	jr nz, .wait
++.fresh_hblank
++	ldh a, [rSTAT]
++	and 3
++	cp 3
++	jr z, .fresh_hblank
++	and a
++	jr nz, .wait
++	jr .lock
++.try_vblank
++	cp 150
++	jr nc, .wait
++.lock
+ 	di
+ 	ldh a, [rSTAT]
+ 	and 2
+@@ -795,7 +842,7 @@
+ 	push bc
+ 	push hl
+ 	ld b, 0
+-	call ByteFill
++	call PokedexTypes_Fill
+ 	pop hl
+ 	ld de, SCREEN_WIDTH
+ 	add hl, de
+@@ -819,6 +866,7 @@
+ 	xor a
+ 	ld [TYPES_LIST_INDEX], a
+ .list
++	call PokedexTypes_Yield
+ 	ld a, [TYPES_LIST_INDEX]
+ 	ld e, a
+ 	ld d, 0
+@@ -895,16 +943,11 @@
+ 	ld hl, TYPES_EFFECTS
+ 	ld bc, 29
+ 	ld a, EFFECTIVE
+-	call ByteFill
++	call PokedexTypes_Fill
+ 	ldh a, [rSVBK]
+ 	push af
+ 	ld a, BANK(wPokedexInfoGFX)
+ 	ldh [rSVBK], a
+-	ld hl, TypeMatchups
+-	ld de, wPokedexInfoGFX
+-	ld bc, TypeMatchupsEnd - TypeMatchups
+-	ld a, BANK(TypeMatchups)
+-	call FarCopyBytes
+ 	ld a, [TYPES_CURSOR]
+ 	ld e, a
+ 	ld d, 0
+@@ -913,6 +956,7 @@
+ 	ld d, [hl]
+ 	ld hl, wPokedexInfoGFX
+ .record
++	call PokedexTypes_Yield
+ 	ld a, [hli]
+ 	cp -1
+ 	jr z, .lists
+@@ -941,6 +985,7 @@
+ 	ld [TYPES_R_COUNT], a
+ 	ld [TYPES_ORDINAL], a
+ .type
++	call PokedexTypes_Yield
+ 	ld a, [TYPES_ORDINAL]
+ 	ld e, a
+ 	ld d, 0
+@@ -1003,10 +1048,11 @@
+ 	ld l, 0
+ 	ld bc, 96
+ 	xor a
+-	call ByteFill
++	call PokedexTypes_Fill
+ 	xor a
+ 	ld [TYPES_ORDINAL], a
+ .top
++	call PokedexTypes_Yield
+ 	call PokedexTypes_Initialize.OrdinalPosition
+ 	ld a, [TYPES_ROW]
+ 	inc a
+@@ -1053,6 +1099,14 @@
+ 	ret
+ 
+ PokedexTypes_Update::
++.owner_loop
++	call PokedexTypes_Yield
++	ld a, [TYPES_FRAME_READY]
++	and a
++	jr z, .owner_loop
++	xor a
++	ld [TYPES_FRAME_READY], a
++	call JoyTextDelay
+ 	call PokedexTypes_BlinkCursor
+ 	; Only VBlank accumulates edges, so this short exchange cannot delay a
+ 	; raster palette write beyond HBlank's available time.
+@@ -1071,7 +1125,7 @@
+ 	jr nz, .direction
+ 	ldh a, [hJoyLast]
+ 	and PAD_CTRL_PAD
+-	ret z
++	jr z, .owner_loop
+ .direction
+ 	ld c, a
+ 	ld a, [TYPES_CURSOR]
+@@ -1130,27 +1184,15 @@
+ 	ldh a, [hLYOverrideStart]
+ 	xor TYPES_PAGE_A ^ TYPES_PAGE_B
+ 	ld [TYPES_PAGE], a
+-	call PokedexTypes_DrawSelection
+-	farcall Pokedex_StageOwnerTransitionMaps
+-.near_vblank
+-	ldh a, [rLY]
+-	cp 140
+-	jr c, .near_vblank
+-	cp 144
+-	jr nc, .near_vblank
+-	di
+-.vblank
+-	ldh a, [rLY]
+-	cp 144
+-	jr c, .vblank
+-	call PokedexTypes_CommitLower
+-	ld a, [TYPES_PAGE]
+-	ldh [hLYOverrideStart], a
+-	call hTransferShadowOAM
+-	xor a
+-	ldh [hOAMUpdate], a
+-	ei
+-	ret
++	call PokedexTypes_PrepareLower
++	ld a, TRUE
++	ld [TYPES_PENDING], a
++.publication
++	call PokedexTypes_Yield
++	ld a, [TYPES_PENDING]
++	and a
++	jr nz, .publication
++	jp .owner_loop
+ 
+ PokedexTypes_BlinkCursor:
+ 	farcall Pokedex_AdvanceArrowCursorBlink
+@@ -1194,6 +1236,24 @@
+ 	ldh [rVDMA_LEN], a
+ 	ret
+ PokedexTypes_Leave:
++	ld a, TRUE
++	ld [TYPES_EXIT], a
++.mask
++	call PokedexTypes_Yield
++	ld a, [TYPES_ACTIVE]
++	and a
++	jr nz, .mask
++	di
++	ld a, [TYPES_SAVED_STAT]
++	ldh [rSTAT], a
++	ld a, [TYPES_SAVED_LYC]
++	ldh [rLYC], a
++	ldh a, [rIF]
++	res B_IF_STAT, a
++	ldh [rIF], a
++	ld a, [TYPES_SAVED_IE]
++	ldh [rIE], a
++	ei
+ 	xor a
+ 	ldh [hLCDCPointer], a
+ 	ldh [hLYOverrideStart], a
+--- /dev/null
++++ b/engine/pokedex/pokedex_types_mode7.asm
+@@ -0,0 +1,305 @@
++; The Type owner cooperatively services HBlank without changing shared IRQs.
++
++PokedexTypes_CacheChart:
++	ldh a, [rSVBK]
++	push af
++	ld a, BANK(wPokedexInfoGFX)
++	ldh [rSVBK], a
++	ld hl, TypeMatchups
++	ld de, wPokedexInfoGFX
++	ld bc, TypeMatchupsEnd - TypeMatchups
++	ld a, BANK(TypeMatchups)
++	call FarCopyBytes
++	pop af
++	ldh [rSVBK], a
++	ret
++
++PokedexTypes_PrepareLower:
++IF DEF(TYPE_PANEL_PRECOMPUTED)
++	call PokedexTypes_LoadRecord
++ELSE
++	call PokedexTypes_DrawSelection
++ENDC
++	; Only the five lower rows changed. Do not restage the upper frame.
++	ldh a, [rSVBK]
++	push af
++	ld a, BANK(wPokedexOwnerTilemapBuffer)
++	ldh [rSVBK], a
++	hlcoord 0, 12
++	ld de, wPokedexOwnerTilemapBuffer + 12 * TILEMAP_WIDTH
++	ld c, ' '
++	call .map
++	hlcoord 0, 12, wAttrmap
++	ld de, wPokedexOwnerAttrmapBuffer + 12 * TILEMAP_WIDTH
++	ld c, 0
++	call .map
++	pop af
++	ldh [rSVBK], a
++	ret
++.map
++	ld b, 5
++.row
++	push bc
++	ld b, SCREEN_WIDTH
++.cell
++	call PokedexTypes_Yield
++	ld a, [hli]
++	ld [de], a
++	inc de
++	dec b
++	jr nz, .cell
++	ld b, TILEMAP_WIDTH - SCREEN_WIDTH
++	ld a, c
++.pad
++	ld [de], a
++	inc de
++	dec b
++	jr nz, .pad
++	pop bc
++	dec b
++	jr nz, .row
++	ret
++
++PokedexTypes_Fill:
++	push de
++	ld d, a
++.byte
++	call PokedexTypes_Yield
++	ld a, d
++	ld [hli], a
++	dec bc
++	ld a, b
++	or c
++	jr nz, .byte
++	ld a, d
++	pop de
++	ret
++
++PokedexTypes_VBlank::
++	ld hl, hVBlankCounter
++	inc [hl]
++	ldh a, [rDIV]
++	ld b, a
++	ldh a, [hRandomAdd]
++	adc b
++	ldh [hRandomAdd], a
++	ldh a, [rDIV]
++	ld b, a
++	ldh a, [hRandomSub]
++	sbc b
++	ldh [hRandomSub], a
++	ld a, [TYPES_EXIT]
++	and a
++	jr nz, .exit
++	ld a, [TYPES_PENDING]
++	and a
++	jr z, .no_publication
++	call PokedexTypes_CommitLower
++	ld a, [TYPES_PAGE]
++	ldh [hLYOverrideStart], a
++	xor a
++	ld [TYPES_PENDING], a
++	ldh [hOAMUpdate], a
++.no_publication
++	ldh a, [hOAMUpdate]
++	and a
++	call z, hTransferShadowOAM
++	ldh a, [hLYOverrideStart]
++	ld h, a
++	ld l, 8
++	call PokedexTypes_WriteAccents
++	xor a
++	ld [TYPES_EVENT], a
++	ld a, 21
++	ld [TYPES_NEXT_LINE], a
++	jr .bookkeeping
++.exit
++	ld hl, .Gray
++	ld b, 4
++	ld d, $80 | 8
++.mask_palette
++	ld a, d
++	ldh [rBCPS], a
++	ld c, 8
++.mask_color
++	ld a, [hli]
++	ldh [rBCPD], a
++	dec c
++	jr nz, .mask_color
++	ld hl, .Gray
++	ld a, d
++	add 8
++	ld d, a
++	dec b
++	jr nz, .mask_palette
++	xor a
++	ld [TYPES_ACTIVE], a
++	ldh [hVBlank], a
++	ldh [hLCDCPointer], a
++	ldh [hLYOverrideStart], a
++.bookkeeping
++	xor a
++	ld [wVBlankOccurred], a
++	ld a, [wOverworldDelay]
++	and a
++	jr z, .text_delay
++	dec a
++	ld [wOverworldDelay], a
++.text_delay
++	ld a, [wTextDelayFrames]
++	and a
++	jr z, .input
++	dec a
++	ld [wTextDelayFrames], a
++.input
++	call UpdateJoypad
++	call PokedexTypes_UpdateSound
++	ldh a, [hSeconds]
++	ldh [hUnusedBackup], a
++	ld a, TRUE
++	ld [TYPES_FRAME_READY], a
++	ret
++.Gray
++	RGB 5,5,5, 5,5,5, 5,5,5, 5,5,5
++
++PokedexTypes_Yield::
++	push af
++	ld a, [TYPES_ACTIVE]
++	and a
++	jr z, .done
++	ld a, [TYPES_NEXT_LINE]
++	cp $ff
++	jr z, .done
++	push bc
++	push de
++	push hl
++	ld b, a
++	sub 4
++	ld c, a
++	ldh a, [rLY]
++	cp c
++	jr c, .restore
++	cp 144
++	jr nc, .restore
++.line
++	ldh a, [rLY]
++	cp b
++	jr c, .line
++.hblank
++	ldh a, [rSTAT]
++	and 3
++	jr nz, .hblank
++	ld a, [TYPES_EVENT]
++	add a
++	add a
++	add a
++	add 16
++	ld l, a
++	ldh a, [hLYOverrideStart]
++	ld h, a
++	call PokedexTypes_WriteAccents
++	ld hl, TYPES_EVENT
++	inc [hl]
++	ld e, [hl]
++	ld d, 0
++	ld hl, .Lines
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_NEXT_LINE], a
++.restore
++	pop hl
++	pop de
++	pop bc
++.done
++	pop af
++	ret
++.Lines
++	db 21, 35, 49, 63, 77, 95, 103, 111, 119, 127, $ff
++
++PokedexTypes_WriteAccents::
++	ld c, LOW(rBCPD)
++FOR palette_id, 1, 5
++	ld a, $80 | palette_id * 8 + 4
++	ldh [rBCPS], a
++	ld a, [hli]
++	ldh [c], a
++	ld a, [hli]
++	ldh [c], a
++ENDR
++	ret
++
++IF DEF(TYPE_PANEL_PRECOMPUTED)
++PokedexTypes_LoadRecord:
++	ld a, [TYPES_CURSOR]
++	add a
++	ld e, a
++	ld d, 0
++	ld hl, PokedexTypes_PanelPointers
++	add hl, de
++	ld a, [hli]
++	ld h, [hl]
++	ld l, a
++	push hl
++	ld a, [hli]
++	ld [TYPES_I_COUNT], a
++	ld a, [hli]
++	ld [TYPES_W_COUNT], a
++	ld a, [hli]
++	ld [TYPES_R_COUNT], a
++	ld a, [hli]
++	ld [TYPES_R_ROW], a
++	ld de, TYPES_W_LIST
++	ld a, [TYPES_W_COUNT]
++	ld c, a
++	ld b, 0
++	call .copy
++	ld de, TYPES_R_LIST
++	ld a, [TYPES_R_COUNT]
++	ld c, a
++	ld b, 0
++	call .copy
++	ld de, TYPES_I_LIST
++	ld a, [TYPES_I_COUNT]
++	ld c, a
++	ld b, 0
++	call .copy
++	pop hl
++	ld de, 22
++	add hl, de
++	decoord 0, 12
++	ld bc, 100
++	call .copy
++	decoord 0, 12, wAttrmap
++	ld bc, 100
++	call .copy
++	ld a, [TYPES_PAGE]
++	ld d, a
++	ld e, 56
++	ld bc, 40
++	call .copy
++	ldh a, [hLYOverrideStart]
++	ld h, a
++	ld l, 8
++	ld a, [TYPES_PAGE]
++	ld d, a
++	ld e, 8
++	ld bc, 48
++	call .copy
++	jp PokedexTypes_DrawSelection.Cursor
++.copy
++	ld a, b
++	or c
++	ret z
++.byte
++	call PokedexTypes_Yield
++	ld a, [hli]
++	ld [de], a
++	inc de
++	dec bc
++	ld a, b
++	or c
++	jr nz, .byte
++	ret
++
++INCLUDE "engine/pokedex/pokedex_types_mode7_records.asm"
++ENDC
+--- /dev/null
++++ b/engine/pokedex/pokedex_types_mode7_config.asm
+@@ -0,0 +1 @@
++DEF TYPE_PANEL_PRECOMPUTED EQU 1
+--- a/Makefile
++++ b/Makefile
+@@ -47,6 +47,11 @@
+ 
+ .SUFFIXES:
+ .SECONDEXPANSION:
++
++engine/pokedex/pokedex_types_audio.asm: audio/engine.asm tools/pokedex_type_audio.py
++	python3 tools/pokedex_type_audio.py --output $@
++
++audio.o: engine/pokedex/pokedex_types_audio.asm
+ .PRECIOUS:
+ .SECONDARY:
+ .PHONY: \
+@@ -60,6 +65,13 @@
+ all: crystal
+ crystal:    pokecrystal.gbc
+ crystal_vc: pokecrystal.patch
++
++engine/pokedex/pokedex_types_mode7_records.asm: data/types/type_matchups.asm \
++        constants/type_constants.asm constants/battle_constants.asm constants/charmap.asm \
++        engine/pokedex/pokedex_types.asm tools/pokedex_type_panels.py $(wildcard gfx/types/*.pal)
++	python3 tools/pokedex_type_panels.py --output $@
++
++main.o: engine/pokedex/pokedex_types_mode7_records.asm
+ 
+ clean: tidy
+ 	find gfx \
+--- a/audio.asm
++++ b/audio.asm
+@@ -6,6 +6,7 @@
+ INCLUDE "audio/music/nothing.asm"
+ INCLUDE "audio/cry_pointers.asm"
+ INCLUDE "audio/sfx_pointers.asm"
++INCLUDE "engine/pokedex/pokedex_types_audio.asm"
+ 
+ SECTION "Songs 1", ROMX
+ 
+--- /dev/null
++++ b/engine/pokedex/pokedex_types_mode7_records.asm
+@@ -0,0 +1 @@
++; Runtime variant has no precomputed lower-panel records.

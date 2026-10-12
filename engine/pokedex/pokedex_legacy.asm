@@ -584,6 +584,16 @@ PokedexListing_InitModeScreen:
 	call PlaceString
 	farcall Pokedex_InitArrowCursor
 	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_TYPES_RETURN
+	jr nz, .not_types_return
+	ld a, [wUnlockedUnownMode]
+	and a
+	ld a, 4
+	jr nz, .cursor
+	dec a
+	jr .cursor
+.not_types_return
+	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_MOVES_RETURN
 	jr nz, .ordinary_return
 	ld a, [wUnlockedUnownMode]
@@ -687,6 +697,13 @@ PokedexListing_UpdateModeScreen:
 	ld [wJumptableIndex], a
 	ret
 .other
+	cp DEXMENU_TYPES
+	jr nz, .not_types
+	call PokedexListing_BeginMenuTransition
+	ld a, DEXSTATE_TYPES_INIT
+	ld [wJumptableIndex], a
+	ret
+.not_types
 	cp DEXMENU_MOVES
 	jr nz, .unown_check
 	call PokedexListing_BeginMenuTransition

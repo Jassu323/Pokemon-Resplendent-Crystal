@@ -615,6 +615,8 @@ def shifted_text_audit(driver, repo, tiles, attrs):
         return bytes(8) if code == 0x7f else repo.rom[font + (code - 0x80) * 8:font + (code - 0x80 + 1) * 8]
 
     cursor = memory(driver, 3, 0xdc01, 1)[0]
+    visible = (tiles[(7+cursor*2)*20+1] == 0x73
+               if 'PokedexPopover_BlinkCursor' in repo.symbols else True)
     triangle = glyph(0xed)
     for row, label in enumerate(labels):
         previous = bytes(8)
@@ -623,7 +625,7 @@ def shifted_text_audit(driver, repo, tiles, attrs):
             expected = bytearray()
             for y, (left, right) in enumerate(zip(previous, current)):
                 white = ((left << 5) & 255) | (right >> 3)
-                if not column and row == cursor:
+                if not column and row == cursor and visible:
                     white |= (triangle[y] << 5) & 255
                 expected.extend((0, white ^ 255))
             position = (7 + row * 2) * 20 + 2 + column
@@ -631,7 +633,7 @@ def shifted_text_audit(driver, repo, tiles, attrs):
                 raise RuntimeError(f'Shifted native label/cursor differs at row {row}, cell {column}')
             previous = current
         position = (7 + row * 2) * 20 + 1
-        if row == cursor:
+        if row == cursor and visible:
             expected = bytes(value for plane in triangle for value in (0, (plane >> 3) ^ 255))
             if attrs[position] != 8 or actual.get(tiles[position]) != expected:
                 raise RuntimeError('Shifted cursor body differs from the native font')

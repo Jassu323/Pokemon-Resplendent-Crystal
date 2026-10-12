@@ -13,6 +13,7 @@ DEF wPopBorderStyle EQU $dc0b
 DEF wPopGlyphRows EQU $dc0c
 DEF wPopGlyphColumn EQU $dc0d
 DEF wPopPreviousGlyph EQU $dc0e
+DEF wPopArrowVisible EQU $dc0f
 DEF wPopSavedOAM EQU $dc10
 DEF wPopBorderGFX EQU $dcb0
 DEF wPopRightEdgeGFX EQU $dd30
@@ -78,6 +79,7 @@ PokedexPopover_Open:
     call Pokedex_HDMATransferCacheGFX
     pop af
     ldh [rVBK], a
+    call PokedexPopover_ResetBlink
     call PokedexPopover_ReadRightEdge
     call PokedexPopover_Draw
     call PokedexPopover_Publish
@@ -90,6 +92,7 @@ PokedexPopover_Update:
     push af
     ld a, 3
     ldh [rSVBK], a
+    call PokedexPopover_BlinkCursor
 ; Preserve physical command edges received during a staged redraw. The normal
 ; input mirror can miss a release/repress while this local owner is busy.
     di
@@ -112,7 +115,7 @@ PokedexPopover_Update:
     jr nz, .up
     bit D_DOWN_F, a
     jr nz, .down
-    jr .done
+    jp .done
 .up
     ld hl, wPopCursor
     ld a, [hl]
@@ -134,10 +137,12 @@ PokedexPopover_Update:
     xor a
     ld [hl], a
 .cursor_changed
+    call PokedexPopover_ResetBlink
     call PokedexPopover_MoveCursor
     call PokedexPopover_Publish
     jr .done
 .redraw
+    call PokedexPopover_ResetBlink
     call PokedexPopover_Draw
     call PokedexPopover_Publish
     jr .done
@@ -219,6 +224,9 @@ PokedexPopover_MoveCursor:
     dec b
     jr nz, .clear
     pop hl
+    ld a, [wPopArrowVisible]
+    and a
+    ret z
     ld a, [wPopCursor]
 .row
     and a
@@ -228,6 +236,31 @@ PokedexPopover_MoveCursor:
     jr .row
 .place
     ld [hl], "▶"
+    ret
+
+PokedexPopover_ResetBlink:
+    farcall Pokedex_ResetArrowCursorBlink
+    ld a, 1
+    ld [wPopArrowVisible], a
+    ret
+
+PokedexPopover_BlinkCursor:
+    farcall Pokedex_AdvanceArrowCursorBlink
+    ld b, 1
+    jr z, .phase
+    dec b
+.phase
+    ld a, [wPopArrowVisible]
+    cp b
+    ret z
+    ld a, b
+    ld [wPopArrowVisible], a
+    ; Publish at the next normal VBlank, without adding a blocking frame.
+    di
+    call PokedexPopover_MoveCursor
+    ld a, 1
+    ld [wPopPending], a
+    ei
     ret
 
 PokedexPopover_DrawBase:
@@ -672,6 +705,9 @@ PokedexPopover_MoveShiftedCursor:
         ld [hl], 0
         add hl, de
     ENDR
+    ld a, [wPopArrowVisible]
+    and a
+    ret z
     ld a, [wPopCursor]
     ld b, a
     ld hl, wPokedexOwnerTilemapBuffer + 7 * TILEMAP_WIDTH + 1

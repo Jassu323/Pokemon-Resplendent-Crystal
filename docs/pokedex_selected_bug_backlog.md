@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-11. This is the live issue/status list, not the chronological
+Updated 2026-10-12. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -21,6 +21,9 @@ Listing/exit presentation reports.
 
 Remaining Dex review queue:
 
+- `BATTLE-MOVE-02` records a production Sand Tomb trapping-message hang found
+  by the Type Matchups animation regression. Fix it in this branch as a
+  separate change; it is not part of the current interrupt/palette work.
 - `DEX-UNOWN-01/02/03/04` are manually accepted and integrated into production
   on 2026-10-11. Resident blank tiles, bounded form counts, the fully red canvas,
   solid-black panels and corrected portrait palette boundary pass native checks
@@ -1869,6 +1872,45 @@ Scope and acceptance:
 - Test both orders, every cursor row, top/bottom/wrap/page boundaries, known
   and unseen entries, other Dex modes, menus/battles, normal Save/Continue and
   primary/backup recovery. Retain accepted scrollbar and popup alignment.
+
+## Current Branch Battle Follow-Ups
+
+### BATTLE-MOVE-02: Sand Tomb Can Hang In The Trapping-Message Lookup
+
+Status: Confirmed in production and the Type Matchups prototype; queued for a
+separate fix in this branch, not being implemented with the current Dex work
+
+Found 2026-10-12 by the all-move, both-side native-input regression. On either
+side, successfully hit a non-immune target without a Substitute using Sand Tomb
+and apply its initial trapping effect. The move animation returns normally;
+processing then fails to reach the trapping message or next turn. Production
+commit `6d9fba86f6aa67e465721bfd76a53e5662d93ffc` and the current Type prototype
+both stop in `BattleCommand_TrapTarget.next_trap_text`.
+
+Cause: `engine/battle/effect_commands.asm`, `BattleCommand_TrapTarget.Traps`,
+lists Bind, Wrap, Fire Spin, Clamp, and Whirlpool, but not Sand Tomb. The lookup
+has no not-found terminator, so it scans beyond the table for Sand Tomb's index.
+This is independent of the Type chart, palette artwork, shared blinking, and
+the new LCD/VBlank timing regression.
+
+Minimal fix to evaluate: add Sand Tomb's move/text-pointer entry using the
+existing generic "was trapped!" text. Projected cost is four ROMX bytes and no
+new artwork, WRAM, HRAM, SRAM, or save changes. Implementation complexity is
+low; separately consider a bounded/not-found lookup to prevent future missing
+entries from doing the same thing. Do not fold a broader table redesign into
+the minimal correction without assessing its behavior and costs.
+
+Acceptance: normal battle input from both sides; successful initial trapping,
+already-trapped target, miss, immunity, Substitute, residual damage, trap expiry,
+faint/battle-end and switch/escape restrictions. Regress every existing trapping
+move's message/effect and the standard battle/Dex return paths. Do not close
+this story based only on the animation returning; the following message and
+next-turn lifecycle must complete.
+
+Evidence: `build/dex-types-all-animations-20261012/native-edge-events.json` and
+the per-link `native/*/sand_tomb-{player,foe}-q0/events.jsonl.gz` traces.
+See the [animation investigation](pokedex_type_matchups_prototype.md#native-input-exceptions-and-sand-tomb).
+No fix is applied by logging this story.
 
 ## Adjacent Deferred Work
 

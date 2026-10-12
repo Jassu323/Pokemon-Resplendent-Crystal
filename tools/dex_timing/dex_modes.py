@@ -113,6 +113,19 @@ def row_case(task):
             driver.run(frames=3)
             issues += audit_menu(driver.command('ui'), unlocked, row)
             press(driver, 'b')
+        elif mode == 4 and 'PokedexTypes_Update' in repo.symbols:
+            press(driver, 'a')
+            reach(driver, repo, 'PokedexTypes_Update')
+            driver.run(frames=20, key='a')
+            driver.run(frames=3)
+            state = driver.command('peek')
+            if state['presentation'] != presentation or state['mode'] != order:
+                issues.append('types_changed_presentation_or_order')
+            press(driver, 'select' if row & 1 else 'b')
+            reach(driver, repo, 'Pokedex_UpdateOptionScreen')
+            driver.run(frames=3)
+            issues += audit_menu(driver.command('ui'), unlocked, row)
+            press(driver, 'b')
         elif mode in (3, 4):
             press(driver, 'a')
             driver.run(frames=20, key='a')

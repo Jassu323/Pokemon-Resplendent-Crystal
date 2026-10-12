@@ -359,6 +359,11 @@ INCLUDE "engine/pokedex/pokedex_search_results.asm"
 SECTION "Pokedex Moves", ROMX
 INCLUDE "engine/pokedex/pokedex_moves.asm"
 
+SECTION "Pokedex Type Matchups", ROMX
+INCLUDE "engine/pokedex/pokedex_types_mode7_config.asm"
+INCLUDE "engine/pokedex/pokedex_types.asm"
+INCLUDE "engine/pokedex/pokedex_types_mode7.asm"
+
 SECTION "Pokedex Moves Index", ROMX
 INCLUDE "build/dex-moves-assets/tables.asm"
 

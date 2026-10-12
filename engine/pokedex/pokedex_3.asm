@@ -1306,6 +1306,14 @@ Pokedex_VBlankDispatch::
     ret
 .not_search
     ld a, [wJumptableIndex]
+    sub DEXSTATE_MOVES_MODE_UPDATE
+    cp DEXSTATE_MOVES_SEARCH - DEXSTATE_MOVES_MODE_UPDATE
+    jr nc, .not_moves_list
+    call PokedexMovesCursor_VBlank
+    scf
+    ret
+.not_moves_list
+    ld a, [wJumptableIndex]
     cp DEXSTATE_POPOVER
     jr nz, .ordinary
     call PokedexPopover_VBlank

@@ -13,6 +13,9 @@ DEF wMovesModeTextBank   EQUS "wPokedexInfoGFX + 15"
 DEF wMovesModeTextRow    EQUS "wPokedexInfoGFX + 16"
 DEF wMovesModeTextColumn EQUS "wPokedexInfoGFX + 17"
 DEF wMovesModePalettes   EQUS "wPokedexInfoGFX + 18"
+DEF wMovesCursorPending EQUS "wPokedexInfoGFX + 34"
+DEF wMovesCursorTile    EQUS "wPokedexInfoGFX + 35"
+DEF wMovesCursorAddress EQUS "wPokedexInfoGFX + 36"
 DEF wMovesModeBorderGFX  EQUS "wPokedexInfoGFX + 3 tiles"
 DEF wMovesModeSeenSnapshot EQUS "wPokedexInfoGFX + 36 tiles"
 ASSERT wMovesModeBorderGFX + 21 tiles <= wMovesModeSeenSnapshot
@@ -81,6 +84,7 @@ PokedexMovesMode_Update:
     ld a, BANK(wPokedexInfoGFX)
     ldh [rSVBK], a
     call PokedexMovesMode_ReadInput
+    call PokedexMovesMode_BlinkCursor
     ldh a, [hJoyPressed]
     and PAD_SELECT
     jp nz, .leave
@@ -221,6 +225,7 @@ PokedexMovesMode_SortUpdate:
     ld a, BANK(wPokedexInfoGFX)
     ldh [rSVBK], a
     call PokedexMovesMode_ReadInput
+    call PokedexMovesMode_BlinkCursor
     ldh a, [hJoyPressed]
     and PAD_B | PAD_START
     jr nz, .close
@@ -441,6 +446,7 @@ PokedexMovesMode_SnapshotSeen:
     ret
 
 PokedexMovesMode_Draw:
+    farcall Pokedex_ResetArrowCursorBlink
     ld a, TRUE
     ldh [hOAMUpdate], a
     xor a
@@ -532,6 +538,66 @@ PokedexMovesMode_RowAddress:
     add hl, de
     dec a
     jr nz, .row
+    ret
+
+PokedexMovesMode_BlinkCursor:
+    ld a, VBLANK_POKEDEX
+    ldh [hVBlank], a
+    farcall Pokedex_AdvanceArrowCursorBlink
+    ld c, MOVES_MODE_CURSOR_TILE
+    jr z, .position
+    ld c, $32
+.position
+    ld a, [wJumptableIndex]
+    cp DEXSTATE_MOVES_MODE_UPDATE
+    jr nz, .popup
+    ld a, [wMovesModeSelected]
+    ld b, a
+    ld a, [wMovesModeSelected + 1]
+    or b
+    ret z
+    hlcoord 6, 1
+    debgcoord 6, 1
+    ld a, [wMovesModeCursor]
+    ld b, a
+.row
+    ld a, b
+    and a
+    jr z, .tile
+    push bc
+    ld bc, SCREEN_WIDTH
+    add hl, bc
+    ld a, e
+    add TILEMAP_WIDTH
+    ld e, a
+    jr nc, .next
+    inc d
+.next
+    pop bc
+    dec b
+    jr .row
+.popup
+    hlcoord 7, 3
+    debgcoord 7, 3
+    ld a, [wDexArrowCursorPosIndex]
+    and a
+    jr z, .tile
+    hlcoord 7, 5
+    debgcoord 7, 5
+.tile
+    ld a, c
+    cp [hl]
+    ret z
+    di
+    ld [hl], a
+    ld [wMovesCursorTile], a
+    ld a, e
+    ld [wMovesCursorAddress], a
+    ld a, d
+    ld [wMovesCursorAddress + 1], a
+    ld a, 1
+    ld [wMovesCursorPending], a
+    ei
     ret
 
 PokedexMovesMode_DrawShell:
@@ -1050,6 +1116,7 @@ PokedexMovesMode_DrawPopupFrame:
     ret
 
 PokedexMovesMode_DrawSortRows:
+    farcall Pokedex_ResetArrowCursorBlink
     hlcoord 7, 4
     ld a, $32
     ld bc, 11
@@ -1080,6 +1147,8 @@ PokedexMovesMode_DrawSortRows:
     db "Alphabet@"
 
 PokedexMovesMode_Publish:
+    xor a
+    ld [wMovesCursorPending], a
     farcall Pokedex_StageOwnerTransitionMaps
     call PokedexMovesMode_StageRightEdge
     ld hl, wMovesModePalettes
@@ -1145,6 +1214,36 @@ PokedexMovesMode_Publish:
 PokedexMovesModeScrollbarGFX:
 INCBIN "gfx/pokedex/pokedex_moves_scroll_bar_and_borders.2bpp"
 ASSERT @ - PokedexMovesModeScrollbarGFX == 6 tiles
+
+PUSHS
+SECTION FRAGMENT "bank77", ROMX
+PokedexMovesCursor_VBlank:
+    ldh a, [rSVBK]
+    push af
+    ld a, BANK(wPokedexInfoGFX)
+    ldh [rSVBK], a
+    ld a, [wMovesCursorPending]
+    and a
+    jr z, .done
+    ldh a, [rVBK]
+    push af
+    xor a
+    ldh [rVBK], a
+    ld a, [wMovesCursorAddress]
+    ld l, a
+    ld a, [wMovesCursorAddress + 1]
+    ld h, a
+    ld a, [wMovesCursorTile]
+    ld [hl], a
+    xor a
+    ld [wMovesCursorPending], a
+    pop af
+    ldh [rVBK], a
+.done
+    pop af
+    ldh [rSVBK], a
+    ret
+POPS
 
 INCLUDE "build/dex-moves-mode-assets/tables.asm"
 
@@ -1264,6 +1363,7 @@ PokedexMovesSearch_MaxScroll:
     ret
 
 PokedexMovesSearch_DrawOptions:
+    farcall Pokedex_ResetArrowCursorBlink
     hlcoord 7, 4
     ld a, $32
     ld bc, 11
@@ -1300,6 +1400,7 @@ PokedexMovesSearch_OptionsUpdate:
     ld a, 3
     ldh [rSVBK], a
     call PokedexMovesMode_ReadInput
+    call PokedexMovesMode_BlinkCursor
     ldh a, [hJoyPressed]
     and PAD_B | PAD_START
     jr nz, .close
@@ -1469,8 +1570,7 @@ PokedexMovesSearch_DrawCursor:
     ld [hl], $32
     hlcoord 2, 15
     ld [hl], $32
-    xor a
-    ld [wDexArrowCursorBlinkCounter], a
+    farcall Pokedex_ResetArrowCursorBlink
     ld a, [wMovesSearchRow]
     ld [wDexArrowCursorPosIndex], a
 PokedexMovesSearch_BlinkCursor:

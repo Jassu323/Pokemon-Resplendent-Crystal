@@ -111,7 +111,8 @@ def audit(driver, repo, manifest):
         if tiles[start:start + 12] != encode(name).ljust(12, b'\x32'):
             raise ValueError(f'Move row {row} differs: index {index}')
         cursor = tiles[(row + 1) * 21 + name_column - 1]
-        if cursor != (0xed if row == current['cursor'] else 0x32):
+        expected_cursor = ((0xed,0x32) if 'PokedexMovesMode_BlinkCursor' in repo.symbols else (0xed,))
+        if cursor not in (expected_cursor if row == current['cursor'] else (0x32,)):
             raise ValueError('Moves cursor differs')
     index = order[current['scroll'] + current['cursor']]
     if current['selected'] != index:
@@ -333,7 +334,10 @@ def audit_sort(driver, repo, base=None):
         at = row * 21 + 8
         if tiles[at:at + 9] != expected:
             raise ValueError('Sort option text differs')
-        if tiles[row * 21 + 7] != ((0xed if aligned else 0x68) if selected else 0x32):
+        expected_cursor = ((0xed, 0x32) if aligned and selected and
+                           'PokedexMovesMode_BlinkCursor' in repo.symbols else
+                           ((0xed if aligned else 0x68) if selected else 0x32,))
+        if tiles[row * 21 + 7] not in expected_cursor:
             raise ValueError('Sort option cursor differs')
     def gfx(cell, bank=1):
         address = 0x9000 + (cell if cell < 128 else cell - 256) * 16

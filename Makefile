@@ -45,8 +45,15 @@ RGBGFXFLAGS  ?= -Weverything
 
 ### Build targets
 
+.DEFAULT_GOAL := all
+
 .SUFFIXES:
 .SECONDEXPANSION:
+
+engine/pokedex/pokedex_types_audio.asm: audio/engine.asm tools/pokedex_type_audio.py
+	python3 tools/pokedex_type_audio.py --output $@
+
+audio.o: engine/pokedex/pokedex_types_audio.asm
 .PRECIOUS:
 .SECONDARY:
 .PHONY: \

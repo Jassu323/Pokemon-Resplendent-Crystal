@@ -75,6 +75,26 @@ static void hex(const uint8_t *p, unsigned length)
 #ifdef DEX_PERFORMANCE_TRACE
 #include "performance.c"
 #endif
+#ifdef DEX_TYPES_TRACE
+#include "pokedex_types_trace.c"
+#endif
+#ifdef DEX_TYPES_AUDIO_FIXTURE
+#include "type_audio_fixture.c"
+#endif
+#ifdef DEX_TYPES_UPLOAD_DIAGNOSTIC
+static bool ice_dma_write(GB_gameboy_t *g, uint16_t address, uint8_t value)
+{
+    if (address >= 0xff51 && address <= 0xff55 && byte(S_wPokedexWRAM0Scratch + 1) >= 11) {
+        printf("{\"event\":\"ice_dma_register\",\"t\":%" PRIu64 ",\"address\":%u,"
+               "\"value\":%u,\"pc\":%u,\"hl\":%u,\"de\":%u,\"mode\":%u,"
+               "\"src\":%u,\"dest\":%u,\"active\":%u}\n",
+               ticks / 2, address, value, g->pc, g->hl, g->de,
+               g->io_registers[0x41] & 3, g->hdma_current_src,
+               g->hdma_current_dest, g->hdma_on || g->hdma_on_hblank);
+    }
+    return true;
+}
+#endif
 
 static void snapshot(int hit)
 {
@@ -129,6 +149,30 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
      * Polling PC before GB_cpu_run would count that instruction twice. */
     uint64_t now = ticks + (unsigned)(gb.cycles_since_run - step_origin);
     unsigned bank = pc < 0x4000 ? 0 : gb.mbc_rom_bank;
+#ifdef DEX_TYPES_UPLOAD_DIAGNOSTIC
+    static unsigned previous_pc, previous_bank, previous_ice;
+    unsigned ice = gb.vram[8192 + 0x1020];
+    if (ice != previous_ice) {
+        printf("{\"event\":\"ice_change\",\"t\":%" PRIu64 ",\"previous_pc\":%u,"
+               "\"previous_bank\":%u,\"pc\":%u,\"bank\":%u,\"value\":%u,"
+               "\"hl\":%u,\"de\":%u,\"vbk\":%u,\"ordinal\":%u}\n",
+               now / 2, previous_pc, previous_bank, pc, bank, ice, gb.hl, gb.de,
+               gb.cgb_vram_bank, byte(S_wPokedexWRAM0Scratch + 1));
+        previous_ice = ice;
+    }
+    if (bank == DIAG_TRANSFER_BANK && pc == DIAG_TRANSFER_PC && gb.de == 0x9020) {
+        printf("{\"event\":\"ice_upload\",\"t\":%" PRIu64 ",\"hl\":%u,\"source\":",
+               now / 2, gb.hl);
+        hex(gb.ram + gb.hl - 0xc000, 16);
+        printf(",\"vbk\":%u,\"ordinal\":%u}\n", gb.cgb_vram_bank,
+               byte(S_wPokedexWRAM0Scratch + 1));
+    }
+    previous_pc = pc;
+    previous_bank = bank;
+#endif
+#ifdef DEX_TYPES_TRACE
+    types_observe(bank, pc, now);
+#endif
 #ifdef DEX_PERFORMANCE_TRACE
     perf_observe(bank, pc);
 #endif
@@ -213,7 +257,10 @@ static void host_log(GB_gameboy_t *g, const char *message, GB_log_attributes_t a
 int main(int argc, char **argv)
 {
     if (argc != 4) { fprintf(stderr, "Usage: cold-listing ROM BOOT_ROM BATTERY_COPY\n"); return 2; }
-    GB_init(&gb, GB_MODEL_CGB_E);
+#ifndef DEX_TEST_MODEL
+#define DEX_TEST_MODEL GB_MODEL_CGB_E
+#endif
+    GB_init(&gb, DEX_TEST_MODEL);
     GB_set_log_callback(&gb, host_log);
 #ifdef DEX_PERFORMANCE_TRACE
     /* Configure the host audio sink before execution, not after STOP has
@@ -225,8 +272,17 @@ int main(int argc, char **argv)
     GB_set_pixels_output(&gb, pixels);
     GB_set_rgb_encode_callback(&gb, rgb);
     GB_set_execution_callback(&gb, observe);
+#ifdef DEX_TYPES_TRACE
+    GB_set_write_memory_callback(&gb, types_write);
+#endif
+#ifdef DEX_TYPES_UPLOAD_DIAGNOSTIC
+    GB_set_write_memory_callback(&gb, ice_dma_write);
+#endif
 #ifdef DEX_PERFORMANCE_TRACE
     GB_set_vblank_callback(&gb, perf_frame);
+#endif
+#ifdef DEX_TYPES_TRACE
+    GB_set_vblank_callback(&gb, types_frame);
 #endif
 #ifdef DEX_LISTING_RESTORE_TRACE
     GB_set_vblank_callback(&gb, restoration_frame);
@@ -282,6 +338,11 @@ int main(int argc, char **argv)
 #ifdef DEX_PERFORMANCE_TRACE
         else if (perf_command(line)) {
             /* Display hashes and routine costs are host-only observations. */
+        }
+#endif
+#ifdef DEX_TYPES_AUDIO_FIXTURE
+        else if (types_audio_command(line)) {
+            /* Explicit audio fixture only; never compiled into normal-input tests. */
         }
 #endif
 #ifdef DEX_LISTING_RESTORE_TRACE

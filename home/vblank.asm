@@ -32,6 +32,7 @@ VBlank::
 	pop de
 	pop bc
 	pop af
+.return
 	reti
 
 VBlankHandlers:
@@ -48,6 +49,10 @@ VBlankHandlers:
 	assert_table_length NUM_VBLANK_HANDLERS
 
 VBlank_Pokedex:
+	; Bit 4 tags the Type-only use of existing mode 7. No other IRQ pays this.
+	ldh a, [hVBlank]
+	bit 4, a
+	jr nz, .types
 ; Let the Listing animate its resident mini-sprites while synchronous
 ; frontpic preparation is running. Selection and scrolling transactions lock
 ; OAM and perform their own final frame synchronization.
@@ -61,9 +66,48 @@ VBlank_Pokedex:
 	pop af
 	rst Bankswitch
 	jp VBlank_Normal
+.types
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_VBlank)
+	rst Bankswitch
+	call PokedexTypes_VBlank
+	pop af
+	rst Bankswitch
+	ret
+
+PokedexTypes_UpdateSound::
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_AudioUpdate)
+	rst Bankswitch
+	call PokedexTypes_AudioUpdate
+	pop af
+	rst Bankswitch
+	ret
+
+PokedexTypes_AudioYield::
+	push af
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_Yield)
+	rst Bankswitch
+	call PokedexTypes_Yield
+	pop af
+	rst Bankswitch
+	pop af
+	ret
 
 VBlank_Normal::
 ; normal operation
+; TIMING CONTRACT: DO NOT ADD OVERHEAD TO ORDINARY VBLANK WORK/DISPATCH.
+; Even an inactive-owner check changes battle setup/cleanup frame alignment.
+; Scripts use VBlank_CutsceneCGB, but surrounding VBlank_Normal still matters.
+; A Type-page check added 32 T-cycles here plus 20 per active LCD interrupt:
+; 314/333 moves changed duration despite identical logical animation updates.
+; Type-only EI was not taken in battle; rejecting its check still cost time.
+; Preserve budgets; verify physical timing, both sides, phases and owner exits.
+; Evidence and acceptance: docs/battle_animation_interrupt_timing_contract.md
 
 ; rng
 ; scx, scy, wy, wx
@@ -133,7 +177,6 @@ VBlank_Normal::
 	jr nz, .done_oam
 	call hTransferShadowOAM
 .done_oam
-
 	; vblank-sensitive operations are done
 
 	xor a
