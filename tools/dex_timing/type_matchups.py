@@ -224,6 +224,12 @@ def owner_signature(driver, owner):
         attrs += bytes.fromhex(ui['window_attrs'])
     palettes = bytes.fromhex(ui['palettes'])
     result = {key:ui[key] for key in keys}
+    if owner == 2:
+        # The generic UI picture samples x=1,y=1. Unown is at x=6,y=5;
+        # its 49 base tiles are bank 0 $9000, not that unrelated corner crop.
+        result['picture'] = driver.command('inspectvram 0 36864 784')['bytes']
+        result['unown_font'] = driver.command('inspectvram 1 35664 432')['bytes']
+        result['unown_blank'] = driver.command('inspectvram 1 37664 16')['bytes']
     if owner == 3:
         tiles = bytearray.fromhex(result['map'])
         for row in range(1,9):

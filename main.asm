@@ -359,6 +359,9 @@ INCLUDE "engine/pokedex/pokedex_search_results.asm"
 SECTION "Pokedex Moves", ROMX
 INCLUDE "engine/pokedex/pokedex_moves.asm"
 
+SECTION "Pokedex Unown Static", ROMX
+INCLUDE "engine/pokedex/pokedex_unown_static.asm"
+
 SECTION "Pokedex Type Matchups", ROMX
 INCLUDE "engine/pokedex/pokedex_types_mode7_config.asm"
 INCLUDE "engine/pokedex/pokedex_types.asm"
@@ -454,6 +457,7 @@ INCLUDE "engine/link/init_list.asm"
 INCLUDE "engine/pokemon/experience.asm"
 INCLUDE "engine/pokemon/switchpartymons.asm"
 INCLUDE "engine/gfx/load_pics.asm"
+INCLUDE "engine/pokedex/pokedex_unown_decode.asm"
 INCLUDE "engine/pokemon/move_mon_wo_mail.asm"
 INCLUDE "data/pokemon/base_stats.asm"
 INCLUDE "data/pokemon/names.asm"

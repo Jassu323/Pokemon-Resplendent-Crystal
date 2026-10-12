@@ -245,6 +245,22 @@ Negative controls must detect the earlier indexing, background, and panel
 defects. A checker that passes both good and intentionally bad ROMs is not a
 useful acceptance oracle.
 
+The static Unown performance prototype adds native button-to-display sweeps:
+112 cases on each of CGB 0/A/B/C/D/E, both listing origins and four input
+phases. Every displayed frame must be an old or new whole selection; assert
+that picture/map DMA stays within VBlank, the original form/banks are restored,
+and returning preserves the originating selection. Compare ordinary Modern
+and Legacy selection/entry timing against the frozen production link.
+
+Its direct decoder fixture has 156 cases: all 26 forms after prior 5-, 6-,
+and 7-tile species, with original form values 1/26. Check the independent
+padded base image and stack/ROM/WRAM/SRAM restoration. The intentionally stale
+dimension decoder must fail the expected 104 cases. Type return checks must
+inspect Unown's actual centered portrait tiles and resident font/blank bytes,
+not the generic top-left portrait oracle. See
+[Unown Performance Prototype](pokedex_unown_performance_prototype.md) for the
+recipe, evidence, ownership contract, and this run's explicit coverage limits.
+
 ### Selected Playback And Entry Timing
 
 For each style, exercise all 373 species in cold, paging, and warm suites:

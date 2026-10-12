@@ -978,6 +978,11 @@ Pokedex_InitUnownMode:
 	call Pokedex_LoadUnownFrontpicTiles
 	call Pokedex_UnownModePlaceCursor
 	farcall PrintUnownWord
+	ldh a, [hCGB]
+	and a
+	jr z, .mapped
+	farcall PokedexUnown_Publish
+.mapped
 	call WaitBGMap
 	ld a, SCGB_POKEDEX_UNOWN_MODE
 	call Pokedex_GetSGBLayout
@@ -1056,6 +1061,13 @@ Pokedex_UnownModeHandleDPadInput:
 	call Pokedex_LoadUnownFrontpicTiles
 	call Pokedex_UnownModePlaceCursor
 	farcall PrintUnownWord
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	farcall PokedexUnown_Publish
+	ret
+
+.dmg
 	ld a, $1
 	ldh [hBGMapMode], a
 	call DelayFrame
@@ -3321,6 +3333,14 @@ Pokedex_LoadUnownFrontpicTiles:
 	ld [wCurPartySpecies], a
 	ld l, LOCKED_MON_ID_DEX_SELECTED
 	call LockPokemonID
+	ldh a, [hCGB]
+	and a
+	jr z, .dmg
+	farcall PokedexUnown_PreparePicture
+	pop af
+	ld [wUnownLetter], a
+	ret
+.dmg
 	call GetBaseData
 	ld de, vTiles2 tile $00
 	predef GetMonFrontpic
