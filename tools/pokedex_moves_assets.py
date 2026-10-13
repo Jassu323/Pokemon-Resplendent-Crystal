@@ -40,7 +40,7 @@ def family_egg_sources(root, names, eggs):
             sources[name] = source or name
     return sources
 
-def compile(root=ROOT):
+def compile(root=ROOT, validate_only=False):
     names = species(root)
     moves = constants(root / 'constants/move_constants.asm')
     move_names = re.findall(r'^\s*li "([^"]+)"', (root / 'data/moves/names.asm').read_text(), re.M)
@@ -97,6 +97,8 @@ def compile(root=ROOT):
         asm += [f'\tdb {max(1, len(pages))}']
         for count, pointer in zip(map(len, streams), (level_pointer[name], f'.tm_{name}', f'.tut_{name}', egg_pointer[egg_sources[name]])):
             asm += [f'\tdb {count}, BANK({pointer.split()[0]})', f'\tdw {pointer}']
+    if validate_only:
+        return manifest
     for name in names:
         asm += [f'.tm_{name}:', '\tdb ' + ', '.join(map(str, manifest[name]['machines'] or [0])),
                 f'.tut_{name}:', '\tdb ' + ', '.join(map(str, manifest[name]['tutors'] or [0]))]

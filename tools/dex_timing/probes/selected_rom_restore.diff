@@ -1,0 +1,52 @@
+--- a/main.asm
++++ b/main.asm
+@@ -331,6 +331,7 @@
+ INCLUDE "engine/pokedex/pokedex_info.asm"
+ INCLUDE "engine/pokedex/pokedex_runtime_graphics.asm"
+ INCLUDE "engine/pokedex/pokedex_runtime_data.asm"
++INCLUDE "engine/pokedex/pokedex_rom_restore.asm"
+ INCLUDE "engine/pokedex/performance_queue.asm"
+ INCLUDE "engine/pokedex/performance_admission.asm"
+ INCLUDE "engine/pokedex/performance_retained.asm"
+@@ -373,6 +374,21 @@
+ INCLUDE "build/dex-moves-assets/tables.asm"
+ 
+ 
++SECTION "Pokedex ROM Recovery", ROMX
++INCLUDE "build/dex-runtime-display-assets/rom-restore.asm"
++IF DEF(DEX_RUNTIME_ANCESTORS)
++ASSERT PokedexROMRestoreMetadataEnd - PokedexROMRestoreSpecies <= $4000
++SECTION "Pokedex ROM Recovery Pixels", ROMX
++ENDC
++PokedexROMRestoreGFX:
++INCBIN "build/dex-runtime-display-assets/rom-restore.2bpp"
++PokedexROMRestoreGFXEnd:
++IF !DEF(DEX_RUNTIME_ANCESTORS)
++ASSERT PokedexROMRestoreGFXEnd - PokedexROMRestoreSpecies <= $4000
++ENDC
++ASSERT PokedexROMRestoreGFXEnd - PokedexROMRestoreGFX <= $4000
++
++
+ SECTION "bank11", ROMX
+ 
+ INCLUDE "engine/events/overworld.asm"
+--- a/engine/pokedex/pokedex_info_return.asm
++++ b/engine/pokedex/pokedex_info_return.asm
+@@ -2,6 +2,7 @@
+ ; Each inactive record is prepared before its atlas is published. Cancellation
+ ; never changes the visible selector or its matching immutable source pointers.
+ PokedexInfo_BeginRecord:
++	call PokedexRuntime_RecordROMRecipe
+ 	xor a
+ 	ld [wPokedexInfoRow], a
+ 	ld a, POKEDEX_INFO_RECORD
+--- a/Makefile
++++ b/Makefile
+@@ -174,5 +174,7 @@
+ build/dex-runtime-display-assets/semantic-info.asm: tools/pokedex_semantic_display_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm $(wildcard data/pokemon/evos_attacks_*.asm)
+ 	python3 -B tools/pokedex_semantic_display_assets.py
++build/dex-runtime-display-assets/rom-restore.asm: tools/pokedex_rom_restore_assets.py $(info_asset_inputs)
++	python3 -B tools/pokedex_rom_restore_assets.py
+ define DEP
+ $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
+ 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<

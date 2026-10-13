@@ -119,6 +119,8 @@ class InfoLinkedTests(unittest.TestCase):
                 cpu.field('wPokedexInfoActiveAtlasBuffer', 1 - inactive)
                 cpu.field('wPokedexInfoVisible', 1)
                 cpu.field('wPokedexInfoTileCount', 39)
+                cpu.field('wPrevDexEntry', 373, 2)
+                cpu.field('wPokedexInfoPage', 4)
                 tilemap = bytes((i * 7) & 255 for i in range(224))
                 sources = bytes((i * 3) & 255 for i in range(80))
                 cpu.block(repo.symbols['wPokedexOwnerTilemapBuffer'][1] + 9 * 32, tilemap)
@@ -127,6 +129,8 @@ class InfoLinkedTests(unittest.TestCase):
                 active = repo.symbols['wPokedexInfoReturnRecord' + 'AB'[1 - inactive]][1]
                 cpu.block(active, b'\x5a' * 305)
                 cpu.run('PokedexInfo_BeginRecord')
+                if 'PokedexRuntime_RecordROMRecipe' in repo.symbols:
+                    sources = (373).to_bytes(2, 'little') + bytes((4,)) + sources[3:]
                 for step in range(6):
                     cpu.run('PokedexInfo_Step')
                     self.assertEqual(cpu.read(repo.symbols['wPokedexInfoState'][1]), 5 if step == 5 else 8)

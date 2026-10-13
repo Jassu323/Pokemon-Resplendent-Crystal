@@ -618,7 +618,7 @@ def interface_case(task):
         if view == 1:
             ui = info_ready(driver, 0)
             compiler = Compiler()
-            data = compiler.compile()
+            data = compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
             name = config['names'][driver.command('peek')['index']]
             issues += type_audit(repo, name, ui) + info_audit(compiler, data, name, 0, ui, repo)
         elif view == 2:

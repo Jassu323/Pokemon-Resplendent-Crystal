@@ -34,6 +34,11 @@ static uint64_t perf_now(void)
     return (ticks + (unsigned)(gb.cycles_since_run - step_origin)) / 2;
 }
 
+#ifdef DEX_LIFECYCLE_TRACE
+#include DEX_LIFECYCLE_SYMBOLS
+#include "dex_lifecycle.c"
+#endif
+
 static uint32_t perf_hash(unsigned kind)
 {
     uint32_t hash = 2166136261u;
@@ -89,6 +94,9 @@ static void perf_frame(GB_gameboy_t *g, GB_vblank_type_t type)
         white += (pixels[i] & 0xffffff) == 0xffffff;
     }
     uint64_t now = perf_now();
+#ifdef DEX_LIFECYCLE_TRACE
+    life_frame(now, perf_frames);
+#endif
 #ifdef DEX_SURF_CLEANUP_TRACE
     perf_surf_cleanup("display");
 #endif
@@ -135,6 +143,9 @@ static void perf_observe(unsigned bank, unsigned pc)
 {
     if (!perf_enabled) return;
     uint64_t now = perf_now();
+#ifdef DEX_LIFECYCLE_TRACE
+    life_step(now);
+#endif
 #ifdef DEX_SEARCH_RESULTS_TRACE
     unsigned results_ly = gb.io_registers[0x44];
     if (byte(S_wJumptableIndex) == 10 && bank == RESULTS_DMA_BANK && pc == RESULTS_DMA_PC) {
@@ -413,6 +424,9 @@ static bool perf_command(const char *line)
     if (sscanf(line, "perf %u", &enabled) == 1) {
         perf_enabled = enabled != 0;
         perf_frames = perf_span_count = 0;
+#ifdef DEX_LIFECYCLE_TRACE
+        life_sfx_last = 255;
+#endif
 #ifdef DEX_SEARCH_ICON_TRACE
         perf_search_last_ly = 255;
 #endif

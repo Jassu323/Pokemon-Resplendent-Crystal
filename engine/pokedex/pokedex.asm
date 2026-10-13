@@ -971,7 +971,12 @@ Pokedex_UpdateSearchResultsScreen:
 Pokedex_InitUnownMode:
 	ldh a, [hCGB]
 	and a
-	call z, Pokedex_LoadUnownFont
+	jr z, .ordinary_font
+	farcall PokedexAncestors_RestoreUnownFont
+	jr .font_ready
+.ordinary_font
+	call Pokedex_LoadUnownFont
+.font_ready
 	call Pokedex_DrawUnownModeBG
 	xor a
 	ld [wDexCurUnownIndex], a

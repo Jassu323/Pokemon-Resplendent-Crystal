@@ -14,6 +14,13 @@ The findings and private trials below are retained as evidence for that broader
 work, not approval to integrate the early-mask candidate. Production remains
 unchanged and the confirmed exit defect remains unfixed.
 
+Current-link update, 2026-10-13: the fresh baseline's 88 exit cases no longer
+reproduce that displacement on the tested map. Its block rebuild is about
+7 ms in the current double-speed game. The historical reproduction below is
+retained, not generalized to every later link. See the measured local options
+and qualified hardware-write guard in
+[Pokedex opening and closing performance](pokedex_lifecycle_performance_review.md).
+
 ## Results
 
 | Issue | Current result | Recommended disposition |

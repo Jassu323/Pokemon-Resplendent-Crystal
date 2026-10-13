@@ -22,6 +22,15 @@ class MovesTests(unittest.TestCase):
 
     def test_index_matches_linked_learnsets_and_actual_machine_bits(self):
         repo = self.repo
+        if 'PokedexRuntime_PrepareMoves' in repo.symbols:
+            from tools.test_selected_runtime_display import RuntimeDisplayTests
+            from pokedex_info_assets import Compiler
+            verifier = RuntimeDisplayTests('test_runtime_moves_streams_match_all_authoritative_sources')
+            verifier.repo = repo
+            verifier.compiler = Compiler(ROOT)
+            verifier.data = verifier.compiler.compile()
+            verifier.test_runtime_moves_streams_match_all_authoritative_sources()
+            return
         names = species()
         ids = constants(ROOT / 'constants/move_constants.asm')
         at = offset(repo.symbols['PokedexMovesSpecies'])
@@ -81,9 +90,15 @@ class MovesTests(unittest.TestCase):
     def test_workspace_uses_existing_overlay_and_no_premium_ram(self):
         repo = self.repo
         self.assertEqual(repo.symbols['wPokedexMovesState'][0], 3)
-        self.assertLessEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1], 0xdc00)
+        runtime = 'PokedexRuntime_LoadTitles' in repo.symbols
+        self.assertLessEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1], 0xdc40 if runtime else 0xdc00)
         self.assertEqual(repo.symbols['wPokedexInfoPendingPage'][1] - repo.symbols['wPokedexMovesState'][1], 45)
-        self.assertEqual(repo.symbols['wPokedexInfoWorkspaceEnd'][1] - repo.symbols['wPokedexInfoPendingPage'][1], 2)
+        end = 'wPokedexRuntimeReturnRepair' if runtime else 'wPokedexInfoWorkspaceEnd'
+        self.assertEqual(repo.symbols[end][1] - repo.symbols['wPokedexInfoPendingPage'][1], 2)
+        if runtime:
+            if 'wPokedexRuntimeParents' in repo.symbols:
+                self.assertEqual(repo.symbols['wPokedexRuntimeParents'][0], 5)
+            self.assertLessEqual(repo.symbols['wPokedexRuntimeCacheEnd'][1], 0xe000)
 
     def test_deferred_evolution_links_are_not_invented(self):
         for name in ('WEAVILE', 'LEAFEON', 'GLACEON'):

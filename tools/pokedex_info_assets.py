@@ -66,6 +66,23 @@ def future_stages(graph, name, ancestors=()):
     return result
 
 
+def previous_stages(graph, name):
+    parents = {}
+    for parent, edges in graph.items():
+        for child, method in edges:
+            if child in parents:
+                raise ValueError(f'Ambiguous pre-evolution for {child}')
+            parents[child] = (parent, method)
+    result, visited = [], {name}
+    while name in parents:
+        name, method = parents[name]
+        if name in visited:
+            raise ValueError(f'Pre-evolution cycle at {name}')
+        visited.add(name)
+        result.append((name, method))
+    return result[::-1]
+
+
 def width(value):
     return min(101, 2 * (value // 5))
 
@@ -185,14 +202,14 @@ class Compiler:
             result[text] = dict(cells=list(cells), tiles=tiles)
         return result
 
-    def compile(self):
+    def compile(self, ancestors=False):
         graph, names = evolution_graph(self.root), species(self.root)
         display = re.findall(r'\bdname\s+"([^"]+)"',
             (self.root / 'data/pokemon/names.asm').read_text().split('PokemonNames::')[1])
         display = dict(zip(names, display))
         item_ids = constants(self.root / 'constants/item_constants.asm')
         items = re.findall(r'\bli\s+"([^"]+)"', (self.root / 'data/items/names.asm').read_text())
-        records, roots = {}, {}
+        records, roots, pages, headings = {}, {}, {}, {}
         def condition(method):
             kind, param, *extra = method
             if kind == 'EVOLVE_LEVEL':
@@ -209,18 +226,28 @@ class Compiler:
             raise ValueError(kind)
         for name in names:
             roots[name] = []
-            for target, method in future_stages(graph, name):
-                key = (target, tuple(method))
-                if key not in records:
-                    texts = (display[target], *condition(method))
-                    if texts[2]:
-                        raise ValueError('Evolution entries must fit a name and one requirement line')
-                    records[key] = (target, [self.line(t) for t in texts], texts)
-                roots[name].append(list(records).index(key))
-            if 1 + (len(roots[name]) + 1) // 2 > 19:
+            groups = [('Evolutions', future_stages(graph, name))]
+            if ancestors:
+                groups.append(('Evolves from', previous_stages(graph, name)))
+            pages[name], headings[name] = [], ['Stats']
+            for heading, entries in groups:
+                group = []
+                for target, method in entries:
+                    key = (target, tuple(method))
+                    if key not in records:
+                        texts = (display[target], *condition(method))
+                        if texts[2]:
+                            raise ValueError('Evolution entries must fit a name and one requirement line')
+                        records[key] = (target, [self.line(t) for t in texts], texts)
+                    group.append(list(records).index(key))
+                if heading == 'Evolutions':
+                    roots[name] = group
+                pages[name].extend(group[first:first + 2] for first in range(0, len(group), 2))
+                headings[name].extend([heading] * ((len(group) + 1) // 2))
+            if 1 + len(pages[name]) > 19:
                 raise ValueError(f'{name} requires more than 19 Info pages')
-            for first in range(0, len(roots[name]), 2):
-                used = {tile for i in roots[name][first:first + 2]
+            for page in pages[name]:
+                used = {tile for i in page
                         for line in list(records.values())[i][1]
                         for tile in list(self.lines.values())[line]}
                 if len(used) > 40:
@@ -257,12 +284,17 @@ class Compiler:
             used.update(tile for value in values for tile in numbers[value])
             if len(used) > 40:
                 raise ValueError(f'{name} Stats page requires {len(used)} unique tiles; capacity is 40')
-        return dict(names=names, roots=roots, records=list(records.values()),
+        titles = self.titles()
+        if ancestors:
+            pixels = self.text('Evolves from', 5)
+            titles['Evolves from'] = dict(cells=list(range(0xb5, 0xc2)), bank=1,
+                tiles=[pack([row[x:x + 8] for row in pixels]) for x in range(0, len(pixels[0]), 8)])
+        return dict(names=names, roots=roots, pages=pages, headings=headings, records=list(records.values()),
                     lines=list(self.lines.items()), shared=shared, labels=label_map,
-                    numbers=numbers, stats=stats, titles=self.titles())
+                    numbers=numbers, stats=stats, titles=titles)
 
-    def write(self, destination):
-        data = self.compile()
+    def write(self, destination, ancestors=False):
+        data = self.compile(ancestors=ancestors)
         destination.mkdir(parents=True, exist_ok=True)
         (destination / 'tiles.2bpp').write_bytes(b''.join(self.pool))
         # Both headings end in the same partial 's' tile, sharing cell $cf.
@@ -273,9 +305,18 @@ class Compiler:
         asm = ['; Generated by tools/pokedex_info_assets.py; do not edit.', 'PokedexInfoSpecies:']
         for name in data['names']:
             asm += [f'\tdb {len(data["roots"][name])}', f'\tdw .{name}']
+            if ancestors:
+                previous = [record for page, heading in zip(data['pages'][name], data['headings'][name][1:])
+                            if heading == 'Evolves from' for record in page]
+                asm += [f'\tdb {len(previous)}', f'\tdw .{name}_From']
         for name in data['names']:
             asm += [f'.{name}:']
             asm += [f'\tdw PokedexInfoEvolution{i}' for i in data['roots'][name]]
+            if ancestors:
+                asm += [f'.{name}_From:']
+                asm += [f'\tdw PokedexInfoEvolution{record}'
+                        for page, heading in zip(data['pages'][name], data['headings'][name][1:])
+                        if heading == 'Evolves from' for record in page]
         for i, (target, lines, _) in enumerate(data['records']):
             asm += [f'PokedexInfoEvolution{i}:', f'\tdw {target}']
             asm += ['\tdw ' + ', '.join(f'PokedexInfoLine{line}' for line in lines)]
@@ -288,7 +329,8 @@ class Compiler:
         asm += ['PokedexInfoNumbers:']
         asm += ['\tdw ' + ', '.join(map(pointer, row)) for row in data['numbers']]
         for text, title in data['titles'].items():
-            asm += [f'PokedexInfo{text}Title:',
+            label = 'EvolvesFrom' if text == 'Evolves from' else text
+            asm += [f'PokedexInfo{label}Title:',
                     '\tdb ' + ', '.join(f'${cell:02x}' for cell in title['cells']) + ', "@"']
         (destination / 'tables.asm').write_text('\n'.join(asm) + '\n')
         report = dict(species=len(data['names']), records=len(data['records']),
@@ -303,11 +345,17 @@ class Compiler:
                          for records in data['roots'].values() for first in range(0, len(records), 2)),
                       stats=data['stats'], evolutions={name: [data['records'][i][2]
                         for i in records] for name, records in data['roots'].items()})
+        if ancestors:
+            report.update(ancestors=True, species_header_bytes=6,
+                          ancestor_species=sum('Evolves from' in headings for headings in data['headings'].values()),
+                          pages={name: data['headings'][name] for name in data['names']})
         (destination / 'manifest.json').write_text(json.dumps(report, indent=2) + '\n')
-        print(json.dumps({k: v for k, v in report.items() if k not in ('stats', 'evolutions')}))
+        print(json.dumps({k: v for k, v in report.items() if k not in ('stats', 'evolutions', 'pages')}))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, default=ROOT / 'build/dex-info-assets')
-    Compiler().write(parser.parse_args().output)
+    parser.add_argument('--ancestors', action='store_true')
+    args = parser.parse_args()
+    Compiler().write(args.output, ancestors=args.ancestors)

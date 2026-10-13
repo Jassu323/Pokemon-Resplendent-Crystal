@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-12. This is the live issue/status list, not the chronological
+Updated 2026-10-13. This is the live issue/status list, not the chronological
 scheduler investigation. Settled Selected animation/audio and New Dex Entry
 acceptance have passed, including instrumentation cleanup. Description UI,
 footprint styling and New Dex boundary wrapping are also accepted. The separate
@@ -21,6 +21,10 @@ Listing/exit presentation reports.
 
 Remaining Dex review queue:
 
+- `DEX-INFO-07` is integrated with the precomputed production renderer and
+  full automated regression passed on 2026-10-13. Manual review remains.
+  Earliest-to-latest ancestry and actual gameplay requirements are preserved;
+  the runtime/VRAM alternative is archived as a future space-saving fallback.
 - `BATTLE-MOVE-02` records a production Sand Tomb trapping-message hang found
   by the Type Matchups animation regression. Fix it in this branch as a
   separate change; it is not part of the current interrupt/palette work.
@@ -551,6 +555,46 @@ covered by all-species and input stress regressions. Fresh production passes
 [production qualification](production_clock_policy.md). Historical costs and
 trial evidence are in
 [measurements, exact candidate identity and tests](pokedex_selected_performance.md).
+
+### DEX-INFO-07: Add An "Evolves From" Section To Selected Info
+
+Status: Integrated and automated-qualified 2026-10-13; manual review pending
+
+Cycle Stats, forward Evolutions pages, then "Evolves from" pages, skipping
+empty sections and wrapping to Stats. Reuse the two-entry evolution layout,
+animated minis and requirement wording. List ancestors earliest first, not
+nearest first, and include only paths leading to the selected species.
+
+Acceptance examples:
+
+- Bayleef: Stats; Evolutions: Meganium / Level 32; Evolves from: Chikorita /
+  Level 16.
+- Meganium: Stats; Evolves from: Chikorita / Level 16, then Bayleef / Level 32.
+- Chikorita has no ancestral section. Branch evolutions must not list siblings.
+
+Use the actual records in `data/pokemon/evos_attacks_{kanto,johto,custom}.asm`,
+not guessed requirements or the lowest-stage family table. Missing gameplay
+links remain part of `DEX-DATA-02`; correcting them should update both display
+directions. Keep existing caught/uncaught visibility and owner return rules.
+
+Relevant implementation: `engine/pokedex/pokedex_info.asm`,
+`tools/pokedex_info_assets.py`, `engine/pokedex/performance_queue.asm`, and
+the Info normal-input/content/return tests. Current ancestry fits two entries
+per page. Reassess storage against the runtime-display prototype rather than
+treating the earlier 5-6 KiB generated-data estimate as an approved allocation.
+Qualify ordering/methods for every species, wrap/coalescing, species changes,
+all tab/Listing/Area returns, and portrait/cry timing before promotion.
+
+The user subsequently requested this feature in all three semantic-metadata
+architecture trials, paired with without-feature builds. See
+[Selected Display Architecture Comparison](pokedex_selected_architecture_comparison.md)
+for the original private builds and tradeoffs. The user chose precomputed
+production rendering with ancestors; its actual cost is +5,332 ROMX bytes
+and no additional allocated RAM. Full regression has no new failures relative
+to production. See [production integration](pokedex_ancestors_production_integration.md)
+for build identity, content, performance and retained exceptions. The complete
+[runtime/VRAM fallback](archived/selected-vram-ancestors-20261013/README.md)
+includes restorable source and matched costs. This story awaits manual review.
 
 ### DEX-PAGE-01: Shared Buffered Page Indicators For Lower Tabs
 
@@ -1521,7 +1565,30 @@ the normal animation/cry regression suite when producing the revised ROM.
 
 ### DEX-PERF-01: Optimize Pokedex opening and closing
 
-Status: Deferred story; includes DEX-EXIT-01, no production implementation approved
+Status: Scoped and privately profiled 2026-10-13; includes DEX-EXIT-01,
+no production implementation approved
+
+The current investigation is in
+[Pokedex opening and closing performance](pokedex_lifecycle_performance_review.md).
+Against production with ancestors, a zero-space initialization reorder saves
+132 ms on entry. Reusing the existing exposed-edge copier brings entry to about
+513 ms; a guarded Dex-only closing coordinator brings exit to about 693 ms,
+versus 778/861 ms in production. The combined source projection is +92 ROMX
+bytes with no RAM growth; address-stable diagnostics cost +104 bytes.
+
+The preferred diagnostic keeps the full exit sound and requests its mask after
+the sound but before saved viewport restoration. The early-mask alternative
+has the same responsiveness but a longer white dwell. An unguarded direct-map
+trial had rejected palette writes despite a correct final screenshot; the
+required local palette guard eliminates them without changing shared ISR code.
+Recommended candidate checks include 48 lifecycle, 88 detailed exit and 36
+secondary-route cases, with zero failures, plus independent pixel comparisons.
+Full production integration regression and manual approval remain outstanding.
+
+The historical exit shift below is dated 2026-10-02. It does not reproduce in
+the current baseline's fresh 88-case matrix; its current tested map rebuild is
+about 7 ms. Preserve its ordering requirements for other maps and future links
+rather than treating that old 88/88 result as the present production result.
 
 2026-10-02: optimize the full Start-menu-to-Dex entry and Dex-to-menu exit
 procedures together rather than adding a standalone mask fix. The objective
@@ -1547,7 +1614,7 @@ Investigation scope:
 Merged defect and evidence from DEX-EXIT-01:
 
 A shell/layout shift was previously reported while leaving the Pokedex for the
-main menu. The user reconfirms it in the latest build. Headless normal-input
+main menu. The user reconfirmed it in the 2026-10-02 build. Headless normal-input
 revalidation reproduces one colored outgoing Dex frame displaced five pixels
 right, with the right-hand window content missing, in all 88 exit cases.
 
@@ -1581,6 +1648,48 @@ Acceptance and regression requirements:
   viewport, then normal overworld rendering, movement and audio after closing.
 - Preserve accepted Description animation/cry timing and input behavior in
   focused and all-species regressions. Obtain manual presentation approval.
+
+### DEX-CLEAN-01: Audit And Remove Unused Replaced Pokedex Code
+
+Status: Backlog; requested 2026-10-13, no removal performed
+
+Review original and superseded Pokedex routines, assets and display tables that
+are still linked into production after the modernized owners replaced them.
+Remove only demonstrably unreachable code/data and measure the occupied ROM
+space recovered. Coordinate with `DEX-PERF-01`, since its final implementation
+may make additional entry/exit callers obsolete.
+
+Relevant ownership and build files include `engine/pokedex/pokedex.asm`,
+`pokedex_2.asm`, `pokedex_3.asm`, the current Selected/Description/Info/Moves,
+Legacy, Search/results, Unown and Type modules, `main.asm`, `Makefile`,
+`data/predef_pointers.asm`, `ram/wram.asm`, `gfx/pokedex/`, and the asset generators
+under `tools/pokedex_*`. Include shared helpers only when their remaining
+non-Dex callers have also been proven absent.
+
+Required investigation:
+
+- Build a live-reference inventory covering direct calls, farcalls, predefs,
+  jump tables, pointer records, fallthrough, exported labels and conditional
+  CGB/non-CGB paths. A missing text-search hit alone is not dead-code proof.
+- Separate currently used Legacy Mode from obsolete vanilla logic. Preserve
+  New Dex Entry/catch flow, Area/town map, sprites/cry helpers, menus and all
+  graphics shared with battle, Party, Stats, PC and daycare.
+- Identify included but unused graphics/tables as well as routines. Distinguish
+  live ROM allocation from ignored build outputs, test probes and fallback
+  archives; deleting those files does not necessarily recover cartridge space.
+- Keep the chosen precomputed Selected renderer and its intentional display
+  atlases. Their retention was explicitly accepted; this is not another runtime
+  architecture conversion. Preserve the archived VRAM fallback handoff.
+- Record each removed label or asset, its former callers, why it is unreachable,
+  exact linked ROM0/ROMX savings and any resulting bank-layout/branch changes.
+  Release RAM only when its ownership/lifetime audit also proves it unused.
+
+Acceptance: a clean source build with no unresolved or silently redirected
+references; matched baseline/candidate rollback artifacts; the full documented
+Dex, New Entry, all-move battle/animation, sampled-cry/audio, persistence and
+surrounding-gameplay regressions. Functional behavior and timings outside the
+intended cleanup must remain unchanged. Obtain manual acceptance before
+promotion; do not delete merely old-looking routines speculatively.
 
 ### DEX-PERF-02: Profile And Optimize The Completed Dex
 

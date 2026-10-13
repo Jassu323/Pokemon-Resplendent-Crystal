@@ -240,8 +240,14 @@ def chart(output):
 def historical_host(output):
     candidate = output / 'candidate'
     baseline = output / 'baseline/candidate'
-    shutil.copytree(candidate / 'build',baseline / 'build',dirs_exist_ok=True)
-    shutil.copytree(candidate / 'gfx',baseline / 'gfx',dirs_exist_ok=True)
+    # A frozen baseline may use a different generated table format.
+    # Populate missing dependencies only; never replace its matching assets.
+    for name in ('dex-area-assets', 'dex-info-assets', 'dex-moves-assets',
+                 'dex-moves-mode-assets', 'dex-sort-assets'):
+        if not (baseline / 'build' / name).exists():
+            shutil.copytree(candidate / 'build' / name, baseline / 'build' / name)
+    if not (baseline / 'gfx').exists():
+        shutil.copytree(candidate / 'gfx', baseline / 'gfx')
     records = {}
     for variant,root in (('baseline',baseline),('candidate',candidate)):
         os.environ['DEX_TIMING_REFERENCE_ROOT'] = str(root)

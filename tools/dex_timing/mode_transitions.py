@@ -6,7 +6,7 @@ from pathlib import Path
 
 from PIL import Image
 
-from .assets import Repository
+from .assets import Repository, offset
 from .cold_listing import Driver, ROOT, audit, bootstrap, move
 from .description_ui import settle
 from .dex_modes import audit_menu
@@ -146,6 +146,10 @@ def case(task):
         for _ in range(2 - target):
             press(driver, 'down')
         records['modes-to-unown'] = capture(driver, output, 'modes-to-unown', 'a', unown_ready)
+        font = bytes.fromhex(driver.command('inspectvram 1 35664 432')['bytes'])
+        start = offset(repo.symbols['UnownFont'])
+        if font != bytes(value ^ 255 for value in repo.rom[start:start + 432]):
+            issues.append('unown_resident_font')
         press(driver, 'right')
         press(driver, 'left')
         records['unown-to-modes'] = capture(driver, output, 'unown-to-modes',
@@ -164,6 +168,20 @@ def case(task):
         asset = repo.load([config['names'][index]])[0]
         playback = audit(asset, accepted, driver.events, final, cold=False, expected_double_speed=1)
         issues.extend('post_menu:' + issue for issue in playback['issues'])
+        if 'PokedexInfoEvolvesFromTitle' in repo.symbols:
+            from pokedex_info_assets import Compiler
+            from .info_ui import info_audit
+            compiler = Compiler()
+            data = compiler.compile(ancestors=True)
+            press(driver, 'right')
+            press(driver, 'a')
+            ui = info_ready(driver, 0)
+            for page in range(ui['info_pages']):
+                if page:
+                    press(driver, 'a')
+                    ui = info_ready(driver, page)
+                issues.extend('post_unown:' + issue for issue in info_audit(
+                    compiler, data, config['names'][index], page, ui, repo))
     except (RuntimeError, ValueError) as error:
         issues.append(str(error))
         driver.evidence(output / 'failure')

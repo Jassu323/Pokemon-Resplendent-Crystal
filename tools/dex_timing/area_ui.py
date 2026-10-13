@@ -24,10 +24,10 @@ T = 70224
 ALIASES = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
 
 
-@lru_cache(maxsize=1)
-def info_data():
+@lru_cache(maxsize=2)
+def info_data(ancestors=False):
     compiler = Compiler()
-    return compiler, compiler.compile(), json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+    return compiler, compiler.compile(ancestors=ancestors), json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
 
 
 @lru_cache(maxsize=4)
@@ -61,7 +61,7 @@ def lower_audit(driver, repo, name, view, page):
         if driver.command('ui')['caught']:
             settle_description_text(driver, description_pages(repo, name)[page])
         return description_audit(repo, driver.command('ui')) + type_audit(repo, name, driver.command('ui'))
-    compiler, data, manifest = info_data()
+    compiler, data, manifest = info_data('PokedexInfoEvolvesFromTitle' in repo.symbols)
     ui = driver.command('ui')
     if view == 1:
         return info_audit(compiler, data, name, page, ui, repo) + type_audit(repo, name, ui)
@@ -530,14 +530,14 @@ def main():
                   states=str(states), names=names, output=str(args.output), images=args.images,
                   follow_up=args.follow_up, repeat_area=args.repeat_area, direct_listing=args.direct_listing,
                   expected_double_speed=int(args.expected_double_speed))
-    _, data, manifest = info_data()
+    _, data, manifest = info_data('PokedexInfoEvolvesFromTitle' in repo.symbols)
     tasks = []
     for n in (args.species or names):
         constant = {'unown_a': 'UNOWN', 'porygonz': 'PORYGON_Z'}.get(n, n.upper())
         for v in args.views:
-            if v == 'evo' and (args.uncaught or not data['roots'][constant]):
+            if v == 'evo' and (args.uncaught or not data['pages'][constant]):
                 continue
-            count = (2 if v == 'description' else 1 + (len(data['roots'][constant]) + 1) // 2
+            count = (2 if v == 'description' else 1 + len(data['pages'][constant])
                      if v == 'info' else max(1, len(manifest[constant]['pages'])) if v == 'moves' else 1)
             pages = range(count) if args.all_pages and not args.uncaught else (int(v in ('page2', 'evo')),)
             tasks += [(config, n, v, p, k, page) for page in pages for p in args.phases for k in args.exit_keys]

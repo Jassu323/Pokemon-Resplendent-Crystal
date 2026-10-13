@@ -146,7 +146,7 @@ def run_case(task):
         press(driver, 'a')
         ui = info_ready(driver, 0)
         compiler = Compiler()
-        info_issues = info_audit(compiler, compiler.compile(), target_name, 0, ui, repo)
+        info_issues = info_audit(compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols), target_name, 0, ui, repo)
         issues += ['info:' + issue for issue in info_issues]
         if info_issues:
             (out / f'{name}-{phase}-info.json').write_text(json.dumps(ui, indent=2))
@@ -252,7 +252,7 @@ def run_stress(task):
             activate_footer()
             ui = info_ready(driver, 0)
             compiler = Compiler()
-            issues += info_audit(compiler, compiler.compile(), name, 0, ui, repo) + type_audit(repo, name, ui)
+            issues += info_audit(compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols), name, 0, ui, repo) + type_audit(repo, name, ui)
             if ui['moves_state']:
                 issues.append('moves_job_survived_info')
             final = settle(driver)

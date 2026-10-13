@@ -94,7 +94,7 @@ def main():
     config.update(core=str(binary), output=str(args.output.resolve()), checkpoints=str(checkpoints.resolve()),
                   compress_traces=args.compress_traces,
                   require_lookahead='PokedexPerf_PrepareIncomingGridRow' not in repo.symbols)
-    data = Compiler().compile()
+    data = Compiler().compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
     targets = args.species or config['names']
     important = {'chikorita', 'eevee', 'tyrogue', 'dusknoir', 'weavile', 'luxray', 'garchomp',
                  'bastiodon', 'rampardos', 'groudon', 'kyogre', 'metagross', 'chansey',
@@ -102,7 +102,7 @@ def main():
     tasks = []
     for name in targets:
         constant = {'unown_a': 'UNOWN', 'porygonz': 'PORYGON_Z'}.get(name, name.upper())
-        pages = 1 + (len(data['roots'][constant]) + 1) // 2
+        pages = 1 + len(data['pages'][constant])
         tasks += [(config, name, page, 0, None) for page in range(pages)]
         if name in important:
             remaining = len(config['names']) - 1 - config['names'].index(name)

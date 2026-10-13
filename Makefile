@@ -163,11 +163,11 @@ build/dex-moves-assets/level.2bpp: build/dex-moves-assets/tables.asm
 build/dex-moves-assets/evos_exports.asm build/dex-moves-assets/egg_exports.asm: build/dex-moves-assets/tables.asm
 	@test -f $@ || python3 -B tools/pokedex_moves_assets.py
 build/dex-info-assets/tables.asm: $(info_asset_inputs)
-	python3 -B tools/pokedex_info_assets.py
+	python3 -B tools/pokedex_info_assets.py --ancestors
 build/dex-info-assets/tiles.2bpp: build/dex-info-assets/tables.asm
-	@test -f $@ || python3 -B tools/pokedex_info_assets.py
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
 build/dex-info-assets/titles.2bpp: build/dex-info-assets/tables.asm
-	@test -f $@ || python3 -B tools/pokedex_info_assets.py
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
 define DEP
 $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<

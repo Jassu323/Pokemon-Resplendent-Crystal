@@ -311,7 +311,7 @@ def run_case(driver, checkpoints, output, names, source, target, key, delay, ima
         from .info_ui import info_audit, type_audit
         from pokedex_info_assets import Compiler
         compiler = Compiler()
-        ui_issues = type_audit(repo, target, ui) + info_audit(compiler, compiler.compile(), target, 0, ui, repo)
+        ui_issues = type_audit(repo, target, ui) + info_audit(compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols), target, 0, ui, repo)
     report = dict(label=label, source=source, target=target, delay=delay, info_page=info_page, incoming=incoming,
                   final=final, events=events, final_ui_issues=ui_issues,
                   animation_audit=audit_animation(assets[target], changed, incoming_events, final, cold=False),

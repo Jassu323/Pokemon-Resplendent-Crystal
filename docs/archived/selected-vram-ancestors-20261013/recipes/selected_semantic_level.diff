@@ -1,0 +1,7 @@
+--- a/engine/pokedex/pokedex_moves.asm
++++ b/engine/pokedex/pokedex_moves.asm
+@@ -595,4 +595,3 @@
+ 	INCBIN "gfx/pokedex/pokedex_page_numbers_double_digits.2bpp"
+ PokedexBadgePermanentGFX:
+ 	INCBIN "gfx/pokedex/pokedex_page_numbers_double_digits.2bpp", 4 tiles, 2 tiles
+-	INCBIN "build/dex-moves-assets/level.2bpp"

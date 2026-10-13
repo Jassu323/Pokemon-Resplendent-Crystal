@@ -57,7 +57,7 @@ def info_audit(compiler, data, name, page, ui, repo=None):
     issues = []
     if ui['view'] != 1 or ui['info_page'] != page or ui['info_state']:
         issues.append('info_owner')
-    if ui['info_pages'] != 1 + (len(data['roots'][constant]) + 1) // 2:
+    if ui['info_pages'] != 1 + len(data['pages'][constant]):
         issues.append('page_count')
     raw = bytes.fromhex(ui['lower_tiles'])
     def tile(row, col):
@@ -81,9 +81,9 @@ def info_audit(compiler, data, name, page, ui, repo=None):
                 if tilemap[row * 21 + col] != 0x32 or attrs[row * 21 + col]:
                     issues.append(f'uncaught_content_{row}_{col}')
         return issues
-    title = data['titles']['Evolutions' if page else 'Stats']
+    title = data['titles'][data['headings'][constant][page]]
     for col, (cell, pixels) in enumerate(zip(title['cells'], title['tiles']), 4):
-        if (tilemap[9 * 21 + col] != cell or attrs[9 * 21 + col]
+        if (tilemap[9 * 21 + col] != cell or attrs[9 * 21 + col] != title.get('bank', 0) * 8
                 or tile(9, col) != pixels):
             issues.append(f'title_{col}')
     if tilemap[9 * 21 + 3] != 0x32:
@@ -117,7 +117,7 @@ def info_audit(compiler, data, name, page, ui, repo=None):
         if endpoint != expected:
             issues.append('hp_endpoint')
     else:
-        entries = data['roots'][constant][(page - 1) * 2:page * 2]
+        entries = data['pages'][constant][page - 1]
         if ui['info_minis'] != len(entries):
             issues.append('mini_count')
         for entry, record in enumerate(entries):
@@ -172,9 +172,10 @@ def ready(driver, page):
 def run_stress(task):
     config, index, name, offset, family = task
     from .description_paging import description_pages
-    repo = Repository(ROOT, Path(config['rom']), Path(config.get('sym', ROOT / 'pokecrystal.sym')))
-    compiler = Compiler()
-    data = compiler.compile()
+    root = Path(config.get('root', ROOT))
+    repo = Repository(root, Path(config['rom']), Path(config.get('sym', ROOT / 'pokecrystal.sym')))
+    compiler = Compiler(root)
+    data = compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
     output = Path(config['output'])
     label = f'{name}-{offset}-{family}'
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / (label + '.log'))
@@ -251,9 +252,10 @@ def run_stress(task):
 def run_case(task):
     config, index, name, offset = task
     output = Path(config['output'])
-    repo = Repository(ROOT, Path(config['rom']), Path(config.get('sym', ROOT / 'pokecrystal.sym')))
-    compiler = Compiler()
-    data = compiler.compile()
+    root = Path(config.get('root', ROOT))
+    repo = Repository(root, Path(config['rom']), Path(config.get('sym', ROOT / 'pokecrystal.sym')))
+    compiler = Compiler(root)
+    data = compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / f'{name}-{offset}.log')
     issues, pages, timings, playback, slice_costs = [], [], [], [], {}
     try:

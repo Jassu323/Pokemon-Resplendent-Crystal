@@ -244,31 +244,7 @@ PokedexInfo_Initialize:
 	ld a, [wPokedexInfoActiveMiniBuffer]
 	xor 1
 	ld [wPokedexInfoMiniBuffer], a
-	ld a, [wPrevDexEntry]
-	ld l, a
-	ld a, [wPrevDexEntry + 1]
-	ld h, a
-	dec hl
-	ld d, h
-	ld e, l
-	add hl, hl
-	add hl, de
-	ld de, PokedexInfoSpecies
-	add hl, de
-	inc hl
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	ld a, [wPokedexInfoPage]
-	and a
-	jr z, .list
-	dec a
-	add a
-	add a
-	ld e, a
-	ld d, 0
-	add hl, de
-.list
+	call PokedexAncestors_SelectPage
 	ld a, l
 	ld [wPokedexInfoEvolutionList], a
 	ld a, h
@@ -296,22 +272,8 @@ PokedexInfo_PrepareSpecies:
 	ldh [rSVBK], a
 	ld a, c
 	ld [wPokedexInfoCaught], a
-	ld a, [wPrevDexEntry]
-	ld l, a
-	ld a, [wPrevDexEntry + 1]
-	ld h, a
-	dec hl
-	ld d, h
-	ld e, l
-	add hl, hl
-	add hl, de
-	ld de, PokedexInfoSpecies
-	add hl, de
-	ld a, [hli]
-	inc a
-	srl a
-	inc a
-	ld [wPokedexInfoPageCount], a
+	call PokedexAncestors_PageCount
+	call PokedexAncestors_PrepareTitle
 	ld de, wPokedexInfoStats
 	ld hl, .BaseStatAddresses
 	ld b, 6
@@ -410,20 +372,7 @@ PokedexInfo_ClearRow:
 	ld a, [wPokedexInfoCaught]
 	and a
 	jr z, .plan
-	ld hl, PokedexInfoStatsTitle
-	ld a, [wPokedexInfoPage]
-	and a
-	jr z, .title
-	ld hl, PokedexInfoEvolutionsTitle
-.title
-	ld de, wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH + 4
-.letter
-	ld a, [hli]
-	cp '@'
-	jr z, .plan
-	ld [de], a
-	inc de
-	jr .letter
+	call PokedexAncestors_DrawTitle
 .plan
 	ld a, POKEDEX_INFO_PLAN
 	ld [wPokedexInfoState], a
@@ -706,24 +655,13 @@ PokedexInfo_PlanEvolution:
 	ld a, [wPokedexInfoRow]
 	srl a
 	srl a
-	ld b, a
-	ld a, [wPokedexInfoPage]
-	dec a
+	push af
+	call PokedexAncestors_GroupPage
+	ld a, c
 	add a
-	add b
 	ld b, a
-	ld a, [wPrevDexEntry]
-	ld l, a
-	ld a, [wPrevDexEntry + 1]
-	ld h, a
-	dec hl
-	ld d, h
-	ld e, l
-	add hl, hl
-	add hl, de
-	ld de, PokedexInfoSpecies
-	add hl, de
-	ld a, b
+	pop af
+	add b
 	cp [hl]
 	jp nc, .copy
 	ld a, [wPokedexInfoEvolutionList]

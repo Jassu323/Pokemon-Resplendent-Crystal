@@ -328,6 +328,7 @@ INCLUDE "engine/gfx/new_dex_entry_pics.asm"
 
 SECTION "Pokedex Info", ROMX
 INCLUDE "engine/pokedex/pokedex_info.asm"
+INCLUDE "engine/pokedex/pokedex_ancestors.asm"
 INCLUDE "engine/pokedex/performance_queue.asm"
 INCLUDE "engine/pokedex/performance_admission.asm"
 INCLUDE "engine/pokedex/performance_retained.asm"
@@ -340,9 +341,13 @@ INCBIN "build/dex-info-assets/tiles.2bpp"
 PokedexInfoTileGFXEnd:
 ASSERT PokedexInfoTileGFXEnd - PokedexInfoTileGFX <= $4000
 PokedexInfoTitleGFX:
-INCBIN "build/dex-info-assets/titles.2bpp"
+INCBIN "build/dex-info-assets/titles.2bpp", 0, 16 tiles
 PokedexInfoTitleGFXEnd:
 ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
+PokedexInfoAncestorTitleGFX:
+INCBIN "build/dex-info-assets/titles.2bpp", 16 tiles, 13 tiles
+PokedexInfoAncestorTitleGFXEnd:
+ASSERT PokedexInfoAncestorTitleGFXEnd - PokedexInfoAncestorTitleGFX == 13 tiles
 
 INCLUDE "engine/pokedex/performance_fast.asm"
 

@@ -111,6 +111,21 @@ Host snapshots also require the generated `dex-area-assets`, `dex-info-assets`,
 `dex-moves-assets`, `dex-moves-mode-assets` and `dex-sort-assets` directories under
 their own `build/`. Missing fixture tables are setup errors, not game regressions;
 correct the snapshot and rerun the affected phases before acceptance.
+Keep each snapshot's matching generated tables. A pre-ancestor baseline uses
+three-byte Info headers while the integrated ancestor build uses six-byte
+headers; copying candidate tables over the baseline invalidates that comparison.
+
+If the historical Moves visual/donor paths have been compressed, restore only
+the verified negative-control inputs and rebuild their observers before `moves`:
+
+```sh
+python3 -m tools.dex_timing.unown_fast_campaign restore-negative --output build/regression-new-review
+```
+
+Despite its historical module name, this helper restores the Moves keyboard
+negative-control source/cartridge and Struggle-grant donor batteries for an
+ordinary full campaign. It verifies archive receipts and changes only private
+test setup. Preserve the initial failed setup logs before retrying.
 
 After approved cleanup, compact archives live under
 `research_artifacts/dex-build-history-20261012/`, outside disposable builds.
@@ -267,6 +282,159 @@ For each style, exercise all 373 species in cold, paging, and warm suites:
 2,238 playback cases per candidate. Check actual picture frames, timelines,
 resident tiles, upload/decode services, queue ownership, and cry completion.
 Idle listing checks verify 120 hover frames do not resume cache warming.
+
+### Selected Runtime Display Qualification
+
+The October 12 private runtime-display trial additionally removes Info glyph,
+heading, number/bar and species-display tables, plus Selected Moves metadata.
+It does not remove Area data or portrait scheduler plans. See
+[Selected Pokemon Runtime Display Prototype](pokedex_selected_runtime_prototype.md)
+for the frozen inputs, allocation delta, retained data, timing tradeoffs, and
+existing host exception.
+
+`tools/test_selected_runtime_display.py` compares linked runtime bytes against
+the original display compiler and native source data: headings/stat glyphs,
+all 256 numeric/bar values, all evolution text/requirements, every species'
+native graph and move streams, decimal formatting, RAM boundaries, and bank
+restoration. Select the candidate explicitly:
+
+```sh
+DEX_RUNTIME_SOURCE=build/selected-runtime-new/candidate python3 -m unittest tools.test_selected_runtime_display -v
+```
+
+Prepare normal-input Modern checkpoints with `performance --prepare` under
+the source's `focused/modern/`; use matching ROM, symbols, and a copied battery.
+The `selected_runtime` wrapper runs 746 Info scenarios, 746 Selected Moves
+scenarios, and 400 rapid/held/canceled Info scenarios. Its audit explicitly
+expects the integrated double-speed policy. A legacy normal-speed harness
+report is not acceptance evidence for the current game.
+
+```sh
+python3 -m tools.dex_timing.selected_runtime info --source build/selected-runtime-new --jobs 6
+python3 -m tools.dex_timing.selected_runtime moves --source build/selected-runtime-new --jobs 6
+python3 -m tools.dex_timing.selected_runtime stress --source build/selected-runtime-new --jobs 6
+python3 -m tools.dex_timing.selected_runtime inventory --source build/selected-runtime-new
+```
+
+After `type_full_regression prepare/setup`, paired timing phases use fresh
+candidate/baseline Modern and Legacy checkpoints. `compare` has 1,600 page,
+species, listing, and Area-return cases; `extra-timing` has 544 evolution/Moves
+cases; `startup` has 16 normal-input Dex-reopen cases. The latter explicitly
+selects Legacy before closing, rather than assuming a Legacy checkpoint's
+battery already stores that presentation.
+
+```sh
+python3 -m tools.dex_timing.selected_runtime compare --source build/selected-runtime-new --campaign build/runtime-review-new --jobs 6
+python3 -m tools.dex_timing.selected_runtime extra-timing --source build/selected-runtime-new --campaign build/runtime-review-new --jobs 6
+python3 -m tools.dex_timing.selected_runtime startup --source build/selected-runtime-new --campaign build/runtime-review-new --jobs 6
+python3 -m tools.dex_timing.listing_warming timing --output build/runtime-review-new --jobs 6
+```
+
+Report median matched-case differences, distributions and individual maxima,
+not only differences between population medians. Separate input acceptance,
+first changed pixel, complete screen, and animation/cry deadlines. At double
+speed, safe preparation still proceeds at the display-frame cadence, so a ROM
+saving can add page latency without changing the portrait timeline. Run the
+standard Dex, Moves Search, Unown, Type return, host and full-species playback
+phases on the same frozen link before accepting a runtime-rendering change.
+
+### Precomputed Production Ancestors
+
+The October 13 production build retains generated display pixels and adds
+ancestor groups after forward Evolutions. It uses six-byte Info headers and
+pooled precomputed display records. Qualify actual graph direction/order,
+native requirements, empty/odd groups, caught visibility, page capacity,
+caller banks and unchanged live RAM addresses:
+
+```sh
+PYTHONPATH=tools:. python3 -m unittest tools.test_pokedex_ancestors -v
+python3 -m tools.dex_timing.selected_architecture prepare --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture info --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture moves --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture stress --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture feature --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture returns --source build/ancestor-review-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture modes --source build/ancestor-review-new --jobs 6
+```
+
+The frozen source needs the wrapper's `pokecrystal-dex-selected-runtime` aliases,
+matching symbols and copied battery; the alias does not imply runtime rendering.
+The 13 precomputed heading tiles borrow bank-1 Unown font cells `$b5-$c1`.
+After Info, verify every actual Unown font byte, centered portrait, blank tile
+and letter overlay; returning to Selected must restore the heading. Cover both
+Pokemon listing origins and all six CGB models. Existing Area data and shared
+ISR/battle/audio code remain unchanged, but the complete full regression and
+all-move timing/pixel comparisons are still required.
+
+The accepted native catalog's focused matrix has 746 Info, 746 Selected Moves,
+400 stress, 1,056 all-page feature timings, 115 panel returns and 96 font-reuse
+transitions. Actual counts vary with evolution data; inspect current summaries
+rather than treating the earlier scoped 1,248 estimate as observed evidence.
+See [production ancestor integration](pokedex_ancestors_production_integration.md)
+for the exact build and [archived fallback](archived/selected-vram-ancestors-20261013/README.md)
+for the separately restorable runtime/VRAM alternative.
+
+### Semantic Metadata And Ancestor Architecture Trials
+
+The six private October 12 links retain semantic Info/Selected Moves records
+but remove main-rendering display glyphs. Compare RAM preservation, guarded
+VRAM readback and immutable ROM recovery, each with and without ancestor
+pages. See [the architecture report](pokedex_selected_architecture_comparison.md)
+for exact hashes, allocations, implementation and matched measurements.
+
+```sh
+python3 tools/build_selected_semantic_prototype.py --output build/selected-semantic-new --restore vram --ancestors --jobs 6
+python3 -m tools.dex_timing.selected_architecture prepare --source build/selected-semantic-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture units --source build/selected-semantic-new --jobs 6
+python3 -m tools.dex_timing.selected_architecture campaign --source build/selected-semantic-new --jobs 6
+```
+
+Omit `--ancestors` for the paired old-page link. Always use a fresh private
+directory; never run the patched recipe against production source or the
+player's battery. `control` freezes production and prepares matching fixtures
+for timing instead of borrowing an older save's discovery expectations.
+
+The campaign records 746 Info, 746 Selected Moves, 400 input-stress, 1,072
+main timing, eight reopen, 512 entry-timing, 4,479 standard Dex and host
+scenarios. The separate all-page timing survey has 672 old-page or 1,248
+ancestor-page cases, with 105 or 115 cancellation/pixel return cases. Counts
+overlap and are not an additive independent-test total. Check actual summary
+counts and hashes before claiming acceptance.
+
+Runtime unit tests now cover all old glyph/heading/number pixels, native
+requirements, semantic lists, all 373 ancestor chains, group page boundaries,
+page selectors, headings/attributes, RAM limits and bank restoration. The
+VRAM branch also checks exact committed-atlas reads at all 1-40 tile counts
+and both prior VBK values. The ROM branch checks every species/page's ordered
+recovery atlas and committed keys surviving a subsequently requested page.
+Branches skip genuinely inapplicable tests; skips are not passes.
+
+The new heading temporarily owns the first 13 bank-1 Unown-font tiles. Run
+`modes` after Selected/Info ownership, not just on a clean Dex menu: 16 phase,
+index and presentation scenarios, 96 transitions. Read all 27 resident Unown
+glyphs from VRAM and compare to the linked source; then revisit every actual
+Info page and audit heading pixels/attributes. A correct first Unown portrait
+alone cannot detect a damaged alphabet. Page and intraspecies sweeps must also
+catch heading collisions with the scattered Info atlas and animated sidebar.
+
+`types` runs all 18 selections, 72 navigation and 32 input-phase cases,
+720 held-input frames, 1,800 idle frames, raster/palette/bank checks, 42 owner
+reentries, 12 close/reopens and 24 post-return Selected playbacks. It also
+checks the linked battle chart's 648 single/2,754 dual calculations. This is
+not a substitute for the separate all-move animation campaign.
+
+`selected_comparison` emits matched distributions for the six frozen links.
+Three comparison unit tests prevent pairing an old wrap/no-op with a newly
+rendered ancestor page. Existing Area, Moves and species-transition audits
+detect the ancestor-enabled symbol and use its actual page count.
+
+Keep native owner-ready/reveal timing alongside final-pixel-hash timing.
+A blinking cursor can delay matching the final hash by multiple frames even
+when the native reveal time is unchanged. Investigate the raw trace before
+calling that an algorithm slowdown. Conversely, do not discard a real
+Area-to-Info regeneration delay because a population median is small.
+Retain the known synthetic LY-64 host exception if it also fails unchanged
+production; report both results and any new failures separately.
 
 Entry timing uses sixteen representative species, four hover durations
 (0, 4, 30, 120 frames), four physical phases, both styles, and both links:

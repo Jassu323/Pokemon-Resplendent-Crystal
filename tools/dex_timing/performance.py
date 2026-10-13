@@ -35,6 +35,11 @@ POINTS = {
     'info_upload': ('PokedexInfo_UploadTiles', True),
     'info_record': ('PokedexInfo_RecordPage', True),
     'info_publish': ('Pokedex_VBlankInfoAssets', False),
+    'runtime_parent_index': ('PokedexRuntime_BuildParents', True),
+    'runtime_metadata': ('PokedexRuntime_PrepareMoves', True),
+    'runtime_stats_number': ('PokedexRuntime_NumberStep', True),
+    'runtime_text_glyph': ('PokedexRuntime_TextGlyphStep', True),
+    'runtime_text_tile': ('PokedexRuntime_TextTileStep', True),
     'info_preserve_return': ('PokedexInfo_PreserveReturnPanel', True),
     'cache_repair': ('Pokedex_RepairGridCache', True),
     'cache_prime': ('Pokedex_PrimeGridCache', True),
@@ -101,10 +106,10 @@ def prepare(rom, sym, battery, output):
 
 
 @lru_cache(maxsize=4)
-def data(rom, sym):
-    repo = Repository(ROOT, Path(rom), Path(sym))
-    compiler = Compiler()
-    return repo, compiler, compiler.compile()
+def data(rom, sym, root=ROOT):
+    repo = Repository(Path(root), Path(rom), Path(sym))
+    compiler = Compiler(Path(root))
+    return repo, compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
 
 
 def cycles(driver, amount, key=0):
@@ -163,7 +168,7 @@ def result_timing(events, initial, final, key, pressed, accepted, completion_aft
 
 def run_case(job):
     config, name, action, phase, page, input_phase = job
-    repo, compiler, generated = data(config['rom'], config['sym'])
+    repo, compiler, generated = data(config['rom'], config['sym'], config.get('root', ROOT))
     label = f'{name}-{action}-{phase}-p{page}-q{input_phase}'
     out = Path(config['output']) / 'measurements'
     out.mkdir(exist_ok=True)
@@ -178,6 +183,8 @@ def run_case(job):
         driver.command('rawcolor')
         move(driver, direction, index)
         driver.command('audit 1')
+        if config.get('cry_trace'):
+            driver.command(f'crytrace {out / (label + "-cry.jsonl")}')
         driver.run(('accept',), key='a')
         driver.run(('selected', 'animation_miss', 'audio_miss'), frames=600)
         if phase == 'settled':
@@ -199,10 +206,14 @@ def run_case(job):
             cursor(driver, 3)
         elif action.endswith('info'):
             cursor(driver, 1)
+        elif action.endswith('moves'):
+            cursor(driver, 2)
         if input_phase:
             cycles(driver, input_phase)
         before = driver.command('peek')
         result['playback_at_input'] = {k: before[k] for k in ('playback', 'audio', 'remaining', 'sfx', 'ly')}
+        if config.get('cry_trace'):
+            result['cry_at_input'] = driver.command('cry')
         initial = driver.command('perf 1')
         result['initial_hashes'] = initial
         driver.events.clear()
@@ -215,6 +226,13 @@ def run_case(job):
             ui = driver.command('ui')
             result['issues'] += info_audit(compiler, generated, name, ui['info_page'], ui, repo)
             result['issues'] += type_audit(repo, name, ui)
+            hash_key = 'lower'
+        elif action in ('description-moves', 'info-moves'):
+            accepted = driver.run(('footer_accept', 'animation_miss', 'audio_miss'), key='a')
+            driver.run(('animation_miss', 'audio_miss'), frames=1)
+            ui = moves_ready(driver, 0)
+            manifest = json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+            result['issues'] += content_audit(repo, name, 0, ui, manifest)
             hash_key = 'lower'
         elif action == 'rapid':
             accepted = driver.run(('footer_accept', 'animation_miss', 'audio_miss'), key='a')
@@ -290,6 +308,11 @@ def run_case(job):
             settle(driver)
             if any(e['event'] in ('animation_miss', 'audio_miss') for e in driver.events):
                 result['issues'].append('playback_miss_after_measurement')
+        if config.get('cry_trace'):
+            if action in ('description-moves', 'info-moves'):
+                settle(driver)
+            result['cry_at_end'] = driver.command('cry')
+            driver.command('crystop')
         result['status'] = 'pass' if not result['issues'] else 'fail'
     except Exception as error:
         result.update(status='error', error=str(error))
@@ -340,7 +363,7 @@ def main():
     tasks = []
     for name in dict.fromkeys(args.species):
         constant = {'unown_a': 'UNOWN', 'porygonz': 'PORYGON_Z'}.get(name, name.upper())
-        count = 1 + (len(generated['roots'][constant]) + 1) // 2
+        count = 1 + len(generated['pages'][constant])
         for action in args.actions:
             pages = range(count) if args.all_info_pages and action in ('listing', 'cycle', 'info-area-return', 'info-area') else [0]
             tasks.extend((config, name, action, phase, page, q) for page in pages for phase in args.phases for q in args.input_phases)

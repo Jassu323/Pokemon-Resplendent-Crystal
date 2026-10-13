@@ -81,7 +81,7 @@ def cancellation_prototype(repo, output):
         remaining_dex_bank_bytes=0x8000 - labels['PrototypeEnd'][1])
 
 
-def compile_observer(repo, source, output, extra_points=None):
+def observer_flags(repo, output, extra_points=None):
     header = (output / 'cry-owner-symbols.h').resolve()
     lines = [f'#define C_{name} 0x{repo.symbols[name][1]:04x}' for name in FIELDS]
     for array, stem, channels in (
@@ -104,9 +104,13 @@ def compile_observer(repo, source, output, extra_points=None):
         lines.append(f'{{{bank}, 0x{pc:04x}, "{name}"}},')
     lines += ['};']
     header.write_text('\n'.join(lines) + '\n')
-    return build_core(repo, source, output, (
+    return (
         '-DDEX_CRY_OWNER_TRACE', '-DDEX_BACKLOG_REVALIDATION_TRACE',
-        f'-DDEX_CRY_OWNER_SYMBOLS="{header}"'))
+        f'-DDEX_CRY_OWNER_SYMBOLS="{header}"')
+
+
+def compile_observer(repo, source, output, extra_points=None):
+    return build_core(repo, source, output, observer_flags(repo, output, extra_points))
 
 
 def sparse_fixture(repo, source, destination, names=TARGETS):
