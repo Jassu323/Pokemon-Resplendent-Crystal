@@ -116,6 +116,26 @@ Pokedex_StageDescriptionRightEdge:
 	jr nz, .attrs
 	ret
 
+Pokedex_InitListingRightEdge:
+	ldh a, [hCGB]
+	and a
+	jr z, .compat
+	; The Dex loader leaves LCD off, so publish the exposed edge directly.
+	call Pokedex_CopyDescriptionRightEdge
+	ldh a, [rVBK]
+	push af
+	xor a
+	ldh [rVBK], a
+	ld hl, $9914
+	ld [hl], $67
+	pop af
+	ldh [rVBK], a
+	jp EnableLCD
+.compat
+	call EnableLCD
+	farcall DrawDexEntryScreenRightEdge
+	ret
+
 Pokedex_CopyDescriptionRightEdge:
 	; SCX=5 exposes five pixels of BG column 20 beyond the backing map.
 	ldh a, [rVBK]

@@ -467,7 +467,7 @@ StartMenu_Pokedex:
 	; The Pokedex may use the overworld map WRAM union as scratch space.
 	; Rebuild its block data before CloseSubmenu redraws the map from it.
 	call ReturnToMapFromSubmenu
-	call CloseSubmenu
+	call Pokedex_CloseSubmenu
 
 .empty
 	ld a, 0
@@ -479,6 +479,31 @@ StartMenu_Pokegear:
 	call CloseSubmenu
 	ld a, 0
 	ret
+
+Pokedex_CloseSubmenu:
+	ldh a, [hCGB]
+	and a
+	jp z, CloseSubmenu
+	call ClearPalettes
+	call ReloadTilesetAndPalettes
+	call UpdateSprites
+	call ExitMenu
+	ld b, SCGB_MAPPALS
+	call GetSGBLayout
+	farcall LoadOW_BGPal7
+	; Keep a pending VBlank from applying map colors during tile publication.
+	ldh a, [hCGBPalUpdate]
+	push af
+	xor a
+	ldh [hCGBPalUpdate], a
+	call CGBOnly_CopyTilemapAtOnce
+	call DelayFrame
+	pop af
+	ldh [hCGBPalUpdate], a
+	ld a, 1
+	ldh [hBGMapMode], a
+	farcall FadeInFromWhite
+	jp EnableSpriteUpdates
 
 StartMenu_Pack:
 	call FadeToMenu

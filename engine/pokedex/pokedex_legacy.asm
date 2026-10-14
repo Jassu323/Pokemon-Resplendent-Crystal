@@ -68,7 +68,7 @@ PokedexLegacy_InitMainScreen:
 	ld a, [wPokedexSelectedState]
 	cp DEXSELECT_STATE_MENU_RETURN
 	jr z, .return_layout
-	farcall Pokedex_GetDexSGBLayout
+	farcall CGB_PokedexStageListLayout
 	jr .layout_ready
 .return_layout
 	farcall CGB_PokedexStageListLayout

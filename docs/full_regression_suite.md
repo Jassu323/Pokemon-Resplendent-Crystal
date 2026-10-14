@@ -1,6 +1,6 @@
 # Full Regression Suite
 
-Maintained reference: 2026-10-12. This documents the campaigns actually run for
+Maintained reference: 2026-10-13. This documents the campaigns actually run for
 the Dex branch, including the isolated Type Matchups prototypes. It is a
 reusable test specification and local execution runbook, not a claim that
 every possible game state has been exhaustively tested.
@@ -917,3 +917,56 @@ frozen outputs, full campaign results, the corrected host-baseline setup,
 audio-stress fix, chart ablations, narrow Legacy latency difference, and memory
 costs. Future runs should create their own dated evidence instead of silently
 reusing or overwriting that reference.
+
+## 17. Dex Entry And Exit Reveal
+
+The Stage integration adds a mid-transition requirement: a correct completed
+overworld does not excuse corrupt frames before it. `ClearPalettes` queues
+white; it is not a synchronous hardware update. Preserve the display wait
+before the map reload suppresses VBlank. Also preserve the local close guard
+around map publication, and the complete exit `WaitSFX` before masking.
+See [Stage Return Repair](pokedex_stage_return_repair.md) for the two-frame
+negative control and source ownership.
+
+Use a new source-linked core and new checkpoints for each cartridge. Compare
+both listing styles and all three orders, cold entry and immediate reentry,
+at four physical input phases. Qualify CGB 0/A/B/C/D/E, validate double-speed
+restoration, and compare completed maps, attrs, OAM, palettes and viewports.
+Audit every native exit frame from LCD re-enable to fade-in: it must remain
+white, not merely avoid the old Dex palette signature. Original Reference
+and Stage are retained negative controls, not passing alternatives.
+
+The October 13 source adapter freezes original production before game edits
+and protects the integrated root ROM during testing:
+
+```sh
+python3 -m tools.dex_timing.stage_integration freeze
+# Apply the approved Stage source changes, then build the production ROM.
+make -s -j6 pokecrystal.gbc
+python3 -m tools.dex_timing.stage_integration prepare
+python3 -m tools.dex_timing.stage_integration resources
+python3 -m tools.dex_timing.stage_integration lifecycle
+python3 -m tools.dex_timing.stage_integration lifecycle-audit
+python3 -m tools.dex_timing.stage_integration routes
+python3 -m tools.dex_timing.stage_integration selected
+python3 -m tools.dex_timing.stage_integration exit-matrix
+python3 -m tools.dex_timing.stage_integration audio-reference
+python3 -m unittest tools.test_pokedex_lifecycle_stage tools.test_dex_return_reveal
+```
+
+This dated adapter is specific to the approved four-file source integration;
+update its source list and baseline configuration for another change. It adds
+336 paired/model lifecycle cases, 36 secondary routes, 88 viewport/hardware
+exits and twelve fresh cue comparisons against the approved Stage cartridge.
+Secondary routes cover mode cancellation, Pokemon Search, Description,
+ancestor Info, Selected Moves, Area, Unown, Type Matchups and Moves Search,
+followed by actual overworld movement. Cue parity with the approved Stage is
+separate from original-production parity: faster cold preparation changes
+entry sound servicing, as retained explicitly in the audio comparison.
+
+Run the full suite from earlier sections as well. The `animations`, `displays`
+and `selected` adapter actions rebuild exhaustive battle, six-model Type/Unown,
+both 122-song owner stresses and focused Selected acceptance. Final reports
+must all carry the integrated ROM hash. The `precomputed` campaign alias names
+the retained Selected renderer; Type Matchups still uses its chosen runtime
+owner, not the archived precomputed Type implementation.

@@ -458,7 +458,11 @@ def exit_matrix(variants):
             print(json.dumps(dict(variant=variant,reused_completed_matrix=True)),flush=True)
             continue
         overrides = {}
-        if variant in ('exit-local','local-combined','exit-local-guarded','local-guarded',
+        if config['variants'][variant].get('close_probe'):
+            helper = tuple(config['variants'][variant]['close_probe'])
+            repo.symbols['CloseSubmenu'] = helper
+            overrides['close_submenu'] = list(helper)
+        elif variant in ('exit-local','local-combined','exit-local-guarded','local-guarded',
                        'exit-late-guarded','local-late-guarded'):
             helper = read_symbols(BASE / variant / 'dex_exit_local.sym')['ProbeExitLocal']
             repo.symbols['CloseSubmenu'] = helper

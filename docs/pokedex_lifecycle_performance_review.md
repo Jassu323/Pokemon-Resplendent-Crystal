@@ -1,8 +1,14 @@
 # Pokedex Opening And Closing Performance Review
 
-Date: 2026-10-13. Diagnostic scope for `DEX-PERF-01`; no lifecycle changes
-have been integrated into production. The baseline is the accepted production
+Date: 2026-10-13. Historical diagnostic scope for `DEX-PERF-01`. The repaired
+[Stage lifecycle](pokedex_stage_return_repair.md#production-integration) is now
+approved, integrated and fully qualified. The baseline below is the accepted production
 build with the new Evolves from pages and the precomputed Selected renderer.
+
+Follow-up: [budgeted lifecycle alternatives](pokedex_lifecycle_budget_review.md)
+compares additional private designs under the 1 KiB ROMX / 100-byte WRAMX
+limits. Its recommendation supersedes the initial 92-byte option below;
+this report retains the initial measurements and save-update receipt.
 
 The best low-space candidate removes redundant display waits from entry and
 uses a Dex-only closing coordinator. It reduces median input-to-ready entry

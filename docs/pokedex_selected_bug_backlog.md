@@ -55,16 +55,16 @@ Remaining Dex review queue:
   corrected in production with the accepted Moves implementation. The exact
   failing phase and all 746 Info cases pass physical-clock audits; the user
   also reports no visual/audio/data errors or miss breakpoints in manual review.
-- `DEX-PERF-01` is a deferred optimization story for opening and closing the
-  Dex. It includes the confirmed `DEX-EXIT-01` shell shift, now merged into
-  that broader lifecycle work rather than scheduled as a standalone fix.
+- `DEX-PERF-01` is approved and integrated with the repaired Stage lifecycle
+  on 2026-10-13. Fresh full qualification finds no new issues. It includes the
+  merged `DEX-EXIT-01` shell shift, corrected by committing white before reload.
 - `DEX-PERF-02` has an integrated, manually accepted Selected-tab baseline: double
   speed, faster Area/Info paths, bounded active Info work, coalesced page requests
   and no eager Listing lookahead. The rejected round-one component-repair return
   is not the selected implementation. See the [current accepted clock policy and
   qualification](battle_normal_speed_prototype.md) and [measured Dex benefits](global_double_speed.md).
   See the [production integration and fresh qualification](production_clock_policy.md).
-  Other modes and lifecycle optimization remain deferred.
+  The entry/exit lifecycle is separately completed under `DEX-PERF-01`.
 - `DEX-PERF-03` is manually accepted and integrated into production 2026-10-11
   with the Unown repairs. Its idle-work and paired entry-time evidence remains
   recorded separately from the already removed speculative minisprite lookahead.
@@ -1565,8 +1565,37 @@ the normal animation/cry regression suite when producing the revised ROM.
 
 ### DEX-PERF-01: Optimize Pokedex opening and closing
 
-Status: Scoped and privately profiled 2026-10-13; includes DEX-EXIT-01,
-no production implementation approved
+Status: Repaired Stage approved and source-integrated 2026-10-13; includes
+DEX-EXIT-01. Fresh full integration qualification completed with no new issues;
+ready for the user's commit/push.
+
+Manual-review follow-up: [Stage return repair](pokedex_stage_return_repair.md).
+Reference and Stage exposed two colored frames before the proper fade in all
+48 rechecked cases each; earlier final-state audits missed that reveal defect.
+The user rejected Hard Cuts' distorted cues and prefers Stage with normal
+fades. A projected +3-byte ROMX mask-commit wait fixes Stage in the focused
+checks: 102 ROMX bytes total, no new RAM, entry about 445.6 ms / 26.61 frames,
+exit 711.7 ms / 42.51 frames. Exit remains 148.2 ms / 8.85 frames faster than
+production. The new reveal assertion, six-model checks, detailed exit/return
+checks and unchanged cue-duration comparisons pass. The user approved the
+repair; its actual source-linked cost is 96 ROMX bytes, with no new static RAM.
+Fresh linked lifecycle and cue checks pass. All 16 full campaign phases pass,
+including exhaustive battle timing/visual acceptance, six-model display and
+122-song stresses, persistence and surrounding gameplay. Existing baseline
+exceptions are retained explicitly; no new issues were found. The final ROM
+hash and source-linked costs are in the Stage repair report.
+
+Budgeted follow-up: [alternative comparison and video](pokedex_lifecycle_budget_review.md).
+The historical larger alternative preserves the fades and adds a projected
+712 ROMX bytes / 5 WRAMX bytes, zero static WRAM0/ROM0/HRAM growth. Entry and
+exit medians are 354.1 ms / 21.15 display frames and 669.2 ms / 39.97 frames.
+Paired improvements over production are 423.9 ms / 25.32 frames and
+191.6 ms / 11.44 frames. A 99-byte zero-RAM option and a 777-byte short-fade
+option remain comparisons. Focused lifecycle, pixels, exit hardware writes,
+six-model sound-clock and secondary-return checks pass; full production
+integration regression and manual approval remain outstanding. Document and
+retest the local TIMA checkpoint interval when changing cold preparation or
+timer policy. No shared interrupt overhead is added.
 
 The current investigation is in
 [Pokedex opening and closing performance](pokedex_lifecycle_performance_review.md).

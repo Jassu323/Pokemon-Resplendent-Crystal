@@ -144,7 +144,7 @@ static void perf_observe(unsigned bank, unsigned pc)
     if (!perf_enabled) return;
     uint64_t now = perf_now();
 #ifdef DEX_LIFECYCLE_TRACE
-    life_step(now);
+    life_step(now, bank, pc);
 #endif
 #ifdef DEX_SEARCH_RESULTS_TRACE
     unsigned results_ly = gb.io_registers[0x44];

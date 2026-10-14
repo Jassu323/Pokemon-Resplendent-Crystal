@@ -230,6 +230,9 @@ Pokedex:
 	call PlaySFX
 	call WaitSFX
 	call ClearSprites
+	; Publish white before the map reload disables VBlank palette updates.
+	call ClearPalettes
+	call DelayFrame
 	ld a, [wCurDexMode]
 	ld [wLastDexMode], a
 	ld a, [wPokedexListingPresentation]
@@ -252,10 +255,10 @@ Pokedex:
 	ret
 
 InitPokedex:
-	call ClearBGPalettes
+	call ClearPalettes
 	call ClearSprites
-	call ClearTilemap
 	call Pokedex_LoadGFX
+	call ClearTilemap
 
 	ld hl, wPokedexDataStart
 	ld bc, wPokedexDataEnd - wPokedexDataStart
@@ -291,9 +294,8 @@ InitPokedex:
 	jr z, .grid_cache_ready
 	farcall Pokedex_EnsureGridCache
 .grid_cache_ready
-	call EnableLCD
 	call Pokedex_GetLandmark
-	farcall DrawDexEntryScreenRightEdge
+	farcall Pokedex_InitListingRightEdge
 	call Pokedex_ResetBGMapMode
 	; fallthrough
 
@@ -610,8 +612,7 @@ Pokedex_InitMainScreen:
 	jr .layout_ready
 
 .cgb_cold_layout
-	ld a, SCGB_POKEDEX
-	call Pokedex_GetSGBLayout
+	farcall CGB_PokedexStageListLayout
 	jr .layout_ready
 
 .sgb_layout

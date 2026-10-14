@@ -10,8 +10,17 @@ static unsigned life_sfx_mask(void)
            (((ram[S_wChannel8Flags1 & 4095] & 1) != 0) << 3);
 }
 
-static void life_step(uint64_t now)
+static void life_step(uint64_t now, unsigned bank, unsigned pc)
 {
+#ifdef LIFE_MUSIC_BANK
+    if (bank == LIFE_MUSIC_BANK &&
+        (pc == LIFE_MUSIC_BEGIN || pc == LIFE_MUSIC_CHECK)) {
+        printf("{\"event\":\"life_music\",\"t\":%" PRIu64
+               ",\"phase\":\"%s\",\"sample\":%u,\"tac\":%u,\"tma\":%u}\n",
+               now, pc == LIFE_MUSIC_BEGIN ? "begin" : "check", gb.af >> 8,
+               gb.io_registers[7], gb.io_registers[6]);
+    }
+#endif
     unsigned mask = life_sfx_mask();
     if (mask == life_sfx_last) return;
     printf("{\"event\":\"life_sfx\",\"t\":%" PRIu64 ",\"mask\":%u,\"lcdc\":%u,"
