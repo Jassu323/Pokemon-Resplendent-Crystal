@@ -225,7 +225,9 @@ class InfoLinkedTests(unittest.TestCase):
 
     def test_ready_handoff_obeys_the_active_playback_budget(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
-        for line, expected in ((63, 5), (64, 0)):
+        # READY uses the measured 84-line cutoff, not the old shared 64-line gate.
+        for line in range(154):
+            expected = 5 if line < 84 else 0
             with self.subTest(line=line):
                 cpu = machine(repo)
                 cpu.field('wPokedexSelectedView', 1)
@@ -234,6 +236,29 @@ class InfoLinkedTests(unittest.TestCase):
                 cpu.write(0xff44, line)
                 cpu.run('PokedexInfo_Service')
                 self.assertEqual(cpu.read(repo.symbols['wPokedexOwnerTransition'][1]), expected)
+
+    def test_ready_handoff_retains_animation_and_audio_admission_guards(self):
+        repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
+        cases = (
+            ('frame_changed', {'hVBlankCounter': 1}, 0),
+            ('portrait_upload_busy', {'wPokedexAnimSchedulerControl': 4}, 0),
+            ('sampled_cache_short', {'hSampledCryTimer': 1, 'hSampledCryBlocks': 12,
+                                     'wSampledCryCacheCount': 4}, 0),
+            ('sampled_cache_ready', {'hSampledCryTimer': 1, 'hSampledCryBlocks': 12,
+                                     'wSampledCryCacheCount': 5}, 5),
+        )
+        for name, fields, expected in cases:
+            with self.subTest(guard=name):
+                cpu = machine(repo)
+                cpu.field('wPokedexSelectedView', 1)
+                cpu.field('wPokedexInfoState', 5)
+                cpu.field('wPokedexAnimPlaybackState', 2)
+                for field, value in fields.items():
+                    cpu.field(field, value)
+                cpu.write(0xff44, 83)
+                cpu.run('PokedexInfo_Service')
+                self.assertEqual(cpu.read(repo.symbols['wPokedexOwnerTransition'][1]), expected)
+                self.assertEqual(cpu.ram[0xff70], 1)
 
     def test_stats_slice_cpu_cost_is_bounded_for_all_values(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')

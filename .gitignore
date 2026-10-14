@@ -55,3 +55,7 @@ gfx/pokemon/*/frames.asm
 
 # macOS annoyance
 .DS_Store
+
+# Exact retired graphics retained for future reuse
+!gfx/archived/pokedex/*.2bpp
+!gfx/archived/pokedex/*.2bpp.lz

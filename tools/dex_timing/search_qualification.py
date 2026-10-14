@@ -37,8 +37,16 @@ def slowpoke_audit(driver, repo):
         expected[index] += pose * 3
     if bytes.fromhex(ui['oam'])[:36] != expected:
         raise RuntimeError('Slowpoke hardware OAM does not show the requested pose')
-    actual = bytes.fromhex(driver.command('inspectvram 0 32768 880')['bytes'])
-    if actual != decompress(repo.rom, offset(repo.symbols['PokedexSlowpokeLZ']), 880).output:
+    graphics = decompress(repo.rom, offset(repo.symbols['PokedexSlowpokeLZ']), 880).output
+    if len(graphics) not in (48 * 16, 55 * 16):
+        raise RuntimeError('Unexpected Slowpoke sheet size')
+    source = repo.root / 'gfx/pokedex/slowpoke.2bpp'
+    if not source.exists():
+        source = repo.root / 'gfx/archived/pokedex/slowpoke.2bpp'
+    if graphics != source.read_bytes()[:len(graphics)]:
+        raise RuntimeError('Linked Slowpoke pixels differ from the preserved original')
+    actual = bytes.fromhex(driver.command(f'inspectvram 0 32768 {len(graphics)}')['bytes'])
+    if actual != graphics:
         raise RuntimeError('Slowpoke resident graphics were overwritten')
     if 'PokedexSearch_Filter' in repo.symbols:
         icons_audit(driver, repo, ui)

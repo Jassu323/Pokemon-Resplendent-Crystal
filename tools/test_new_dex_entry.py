@@ -128,7 +128,7 @@ class RegistrationTests(unittest.TestCase):
 
     def test_description_publication_is_bounded_and_disjoint(self):
         result = audit_description_publication(self.repo)
-        self.assertEqual(result['cells'], 91)
+        self.assertEqual(result['cells'], 92 if 'NewDexEntry_VisualLayout' in self.repo.symbols else 91)
         self.assertGreater(result['write_margin_t'], 0)
 
     def test_final_picture_ack_retains_owner_until_description_commits(self):

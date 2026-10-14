@@ -1,0 +1,61 @@
+
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(222)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(238)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(364)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(495)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(517)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(523)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(524)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(544)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(674)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_popover.asm(694)
+    <- main.asm(359)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(369)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(371)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(381)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(401)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(431)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(453)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(461)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(466)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(472)
+    <- main.asm(365)
+warning: Treating strings as numbers is deprecated; use character literals or `CHARVAL` instead [-Wobsolete]
+    at engine/pokedex/pokedex_moves.asm(481)
+    <- main.asm(365)

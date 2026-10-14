@@ -34,6 +34,10 @@ static uint64_t perf_now(void)
     return (ticks + (unsigned)(gb.cycles_since_run - step_origin)) / 2;
 }
 
+#ifdef DEX_DESCRIPTION_LATENCY_TRACE
+#include "description_latency.c"
+#endif
+
 #ifdef DEX_LIFECYCLE_TRACE
 #include DEX_LIFECYCLE_SYMBOLS
 #include "dex_lifecycle.c"
@@ -143,6 +147,9 @@ static void perf_observe(unsigned bank, unsigned pc)
 {
     if (!perf_enabled) return;
     uint64_t now = perf_now();
+#ifdef DEX_DESCRIPTION_LATENCY_TRACE
+    description_observe(bank, pc, now);
+#endif
 #ifdef DEX_LIFECYCLE_TRACE
     life_step(now, bank, pc);
 #endif

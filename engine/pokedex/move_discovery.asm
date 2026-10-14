@@ -11,31 +11,6 @@ PUSHS
 SECTION "Move Discovery", ROMX
 
 ; DE is a permanent move index. Carry means seen; BC/DE and SVBK survive.
-MoveDiscovery_CheckIndex::
-    push bc
-    push de
-    ldh a, [rSVBK]
-    push af
-    ld a, BANK(wMoveDiscoverySeen)
-    ldh [rSVBK], a
-    call MoveDiscovery_BitAddress
-    jr c, .unseen
-    ld a, [hl]
-    and b
-    jr z, .unseen
-    scf
-    jr .done
-.unseen
-    and a
-.done
-    pop bc
-    ld a, b
-    ldh [rSVBK], a
-    pop de
-    pop bc
-    ret
-
-; DE is a permanent move index. Invalid indices cannot change any memory.
 MoveDiscovery_MarkIndex::
     push bc
     push de

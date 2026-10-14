@@ -117,9 +117,6 @@ Pokedex_StageDescriptionRightEdge:
 	ret
 
 Pokedex_InitListingRightEdge:
-	ldh a, [hCGB]
-	and a
-	jr z, .compat
 	; The Dex loader leaves LCD off, so publish the exposed edge directly.
 	call Pokedex_CopyDescriptionRightEdge
 	ldh a, [rVBK]
@@ -131,10 +128,6 @@ Pokedex_InitListingRightEdge:
 	pop af
 	ldh [rVBK], a
 	jp EnableLCD
-.compat
-	call EnableLCD
-	farcall DrawDexEntryScreenRightEdge
-	ret
 
 Pokedex_CopyDescriptionRightEdge:
 	; SCX=5 exposes five pixels of BG column 20 beyond the backing map.
@@ -200,12 +193,6 @@ Pokedex_SetDescriptionTypeAttrsAndPals:
 	RGB 0, 0, 0
 	RGB 0, 0, 0
 	RGB 5, 5, 5
-
-PokedexInfoPageGFX:
-	INCBIN "gfx/pokedex/pokedex_page_numbers.2bpp", 6 * TILE_SIZE, 4 * TILE_SIZE
-
-; Fixed shell data follows. Frontpic, text, footprint and type badges are
-; supplied by their existing owners after this background is copied.
 
 PokedexDescriptionGFX:
 	; The page sheet is column-major: P., 1..9, each upper tile then lower.

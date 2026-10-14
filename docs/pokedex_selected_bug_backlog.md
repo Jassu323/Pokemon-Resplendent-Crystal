@@ -1,121 +1,49 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-13. This is the live issue/status list, not the chronological
-scheduler investigation. Settled Selected animation/audio and New Dex Entry
-acceptance have passed, including instrumentation cleanup. Description UI,
-footprint styling and New Dex boundary wrapping are also accepted. The separate
-Listing return palette/cache fixes now pass their reproduction and regression
-suites, and grid metadata now uses presence flags instead of retained transient
-IDs. Mew's incomplete category and Drapion's category overflow are also corrected
-with focused headless regressions passed. The remaining historical UI,
-secondary-screen and adjacent-owner items below remain deferred. Internal paging's delayed
-portrait masking, buffered icons and atomic reveal are implemented, with
-automated regression and the user's manual visual review passed.
-The shared-menu fresh-direction correction is now accepted for production;
-overworld turning-delay changes remain a separate research spike.
-The bounded A-button Description transaction is also manually accepted and
-committed as `9f89227efd33a56e064fc010a9ebb4c7d0666d7f` (Description Paging Bug
-Fix). Its automated timing/content regressions remain the recorded evidence;
-the user's confirmation closes `DEX-DESC-01` without closing Area or older
-Listing/exit presentation reports.
+Updated 2026-10-14. This is the live issue/status list, not the chronological
+scheduler investigation. The accepted production implementation and cleanup
+are complete. See [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
+for the complete disposition, exact current build and fresh focused evidence.
+Latest statuses below take precedence over historical prototype paragraphs.
 
-Remaining Dex review queue:
+## Reconciled Review Queue
 
-- `DEX-INFO-07` is integrated with the precomputed production renderer and
-  full automated regression passed on 2026-10-13. Manual review remains.
-  Earliest-to-latest ancestry and actual gameplay requirements are preserved;
-  the runtime/VRAM alternative is archived as a future space-saving fallback.
-- `BATTLE-MOVE-02` records a production Sand Tomb trapping-message hang found
-  by the Type Matchups animation regression. Fix it in this branch as a
-  separate change; it is not part of the current interrupt/palette work.
-- `DEX-UNOWN-01/02/03/04` are manually accepted and integrated into production
-  on 2026-10-11. Resident blank tiles, bounded form counts, the fully red canvas,
-  solid-black panels and corrected portrait palette boundary pass native checks
-  and full Pokemon/Moves Dex requalification. Production matches the accepted
-  [Unown prototype](pokedex_unown_fix_prototype.md#production-integration) exactly.
-- `DEX-PREF-01` defers robust position remembrance for the Modern/Legacy
-  Pokemon listings. `DEX-PREF-02` separately defers Moves Mode position
-  remembrance. These are not part of Moves sort-preference persistence.
-- `DEX-GRID-05` is corrected in the private Listing Options prototype, pending
-  manual review/promotion. Changed-sort cursor reset left old row tags valid
-  on portrait replacement; both branches now invalidate ownership before
-  rebuilding, with independent both-frame icon-byte qualification.
-- `DEX-INFO-01` is solved by the integrated
-  [committed-record return fix](pokedex_info_return_records_preflight.md).
-  It preserves outgoing pixels with about 50ms common return overhead and
-  two extra intervals of Info preparation, accepted for now and retained as
-  measured baselines for `DEX-PERF-02`. `DEX-INFO-04` is a separately confirmed early-cancellation
-  Description badge defect; revalidate it after the shared-indicator promotion
-  before closing its historical report. Missing evolution
-  data (`DEX-INFO-02`) is deferred into the broader `DEX-DATA-02` species pass.
-  Shared pagination is integrated under `DEX-PAGE-01`. `DEX-INFO-03`,
-  delayed tab changes during frontpic playback, remains uninvestigated.
-- `DEX-INFO-05` records a phase-dependent physical display-interval loss during
-  Info-owned Dusclops-to-Dusknoir paging. Its timer-shutdown interrupt race is
-  corrected in production with the accepted Moves implementation. The exact
-  failing phase and all 746 Info cases pass physical-clock audits; the user
-  also reports no visual/audio/data errors or miss breakpoints in manual review.
-- `DEX-PERF-01` is approved and integrated with the repaired Stage lifecycle
-  on 2026-10-13. Fresh full qualification finds no new issues. It includes the
-  merged `DEX-EXIT-01` shell shift, corrected by committing white before reload.
-- `DEX-PERF-02` has an integrated, manually accepted Selected-tab baseline: double
-  speed, faster Area/Info paths, bounded active Info work, coalesced page requests
-  and no eager Listing lookahead. The rejected round-one component-repair return
-  is not the selected implementation. See the [current accepted clock policy and
-  qualification](battle_normal_speed_prototype.md) and [measured Dex benefits](global_double_speed.md).
-  See the [production integration and fresh qualification](production_clock_policy.md).
-  The entry/exit lifecycle is separately completed under `DEX-PERF-01`.
-- `DEX-PERF-03` is manually accepted and integrated into production 2026-10-11
-  with the Unown repairs. Its idle-work and paired entry-time evidence remains
-  recorded separately from the already removed speculative minisprite lookahead.
-- `DEX-PERF-04` defers optimization of Modes-to-Unown entry and Unown-to-Modes
-  return. The clean hidden preparation and restored Unown menu selection are
-  manually accepted; reduce their completion latency without exposing partial
-  maps, sprites or palettes.
-- `DEX-INFO-06` confirms rapid A restart starvation on multi-page Info.
-  The private finish/coalesce fix passes accepted-request/final-page checks and
-  is manually accepted and now promoted/solved in production, with fresh
-  all-species and 400-case Info input-stress qualification.
-- Historical reports `DEX-RETURN-02` (vertical displacement), `DEX-RETURN-04`
-  (placeholder Listing state) and `DEX-GRID-02` (caught-ball OBJ palette) do not
-  reproduce in the current 448-return/746-viewport revalidation. Keep their
-  individual historical reports pending manual revalidation rather than
-  inventing another fix. See the [full revalidation](pokedex_backlog_revalidation.md).
-- `DEX-GRID-04` records a separate blocked BG palette write during Listing
-  follow-up navigation in both matched pre/post-egg prototypes. Visible content
-  remains correct in those sampled checks; investigate without conflating it
-  with return restoration or the timer-shutdown correction.
-- `DEX-AREA-01` is solved by the accepted vanilla-map integration. Its 15,130
-  production Area cases and standard regressions pass with +81 ROMX
-  bytes total and no new RAM/VRAM allocation. The user has now accepted it and
-  the exact runtime changes are integrated into production, preserving tab/page
-  restoration without frontpic/cry replay. See the
-  [integration report](pokedex_area.md).
-- `DEX-SEARCH-01` is confirmed, with a private single-palette repair qualified.
-  `DEX-SEARCH-02` records suspended OAM on Search/Results handoff, and
-  `DEX-SEARCH-03` records Results text, arrow and cursor-background mismatches.
-  Their combined +48 ROMX trial passes 2,618 native cases and 12 host tests,
-  pending review/promotion. `DEX-SEARCH-04` separately defers official National
-  IDs at the user's request; `DEX-SEARCH-05` now implements existing
-  compact type icons and ranked both/Type1-only/Type2-only results in the private
-  prototype. Its +760 ROMX increment passes 5,069 native cases and 12 host tests,
-  pending manual review/promotion. See the
-  [Search investigation](pokedex_search_investigation.md) and
-  [ranked prototype](pokedex_search_ranked_prototype.md).
-  The [Results renderer prototype](pokedex_search_results_prototype.md) supersedes
-  the old green portrait/large outline/BG-ball path at the user's request, adds
-  compact Results badges and an alphabetical selector, and removes the dark
-  portrait gap using existing tiles. Its +708 ROMX increment requires no new
-  RAM/VRAM; pending manual review/promotion. National IDs remain deferred.
-  `DEX-DATA-01` is content completion, not scheduling.
-- `DEX-DATA-04` defers regrouping later-generation evolutions and baby species
-  in the authored Evolves order until the Dex is finalized and the planned
-  descriptions/learnsets/species-data pass begins. Modern and Legacy share
-  this sequence; National and Alphabet remain separate generated orders.
+- **Complete and integrated:** accepted Selected animation/cry/Description/
+  Info/Moves/Area work, Listing options and sort-cache repair, Pokemon Search
+  and colored Results, Moves Dex discovery/search/sort memory, Type Matchups,
+  shared blinking, Unown correctness and fast form paging, ancestors, repaired
+  Stage opening/closing, no warming, visual-only New Entry and approved cleanup.
+  Search/sort/ancestors/cleanup are not awaiting another promotion.
+- **Historical, not reproduced on current production:** `DEX-INFO-04`,
+  `DEX-RETURN-02`, `DEX-RETURN-04`, `DEX-GRID-02`, `DEX-GRID-04`. Fresh badge
+  cancellation and strict frame/palette/navigation replays pass. Retain their
+  prior evidence and reopen if a current state/video reproduces them; no
+  speculative game changes are proposed.
+- **Implemented responsiveness fix:** `DEX-INFO-03`. Info-to-Description
+  after internal paging had publication starvation. The chosen +9 ROMX fix is
+  applied to production source with no new RAM. Fresh 1,492-case and six-model
+  return matrices pass, reaching a 60.45 ms / 3.61-frame catalog median. Fresh
+  full emulator regression passes with no new failures. Manual review remains
+  pending; the atomic portrait flag dependency is documented in the linked
+  investigation and beside both producer/consumer in the source.
+- **Explicitly deferred:** `DEX-SEARCH-04` official National labels;
+  `DEX-DATA-01/02/03/04` content, real evolution data, egg inheritance and
+  family ordering; `DEX-PREF-01/02` durable listing position remembrance.
+  `DEX-INFO-02` is an alias of the evolution-data work, not a second renderer fix.
+- **Optional future performance/audit:** `DEX-PERF-04` Modes/Unown transitions
+  remain about 249-250 ms, separate from accepted fast form paging.
+  `DEX-PERF-02` retains only the broader future performance umbrella; its
+  accepted Selected-tab iteration and later lifecycle work are complete.
+  New Entry option B and the broader Selected implementation audit are future
+  options, not unfinished parts of the approved visual-only registration page.
+- **Adjacent, not Dex completion:** Sand Tomb and other battle/overworld
+  follow-ups retain their separate statuses below. Standalone Stats is
+  qualified; the nested battle cry owner remains deferred. `BT-REWARD-01`
+  is now in the [Battle Tower backlog](battle_tower_bug_backlog.md).
 
 Keep each transaction fix independently scoped and tested. A passing animation
 counter does not close a palette, text, input or cancellation bug. Earlier
-measurements and superseded diagnoses are retained in the
+measurements and superseded diagnoses remain in the individual stories,
 [backlog investigation history](archived/dex-scheduler/dex_backlog_investigation_history.md)
 and [scheduler archive](archived/dex-scheduler/README.md).
 
@@ -365,7 +293,14 @@ See [full reproduction, trace, alternatives and costs](pokedex_info_return_evolu
 
 ### DEX-INFO-04: Early Info cancellation can erase Description's P. badge
 
-Status: Confirmed in production and private return preflight 2026-10-03; not fixed
+Status: Historical; not reproduced on current production, 2026-10-14
+
+Current-link reconciliation: all 102 focused cancellation cases pass, including
+Rhyperior age 0 and ages 0-12/16/24/32/settled on six species. Description now
+explicitly prepares the complete shared buffered badge instead of depending
+on the old fixed `P.` cell. Keep the prior reproduction below as historical
+evidence; no new patch is required by this replay. See
+[reconciliation](pokedex_backlog_reconciliation.md#historical-reports-not-reproduced).
 
 Reproduction: cold-select caught Rhyperior, immediately select Info with
 Right/A, then Left/A back to Description before Info finishes preparation.
@@ -425,7 +360,37 @@ deferred with these source records. See [full data audit and fix choices](pokede
 
 ### DEX-INFO-03: Switching lower tabs waits for frontpic animation completion
 
-Status: User-reported 2026-10-03; investigation pending
+Status: +9 fix implemented and full emulator regression passed; manual review pending, 2026-10-14
+
+Latest [cause, attribution, fixes and costs](pokedex_info_description_latency_investigation.md)
+supersede the initial preparation/admission hypothesis below. Text is ready in
+about 21 ms, but a future queued portrait returns carry as a budget reservation;
+the dispatcher suppresses the larger restore even when no transfer happened.
+Frozen pre-cleanup/pre-Stage/pre-ancestors builds reproduce it. The guard dates
+to the original Info integration, not the cleanup.
+
+The 1,492-case active-paging baseline has a 1,784.97 ms / 106.61-frame median
+and 4,647.95 ms / 277.61-frame maximum. Pending-map-aware (+9 ROMX),
+deadline-aware (+17 ROMX) and combined-publication (0 ROMX) private fixes each
+reach 60.45 ms / 3.61-frame median and 93.95 ms / 5.61-frame maximum. All add
+zero RAM/ROM0/HRAM/SRAM and pass exact playback/content checks. The user chose
+the scoped +9 fix, now applied to production source; it preserves
+full-restore/actual-portrait separation. Fresh exact-link qualification is
+recorded in the investigation's Production Integration section. Full regression
+passes with no new failures; manual review is pending. The dispatcher/publisher comments
+reference its Atomic Portrait Contract; revisit that before changing the map
+pending flag or introducing partial visible-map/attribute publication.
+
+Initial reconciliation measurements follow as historical evidence:
+
+Current-link reconciliation: 128 Modern/Legacy cases pass content and playback
+checks, but do not close this responsiveness story. A is accepted within about
+17.054 ms. Sceptile can defer complete Description for 2,028.83 ms / 121.18
+display frames; settled requests complete in about 53-66 ms. Of 96 active
+requests, 24 finish only after playback while 72 finish during playback.
+The text owner's scanline/publication admission gates defer work; identify the
+dominant gate per long case before proposing a bounded local change. See
+[current reproduction and timings](pokedex_backlog_reconciliation.md#dex-info-03-current-reproduction-and-timings).
 
 Reproduction: leave Info's Stats page selected, internally page to another
 Pokemon, then select Desc while that incoming frontpic is still animating.
@@ -558,7 +523,7 @@ trial evidence are in
 
 ### DEX-INFO-07: Add An "Evolves From" Section To Selected Info
 
-Status: Integrated and automated-qualified 2026-10-13; manual review pending
+Status: Complete; integrated, qualified and manually accepted 2026-10-13
 
 Cycle Stats, forward Evolutions pages, then "Evolves from" pages, skipping
 empty sections and wrapping to Stats. Reuse the two-entry evolution layout,
@@ -594,7 +559,8 @@ and no additional allocated RAM. Full regression has no new failures relative
 to production. See [production integration](pokedex_ancestors_production_integration.md)
 for build identity, content, performance and retained exceptions. The complete
 [runtime/VRAM fallback](archived/selected-vram-ancestors-20261013/README.md)
-includes restorable source and matched costs. This story awaits manual review.
+includes restorable source and matched costs. The user accepted the production
+layout and performance; the earlier pending-review status is superseded.
 
 ### DEX-PAGE-01: Shared Buffered Page Indicators For Lower Tabs
 
@@ -840,7 +806,13 @@ See the
 
 ### DEX-RETURN-02: The Selected page can reappear vertically displaced
 
-Status: LCD-off page reappearance resolved; historical displacement not reproduced in current-link revalidation
+Status: Historical; not reproduced on current production, 2026-10-14
+
+Fresh reconciliation covers 60 normal-input returns and 726 completed
+outgoing/Listing frames, with no physical or mirrored vertical displacement.
+The older all-species evidence remains below. Reopen with a current reproduction
+rather than treating this as an active unverified repair. See
+[reconciliation](pokedex_backlog_reconciliation.md#historical-reports-not-reproduced).
 
 After the white blank interval, the Selected page can reappear eight pixels too
 low and move upward one pixel per frame before the Listing takes ownership.
@@ -890,7 +862,12 @@ See the
 
 ### DEX-RETURN-04: Listing can briefly expose placeholder selection state
 
-Status: Historical report not reproduced in current-link revalidation; manual revalidation pending
+Status: Historical; not reproduced on current production, 2026-10-14
+
+All 60 fresh returns reveal the expected selection, portrait, rendered header
+and cursor against an independently reached Listing. This is current-link
+evidence, not a claimed cause for the older report. See
+[reconciliation](pokedex_backlog_reconciliation.md#historical-reports-not-reproduced).
 
 Some returns briefly show the unseen portrait, `-----`, or an intermediate
 cursor position before restoring the real Listing selection.
@@ -945,7 +922,12 @@ separate caught-ball report below. See the
 
 ### DEX-GRID-02: Caught Poke Ball can receive the wrong OBJ palette
 
-Status: Historical report not reproduced in current-link revalidation; manual revalidation pending
+Status: Historical; not reproduced on current production, 2026-10-14
+
+Fresh return-frame checks pass actual hardware/target palette, marker OAM
+geometry/attributes and uploaded tile bytes in all 60 cases. Prior broad marker
+evidence remains below; no marker-specific fix is proposed. See
+[reconciliation](pokedex_backlog_reconciliation.md#historical-reports-not-reproduced).
 
 The caught indicator has occasionally appeared with the wrong palette. The
 issue is difficult to reproduce and should be tested alongside Listing palette
@@ -997,7 +979,14 @@ text overflow was subsequently corrected under `DEX-UI-02`. See the
 
 ### DEX-GRID-04: Listing Navigation Can Attempt A Blocked BG Palette Write
 
-Status: Host-observed legality warning 2026-10-03; cause investigation deferred
+Status: Historical; not reproduced on current production, 2026-10-14
+
+All 60 current-link returns and their navigation/wrapping/reentry follow-ups
+pass the unchanged strict rejected-palette-write audit. The original Dusknoir
+active-16 setup is repeated three times with zero rejected writes. No single
+causal corrective commit or universal absence claim is inferred. Retain the
+old traces below and reopen on a current reproduction. See
+[reconciliation](pokedex_backlog_reconciliation.md#historical-reports-not-reproduced).
 
 The private Moves regression's Selected-to-Listing restoration itself passes
 all 96 repeated cases. Three repetitions of the subsequent navigation sequence
@@ -1024,7 +1013,12 @@ do not hide the warning by weakening the mode-3 audit.
 
 ### DEX-GRID-05: Changed Sort Can Retain The Previous Order's Minisprites
 
-Status: Fixed in private records prototype; manual review/promotion pending
+Status: Complete; manually accepted and integrated into production 2026-10-11
+
+Included in the accepted [Moves/Search production integration](pokedex_moves_search_prototype.md#production-integration).
+Current cleanup qualification passes the independent sort/icon publication
+checks. The private-build/pending-promotion paragraphs below describe the
+earlier October 6 trials, not a remaining integration task.
 
 2026-10-06: remain at the beginning of Modern Evolves Listing, then START ->
 Sort -> Nat'l Dex. Bulbasaur's portrait/name and the new palettes appear, but
@@ -1322,7 +1316,11 @@ off Area rendering/navigation.
 
 ### DEX-SEARCH-01: Search-page Slowpoke has an all-black palette
 
-Status: Confirmed 2026-10-06; private repair qualified, pending review/promotion
+Status: Complete; manually accepted and integrated into production 2026-10-11
+
+See [production integration](pokedex_moves_search_prototype.md#production-integration).
+The current cleanup's Search controls, default/empty forms and return checks
+pass. The original repair measurements below are historical.
 
 Search initializes BG0 but inherits OBJ0 from the Listing cursor instead of
 owning its established party-menu palette. The usual `$e0` OBJ mapping makes
@@ -1337,7 +1335,11 @@ but unnecessarily resets all eight OBJ palettes. See the
 
 ### DEX-SEARCH-02: Search And Results Retain Suspended Sprite DMA
 
-Status: Confirmed 2026-10-06; private repair qualified, pending review/promotion
+Status: Complete; manually accepted and integrated into production 2026-10-11
+
+The destination-owned reveal is part of the accepted
+[production integration](pokedex_moves_search_prototype.md#production-integration),
+not a pending private change. Current Search/Selected/Listing return checks pass.
 
 Open START -> Search in either Options Listing presentation: Slowpoke is
 absent. Begin a successful search: Results lacks its green selection outline.
@@ -1354,7 +1356,12 @@ authored Slowpoke animation is unchanged.
 
 ### DEX-SEARCH-03: Search Results Retains Vanilla Presentation Assumptions
 
-Status: Confirmed 2026-10-06; private repair qualified, pending review/promotion
+Status: Complete; manually accepted and integrated into production 2026-10-11
+
+Colored Results, compact badges, small cursor/caught-ball rendering and border
+repairs were promoted with the accepted
+[Moves/Search integration](pokedex_moves_search_prototype.md#production-integration).
+The following trial costs and pending statuses are historical.
 
 Three independently reproduced mismatches appear after a successful search:
 mixed-case BG headings join capitalized Window suffixes (`Search REsults`,
@@ -1400,7 +1407,11 @@ project numbering is a separate design decision, not implicitly changed here.
 
 ### DEX-SEARCH-05: Replace Search Type Text With Existing Compact Icons
 
-Status: Implemented 2026-10-06; private prototype qualified, pending manual review/promotion
+Status: Complete; manually accepted and integrated into production 2026-10-11
+
+Compact icons, alphabetical controls and both/Type1-only/Type2-only ranking
+are included in [production](pokedex_moves_search_prototype.md#production-integration).
+Official National labels remain independently deferred under `DEX-SEARCH-04`.
 
 Replace the two Search selector values, retaining labels/controls and Type2's
 None placeholder. Reuse `gfx/types/compact/` and existing type palettes;
@@ -1436,13 +1447,15 @@ labels remain independently deferred under `DEX-SEARCH-04`.
 
 ### DEX-EXIT-01: Saved menu viewport is restored before the Dex is hidden
 
-Status: Merged into DEX-PERF-01 on 2026-10-02; confirmed defect remains unfixed
+Status: Complete under DEX-PERF-01; repaired Stage integrated 2026-10-13
 
 The user deferred the standalone fix so entry/exit timing and presentation can
 be addressed together. See
 [DEX-PERF-01](#dex-perf-01-optimize-pokedex-opening-and-closing) for scope,
-acceptance criteria and retained diagnostic evidence. This ID remains as a
-cross-reference, not a separate active work item or a solved bug.
+acceptance criteria and retained diagnostic evidence. The accepted Stage
+white-mask/reveal ordering now resolves the report. Current 88-case exit
+replays and 336-case lifecycle checks have no displaced or early colored
+frames. This ID remains a closed cross-reference, not another active item.
 
 ### DEX-DATA-01: Custom entries contain placeholder data
 
@@ -1538,10 +1551,10 @@ therefore applies to both Listings and their normal Selected-page navigation.
 `Nat'l Dex` and `Alphabet` keep their independently generated numerical/name
 orders; neither should change merely because Evolves entries move.
 
-The current private generator, `tools/pokedex_sort_assets.py`, reads the authored
+The production generator, `tools/pokedex_sort_assets.py`, reads the authored
 family sequence and regenerates its word table and species/Seen-bit records.
-`tools/build_dex_options_prototype.py` invokes it on each prototype build. Carry
-that regeneration contract into production integration; do not manually edit
+The Makefile invokes it for `build/dex-sort-assets` when its source inputs
+change; retained prototype builders also invoke it. Do not manually edit
 generated tables. The compiler requires every registered species exactly once.
 Future added species still need an authored family placement, along with normal
 species registration, display-name and National-number metadata; their generated
@@ -1680,7 +1693,43 @@ Acceptance and regression requirements:
 
 ### DEX-CLEAN-01: Audit And Remove Unused Replaced Pokedex Code
 
-Status: Backlog; requested 2026-10-13, no removal performed
+Status: Complete; qualified, manually accepted and production-integrated 2026-10-14
+
+The approved combined cleanup is integrated. It reclaims 2,970 decimal ROMX
+bytes from the accepted New Entry layout, or 2,693 net bytes from prior
+production after adding that layout. No allocated ROM0/RAM/SRAM/HRAM changes.
+Removed artwork is retained in `gfx/archived/pokedex/`. See
+[implementation results](pokedex_cleanup_implementation.md) for the final
+boundaries, hashes, suite results and independent Tower limitations. The
+following scope notes are historical pre-implementation measurements.
+
+The [post-redesign scope](pokedex_post_new_entry_cleanup_scope.md) confirms
+1,747 ROMX bytes of dead code/data, 1,754 with the wrap no-op removal, and
+1,795 with the Dex-only Slowpoke trim. An optional unused acquisition wrapper
+raises that to 1,809. All other allocated memory returns are zero. The whole
+126-byte old registration builder is now unused; the new layout adds only
+93 incremental cleanup bytes beyond the prior recommended package because
+the old Number/footer bytes were already counted. Production cleanup and
+full runtime qualification remain pending.
+
+The [deferred archive](archived/dex-unused-scope-20261013/README.md) preserves
+findings, production control, both cleanup ROMs, symbols/maps, baseline source,
+patches and checked hashes. Both restored builds reproduce their original
+ROMs byte-for-byte. Re-audit after `NEWDEX-UI-02`; no production cleanup has
+been performed.
+
+See [Unused Pokedex Code Removal Scope](pokedex_unused_code_scope.md) for the
+per-component ownership audit and decimal linked-space measurements. Private
+pruning builds recover 1,624 ROMX bytes of unreachable code/data, or 1,661 with
+two small live-path simplifications; a Dex-only graphics trim raises that to
+1,702. None frees allocated ROM0, WRAM0, WRAMX, SRAM or HRAM. Full runtime
+qualification and manual acceptance remain pending before implementation or
+promotion.
+
+The scope separately lists optional acquisition API and compatibility removals,
+seven unused overlay bytes with no allocated RAM return, and code that can be
+retired after a New Dex Entry redesign. Do not remove the shared 224-byte entry
+printer solely for that redesign: current Selected Description also uses it.
 
 Review original and superseded Pokedex routines, assets and display tables that
 are still linked into production after the modernized owners replaced them.
@@ -1720,10 +1769,53 @@ surrounding-gameplay regressions. Functional behavior and timings outside the
 intended cleanup must remain unchanged. Obtain manual acceptance before
 promotion; do not delete merely old-looking routines speculatively.
 
+### NEWDEX-UI-02: Match Registration To Selected Description
+
+Status: Complete for accepted visual-only option A; production-integrated 2026-10-14
+
+The production link matches the tested combined candidate byte-for-byte. The
+two-page A/B post-catch flow and red footer are retained. Option B remains
+deferred. Historical standalone prototype results follow.
+
+The user selected A. See [visual prototype results](pokedex_new_entry_visual_prototype.md).
+The review build reuses Description artwork and adds 277 ROMX bytes with no
+new RAM, persistent fields or assets. Production remains unchanged. Option B
+and the broader Selected-screen implementation audit remain deferred.
+The October 14 revision makes the registration footer red and updates the
+stale Info READY-admission host test; all 87 current host tests now pass.
+
+See [New Dex Entry Description Layout Scope](pokedex_new_entry_description_scope.md)
+for both requested options: A matches the Description content/layout while
+retaining the two-page post-catch A/B flow; B provides `Desc Info Mov End`
+navigation for the captured species, with A on End or B exiting directly.
+Area and species paging are excluded. Existing species Info (including
+ancestors) and learnset Moves pages are reused, not duplicated.
+
+No new graphical assets or save migration is expected. Preserve normal-speed
+catch/audio behavior and the original naming/party/PC return path. Type OBJ
+space is safe, but Selected's footprint and both Info atlases can conflict
+with New Entry's resident dictionary. A can keep its existing bank-0 footprint;
+B must choose a static portrait handoff or the existing Selected streaming
+architecture for continuous animation. Battle graphics scratch aliases also
+need explicit preservation/lifetime handling.
+
+Acceptance: exact native content-panel parity, correct footer behavior,
+complete bounded page-badge/text publication, uninterrupted authored timing
+where required, normal-speed sampled/synth cries, fixed-species tab/page
+coverage, pending-job cancellation, unchanged captured-mon delivery and
+nickname state, bank/viewport/menu/audio restoration, and the full documented
+regression plus manual review. No generic VBlank/STAT overhead is permitted.
+Then update `DEX-CLEAN-01` against the new live references before removal.
+
 ### DEX-PERF-02: Profile And Optimize The Completed Dex
 
-Status: Selected-tab performance iteration integrated and qualified 2026-10-05.
-Other modes and lifecycle work remain deferred.
+Status: Accepted Selected-tab iteration complete; broader future review remains
+
+Reconciliation 2026-10-14: opening/closing is complete under `DEX-PERF-01`,
+idle warming removal under `DEX-PERF-03`, and Unown form paging is integrated.
+Only future performance review remains under this umbrella. Coordinate the
+measured `DEX-INFO-03` and optional `DEX-PERF-04` rather than counting completed
+iterations or the same follow-up twice. Historical trials follow.
 
 Requested 2026-10-03 after the Info return/evolution investigation. Optimize
 the completed Dex as a whole using measured headless normal-input traces,
@@ -1894,7 +1986,15 @@ Acceptance:
 
 ### DEX-PERF-04: Optimize Unown Dex Mode Entry And Return
 
-Status: Deferred 2026-10-05; Modes transition correctness manually accepted
+Status: Optional transition optimization deferred; form paging is already complete
+
+Current-link reconciliation 2026-10-14: the accepted static decoder/atomic
+publication improves form paging and initial preparation. Eight post-Info
+transition cases now complete Modes-to-Unown in 249.33-249.79 ms and return
+in 249.59-249.60 ms, about 14.9 display frames each. The old 350 ms entry
+baseline below is historical. Further Modes transition optimization remains
+separate from the completed fast form-selection work. See
+[current costs and status](pokedex_backlog_reconciliation.md#still-outstanding).
 
 The user accepts the stage-and-reveal corrections and requests a later
 performance pass on entering and returning from Unown Dex Mode. Do not undo
@@ -1957,7 +2057,7 @@ memory, not a reliable saved position.
 Relevant owners: `engine/pokedex/pokedex.asm` (`InitPokedex`,
 `Pokedex_InitGridCursorPosition`, `Pokedex_InitCursorPosition`),
 `engine/pokedex/pokedex_legacy.asm` (`Pokedex_InitListingPresentation`, mode
-switch normalization), the private `engine/pokedex/pokedex_popover.asm`
+switch normalization), `engine/pokedex/pokedex_popover.asm`
 (changed-sort reset), and `ram/wram.asm` (dedicated saved preference fields).
 
 Scope and acceptance:
@@ -1990,7 +2090,7 @@ Currently `PokedexMovesMode_Initialize` clears cursor and scroll along with
 its shared Info workspace. The current sort-remembrance work restores only
 the Type/Alphabet preference and deliberately leaves this reset intact.
 
-Relevant owners: private `engine/pokedex/pokedex_moves_mode.asm`
+Relevant owners: `engine/pokedex/pokedex_moves_mode.asm`
 (`PokedexMovesMode_Initialize`, navigation, `PokedexMovesMode_SortUpdate`),
 `tools/dex_timing/probes/pokedex_moves_mode.asm`,
 `tools/pokedex_moves_mode_assets.py` (generated Type/Alphabet orders), and
@@ -2005,7 +2105,7 @@ Scope and acceptance:
 - Unknown moves remain valid list positions; do not reveal their names/details
   while restoring. Handle future move additions, regenerated orders, invalid
   saved values, legacy saves and New Game safely.
-- Keep future move-search results separate from the unfiltered list bookmark;
+- Keep current move-search results separate from the unfiltered list bookmark;
   returning from search must not silently lose or replace the prior position.
 - Test both orders, every cursor row, top/bottom/wrap/page boundaries, known
   and unseen entries, other Dex modes, menus/battles, normal Save/Continue and

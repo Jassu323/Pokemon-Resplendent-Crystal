@@ -559,7 +559,9 @@ NewDexEntry_DisplayPage2::
 	lb bc, 5, SCREEN_WIDTH - 2
 	hlcoord 2, 10
 	call ClearBox
-	ld a, $58 ; page 2
+	ld a, POKEDEX_DESCRIPTION_GFX_TILE + 8
+	ld [wTilemap + 8 * SCREEN_WIDTH + 2], a
+	ld a, POKEDEX_DESCRIPTION_GFX_TILE + 9
 	ld [wTilemap + 9 * SCREEN_WIDTH + 2], a
 	pop de
 	pop bc
@@ -651,6 +653,8 @@ NewDexEntry_TryPublishDescription:
 ASSERT HIGH(vBGMap0 + 10 * TILEMAP_WIDTH + 2) == HIGH(vBGMap0 + 14 * TILEMAP_WIDTH + SCREEN_WIDTH - 1)
 	ld a, [wTilemap + 9 * SCREEN_WIDTH + 2]
 	ld [vBGMap0 + 9 * TILEMAP_WIDTH + 2], a
+	ld a, [wTilemap + 8 * SCREEN_WIDTH + 2]
+	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 2], a
 	ld hl, wNewDexEntryAnimFlags
 	res NEW_DEX_ANIM_TEXT_F, [hl]
 NewDexEntry_DescriptionPublished:: ; instrumentation: last store and ACK complete
@@ -659,3 +663,5 @@ NewDexEntry_DescriptionPublished:: ; instrumentation: last store and ACK complet
 NewDexEntry_TryPublishDescription.none:
 	xor a
 	ret
+
+INCLUDE "engine/pokedex/new_entry_visual.asm"

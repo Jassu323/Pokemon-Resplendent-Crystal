@@ -509,7 +509,9 @@ def run(output, smoke, model):
                                          'types_vblank':('VBlank',True),
                                          'types_clock':('GameTimer',True)},extra_flags=flags)
     battery = target / 'battery.sav'
-    shutil.copy2(output / 'pokecrystal-dex-types.sav', battery)
+    private_battery(dict(rom=str(repo.rom_path), sym=str(output / 'pokecrystal-dex-types.sym'),
+                         battery=str(output / 'pokecrystal-dex-types.sav')),
+                    battery, presentation=0, order_mode=0, unown_unlocked=True)
     driver = Driver(core, output / 'pokecrystal-dex-types.gbc', BOOT, battery, target / 'trace.log')
     try:
         driver.command('rawcolor')

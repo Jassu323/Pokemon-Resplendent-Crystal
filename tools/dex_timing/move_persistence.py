@@ -65,6 +65,24 @@ def boot(config, battery, log, trace=None):
     raise AssertionError('Cold Continue did not reach the overworld')
 
 
+def input_call(driver, symbols, name, *, af=0, bc=0xa55a, de=0x5aa5, hl=0):
+    """Set inputs at a real banked callee, then unwind the native far call."""
+    owner = driver.command('peek')
+    bank, pc = symbols[name]
+    driver.command(f'begin {bank} {pc} {bc} {de}')
+    if not driver.command(f'until {bank} {pc} 4 0')['hit']:
+        raise AssertionError('Banked helper entry not reached: ' + name)
+    driver.command(f'regs {af} {bc} {de} {hl}')
+    driver.command('follow')
+    result = driver.command('resume 16 0')
+    if not result['hit']:
+        raise AssertionError('Banked helper did not return: ' + name)
+    returned = driver.command(f'until {owner["bank"]} {owner["pc"]} 8 0')
+    if not returned['hit'] or returned['sp'] != owner['sp']:
+        raise AssertionError('Observer far call did not unwind: ' + name)
+    return result
+
+
 def helper_tests(config, output):
     symbols = config['symbols']
     driver = boot(config, output / 'empty.sav', output / 'helpers.log')
@@ -80,13 +98,30 @@ def helper_tests(config, output):
                 expected = move_bitmap([index]) if 1 <= index <= 333 else bytes(64)
                 if read(driver, symbols)[:64] != expected:
                     raise AssertionError(f'Wrong native bit: bank {bank}, move {index}')
-                checked = call(driver, symbols, 'MoveDiscovery_CheckIndex', index)
                 valid = 1 <= index <= 333
-                for result in (marked, checked):
-                    if bool(result['af'] & 0x10) != valid or result['bc'] != 0xa55a or result['de'] != index:
-                        raise AssertionError(f'Flag/register contract: {result}')
-                    if result['svbk'] & 7 != bank:
-                        raise AssertionError('WRAM bank not restored')
+                if bool(marked['af'] & 0x10) != valid or marked['bc'] != 0xa55a or marked['de'] != index:
+                    raise AssertionError(f'Flag/register contract: {marked}')
+                if marked['svbk'] & 7 != bank:
+                    raise AssertionError('WRAM bank not restored')
+                located = call(driver, symbols, 'MoveDiscovery_BitAddress', index)
+                if bool(located['af'] & 0x10) == valid or located['svbk'] & 7 != bank:
+                    raise AssertionError('Bit-address validity/bank contract changed')
+                if valid:
+                    if located['hl'] != symbols['wMoveDiscoverySeen'][1] + (index - 1) // 8:
+                        raise AssertionError('Wrong production byte address')
+                    if located['bc'] >> 8 != 1 << ((index - 1) % 8):
+                        raise AssertionError('Wrong production bit mask')
+                    # Query the same snapshot and helper that the live Moves UI uses.
+                    snap = call(driver, symbols, 'PokedexMovesMode_SnapshotSeen')
+                    if snap['svbk'] & 7 != symbols['wPokedexInfoGFX'][0]:
+                        raise AssertionError('Snapshot did not select its owning bank')
+                    for query, seen in ((index, True), (index % 333 + 1, False)):
+                        checked = input_call(driver, symbols, 'PokedexMovesMode_IsSeen', hl=query)
+                        if bool(checked['af'] & 0x10) != seen or checked['hl'] != query:
+                            raise AssertionError('Moves UI snapshot query/HL contract changed')
+                        if checked['svbk'] & 7 != symbols['wPokedexInfoGFX'][0]:
+                            raise AssertionError('Moves UI query changed its owning bank')
+                    driver.command(f'io 65392 {bank}')
                 call(driver, symbols, 'MoveDiscovery_MarkIndex', index)
                 if read(driver, symbols)[:64] != expected:
                     raise AssertionError('Duplicate mark changed another bit')

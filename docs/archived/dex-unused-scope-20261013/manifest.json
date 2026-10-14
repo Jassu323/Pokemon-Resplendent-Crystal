@@ -1,0 +1,65 @@
+{
+  "format": "deferred-dex-cleanup-v1",
+  "date": "2026-10-13",
+  "base_commit": "81ff02a25c122650e45b48c04d4352d7fbc2be7b",
+  "qualification": "Source audit and private build/link checks only; no runtime regression acceptance",
+  "variants": {
+    "baseline": {
+      "rom_sha256": "e5f14a4e77082323dce6756f59c8b8951a00f243ff25a87ebbd30d2293b4dc4e",
+      "sym_sha256": "186e9c85d081aac582cbd54984b3641ba5a01bb8822c0fc6232d6cf46e13aa11",
+      "reclaimed": {
+        "ROM0": 0,
+        "ROMX": 0,
+        "SRAM": 0,
+        "WRAM0": 0,
+        "WRAMX": 0,
+        "HRAM": 0
+      }
+    },
+    "recommended": {
+      "rom_sha256": "895b5247eff3487318f624137ec1cef9400330c11645338c1d46d18432aec319",
+      "sym_sha256": "6711d10e7291ae8a4b99fad0bfb60fd56db07a931c6bda753bed92fcf588d36f",
+      "reclaimed": {
+        "ROM0": 0,
+        "ROMX": 1661,
+        "SRAM": 0,
+        "WRAM0": 0,
+        "WRAMX": 0,
+        "HRAM": 0
+      }
+    },
+    "with-asset": {
+      "rom_sha256": "87d6d2726ec623d6f1c96b37c759fbd7eb7a8e9b3df3ec4431ddbb43b0456b80",
+      "sym_sha256": "f8f943c35245ae00b34971f8048cfd2755df28c74051f00e687ecb01f30f9fd2",
+      "reclaimed": {
+        "ROM0": 0,
+        "ROMX": 1702,
+        "SRAM": 0,
+        "WRAM0": 0,
+        "WRAMX": 0,
+        "HRAM": 0
+      }
+    }
+  },
+  "files": {
+    "README.md": "3c0a5968af28a74c70bd34115ece9c688cbef65a7011ea71e6f8eba329aeb803",
+    "backlog-snapshot.md": "af6d5259bdfa0efdd93cf6f4d78122d666d5d228c68cec570aaa604a2b0af1b9",
+    "baseline-build.log": "246d29e48d320431a18791c7ba6e316fe2de76617989fd95c532cabec29d6a0e",
+    "baseline-cartridge.tar.xz": "5cb864855d8cf0ad0259a63d83cfed385385cc3db54c84dd10da4cf5c6f90a0d",
+    "baseline-source.tar.xz": "60ee374ffa4b38e20b09ea6a04710f61f8edf205617880859bc3fd682c37f9a3",
+    "extras.json": "a00814ca17923b4415d031fd7d9add66e3d7dc3562c224dbde82dd8fd805e20b",
+    "findings.md": "dacfcb6a63e7159028d4e1d104849984ffa89c18b8e392d35139018b3528d888",
+    "inventory.json": "28610b606e3bd1f6401e21b29d238ab9dca2d6ba5622fd30607f9cbe4027a299",
+    "recipes/archive_dex_unused_scope.py": "30c2e2b6697d5ff23bc67ffa932dddb7cc95921cc33aeb97619bd9def60a65c7",
+    "recipes/archive_selected_vram_ancestors.py": "36e42670a894e6d2b5eed949205245acf8e6022e53d0d64d6981ab92c4a12219",
+    "recipes/dex_unused_scope.py": "5e063985fb1157dfe0a433e39937590f31194acf5e38329d4454ecae4453d5a1",
+    "recommended-build.log": "246d29e48d320431a18791c7ba6e316fe2de76617989fd95c532cabec29d6a0e",
+    "recommended-cartridge.tar.xz": "c9c59f38a0bfd47e4dc4ddd6101dec5e676ba7eea89a9ded80d2e99ba821afa0",
+    "recommended.patch": "8d7472652e8fca507b28f4451969f27c53382ab5f7008c3abdebb05eaa5e2157",
+    "results.json": "f092d63038b161ed579bc642d823087565da99dd4675e19de9c886250ae5f60c",
+    "with-asset-additions/build/slowpoke-dex-prefix.lz": "3dcd15af44d0b28408208d76639e3405979ed1749b7e545c1433bee70454febf",
+    "with-asset-build.log": "246d29e48d320431a18791c7ba6e316fe2de76617989fd95c532cabec29d6a0e",
+    "with-asset-cartridge.tar.xz": "64a8a150f9861c40f0b31356e24985670028538758f8012702624a79e583c618",
+    "with-asset.patch": "284a02533a248f54122d7e073e872090b13a4448ca9706e495883215e3e356ee"
+  }
+}

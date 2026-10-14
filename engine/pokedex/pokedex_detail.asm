@@ -109,9 +109,6 @@ PokedexSelectedMon_ViewActionJumptable:
 	dw PokedexSelectedMon_Moves
 	dw PokedexSelectedMon_Area
 
-PokedexSelectedMon_Unavailable:
-	ret
-
 PokedexSelectedMon_Info:
 	call PokedexSelectedMon_CancelDescriptionText
 	farcall PokedexInfo_Activate

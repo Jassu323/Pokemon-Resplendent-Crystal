@@ -534,5 +534,8 @@ optimization. Production reproduces the tested prototype ROM/SYM/MAP exactly;
 the [production acceptance](pokedex_info_return_records_preflight.md#production-integration)
 records the identities, 373-species playback pass, 96 focused B-returns,
 250 cancellation cases, full 7,460-case rapid-input sweep and resource bill.
-The only stress failure remains the independently logged `DEX-INFO-04`
-Rhyperior Description badge loss. No new game-side instrumentation was added.
+That October 3 run's only stress failure was the independently logged
+`DEX-INFO-04` Rhyperior Description badge loss. No new game-side instrumentation
+was added. Current October 14 reconciliation no longer reproduces that badge
+loss in 102 focused cancellation cases; the separate `DEX-INFO-03` tab latency
+does reproduce. See [current disposition](pokedex_backlog_reconciliation.md).

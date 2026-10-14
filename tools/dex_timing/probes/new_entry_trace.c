@@ -23,7 +23,7 @@ static bool host_miss_latched;
 static unsigned waits, second_wait_display;
 /* HOST-ONLY presentation audit: check every displayed old/new text rectangle,
  * not just a snapshot scheduled relative to the return of the page routine. */
-static uint8_t description_old[91], description_new[91];
+static uint8_t description_old[DESCRIPTION_CELLS], description_new[DESCRIPTION_CELLS];
 static bool description_started, description_ready;
 static bool compact, planned;
 /* HOST-ONLY instrumentation: optional bounded instruction trace, in T-cycles. */
@@ -139,12 +139,12 @@ static unsigned ui_mismatches(void)
 
 static unsigned description_cell(unsigned i)
 {
-    return i==90 ? 9*20+2 : (10+i/18)*20+2+i%18;
+    return i==91 ? 8*20+2 : i==90 ? 9*20+2 : (10+i/18)*20+2+i%18;
 }
 
 static bool description_map_matches(const uint8_t *expected)
 {
-    for (unsigned i=0;i<91;i++) {
+    for (unsigned i=0;i<DESCRIPTION_CELLS;i++) {
         unsigned cell=description_cell(i), x=cell%20, y=cell/20;
         if (gb.vram[0x1800+y*32+x]!=expected[i]) return false;
     }
@@ -153,7 +153,7 @@ static bool description_map_matches(const uint8_t *expected)
 
 static bool description_pixels_match(const uint8_t *expected)
 {
-    for (unsigned i=0;i<91;i++) {
+    for (unsigned i=0;i<DESCRIPTION_CELLS;i++) {
         unsigned cell=description_cell(i), x=cell%20, y=cell/20;
         unsigned attr=gb.vram[0x3800+y*32+x], tile=expected[i];
         unsigned address=((byte(0xff40)&16)?tile*16:0x1000+(int8_t)tile*16)+((attr&8)?0x2000:0);
@@ -174,6 +174,26 @@ static void snapshot(const char *suffix)
     printf("{\"event\":\"ui_snapshot\",\"name\":\"%s\",\"display\":%u,"
            "\"mismatches\":%u,\"page_backing\":%u,\"page_vram\":%u,\"status\":%u}\n",
            suffix,frame_number,mismatches,byte(S_wTilemap+9*20+2),gb.vram[0x1800+9*32+2],byte(S_wPokedexStatus));
+#if DESCRIPTION_CELLS == 92
+    if (strcmp(suffix, "returned")) {
+        printf("{\"event\":\"visual_snapshot\",\"name\":\"%s\",\"page\":%u,\"types\":[%u,%u],\"map\":\"",
+               suffix, byte(S_wPokedexStatus), ram(B_wBaseType1,S_wBaseType1), ram(B_wBaseType2,S_wBaseType2));
+        for (unsigned y=0;y<18;y++) for (unsigned x=0;x<21;x++) printf("%02x",gb.vram[0x1800+y*32+x]);
+        printf("\",\"attrs\":\"");
+        for (unsigned y=0;y<18;y++) for (unsigned x=0;x<21;x++) printf("%02x",gb.vram[0x3800+y*32+x]);
+        printf("\",\"oam\":\"");
+        for (unsigned i=0;i<32;i++) printf("%02x",gb.oam[i]);
+        printf("\",\"palettes\":\"");
+        for (unsigned i=0;i<64;i++) printf("%02x",gb.background_palettes_data[i]);
+        printf("\",\"obj_palettes\":\"");
+        for (unsigned i=0;i<64;i++) printf("%02x",gb.object_palettes_data[i]);
+        printf("\",\"type_gfx\":\"");
+        for (unsigned i=0;i<128;i++) printf("%02x",gb.vram[0x2280+i]);
+        printf("\",\"footprint_gfx\":\"");
+        for (unsigned i=0;i<64;i++) printf("%02x",gb.vram[0x1620+i]);
+        printf("\"}\n");
+    }
+#endif
     if (!screen_prefix) return;
     char path[2048];snprintf(path,sizeof(path),"%s-%s.ppm",screen_prefix,suffix);
     FILE *file=fopen(path,"wb");if (!file) exit(12);
@@ -326,14 +346,14 @@ static void observe(GB_gameboy_t *g, uint16_t pc, uint8_t opcode)
             timer_phase_armed=true;
         if (events[i].kind==E_DESCRIPTION && byte(S_wPokedexStatus)==1) {
             description_started=true;
-            for (unsigned j=0;j<91;j++) {
+            for (unsigned j=0;j<DESCRIPTION_CELLS;j++) {
                 unsigned cell=description_cell(j);
                 description_old[j]=gb.vram[0x1800+(cell/20)*32+cell%20];
             }
         }
         if (events[i].kind==E_DESCRIPTION_READY) {
             description_ready=true;
-            for (unsigned j=0;j<91;j++) description_new[j]=byte(S_wTilemap+description_cell(j));
+            for (unsigned j=0;j<DESCRIPTION_CELLS;j++) description_new[j]=byte(S_wTilemap+description_cell(j));
         }
         if (events[i].kind==E_FINISH) { finished=true;finish_ticks=t; }
         event(events[i].name,t,pc);

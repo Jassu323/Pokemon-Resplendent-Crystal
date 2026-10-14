@@ -1,5 +1,10 @@
 # Pokedex Info Return Committed Record Preflight
 
+Current disposition, 2026-10-14: `DEX-INFO-01` remains complete. The historical
+`DEX-INFO-04` badge exception quoted below no longer reproduces in 102 current
+focused cancellation cases using the shared buffered indicator. See
+[Backlog Reconciliation](pokedex_backlog_reconciliation.md).
+
 2026-10-03. Accepted successor to the [VRAM readback preflight](pokedex_info_return_preflight.md)
 for `DEX-INFO-01`, now integrated into production at the user's request. Two atlas-specific page
 records eliminate VRAM readback while preserving the actually displayed Info

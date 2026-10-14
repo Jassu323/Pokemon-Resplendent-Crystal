@@ -1,0 +1,86 @@
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -3357,24 +3357,24 @@
+ _NewPokedexEntry:
+ 	xor a
+ 	ldh [hBGMapMode], a
+-	farcall DrawDexEntryScreenRightEdge
++	ld [wPokedexDescriptionPage], a
+ 	call Pokedex_ResetBGMapMode
+ 	call DisableLCD
+ 	call LoadStandardFont
+ 	call LoadFontsExtra
+ 	call Pokedex_LoadGFX
++	farcall Pokedex_CopyDescriptionRightEdge
+ 	call Pokedex_LoadAnyFootprint
+ 	ld a, [wTempSpecies]
+ 	ld [wCurPartySpecies], a
+-	call Pokedex_DrawDexEntryScreenBG
++	farcall Pokedex_DrawDescriptionScreenBG
+ 	call Pokedex_DrawFootprint
+ 	hlcoord 0, 17
+-	ld [hl], $3b
+-	inc hl
+-	ld bc, 19
+-	ld a, ' '
++	ld bc, SCREEN_WIDTH
++	ld a, $31
+ 	call ByteFill
++	ld [vBGMap0 + 17 * TILEMAP_WIDTH + SCREEN_WIDTH], a
+-	farcall DisplayDexEntry
++	farcall Pokedex_DisplayDescriptionEntry
+ 	call EnableLCD
+ 	call WaitBGMap
+ 	call GetBaseData
+@@ -3386,7 +3388,6 @@
+ 	predef LoadMonAnimation
+ 	ld a, 1
+ 	ld [wFrameCounter], a
+-	ld a, SCGB_POKEDEX
+-	call Pokedex_GetSGBLayout
++	farcall NewDexEntry_VisualLayout
+ 	call DelayFrame
+ 	ret
+--- a/engine/pokedex/new_dex_entry_animation.asm
++++ b/engine/pokedex/new_dex_entry_animation.asm
+@@ -559,8 +559,10 @@
+ 	push hl
+ 	lb bc, 5, SCREEN_WIDTH - 2
+ 	hlcoord 2, 10
+ 	call ClearBox
+-	ld a, $58 ; page 2
++	ld a, POKEDEX_DESCRIPTION_GFX_TILE + 8
++	ld [wTilemap + 8 * SCREEN_WIDTH + 2], a
++	ld a, POKEDEX_DESCRIPTION_GFX_TILE + 9
+ 	ld [wTilemap + 9 * SCREEN_WIDTH + 2], a
+ 	pop de
+ 	pop bc
+@@ -650,5 +652,7 @@
+ 	ld a, [wTilemap + 9 * SCREEN_WIDTH + 2]
+ 	ld [vBGMap0 + 9 * TILEMAP_WIDTH + 2], a
++	ld a, [wTilemap + 8 * SCREEN_WIDTH + 2]
++	ld [vBGMap0 + 8 * TILEMAP_WIDTH + 2], a
+ 	ld hl, wNewDexEntryAnimFlags
+ 	res NEW_DEX_ANIM_TEXT_F, [hl]
+ NewDexEntry_DescriptionPublished:: ; instrumentation: last store and ACK complete
+@@ -659,3 +663,5 @@
+ NewDexEntry_TryPublishDescription.none:
+ 	xor a
+ 	ret
++
++INCLUDE "engine/pokedex/new_entry_visual.asm"
+--- a/engine/pokedex/new_pokedex_entry.asm
++++ b/engine/pokedex/new_pokedex_entry.asm
+@@ -79,7 +79,12 @@
+ .frame_done
+ 	push hl
+ 	hlcoord 18, 17
+ 	call BlinkCursor
++	ld a, [hl]
++	cp '▼'
++	jr z, .cursor_ready
++	ld [hl], $31
++.cursor_ready
+ 	pop hl
+ 	call JoyTextDelay
+ 	ldh a, [hJoyLast]

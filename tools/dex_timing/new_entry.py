@@ -25,7 +25,8 @@ FIELDS = '''wPokeAnimSceneIndex wPokeAnimIdleFlag wPokeAnimCommand wPokeAnimPara
     wPokemonIndexTableEntries wCurItem wTempEnemyMonSpecies wEnemyMonSpecies
     wPartyCount wPokedexSeen wPokedexCaught wPartySpecies sBoxCount sBoxSpecies
     hMapAnims hSCX hOAMUpdate wCurSpecies wCurPartySpecies wTempSpecies
-    wNamedObjectIndex wEnemyMonDVs wUnownLetter hJoyDown hJoyLast hJoypadDown'''.split()
+    wNamedObjectIndex wEnemyMonDVs wUnownLetter hJoyDown hJoyLast hJoypadDown
+    wBaseType1 wBaseType2'''.split()
 
 
 def audio_empty(repo):
@@ -41,6 +42,8 @@ def audio_empty(repo):
 def compile_core(repo, sameboy, output, kind, start=(3, 0x6a8c), expected_speed=0):
     symbols = {**repo.symbols, '@audio_empty': audio_empty(repo)}
     lines = [f'#define EXPECTED_CPU_SPEED {int(expected_speed)}']
+    modern_badge = 'NewDexEntry_VisualLayout' in repo.symbols
+    lines += [f'#define DESCRIPTION_CELLS {92 if modern_badge else 91}']
     lines += [f'#define S_{name} 0x{symbols[name][1]:04x}' for name in FIELDS]
     lines += [f'#define B_{name} {symbols[name][0]}' for name in FIELDS]
     external_misses = 'NewDexEntryAnimationMiss' not in symbols
@@ -408,6 +411,11 @@ def audit_description_publication(repo):
     """Bound the disjoint text copy; never count a rejected window as work."""
     cells = [0x9800 + y * 32 + x for y in range(10, 15) for x in range(2, 20)] + [0x9922]
     values = list(range(1, 91)) + [0x58]
+    modern_badge = 'NewDexEntry_VisualLayout' in repo.symbols
+    if modern_badge:
+        cells.append(0x9902)
+        values[-1] = 0x7a
+        values.append(0x79)
     last_write = 0
     for line in range(154):
         cpu = CounterCPU(repo.rom, repo.symbols)
@@ -417,7 +425,9 @@ def audit_description_publication(repo):
         base = repo.symbols['wTilemap'][1]
         for y in range(10, 15):
             cpu.ram[base + y * 20 + 2:base + (y + 1) * 20] = bytes(values[(y-10)*18:(y-9)*18])
-        cpu.ram[base + 9 * 20 + 2] = 0x58
+        cpu.ram[base + 9 * 20 + 2] = values[90]
+        if modern_badge:
+            cpu.ram[base + 8 * 20 + 2] = values[91]
         cpu.record_writes = True
         cpu.run('NewDexEntry_TryPublishDescription')
         stores = [(t, at, value) for t, at, value in cpu.writes if 0x8000 <= at < 0xa000]

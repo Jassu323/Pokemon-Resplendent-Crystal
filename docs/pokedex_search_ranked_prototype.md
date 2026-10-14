@@ -1,6 +1,9 @@
 # Pokedex Ranked Search Prototype
 
-2026-10-06. Private prototype, **not promoted to production**. Search now ranks
+Historical October 6 prototype, accepted and integrated on 2026-10-11 with
+[Moves/Search](pokedex_moves_search_prototype.md#production-integration).
+The private files and protected-production statements below are trial evidence.
+Search ranks
 both-type matches before Type1-only and Type2-only matches, uses existing compact
 OBJ type badges, retains Slowpoke's animation, and includes the qualified Search
 page repairs. All 5,069 native qualification cases and 12 host tests pass.

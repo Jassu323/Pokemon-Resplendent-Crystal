@@ -81,6 +81,11 @@ NewPokedexEntry:
 	push hl
 	hlcoord 18, 17
 	call BlinkCursor
+	ld a, [hl]
+	cp '▼'
+	jr z, .cursor_ready
+	ld [hl], $31
+.cursor_ready
 	pop hl
 	call JoyTextDelay
 	ldh a, [hJoyLast]

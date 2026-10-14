@@ -1,8 +1,10 @@
 # Pokedex Search Investigation
 
-2026-10-06. Investigation and isolated repair trial, **not promoted**. The
-accepted Modern/Legacy Options prototype and production source/output are
-unchanged. Compact Search type icons are scoped below, not implemented.
+Historical October 6 investigation and isolated repair trial. Its accepted
+repairs and subsequent compact icons/ranked Results renderer were integrated
+on 2026-10-11 with [Moves/Search](pokedex_moves_search_prototype.md#production-integration).
+The unimplemented estimates and protected-production statements below describe
+the original trial; official National labels remain separately deferred.
 
 The subsequent [ranked Search prototype](pokedex_search_ranked_prototype.md)
 implements the user's expanded ranking and compact icons, retains these visual

@@ -190,10 +190,16 @@ int main(int argc, char **argv)
             gb.af = old_af; gb.bc = old_bc; gb.de = old_de; gb.hl = old_hl;
             if (!returned) return 3;
         } else if (sscanf(line, "read %u %u %u", &bank, &pc, &count) == 3 &&
-                   bank < 8 && pc >= 0xc000 && pc + count <= 0xe000) {
+                   bank < 8 && pc >= 0xa000 && pc + count <= (pc < 0xc000 ? 0xc000 : 0xe000)) {
             printf("{\"event\":\"ok\",\"bytes\":");
-            hex(gb.ram + bank * 4096 + (pc & 4095), count);
+            hex(pc < 0xc000 ? gb.mbc_ram + bank * 8192 + pc - 0xa000
+                           : gb.ram + bank * 4096 + (pc & 4095), count);
             puts("}");
+        } else if (sscanf(line, "read %u %u %u", &bank, &pc, &count) == 3 &&
+                   pc >= 0xff00 && pc + count <= 0x10000) {
+            printf("{\"event\":\"ok\",\"bytes\":\"");
+            for (unsigned i = 0; i < count; i++) printf("%02x", GB_read_memory(&gb, pc + i));
+            puts("\"}");
         } else if (sscanf(line, "romfixture %u %3499s", &pc, path) == 2 && !(strlen(path) & 1)) {
             unsigned length = (unsigned)strlen(path) / 2;
             if (pc + length > gb.rom_size) return 4;
@@ -268,6 +274,19 @@ int main(int argc, char **argv)
             if (trace) fclose(trace);
             trace = !strcmp(path, "off") ? NULL : fopen(path, "w");
             printf("{\"event\":\"ok\",\"error\":%d}\n", !trace && strcmp(path, "off") != 0);
+        } else if (sscanf(line, "save %3499s", path) == 1) {
+            printf("{\"event\":\"ok\",\"error\":%d}\n", GB_save_state(&gb, path));
+        } else if (sscanf(line, "image %3499s", path) == 1) {
+            FILE *image = fopen(path, "wb");
+            if (!image) return 4;
+            fprintf(image, "P6\n160 144\n255\n");
+            for (unsigned i = 0; i < 160 * 144; i++) {
+                fputc(pixels[i] >> 16 & 255, image);
+                fputc(pixels[i] >> 8 & 255, image);
+                fputc(pixels[i] & 255, image);
+            }
+            fclose(image);
+            puts("{\"event\":\"ok\"}");
         } else if (sscanf(line, "load %3499s", path) == 1) {
             pending = false;
             printf("{\"event\":\"ok\",\"error\":%d}\n", GB_load_state(&gb, path));

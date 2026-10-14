@@ -284,11 +284,12 @@ gfx/pokedex/pokedex.2bpp: tools/gfx += --trim-whitespace
 gfx/pokedex/pokedex_core.2bpp: gfx/pokedex/pokedex.2bpp
 	dd if=$< of=$@ bs=16 count=64
 
-gfx/pokedex/pokedex_sgb.2bpp: tools/gfx += --trim-whitespace
 gfx/pokedex/pokedex_page_numbers.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/pokedex_page_numbers_double_digits.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/question_mark.2bpp: RGBGFXFLAGS += --columns
-gfx/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
+gfx/archived/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
+gfx/pokedex/slowpoke_dex.2bpp: gfx/archived/pokedex/slowpoke.2bpp
+	dd if=$< of=$@ bs=16 count=48
 
 gfx/pokegear/pokegear.2bpp: RGBGFXFLAGS += --trim-end 2
 gfx/pokegear/pokegear_sprites.2bpp: tools/gfx += --trim-whitespace

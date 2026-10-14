@@ -1,6 +1,9 @@
 # Pokedex Search Results Renderer Prototype
 
-2026-10-06. Private prototype, **not promoted to production**. This extends the
+Historical October 6 prototype, accepted and integrated on 2026-10-11 with
+[Moves/Search](pokedex_moves_search_prototype.md#production-integration).
+The private files and protected-production statements below are trial evidence.
+This extends the
 ranked Search prototype with colored, base-only Results portraits, the resident
 small cursor and colored caught ball, compact Results type badges, an orange gap
 below the portrait, and an alphabetical Search selector. The latest revision

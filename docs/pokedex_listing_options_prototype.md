@@ -1,10 +1,11 @@
 # Listing Options And Sort Prototype
 
-2026-10-06. Private Modern/Legacy prototype for the Listing START popup,
-precomputed sort orders and the existing Search entry. Not promoted to
-production. The current review build and qualification are in the first section;
-older sections preserve the earlier investigations and measurements.
-Production ROM/symbol/map hashes and the installed SameBoy save remain unchanged.
+Historical October 6 prototype measurements for Modern/Legacy Listing START
+popups, generated sort orders and Search entry. These accepted changes, including
+the changed-sort cache correction, were integrated on 2026-10-11 with
+[Moves/Search](pokedex_moves_search_prototype.md#production-integration).
+The private builds, protected-production statements and pending-promotion
+wording below describe the original trials, not current outstanding work.
 
 ## 2026-10-06: Modern Sort Whole-Popup Three-Pixel Shift
 

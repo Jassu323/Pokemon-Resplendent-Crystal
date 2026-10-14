@@ -1,9 +1,44 @@
 # Full Regression Suite
 
-Maintained reference: 2026-10-13. This documents the campaigns actually run for
+Maintained reference: 2026-10-14. This documents the campaigns actually run for
 the Dex branch, including the isolated Type Matchups prototypes. It is a
 reusable test specification and local execution runbook, not a claim that
 every possible game state has been exhaustively tested.
+
+Battle Tower coverage is a separate, independently runnable addendum:
+[Battle Tower Regression Suite](battle_tower_regression_suite.md). Its
+[findings](battle_tower_testing_findings.md) include existing prize-pocket
+failures. Do not fold those into a claim that the Tower is clean merely because
+the standard Dex campaign passes.
+
+The October 14 cleanup run is summarized in
+[Cleanup Implementation](pokedex_cleanup_implementation.md). It removes the
+test-only `MoveDiscovery_CheckIndex` API; current exhaustive persistence checks
+use retained `MoveDiscovery_MarkIndex`, `MoveDiscovery_BitAddress`, and the
+production Moves UI seen-query path instead. No index/bank/register coverage
+is skipped. Slowpoke checks compare the linked 48-tile prefix with the exact
+archived original in `gfx/archived/pokedex/`; do not expect retired trailing
+cursor tiles to remain in VRAM. Shared-arrow results fixtures must explicitly
+seed seen moves and assert a nonzero result count. Type fixtures must explicitly
+unlock Unown when testing that return menu. These are declared fixture changes,
+not altered game completion flags.
+
+The subsequent [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
+documents focused current-link replays for badge cancellation, tab latency,
+Listing return frames, caught markers and rejected palette writes. That audit
+does not replace this full suite or turn latency findings into correctness passes.
+
+The nine-byte [Info-to-Description correction](pokedex_info_description_latency_investigation.md)
+also needs an active internal-paging test. Settled tab navigation alone does
+not expose its former starvation. Preserve the atomic portrait pending-flag
+contract documented beside both dispatcher and publisher; source checks are
+additional controls, not substitutes for native timing/visual tests.
+Its fresh October 14 full campaign is retained at
+`build/dex-description-fix-integration-20261014/`, including all standard phases,
+all-move renderer/native comparisons, six-model display/return checks and the
+supplementary Selected/New Entry/lifecycle/audio qualifications. The exact
+production ROM hash, costs, results and preserved harness corrections are in
+the linked investigation's Production Integration section.
 
 For the final Type prototype results and ROM hashes, see
 [Type Mode 7 Comparison](pokedex_type_mode7_comparison.md). For the critical
@@ -206,6 +241,42 @@ phase command definitions or run phases serially; do not silently reduce case
 coverage. Child processes can keep running after a parent is interrupted.
 
 ## 4. Pokemon Dex Coverage
+
+### Active Description Return Publication
+
+`tools.dex_timing.description_latency_integration` freezes the actual checkout
+(including accepted uncommitted work), requires an exact baseline ROM rebuild,
+and verifies the production link's nine-byte ROMX increase with no added/moved
+RAM. Its standard/extra phases reuse the full campaign described above, rather
+than treating the focused improvement matrix as full acceptance.
+
+After `selected` has created fresh matching Modern/Legacy checkpoints, run
+`focused`: 128 four-age/four-phase Info returns, 128 Selected Moves returns,
+128 uncaught returns, all 373 incoming species at ages 0/8 in both styles
+(1,492 scenarios), and 256 Info/Moves return cases on each CGB 0/A/B/C/D/E.
+Every model boots and builds its own checkpoints. Check actual complete lower
+pixels, badge/type/footprint and ownership, exact authored portrait publication,
+natural cry completion, and no upload/audio misses. Compare timings to the
+frozen pre-fix matrix, in milliseconds and physical display frames.
+`audit-latency` requires complete visible publication within eight display
+frames (133.94 ms) for the 1,492 caught active-return cases, with margin above
+the qualified maximum of 5.62 frames. The pre-fix matrix must fail this control.
+This is a scoped regression ceiling, not a promised budget for every Dex action.
+
+```sh
+PYTHONPATH=tools:. python3 -m unittest tools.test_dex_description_latency tools.test_dex_backlog_revalidation -v
+python3 -m tools.dex_timing.description_latency_integration selected --base build/description-review-new
+python3 -m tools.dex_timing.description_latency_integration focused --base build/description-review-new --jobs 6
+python3 -m tools.dex_timing.description_latency_integration audit-latency --base build/description-review-new
+```
+
+The integration runner's `freeze`/`prepare` actions are for this specific
+promotion and require its retained cleanup assets and private nine-byte control.
+For later source changes, adapt the baseline/candidate preparation and expected
+resource delta explicitly; do not silently reuse October 14 checkpoints or
+relax hash checks. The `models` action can resume a completed per-model native
+report after a reporting-only interruption; its existing immutable inputs,
+case count and success guards are verified first. Preserve the failed attempt.
 
 Primary tools: `moves_search_dex_regression`, `listing_options`,
 `search_qualification`, `mode_transitions`, `unown_regression`,
@@ -433,8 +504,13 @@ A blinking cursor can delay matching the final hash by multiple frames even
 when the native reveal time is unchanged. Investigate the raw trace before
 calling that an algorithm slowdown. Conversely, do not discard a real
 Area-to-Info regeneration delay because a population median is small.
-Retain the known synthetic LY-64 host exception if it also fails unchanged
-production; report both results and any new failures separately.
+Historical campaigns through October 13 retain the synthetic LY-64 host failure
+as recorded evidence. On October 14, the stale READY-handoff assertion was
+corrected to the current 83/84 admission boundary, expanded to all 154 scanlines,
+and supplemented with portrait/frame/sample-cache guard checks. The current
+87-test host group passes on production and the New Entry visual prototype.
+Do not carry the old LY-64 assertion forward as an allowed failure in new runs;
+investigate future failures against the current timing contract.
 
 Entry timing uses sixteen representative species, four hover durations
 (0, 4, 30, 120 frames), four physical phases, both styles, and both links:

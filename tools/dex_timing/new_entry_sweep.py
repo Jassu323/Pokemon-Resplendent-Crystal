@@ -173,6 +173,20 @@ def run_case(job):
                              env={**os.environ, 'REGISTRATION_COMPACT': '1'})
     trace = [json.loads(line) for line in process.stdout.splitlines()]
     result = audit(asset, trace, case)
+    if config.get('registration_visual'):
+        from .new_entry_visual import audit_visual_snapshot
+        repo = Repository(Path(config['root']), Path(config['rom']), Path(config['sym']))
+        snapshots = [e for e in trace if e['event'] == 'visual_snapshot']
+        result['visual_snapshots'] = len(snapshots)
+        for ui in snapshots:
+            issues = audit_visual_snapshot(repo, asset.name, ui)
+            if issues:
+                result['errors'].append(dict(reason='registration visual mismatch',
+                                             snapshot=ui['name'], issues=issues))
+        if not snapshots:
+            result['errors'].append(dict(reason='registration visual snapshots missing'))
+        if result['errors']:
+            result['status'] = 'fail'
     if process.returncode:
         result['status'] = 'fail'
         result['errors'].append(dict(reason='runner failed or timed out', code=process.returncode,

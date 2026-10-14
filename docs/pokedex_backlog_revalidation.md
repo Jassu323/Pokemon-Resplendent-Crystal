@@ -1,5 +1,11 @@
 # Pokedex Return and Exit Revalidation
 
+Current disposition, 2026-10-14: see
+[Backlog Reconciliation](pokedex_backlog_reconciliation.md). The repaired
+Stage exit is integrated and qualified. Fresh strict return/marker/navigation
+replays do not reproduce `DEX-RETURN-02/04` or `DEX-GRID-02/04`. The dated
+measurements and confirmed October 2 exit defect below remain historical.
+
 Investigation completed 2026-10-02 against the committed Description-paging
 fix. This is a diagnostic report, not an integrated game change. Three older
 Listing reports did not reproduce in the current link. `DEX-EXIT-01` did:

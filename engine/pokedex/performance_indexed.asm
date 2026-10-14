@@ -31,8 +31,8 @@ PokedexPerf_FastNests:
 	pop af
 	and a
 	ret nz
-	farcall FindNest.RoamMon1
-	farcall FindNest.RoamMon2
+	farcall PokedexArea_RoamerNests.RoamMon1
+	farcall PokedexArea_RoamerNests.RoamMon2
 	ret
 
 INCLUDE "build/dex-area-assets/tables.asm"

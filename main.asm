@@ -332,7 +332,6 @@ INCLUDE "engine/pokedex/pokedex_ancestors.asm"
 INCLUDE "engine/pokedex/performance_queue.asm"
 INCLUDE "engine/pokedex/performance_admission.asm"
 INCLUDE "engine/pokedex/performance_retained.asm"
-INCLUDE "engine/pokedex/performance_idle.asm"
 INCLUDE "build/dex-info-assets/tables.asm"
 
 SECTION "Pokedex Info Glyphs", ROMX

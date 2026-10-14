@@ -2,14 +2,8 @@ GiveOddEgg:
 	farcall _GiveOddEgg
 	ret
 
+; Retired mobile password screen. See docs/battle_tower_regression_suite.md.
 Function11765d:
-	ldh a, [hInMenu]
-	push af
-	ld a, $1
-	ldh [hInMenu], a
-	call Function11766b
-	pop af
-	ldh [hInMenu], a
 	ret
 
 Function11766b:

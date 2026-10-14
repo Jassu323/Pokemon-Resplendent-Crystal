@@ -66,6 +66,8 @@ def core(repo, output, extra_points=None, extra_flags=()):
     header = (output / 'performance-symbols.h').resolve()
     lines = ['static const struct { unsigned bank, pc; const char *name; bool span; } perf_points[] = {']
     for name, (label, span) in dict(POINTS, **(extra_points or {})).items():
+        if label == 'FindNest' and 'PokedexArea_RoamerNests' in repo.symbols:
+            label = 'PokedexArea_RoamerNests'
         if label in repo.symbols:
             bank, pc = repo.symbols[label]
             lines.append(f'{{{bank}, {pc}, "{name}", {str(span).lower()}}},')

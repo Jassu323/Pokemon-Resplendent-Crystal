@@ -1,19 +1,3 @@
-LoadSGBPokedexGFX:
-	ld hl, SGBPokedexGFX_LZ
-	ld de, vTiles2 tile $31
-	call Decompress
-	ret
-
-LoadSGBPokedexGFX2:
-	ld hl, SGBPokedexGFX_LZ
-	ld de, vTiles2 tile $31
-	lb bc, BANK(SGBPokedexGFX_LZ), 58
-	call DecompressRequest2bpp
-	ret
-
-SGBPokedexGFX_LZ:
-INCBIN "gfx/pokedex/pokedex_sgb.2bpp.lz"
-
 ASSERT POKEDEX_GRID_CENTER_GFX + 8 tiles == POKEDEX_GRID_SIDE_FRAME0_GFX
 ASSERT POKEDEX_GRID_SIDE_FRAME0_GFX + 8 tiles == POKEDEX_GRID_SIDE_FRAME1_GFX
 ASSERT POKEDEX_GRID_SIDE_FRAME1_GFX + 8 tiles <= wPokedexWRAM0ScratchEnd
@@ -365,62 +349,6 @@ Pokedex_CacheGridIconPalette:
 	add hl, de
 	ld [hl], c
 	ret
-
-Pokedex_PrepareGridCacheRefill:
-; The row entering the visible viewport is already resident. Stage the new
-; look-ahead/look-behind row into the physical slot that just moved offscreen.
-	ld a, [wPokedexGridScrollDirection]
-	cp POKEDEX_GRID_SCROLL_DOWN
-	jr z, .scrolling_down
-	cp POKEDEX_GRID_SCROLL_WRAP_DOWN
-	jr z, .scrolling_down
-	ld a, [wPokedexGridTopPhysicalRow]
-	and a
-	jr nz, .got_up_physical
-	ld a, POKEDEX_GRID_CACHE_ROWS
-.got_up_physical
-	dec a
-	ld b, a
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld a, d
-	and a
-	jr nz, .subtract_up_offset
-	ld a, e
-	cp POKEDEX_GRID_WIDTH
-	jr nc, .subtract_up_offset
-	ld de, -1
-	jr .prepare
-.subtract_up_offset
-	ld a, e
-	sub POKEDEX_GRID_WIDTH
-	ld e, a
-	jr nc, .prepare
-	dec d
-	jr .prepare
-
-.scrolling_down
-	ld a, [wPokedexGridTopPhysicalRow]
-	add POKEDEX_GRID_HEIGHT
-	cp POKEDEX_GRID_CACHE_ROWS
-	jr c, .got_down_physical
-	sub POKEDEX_GRID_CACHE_ROWS
-.got_down_physical
-	ld b, a
-	ld hl, wDexListingScrollOffset
-	ld e, [hl]
-	inc hl
-	ld d, [hl]
-	ld a, e
-	add POKEDEX_GRID_SIZE
-	ld e, a
-	jr nc, .prepare
-	inc d
-.prepare
-	ld a, b
-	; fallthrough
 
 Pokedex_PrepareGridCacheRow:
 ; a = physical cache row, de = absolute Listing offset or $ffff for empty.
@@ -801,39 +729,6 @@ Pokedex_UploadWrappedBottomRow:
 	cp 56
 	jr c, .wait_row_end
 	jp Pokedex_UploadPendingGridCacheRow
-
-Pokedex_FinalizeWrappedGridCache:
-	ret
-PokedexPerf_LegacyFinalizeWrappedGridCache:
-; Refill the one real neighbor row and invalidate the opposite endpoint row.
-	call Pokedex_PrepareGridCacheRefill
-	call Pokedex_UploadPendingGridCacheRow
-	ld a, [wPokedexGridScrollDirection]
-	cp POKEDEX_GRID_SCROLL_WRAP_DOWN
-	jr z, .invalidate_previous
-	ld a, [wPokedexGridTopPhysicalRow]
-	add POKEDEX_GRID_HEIGHT
-	cp POKEDEX_GRID_CACHE_ROWS
-	jr c, .invalidate
-	sub POKEDEX_GRID_CACHE_ROWS
-	jr .invalidate
-.invalidate_previous
-	ld a, [wPokedexGridTopPhysicalRow]
-	and a
-	jr nz, .decrement
-	ld a, POKEDEX_GRID_CACHE_ROWS
-.decrement
-	dec a
-.invalidate
-	add a
-	ld e, a
-	ld d, 0
-	ld hl, wPokedexGridCacheRowOffsets
-	add hl, de
-	ld a, -1
-	ld [hli], a
-	ld [hl], a
-	ret
 
 LoadQuestionMarkPic:
 	ld hl, .QuestionMarkLZ
@@ -1352,7 +1247,18 @@ Pokedex_VBlankDispatch::
 	ldh [rSVBK], a
 	ld a, c
 	and a
-	call z, Pokedex_VBlankDescriptionText
+	jr z, .description_text
+; Carry also reserves future portraits. MAP_PENDING remains set on deferral,
+; but clears after a complete atomic transfer. Only the former may attempt
+; a full lower restore here, subject to its existing LY/DMA/upload guards.
+; Partial transfers must revisit this contract; see
+; docs/pokedex_info_description_latency_investigation.md#atomic-portrait-contract.
+	ld a, [wPokedexAnimFlags]
+	bit POKEDEX_ANIM_MAP_PENDING_F, a
+	jr z, .description_done
+.description_text
+	call Pokedex_VBlankDescriptionText
+.description_done
 	call Pokedex_VBlankInfo
 	scf
 	ret
@@ -1659,6 +1565,10 @@ Pokedex_VBlankDescriptionText:
 Pokedex_VBlankAnimationFrontpicMap:
 ; Publish all seven rows containing the Selected frontpic from the persistent
 ; owner buffers. Both VRAM banks complete in one VBlank before BG0 is scanned.
+; CONTRACT: deferral transfers no portrait rows and leaves MAP_PENDING set;
+; completion clears it only after both banks. The dispatcher relies on this
+; distinction for full Description restoration. Revisit before partial writes:
+; docs/pokedex_info_description_latency_investigation.md#atomic-portrait-contract.
 	ld hl, wPokedexAnimFlags
 	bit POKEDEX_ANIM_MAP_PENDING_F, [hl]
 	jr nz, .pending
@@ -2642,38 +2552,6 @@ DrawPokedexSearchResultsWindow:
 	next ""
 ; (### FOUN)
 	next "d!@"
-
-DrawDexEntryScreenRightEdge:
-	ldh a, [hBGMapAddress]
-	ld l, a
-	ldh a, [hBGMapAddress + 1]
-	ld h, a
-	push hl
-	inc hl
-	ld a, l
-	ldh [hBGMapAddress], a
-	ld a, h
-	ldh [hBGMapAddress + 1], a
-	hlcoord 19, 0
-	ld [hl], $66
-	hlcoord 19, 1
-	ld a, $67
-	ld b, 15
-	call Pokedex_FillColumn2
-	ld [hl], $68
-	hlcoord 19, 17
-	ld [hl], $3c
-	xor a
-	ld b, SCREEN_HEIGHT
-	hlcoord 19, 0, wAttrmap
-	call Pokedex_FillColumn2
-	call WaitBGMap2
-	pop hl
-	ld a, l
-	ldh [hBGMapAddress], a
-	ld a, h
-	ldh [hBGMapAddress + 1], a
-	ret
 
 Pokedex_FillColumn2:
 ; A local duplicate of Pokedex_FillColumn.

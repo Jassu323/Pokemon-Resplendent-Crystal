@@ -15,20 +15,6 @@ MoveDiscovery_MarkLiveID::
     ret
 
 ; DE points to four live move IDs. Preserve all registers and bank ownership.
-MoveDiscovery_MarkMoveList::
-    push af
-    push bc
-    push de
-    push hl
-    ld h, d
-    ld l, e
-    call MoveDiscovery_LiveMoves
-    pop hl
-    pop de
-    pop bc
-    pop af
-    ret
-
 MoveDiscovery_Learned::
     push af
     push bc

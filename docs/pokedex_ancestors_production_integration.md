@@ -1,7 +1,7 @@
 # Selected Info Ancestors: Production Integration
 
-Date: 2026-10-13. Status: integrated and automated qualification complete;
-awaiting the user's manual review. The final report is merge-ready with no new
+Date: 2026-10-13. Status: complete, integrated, qualified and manually accepted.
+The final report is merge-ready with no new
 issues relative to production, including explicitly retained baseline exceptions.
 No commit or push was made. Production retains its precomputed renderer.
 

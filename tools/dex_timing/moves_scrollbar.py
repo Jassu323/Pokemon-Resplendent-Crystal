@@ -236,7 +236,10 @@ def pixel_audit(output, repo):
     with Image.open(output / 'candidate/gfx/pokedex/pokedex_moves_scroll_bar_and_borders.png') as source:
         source = source.convert('RGB')
         art = [source.getpixel((x, y))[0] for y in range(24) for x in range(16)]
-    thumb = (output / 'candidate/gfx/pokedex/slowpoke.2bpp').read_bytes()[15 * 16:16 * 16]
+    original_sheet = output / 'candidate/gfx/pokedex/slowpoke.2bpp'
+    if not original_sheet.exists():
+        original_sheet = output / 'candidate/gfx/archived/pokedex/slowpoke.2bpp'
+    thumb = original_sheet.read_bytes()[15 * 16:16 * 16]
     visual = json.loads((output / 'scrollbar-visual/summary.json').read_text())
     checks = 0
     for record in visual['records']:

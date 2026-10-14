@@ -115,7 +115,6 @@ Pokedex_UpdateWrappedGrid:
 
 	; Rebuild the one useful neighbor row. The opposite endpoint row is marked
 	; invalid so later cache validation cannot mistake stale ownership for data.
-	farcall Pokedex_FinalizeWrappedGridCache
 	xor a
 	ld [wPokedexGridScrollDirection], a
 	ret
@@ -1415,35 +1414,6 @@ Pokedex_BuildAnimationUnderflowMap:
 	ld hl, wPokedexAnimFlags
 	set POKEDEX_ANIM_STAGE_READY_F, [hl]
 	ret
-
-Pokedex_RestoreBaseFrontpicMap:
-	farcall Pokedex_PlaceFrontpicTopLeftCorner
-	hlcoord 1, 1, wAttrmap
-	ld b, 7
-.attr_row
-	ld c, 7
-.attr_col
-	ld [hl], 1
-	inc hl
-	dec c
-	jr nz, .attr_col
-	ld de, SCREEN_WIDTH - 7
-	add hl, de
-	dec b
-	jr nz, .attr_row
-	farcall Pokedex_CommitCurrentFrontpicMap
-	ld a, -1
-	ld [wPokedexAnimDisplaySlot], a
-	ret
-
-Pokedex_StopDescriptionAnimation:
-	ldh a, [hCGB]
-	and a
-	jp z, Pokedex_CancelAnimationPrefetch
-	ld a, [wPokedexAnimDisplaySlot]
-	cp -1
-	call nz, Pokedex_RestoreBaseFrontpicMap
-	jp Pokedex_CancelAnimationPrefetch
 
 Pokedex_GetAnimationStageMap:
 	ld a, [wPokedexAnimStageFrameID]

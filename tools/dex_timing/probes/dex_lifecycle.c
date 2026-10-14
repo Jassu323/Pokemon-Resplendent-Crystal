@@ -1,5 +1,9 @@
 /* Read-only lifecycle observation. Never linked into the game cartridge. */
 static unsigned life_sfx_last = 255;
+#ifdef DEX_LIFECYCLE_APU_TRACE
+static uint8_t life_apu_last[0x17];
+static bool life_apu_initialized;
+#endif
 
 static unsigned life_sfx_mask(void)
 {
@@ -22,6 +26,17 @@ static void life_step(uint64_t now, unsigned bank, unsigned pc)
     }
 #endif
     unsigned mask = life_sfx_mask();
+#ifdef DEX_LIFECYCLE_APU_TRACE
+    for (unsigned i = 0; i < sizeof(life_apu_last); i++) {
+        uint8_t value = gb.io_registers[0x10 + i];
+        if (!life_apu_initialized || value != life_apu_last[i])
+            printf("{\"event\":\"life_apu\",\"t\":%" PRIu64
+                   ",\"address\":%u,\"value\":%u,\"mask\":%u}\n",
+                   now, 0xff10 + i, value, mask);
+        life_apu_last[i] = value;
+    }
+    life_apu_initialized = true;
+#endif
     if (mask == life_sfx_last) return;
     printf("{\"event\":\"life_sfx\",\"t\":%" PRIu64 ",\"mask\":%u,\"lcdc\":%u,"
            "\"pc\":%u,\"bank\":%u}\n", now, mask, gb.io_registers[0x40], gb.pc, gb.mbc_rom_bank);

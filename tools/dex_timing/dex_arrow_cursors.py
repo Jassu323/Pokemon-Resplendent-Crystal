@@ -11,7 +11,7 @@ from .type_matchups import BOOT, reach, press, capture, memory, enter_types
 from .legacy_listing import private_battery
 from .listing_options import modal_audit
 from .moves_mode import enter, open_sort
-from .moves_search import open_search, row, search, finish_text, keyboard_audit
+from .moves_search import WORK, open_search, row, search, finish_text, keyboard_audit
 from .description_ui import settle
 
 
@@ -48,6 +48,8 @@ def run(output):
     executable = performance_core(repo,target,{})
     seed = target / 'battery.sav'
     shutil.copy2(output / 'pokecrystal-dex-types.sav',seed)
+    from move_discovery_assets import seed_records, move_bitmap
+    seed.write_bytes(seed_records(seed.read_bytes(), repo.symbols, move_bitmap(range(1, 334))))
     unit = helpers(repo,target,seed)
     records = []
     font = offset(repo.symbols['Font']) + (0xed-0x80)*8
@@ -69,6 +71,11 @@ def run(output):
             counters.append(memory(driver,repo,'wDexArrowCursorBlinkCounter',1)[0])
             if audit:
                 audit()
+        if len(states) != 2:
+            for index, image in enumerate(states.values()):
+                image.save(target / f'{name}-unexpected-{index}.png')
+            (target / f'{name}-unexpected.json').write_text(json.dumps(dict(rect=rect,
+                counters=counters, ui=driver.command('ui')), indent=2) + '\n')
         assert len(states) == 2, (name,'cursor_phases',len(states),counters)
         images = sorted(states.values(),key=lambda im:sum(c==(255,255,255) for c in im.crop(rect).get_flattened_data()))
         off,on = images
@@ -179,7 +186,9 @@ def run(output):
             keyboard_audit(driver,repo)
             finish_text(driver,repo)
             search(driver,repo)
-            assert memory(driver,repo,'wPokedexInfoGFX',1,delta=4) != b'\0', 'No seen Bug moves in fixture'
+            count = int.from_bytes(memory(driver, repo, 'wPokedexInfoGFX', 2,
+                delta=WORK + 1 - repo.symbols['wPokedexInfoGFX'][1]), 'little')
+            assert count, 'No seen Bug moves in the declared all-seen fixture'
             observe(driver,f'moves-results-{presentation}',(43,8,51,16))
         finally:
             driver.close()

@@ -918,50 +918,6 @@ PokedexInfo_PrepareMiniOAM:
 PokedexInfo_CopyTiles:
 	farcall PokedexPerf_FastCopyTiles
 	ret
-PokedexInfo_CopyTiles_Legacy:
-	ld b, 8
-.tile
-	ld a, [wPokedexInfoCopyTile]
-	ld c, a
-	ld a, [wPokedexInfoTileCount]
-	cp c
-	jr z, .ready
-	push bc
-	ld a, c
-	add a
-	ld l, a
-	ld h, 0
-	ld de, wPokedexInfoTileSources
-	add hl, de
-	ld a, [hli]
-	ld h, [hl]
-	ld l, a
-	push hl
-	ld h, 0
-	ld l, c
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	add hl, hl
-	ld de, wPokedexInfoGFX
-	add hl, de
-	ld d, h
-	ld e, l
-	pop hl
-	ld bc, TILE_SIZE
-	ld a, BANK(PokedexInfoTileGFX)
-	call FarCopyBytes
-	ld hl, wPokedexInfoCopyTile
-	inc [hl]
-	pop bc
-	dec b
-	jr nz, .tile
-	ret
-.ready
-	ld a, POKEDEX_INFO_UPLOAD
-	ld [wPokedexInfoState], a
-	ret
-
 PokedexInfo_UploadTiles:
 ; At most eight already-copied glyphs into the inactive atlas. Never overwrite
 ; visible text or combine this DMA with the final map publication.
