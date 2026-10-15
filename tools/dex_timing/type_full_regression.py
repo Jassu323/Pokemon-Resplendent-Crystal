@@ -121,6 +121,17 @@ def commands(output, phase):
 def run(output, phase):
     logs = output / 'campaign-logs'
     logs.mkdir(exist_ok=True)
+    if phase == 'gameplay':
+        prerequisite = logs / 'discovery.json'
+        if not prerequisite.exists() or json.loads(prerequisite.read_text())['issues']:
+            raise ValueError('Finish discovery before gameplay recreates its battle fixtures')
+    if phase == 'timing':
+        required = ('acquisition-qualification/legacy-full-current-1.sav',
+                    'persistence-qualification/repair-source.sav')
+        if any(not (output / name).is_file() for name in required):
+            raise ValueError('Finish persistence/migration fixture generation before timing')
+    if phase == 'battle-discovery' and not (output / 'runtime/menus/acquisition/battle/battle-main.s0').is_file():
+        raise ValueError('Finish gameplay menu/battle fixture generation before battle discovery')
     results = []
     env = dict(os.environ, PYTHONPATH='tools:.')
     for number, command in enumerate(commands(output, phase)):

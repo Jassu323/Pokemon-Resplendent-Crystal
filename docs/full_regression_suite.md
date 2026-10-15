@@ -581,6 +581,81 @@ Sort helpers test all byte values across all WRAM bank selections for read/write
 normalization and restoration. UI/save tests include invalid legacy values,
 defaults, opposite/current selection, cold reload, and unaffected discovery bits.
 
+### Shared Moves Bookmark Qualification
+
+The combined implementation was production-integrated on 2026-10-15 with exact
+ROM/symbol/map equality to the fully qualified candidate. Fresh root-link
+observers reran 16,176 Pokemon helpers, 12,641 Moves helpers, six integration
+contexts and 13 lifecycle cases. The original full campaign was reused by exact
+binary identity, not presented as a second full run. The reusable promotion
+driver and receipt are under `build/dex-position-production-integration-20261015/`;
+see [production integration](pokedex_session_position_prototype.md#production-integration).
+Promotion-aware host contracts compare original protected root artifacts to
+their archived copies and new production artifacts to the integration receipt.
+
+The later [combined Pokemon/Moves prototype](pokedex_session_position_prototype.md)
+adds `pokemon_position`, `dex_position_campaign` and `test_dex_position`. Its
+16,176 native cases include every legal Modern/Legacy viewport across the three
+Pokemon sorts, malformed/sparse/changed orders and identity preservation.
+Require all 48 real-input cell/row contexts, Search/Selected isolation,
+independent Moves bookmarks, normal Save, actual soft reset/cold Continue,
+primary/backup recovery and the normal title-menu New Game path. Do not invoke
+the broad New Game RAM reset as a suspended overworld helper call.
+
+Capture Pokemon state only at ordinary Listing exit; restore before grid-cache
+priming. Invalid or reset bookmarks start first, including Legacy, which no
+longer consults the inherited temporary-species restorer. Modern/Legacy share
+selection; layout switching retains the current existing conversion behavior.
+The combined eight-byte padding layout requires an eight-byte successful-Continue
+clear while leaving sort/presentation preferences alone. Emulator state resume
+does not substitute for a reset/cold-boot test.
+
+Modern checkpoint preparation must explicitly seed Modern/Evolves in a private
+fixture rather than trust its donor save. Run discovery before gameplay,
+gameplay menu setup before battle discovery, and persistence/migration setup
+before timing. Chart helpers create their own output directory. Compare sound
+register values **and relative physical write timing**; same-case fade/init cost
+deltas explain entry busy-flag timing, not a pooled opening median. Preserve
+the original failed expectation and the stronger hardware proof. The combined
+campaign also samples 144 first/middle/last reopen workflows; record the actual
+selected identity on both links, because production need not render the same
+selection or viewport as a candidate that remembers position.
+
+The private [Moves position prototype](pokedex_moves_position_prototype.md)
+adds `moves_position` and `test_moves_position` without replacing the existing
+sort/Search tests. Its tag/ID/row fields consume four saved-padding bytes;
+position is not a new discovery flag or a transient-ID reference. Do not keep
+an unconditional reset-to-first expectation for same-session reentry when
+these linked helpers exist. The 2026-10-14 session revision explicitly clears
+position on successful Continue after either cold power-on or real soft reset,
+while retaining the separately saved sort preference. Saving during play must
+not clear the live bookmark. New Game also starts at the beginning. The earlier
+persistent prototype and its full campaign are historical evidence only; its
+cold-Continue restored-position expectations do not apply to this revision.
+Changed sort must still reset; same-sort/cancel must preserve; Search form,
+keyboard and Results must not overwrite the ordinary-list bookmark.
+
+At 333 moves and eight rows, exercise all 5,216 legal cursor/viewport pairs
+across both sorts. Include all raw WRAM banks, preserved registers/adjacent
+saved bytes/discovery, malformed or absent tags/IDs/rows, sort mismatch and
+boundary clamping after reordered data. Native menu checks must cover all rows,
+both Pokemon-mode origins, full Dex reopen, shared Info/Moves/Unown/Type owners,
+unseen rendering, zero results and direct Results exit. Test normal Save/cold
+Continue, primary/backup precedence/corruption, the actual bookmark/checksum
+write-prefix interruptions, canceled Save/New Game, overwrite and deletion.
+For the session revision, any recovered copy must retain its sort but start
+at the first move; do not assert that its saved bookmark is restored.
+Measure entry at beginning/middle/end of both orders against a frozen baseline
+in milliseconds and physical display frames; assert actual restored identity,
+not just that entry completed.
+
+For large campaigns, `DEX_COMPRESS_TRACE_ROOT` may name the fresh evidence root.
+Only consumed JSONL traces inside that root are replaced by lossless gzip
+siblings; `direction_changes.load_trace` replays either form. Other files and
+old campaigns remain untouched. Record this retention option with the evidence
+and retain the compression round-trip/outside-root negative controls. It is
+not permission to omit traces, skip cases or erase failed attempts.
+
 ## 6. Persistence And Legacy Migration
 
 Primary tools: `move_persistence`, `move_acquisition` migration/interruption

@@ -4,7 +4,9 @@ The ROM and source battery stay unchanged. Controls distinguish clean releases,
 brief key overlap, repeat-driven input and multiple fresh simultaneous presses.
 """
 import argparse
+import gzip
 import json
+import os
 from pathlib import Path
 import subprocess
 
@@ -92,7 +94,20 @@ def summarize(rows):
 
 
 def load_trace(path):
-    return [json.loads(line) for line in path.read_text().splitlines()]
+    path = Path(path)
+    compressed = path.with_suffix(path.suffix + '.gz')
+    if not path.exists() and compressed.exists():
+        with gzip.open(compressed, 'rt') as source:
+            return [json.loads(line) for line in source]
+    data = path.read_bytes()
+    result = [json.loads(line) for line in data.splitlines()]
+    # Opt-in lossless retention of this run's large, already-consumed traces.
+    root = os.environ.get('DEX_COMPRESS_TRACE_ROOT')
+    if root and path.resolve().is_relative_to(Path(root).resolve()) and path.suffix == '.jsonl':
+        with gzip.open(compressed, 'wb') as target:
+            target.write(data)
+        path.unlink()
+    return result
 
 
 def react(driver, keys, owner, limit=60):

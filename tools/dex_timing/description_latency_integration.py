@@ -132,7 +132,7 @@ def models(jobs):
             assert record['cases'] == 256 and not record['failures'], record
             assert record['protected_inputs_unchanged'] and record['private_inputs_unchanged']
             config = json.loads((target / 'modern/config.json').read_text())
-            assert config['hashes']['rom_sha256'] == sha256((ROOT / 'pokecrystal.gbc').read_bytes())
+            assert config['hashes']['rom_sha256'] == sha256((source / 'pokecrystal-dex-types.gbc').read_bytes())
             results.append(dict(model=model, cases=record['cases'], failures=0,
                                 rom_sha256=config['hashes']['rom_sha256']))
             continue
@@ -143,7 +143,12 @@ def models(jobs):
         binary = performance.core(repo, modern, listing_options.POINTS,
                                  (f'-DDEX_TEST_MODEL=GB_MODEL_CGB_{model}',))
         battery, states = modern / 'private.sav', modern / 'listing-states'
-        fixture(source / 'pokecrystal-dex-types.sav', battery)
+        seed = modern / 'modern-input.sav'
+        legacy_listing.private_battery(dict(rom=str(repo.rom_path),
+            sym=str(source / 'pokecrystal-dex-types.sym'),
+            battery=str(source / 'pokecrystal-dex-types.sav')), seed,
+            presentation=0, order_mode=0)
+        fixture(seed, battery)
         states.mkdir()
         driver = Driver(binary, repo.rom_path, BOOT, battery, modern / 'bootstrap.log')
         try:

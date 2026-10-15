@@ -9,7 +9,6 @@ Pokedex_InitListingPresentation:
 .legacy
 	ld a, POKEDEX_LEGACY_HEIGHT
 	ld [wDexListingHeight], a
-	farcall Pokedex_InitCursorPosition
 	ret
 
 PokedexLegacy_LoadStaticGFX:

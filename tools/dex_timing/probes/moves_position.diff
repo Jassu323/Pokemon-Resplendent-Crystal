@@ -1,0 +1,204 @@
+--- a/engine/pokedex/pokedex_moves_mode.asm
++++ b/engine/pokedex/pokedex_moves_mode.asm
+@@ -42,6 +42,7 @@
+     ld [wPokedexResidentFootprintSpecies], a
+     call PokedexMovesMode_RestoreSort
+     call PokedexMovesSearch_Reset
++    call PokedexMovesMode_RestorePosition
+     call ClearSprites
+     farcall Pokedex_CancelAnimationPrefetch
+     call PokedexMovesMode_SnapshotSeen
+@@ -524,7 +525,8 @@
+     jr nz, .row
+ .rows_done
+     call PokedexMovesMode_DrawScrollbar
+-    jp PokedexMovesMode_Publish
++    call PokedexMovesMode_Publish
++    jp PokedexMovesMode_RememberPosition
+ .Unknown
+     db "-----@"
+ 
+@@ -1294,6 +1296,169 @@
+     pop af
+     ret
+ 
++DEF MOVES_POSITION_MEMORY_TAG EQU $b0
++ASSERT NUM_ATTACKS >= 8
++DEF MOVES_POSITION_MAX_SCROLL EQU NUM_ATTACKS - 8
++ASSERT BANK(PokedexMovesModeTypeOrder) == BANK(PokedexMovesMode_RestorePosition)
++ASSERT BANK(PokedexMovesModeNameOrder) == BANK(PokedexMovesMode_RestorePosition)
++ASSERT BANK(wMovesDexBookmarkTag) == BANK(wMovesDexBookmarkMove)
++ASSERT BANK(wMovesDexBookmarkTag) == BANK(wMovesDexBookmarkRow)
++ASSERT wMovesDexBookmarkRow == wMovesDexBookmarkMove + 2
++
++; Restore identity/row after scratch clearing. Invalid/old bookmarks start first.
++; Use the resident order directly; never allocate transient move IDs.
++PokedexMovesMode_RestorePosition::
++    push af
++    push bc
++    push de
++    push hl
++    ldh a, [rSVBK]
++    push af
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    xor a
++    ld [wMovesModeCursor], a
++    ld [wMovesModeScroll], a
++    ld [wMovesModeScroll + 1], a
++    ld a, [wMovesModeSort]
++    or MOVES_POSITION_MEMORY_TAG
++    ld c, a
++    ld a, BANK(wMovesDexBookmarkTag)
++    ldh [rSVBK], a
++    ld a, [wMovesDexBookmarkTag]
++    cp c
++    jr nz, .done
++    ld a, [wMovesDexBookmarkRow]
++    cp 8
++    jr nc, .done
++    push af
++    ld a, [wMovesDexBookmarkMove]
++    ld e, a
++    ld a, [wMovesDexBookmarkMove + 1]
++    ld d, a
++    ld hl, PokedexMovesModeTypeOrder
++    bit 0, c
++    jr z, .order
++    ld hl, PokedexMovesModeNameOrder
++.order
++    ld bc, 0
++.scan
++    ld a, [hli]
++    cp e
++    jr nz, .next
++    ld a, [hl]
++    cp d
++    jr z, .found
++.next
++    inc hl
++    inc bc
++    ld a, b
++    cp HIGH(NUM_ATTACKS)
++    jr nz, .scan
++    ld a, c
++    cp LOW(NUM_ATTACKS)
++    jr nz, .scan
++    pop af
++    jr .done
++.found
++    pop af
++    ld h, b
++    ld l, c
++    ld e, a
++    ld a, l
++    sub e
++    ld l, a
++    ld a, h
++    sbc 0
++    ld h, a
++    jr nc, .maximum
++    ld hl, 0
++.maximum
++    ld a, h
++    cp HIGH(MOVES_POSITION_MAX_SCROLL)
++    jr c, .clamped
++    jr nz, .last
++    ld a, l
++    cp LOW(MOVES_POSITION_MAX_SCROLL)
++    jr c, .clamped
++.last
++    ld hl, MOVES_POSITION_MAX_SCROLL
++.clamped
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    ld a, l
++    ld [wMovesModeScroll], a
++    ld a, h
++    ld [wMovesModeScroll + 1], a
++    ld a, c
++    sub l
++    ld [wMovesModeCursor], a
++.done
++    pop af
++    ldh [rSVBK], a
++    pop hl
++    pop de
++    pop bc
++    pop af
++    ret
++
++; Only ordinary list draws own the durable bookmark. Forms clear the active
++; flag too, so keep this hook out of generic input/search state handling.
++PokedexMovesMode_RememberPosition::
++    push af
++    push bc
++    push de
++    push hl
++    ldh a, [rSVBK]
++    push af
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    ld a, [wMovesSearchActive]
++    and a
++    jr nz, .done
++    ld a, [wMovesModeSort]
++    cp 2
++    jr nc, .done
++    or MOVES_POSITION_MEMORY_TAG
++    ld e, a
++    ld a, [wMovesModeCursor]
++    cp 8
++    jr nc, .done
++    ld d, a
++    ld a, [wMovesModeSelected]
++    ld c, a
++    ld a, [wMovesModeSelected + 1]
++    ld b, a
++    or c
++    jr z, .done
++    ld a, b
++    cp HIGH(NUM_ATTACKS)
++    jr c, .valid
++    jr nz, .done
++    ld a, c
++    cp LOW(NUM_ATTACKS)
++    jr c, .valid
++    jr nz, .done
++.valid
++    ld a, BANK(wMovesDexBookmarkTag)
++    ldh [rSVBK], a
++    ld hl, wMovesDexBookmarkMove
++    ld a, c
++    ld [hli], a
++    ld a, b
++    ld [hli], a
++    ld [hl], d
++    ld a, e
++    ld [wMovesDexBookmarkTag], a
++.done
++    pop af
++    ldh [rSVBK], a
++    pop hl
++    pop de
++    pop bc
++    pop af
++    ret
++
+ 
+ ; Reuse the inactive Battle Tower workspace, away from Search's VBlank mailbox.
+ DEF wMovesSearchActive EQU $dc40
+--- a/ram/wram.asm
++++ b/ram/wram.asm
+@@ -3074,7 +3074,10 @@
+ wFarfetchdPosition:: db
+ 
+ wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
+-	ds 12
++wMovesDexBookmarkTag:: db ; $b0 Type, $b1 Alphabet; zero/other values invalid
++wMovesDexBookmarkMove:: dw ; permanent move identity
++wMovesDexBookmarkRow:: db ; zero-based visible row, 0-7
++	ds 8
+ 
+ ; map scene ids
+ wPokecenter2FSceneID::                            db

@@ -88,10 +88,14 @@ def names():
 
 
 def prepare(rom, sym, battery, output):
+    from .legacy_listing import private_battery
     repo = Repository(ROOT, rom, sym)
     compiled = core(repo, output)
+    seed = output / 'modern-input.sav'
+    private_battery(dict(rom=str(rom), sym=str(sym), battery=str(battery)), seed,
+                    presentation=0, order_mode=0)
     copied = output / 'private.sav'
-    fixture(battery, copied)
+    fixture(seed, copied)
     states = output / 'listing-states'
     states.mkdir(exist_ok=True)
     driver = Driver(compiled, rom, BOOT, copied, output / 'bootstrap.log')

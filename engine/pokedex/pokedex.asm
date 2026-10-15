@@ -286,6 +286,7 @@ InitPokedex:
 
 	farcall Pokedex_OrderMonsByMode
 	farcall Pokedex_InitListingPresentation
+	call Pokedex_RestoreListingPosition
 	ld a, [wPokedexListingPresentation]
 	and a
 	jr nz, .grid_cache_ready
@@ -337,107 +338,7 @@ Pokedex_SaveListingViewport:
 	ld [wPokedexListingSavedScrollOffset + 1], a
 	ret
 
-Pokedex_InitCursorPosition:
-	xor a
-	ld [wDexListingScrollOffset], a
-	ld [wDexListingScrollOffset + 1], a
-	ld [wDexListingCursor], a
-	ld hl, wPrevDexEntry + 1
-	ld a, [hld]
-	ld c, [hl]
-	ld b, a
-	if NUM_POKEMON <= $FF
-		and a
-		ret nz
-	else
-		cp HIGH(NUM_POKEMON)
-		jr c, .check_zero
-		ret nz
-		if LOW(NUM_POKEMON) < $FF
-			ld a, c
-			cp LOW(NUM_POKEMON) + 1
-			ret nc
-		endc
-		jr .go
-	endc
-.check_zero
-	or c
-	ret z
-
-.go
-	; ensure we have a list terminator
-	ld hl, wDexListingEnd
-	ld a, [hli]
-	ld d, [hl]
-	ld e, a
-	push de
-	sla e
-	rl d
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wPokedexOrder)
-	ldh [rSVBK], a
-	ld hl, wPokedexOrder
-	push hl
-	add hl, de
-	ld a, -1
-	ld [hli], a
-	ld [hl], a
-
-	; and look for the entry in the list
-	ld de, 2
-	pop hl
-	call IsInWordArray ;returns carry and pointer in hl if found
-	pop de
-	ld a, d
-	ldh [rSVBK], a
-	pop de
-	ret nc
-	ld bc, $10000 - wPokedexOrder ;ld bc, -wPokedexOrder -- see https://github.com/rednex/rgbds/issues/279
-	add hl, bc
-	srl h
-	rr l
-
-	; hl contains the index of wPrevDexEntry into wPokedexOrder, and de contains wDexListingEnd (therefore hl < de)
-	; if de <= 7, then we only have one page; wDexListingScrollOffset must be zero and wDexListingCursor = hl (= l)
-	ld a, d
-	and a
-	jr nz, .can_scroll
-	ld a, e
-	cp 8
-	jr nc, .can_scroll
-	ld a, l
-	ld [wDexListingCursor], a
-	ret
-
-.can_scroll
-	; otherwise, if hl <= (de - 7), then wDexListingScrollOffset = hl, wDexListingCursor = 0 (default)
-	; else, wDexListingScrollOffset = de - 7, wDexListingCursor = hl - wDexListingScrollOffset
-	ld a, e
-	sub 7
-	ld e, a
-	ld [wDexListingScrollOffset], a
-	jr nc, .no_carry
-	dec d
-.no_carry
-	ld a, l
-	sub e
-	ld c, a
-	ld a, h
-	sbc d
-	jr c, .not_last_page
-	ld a, d
-	ld [wDexListingScrollOffset + 1], a
-	ld a, c
-	ld [wDexListingCursor], a
-	ret
-
-.not_last_page
-	ld a, l
-	ld [wDexListingScrollOffset], a
-	ld a, h
-	ld [wDexListingScrollOffset + 1], a
-	ret
+INCLUDE "engine/pokedex/pokedex_position.asm"
 
 Pokedex_GetLandmark:
 	ld a, [wMapGroup]
@@ -766,6 +667,7 @@ Pokedex_UpdateMainScreen:
 	ret
 
 .b
+	call Pokedex_RememberListingPosition
 	call Pokedex_StopGridIconAnimation
 	ld a, DEXSTATE_EXIT
 	ld [wJumptableIndex], a

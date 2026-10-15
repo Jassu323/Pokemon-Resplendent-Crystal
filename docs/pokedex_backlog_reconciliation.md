@@ -1,6 +1,15 @@
 # Pokedex Backlog Reconciliation
 
-Latest follow-up 2026-10-14: `DEX-PERF-04` is manually accepted and integrated.
+Latest follow-up 2026-10-15: `DEX-PREF-01/02` are manually accepted and integrated.
+Shared Modern/Legacy and independent Moves bookmarks are session-only; reset
+starts first without losing sort/presentation preferences. Root ROM/symbols/map
+exactly match the fully qualified prototype, with 28,836 additional fresh
+production checks passing. Combined cost is 518 decimal ROMX bytes, eight
+existing padding bytes assigned and no allocated RAM growth. Root ROM SHA-256:
+`52ba945b4b5e94107495988265401c586ea359212637b666e47df58abe25c7a5`.
+See [production integration](pokedex_session_position_prototype.md#production-integration).
+
+Follow-up 2026-10-14: `DEX-PERF-04` is manually accepted and integrated.
 The root ROM matches the fully tested +51-ROMX-byte candidate exactly:
 `942d1495404ac2ee41793ee4871ac5c4b4f57016102a50ef4fda8a0a161095bc`.
 Fresh root-build transition checks pass; see
@@ -63,7 +72,8 @@ take precedence over older paragraphs describing an unpromoted prototype.
 | Unown form paging | Static decoding and atomic picture/map publication are integrated. Current CGB E median complete selection remains 49.02 ms. This is distinct from Modes transitions. See [Unown performance](pokedex_unown_performance_prototype.md). |
 | `DEX-UI-01/02`, `DEX-AREA-01` | Footprint/category corrections and Area owner/return integration are complete. |
 | `DEX-SEARCH-01/02/03/05` | Slowpoke palette/OAM, colored Results, small cursor/caught ball, compact icons, alphabetical controls and ranked type matching are integrated and manually accepted. |
-| Moves Dex | Visual layout, scrollbar, discovery persistence/migration, acquisition/learning/battle hooks, initial Struggle discovery, sort remembrance, substring/type Search, themed text entry and standard cursor behavior are complete. Position remembrance is not included. See [production integration](pokedex_moves_search_prototype.md#production-integration). |
+| Moves Dex | Visual layout, scrollbar, discovery persistence/migration, acquisition/learning/battle hooks, initial Struggle discovery, sort remembrance, substring/type Search, themed text entry and standard cursor behavior are complete. Session-only position remembrance is also integrated, as noted below. See [original production integration](pokedex_moves_search_prototype.md#production-integration). |
+| `DEX-PREF-01/02` | Manually accepted and production-integrated 2026-10-15. One shared Modern/Legacy species/viewport bookmark and an independent Moves bookmark; both reset on game restart. Exact qualified-ROM match and 28,836 fresh production checks pass. +518 decimal ROMX bytes, eight existing padding bytes, no allocation growth. [Integration and retained qualification](pokedex_session_position_prototype.md#production-integration). |
 | Type Matchups and shared arrow blink | Accepted runtime mode-7 implementation, chart changes, immediate cursor-driven lower panel, layout and shared blinking are integrated. The precomputed alternative is archived. See [integration](pokedex_type_runtime_integration.md). |
 | `DEX-PERF-01`, `DEX-EXIT-01` | Repaired Stage opening/closing is accepted and integrated. Current qualification includes 336 lifecycle cases and 88 exit replays, without early colored reveal or shell displacement. |
 | `DEX-PERF-03` | Idle animation cache warming is removed from regular Dex modes. |
@@ -107,8 +117,6 @@ silently delete its earlier reproduction or label it a proven causal fix.
 | `DEX-DATA-02`, alias `DEX-INFO-02` | Complete real gameplay evolution/species records and added branches during the planned species/learnset/stat pass. Ancestor rendering does not supply absent gameplay links. These are one underlying work item, not two fixes. |
 | `DEX-DATA-03` | Revalidate family egg-move inheritance after the actual evolution/egg records are updated. Current generated content correctly reflects configured data. |
 | `DEX-DATA-04` | Regroup later-generation relatives/babies in the authored Evolves order shared by Modern and Legacy. National/Alphabet remain independent. |
-| `DEX-PREF-01` | Durable Pokémon listing position/viewport remembrance. |
-| `DEX-PREF-02` | Durable Moves listing position/viewport remembrance, separate from already completed sort remembrance. |
 | `DEX-PERF-02` | Accepted Selected-tab iteration and the `DEX-INFO-03` publication correction are complete. Keep only broader future performance review as an umbrella; opening/closing, idle warming and Unown form paging are already integrated. |
 
 Future options, not pending approved implementation: New Entry `Desc/Info/Mov/End`

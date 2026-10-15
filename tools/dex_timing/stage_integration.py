@@ -66,7 +66,12 @@ def run_command(module, *arguments):
     folder = BASE / 'extra-logs'
     folder.mkdir(exist_ok=True)
     name = '-'.join((module, *(str(a) for a in arguments[:1])))
-    with (folder / (name + '.log')).open('w') as log:
+    path = folder / (name + '.log')
+    attempt = 1
+    while path.exists():
+        attempt += 1
+        path = folder / (name + f'-attempt-{attempt}.log')
+    with path.open('w') as log:
         subprocess.run([sys.executable, '-m', 'tools.dex_timing.' + module,
                         *(str(a) for a in arguments)], cwd=ROOT, stdout=log,
                        stderr=subprocess.STDOUT, check=True)

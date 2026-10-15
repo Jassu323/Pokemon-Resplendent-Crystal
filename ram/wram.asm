@@ -3074,7 +3074,13 @@ wUndergroundSwitchPositions:: db
 wFarfetchdPosition:: db
 
 wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
-	ds 12
+wMovesDexBookmarkTag:: db ; session-only; Continue discards saved padding
+wMovesDexBookmarkMove:: dw ; permanent move identity
+wMovesDexBookmarkRow:: db ; zero-based visible row, 0-7
+wPokemonDexBookmarkTag:: db ; session-only; presentation/order association
+wPokemonDexBookmarkSpecies:: dw ; permanent species identity, not a transient ID
+wPokemonDexBookmarkCell:: db ; Modern cell 0-8 or Legacy row 0-6
+	ds 4
 
 ; map scene ids
 wPokecenter2FSceneID::                            db

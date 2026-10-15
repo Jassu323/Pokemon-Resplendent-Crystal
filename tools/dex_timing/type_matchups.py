@@ -362,6 +362,7 @@ def returns(repo, core, output):
 
 
 def battle_chart(repo, oracle, output):
+    output.mkdir(parents=True, exist_ok=True)
     from .move_persistence import core as unit_core, boot as unit_boot, call
     core = unit_core(output.parent,stem='pokecrystal-dex-types',target_root=output)
     config = dict(core=str(core),rom=str(repo.rom_path),symbols=repo.symbols)

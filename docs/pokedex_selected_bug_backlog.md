@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-14. This is the live issue/status list, not the chronological
+Updated 2026-10-15. This is the live issue/status list, not the chronological
 scheduler investigation. The accepted production implementation and cleanup
 are complete. See [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
 for the complete disposition, exact current build and fresh focused evidence.
@@ -12,7 +12,8 @@ Latest statuses below take precedence over historical prototype paragraphs.
   Info/Moves/Area work, Listing options and sort-cache repair, Pokemon Search
   and colored Results, Moves Dex discovery/search/sort memory, Type Matchups,
   shared blinking, Unown correctness and fast form paging, ancestors, repaired
-  Stage opening/closing, no warming, visual-only New Entry and approved cleanup.
+  Stage opening/closing, no warming, visual-only New Entry, approved cleanup,
+  fast Unown transitions and session-only Pokemon/Moves position remembrance.
   Search/sort/ancestors/cleanup are not awaiting another promotion.
 - **Historical, not reproduced on current production:** `DEX-INFO-04`,
   `DEX-RETURN-02`, `DEX-RETURN-04`, `DEX-GRID-02`, `DEX-GRID-04`. Fresh badge
@@ -28,11 +29,11 @@ Latest statuses below take precedence over historical prototype paragraphs.
   investigation and beside both producer/consumer in the source.
 - **Explicitly deferred:** `DEX-SEARCH-04` official National labels;
   `DEX-DATA-01/02/03/04` content, real evolution data, egg inheritance and
-  family ordering; `DEX-PREF-01/02` durable listing position remembrance.
+  family ordering.
   `DEX-INFO-02` is an alias of the evolution-data work, not a second renderer fix.
-- **Optional future performance/audit:** `DEX-PERF-04` Modes/Unown transitions
-  remain about 249-250 ms, separate from accepted fast form paging.
-  `DEX-PERF-02` retains only the broader future performance umbrella; its
+- **Optional future performance/audit:** `DEX-PERF-02` retains only the broader
+  future performance umbrella; the +51-byte `DEX-PERF-04` transition fix is
+  already integrated and separate from accepted fast form paging. Its
   accepted Selected-tab iteration and later lifecycle work are complete.
   New Entry option B and the broader Selected implementation audit are future
   options, not unfinished parts of the approved visual-only registration page.
@@ -2064,7 +2065,15 @@ Acceptance:
 
 ### DEX-PREF-01: Remember Position In Pokemon Dex Modes
 
-Status: Deferred by the user 2026-10-08; no position implementation approved
+Status: Complete; manually accepted and production-integrated 2026-10-15
+
+Implemented over the accepted Moves session prototype. The Pokemon extension
+costs 275 net ROMX bytes, assigns four existing padding bytes and adds no
+allocated RAM/SRAM. Total with Moves is 518 ROMX bytes and eight padding bytes,
+with four left. Focused position checks and the full standard/supplementary
+suite pass with no new game regressions. Production exactly matches that
+qualified ROM; 28,836 fresh native/input/lifecycle cases also pass after rebuilding.
+See the [current build, costs, timings and retained test corrections](pokedex_session_position_prototype.md).
 
 Remember the actual last-highlighted Pokemon and its listing viewport when
 closing/reopening the Dex, for both Modern and Legacy. Modern currently resets
@@ -2081,9 +2090,11 @@ switch normalization), `engine/pokedex/pokedex_popover.asm`
 
 Scope and acceptance:
 
-- Define shared-species versus independent Modern/Legacy bookmarks before
-  implementation. Retain position during gameplay and across normal
-  Save/Continue, without relying on shared Dex/menu scratch surviving.
+- Recommend one shared species bookmark, preserving current Modern/Legacy
+  switching behavior, rather than independent positions. Retain position during
+  gameplay only: actual soft reset or cold Continue starts at the beginning of
+  the saved order/presentation. Sort and presentation preferences stay saved.
+  Do not rely on shared Dex/menu scratch surviving outside the Dex.
 - Use permanent species identity with a validated presentation/sort association;
   restore/clamp the viewport and cursor for each layout. Do not allocate or
   retain transient Pokemon IDs merely for remembrance.
@@ -2099,28 +2110,184 @@ Scope and acceptance:
   both presentations and all supported sorts. Cost reserved saved padding
   explicitly and keep existing save offsets unchanged where possible.
 
+#### Original Session-Only Extension Scope, 2026-10-14 (Historical)
+
+Scope against production commit `b439cf4e8`, with the manually accepted Moves
+session prototype as the proposed base:
+`build/dex-moves-position-session-20261014/`. That prototype is not yet
+integrated. This is an audit/estimate only; no new ROM or emulator campaign was
+run for the Pokemon extension. Any future prototype stays under `build/`.
+
+**Recommended behavior**
+
+Use one shared bookmark for the Pokemon listing, separate from the Moves
+bookmark. Closing/reopening the Dex restores the actual highlighted permanent
+species and its viewport, without requiring A or opening the Options popup.
+Modern restores its three-by-three grid cell; Legacy restores its row in the
+seven-row list. Unknown entries remain valid selections without exposing data.
+
+Modern/Legacy switching already carries the selected Pokemon across layouts:
+`PokedexListing_UpdateModeScreen` uses the Selected-index normalization helpers.
+Keep that behavior and the nearest legal viewport, not two independent remembered
+Pokemon. Returning to a layout after switching need not restore its earlier
+viewport; the latest shared selection is authoritative. Changing Evolves /
+National / Alphabet starts first, while confirming the same order or canceling
+the popup retains position. Do not keep separate bookmarks for those orders.
+
+Selected-page species paging remains authoritative after returning to the
+ordinary listing. Paging Selected pages from Search Results must not replace
+the ordinary list's bookmark. A reset or shutdown discards position; Continue
+starts at the beginning of the normally saved sort and Modern/Legacy preference.
+
+**Minimal implementation**
+
+The ordinary listing's cursor/scroll already survive Modes, Selected, Unown,
+Moves and Type visits inside one Dex session. Unlike Moves' shared Info scratch,
+they do not need a new bookmark update after every drawing operation. Capture
+once at `Pokedex_UpdateMainScreen.b`, the current sole ordinary-list route to
+`DEXSTATE_EXIT`. Do not capture generically in `Pokedex.exit`, in Search input,
+or from palette/portrait publication hooks. A future direct exit from another
+owner must explicitly recover the ordinary selection before capture.
+
+Read the permanent word directly from `wPokedexOrder[scroll + cursor]` while
+preserving the incoming WRAM bank/registers. Do not call
+`Pokedex_GetSelectedMon` merely to record identity: it also resolves/locks a
+transient Pokemon ID. Store a recognizable format/presentation/order tag last.
+
+Restore after order construction and presentation/height/cache-state setup,
+but **before** `Pokedex_EnsureGridCache` and any selection graphics are prepared
+or revealed. The inherited Legacy fallback must be replaced: invalid/absent
+bookmarks must start at zero, not consult stale shared `wPrevDexEntry` data.
+Scan only the active `wDexListingEnd` entries in writable `wPokedexOrder`, not
+an unconditional full species table. This handles Alphabet's seen-only list
+and the seen-bounded Evolves/National lists. Missing IDs and malformed tags,
+sorts, cells or viewports fall back safely without altering discovery.
+
+For Legacy, at selected ordinal `i`, length `n`, saved row `r`:
+`scroll = clamp(i - r, 0, max(n - 7, 0))`, `cursor = i - scroll`.
+For Modern, saved grid row `r = floor(saved_cell / 3)`:
+`scroll = clamp(3 * (floor(i / 3) - r), 0, 3 * max(ceil(n / 3) - 3, 0))`,
+`cursor = i - scroll`. Handle `n == 0` separately. Exact unchanged-order
+viewports round-trip; if the seen list changes, keep identity and vertical row
+where possible. Modern's column necessarily follows the new ordinal modulo
+three. Both offset and species arithmetic must remain 16-bit.
+
+Proposed four fields, contiguous with the existing Moves prototype fields:
+
+| Field | WRAMX bank 1 address | Bytes |
+| --- | --- | ---: |
+| Validity/format, presentation and order tag | `$d9e8` | 1 |
+| Permanent species identity | `$d9e9-$d9ea` | 2 |
+| Grid cell 0-8 or Legacy row 0-6 | `$d9eb` | 1 |
+
+These consume four of the eight padding bytes left after Moves remembrance;
+four remain at `$d9ec-$d9ef`. All established RAM/save offsets and sizes remain
+unchanged. Extend successful Continue's four-byte bookmark clear to cover both
+adjacent four-byte bookmarks; this adds four store instructions, not a new
+reset callback or RAM flag. New Game already clears this player-data region.
+Normal Save may copy the padding, but the next Continue deliberately discards
+it. Preserve saved sort/presentation fields and the separate Moves bookmark.
+
+**Costs and alternatives, decimal bytes**
+
+| Resource/change | Increment over the accepted Moves session prototype |
+| --- | ---: |
+| New helpers, geometry, hooks and extended Continue clear | 300-500 ROMX estimated gross |
+| Replace inherited `Pokedex_InitCursorPosition` | 126 ROMX reclaimed, verified current linked span |
+| Recommended net ROMX budget | 174-374 estimated; requires a prototype link |
+| Existing player-data padding assigned | 4 |
+| Additional allocated WRAMX / SRAM | 0 / 0 |
+| ROM0 / WRAM0 / HRAM | 0 / 0 / 0 |
+| New graphics / VRAM / OAM buffers or tables | 0 |
+
+The 126-byte routine spans `$411e-$419b` in bank `$10` and has one live game
+caller, `Pokedex_InitListingPresentation`. Replace its behavior rather than
+leave a second dead restore implementation behind. `wPrevDexEntry` itself is
+still used by Description, ancestors, Moves, Options and Search backup paths;
+do not remove that field or its unrelated writers. Keeping the old routine
+temporarily would make the estimated net cost the gross 300-500 ROMX instead.
+
+Independent Modern/Legacy bookmarks would consume eight additional padding
+bytes rather than four, leaving none after Moves, and need extra selection
+policy/dispatch. They would change current mode-switch behavior; not recommended
+unless independent browsing histories are explicitly wanted. No per-sort
+bookmarks or generated inverse tables are needed for the shared design.
+
+The bounded scan is at most 373 entries today and only on a same-session Dex
+reopen with a valid bookmark; capture is constant work only on exit. There is
+no new per-frame, per-navigation, VBlank, LCD, timer, DMA or audio handling.
+Entry/exit timing and reveal-frame deltas are not measured by this scope.
+Benchmark top/middle/bottom and the final partial grid row before acceptance;
+small CPU work can still cross a display-frame boundary.
+
+Complexity is low-to-moderate, higher than Moves because grid alignment,
+seen-filtered list lengths and inherited Legacy restoration differ. Risk is
+primarily incorrect viewport/cache priming or Search identity leakage, not a
+required shared interrupt change. Implement in the existing Pokemon ROMX
+owners plus `ram/wram.asm` and the Moves prototype's Continue clear; a new ROM
+bank is not indicated by this audit.
+
+**Qualification for a future prototype**
+
+- Exhaustive legal viewport/cell round trips for both layouts and all three
+  orders; final partial row, wrap/page edges, IDs/offsets above 255, malformed
+  records and zero/short/sparse seen lists. Check register/bank restoration,
+  adjacent preference fields, zero helper SRAM writes and transient-ID/GC safety.
+- Actual highlight without A/Start, full Dex close/reopen, changed/same/canceled
+  sort, repeated Modern/Legacy conversion, known/unseen entries and insertion
+  of newly seen species between closes.
+- Search/no-results/Selected-from-Results isolation; ordinary Selected paging,
+  Desc/Info/Moves/Area returns; Unown, Moves and Type visits. Confirm the
+  separate Moves bookmark is not replaced by Pokemon browsing.
+- Normal Save during a session, canceled save/overwrite, real soft reset,
+  fresh-launch Continue, primary/backup recovery, New Game and legacy padding;
+  reset starts first but order/presentation preferences remain valid.
+- Paired baseline timing and visual publication at entry/exit and cold grid
+  priming, followed by the standard full regression before promotion. No full
+  suite is being run merely to scope this feature.
+
 ### DEX-PREF-02: Remember Position In Moves Dex Mode
 
-Status: Deferred by the user 2026-10-08; separate from approved sort remembrance
+Status: Complete; manually accepted and production-integrated 2026-10-15
+
+The [combined Dex session prototype](pokedex_session_position_prototype.md)
+adds Modern/Legacy remembrance and reruns the full suite, including the Moves
+native helpers, shared owners, Search edges, saving and actual reset paths.
+The root ROM, symbols and map match that qualified build exactly. Fresh root-link
+checks pass; see [production integration](pokedex_session_position_prototype.md#production-integration).
+The earlier Moves-only revision below is historical evidence, not the current build.
+
+The user revised reset behavior after the original full qualification. The
+current private link costs 243 ROMX bytes, assigns four existing padding bytes
+and adds no allocated RAM/save size. Focused session retention, saving, Search,
+actual soft reset and cold Continue checks pass in both sorts and both Pokemon
+mode origins. The full suite was deliberately not rerun. The original 235-byte
+persistent-position link and full evidence remain archived. Review ROM and
+all-moves-seen test save are under `build/dex-moves-position-session-20261014/review/`;
+production remains unchanged. See [prototype and evidence](pokedex_moves_position_prototype.md).
 
 Remember the last-highlighted move and its viewport when leaving/reentering
-Moves Mode or closing/reopening the Dex, and across normal Save/Continue.
+Moves Mode or closing/reopening the Dex during the same play session. A soft
+reset or shutdown followed by Continue starts at the beginning of the saved
+sort, even after saving a later position. The sort preference remains persistent.
 Currently `PokedexMovesMode_Initialize` clears cursor and scroll along with
 its shared Info workspace. The current sort-remembrance work restores only
 the Type/Alphabet preference and deliberately leaves this reset intact.
 
 Relevant owners: `engine/pokedex/pokedex_moves_mode.asm`
 (`PokedexMovesMode_Initialize`, navigation, `PokedexMovesMode_SortUpdate`),
-`tools/dex_timing/probes/pokedex_moves_mode.asm`,
 `tools/pokedex_moves_mode_assets.py` (generated Type/Alphabet orders), and
-`ram/wram.asm` (dedicated saved preference fields).
+`ram/wram.asm` (dedicated saved preference fields). The generated orders need
+no format or content changes. The earlier probe under `tools/dex_timing/probes/`
+is historical, not the current production owner.
 
 Scope and acceptance:
 
-- Keep the durable bookmark outside shared Info/Dex scratch. Use a permanent
+- Keep the session bookmark outside shared Info/Dex scratch. Use a permanent
   move identity and validated sort/viewport state, independent of discovery.
 - Preserve changed-sort reset-to-first and same-sort/cancel position retention.
-  Decide whether each sort gets its own bookmark before implementation.
+  Use one shared bookmark, as chosen by the user; no independent Type/Alphabet
+  positions. The current sort is already remembered separately.
 - Unknown moves remain valid list positions; do not reveal their names/details
   while restoring. Handle future move additions, regenerated orders, invalid
   saved values, legacy saves and New Game safely.
@@ -2129,6 +2296,105 @@ Scope and acceptance:
 - Test both orders, every cursor row, top/bottom/wrap/page boundaries, known
   and unseen entries, other Dex modes, menus/battles, normal Save/Continue and
   primary/backup recovery. Retain accepted scrollbar and popup alignment.
+
+#### Original Shared Bookmark Scope, 2026-10-14 (Historical)
+
+This original source audit and design estimate proposed cross-reset position
+persistence; that detail is superseded by the session-only acceptance above.
+Baseline commit `b439cf4e8` includes the accepted Unown transition
+optimization. Production ROM and player saves remain unchanged by this scope.
+
+Proposed saved fields consume four of the twelve remaining padding bytes
+immediately after `wLastMovesDexSort`, in WRAMX bank 1:
+
+| Field | Proposed address | Bytes | Purpose |
+| --- | --- | ---: | --- |
+| Bookmark tag/sort | `$d9e4` | 1 | Recognizable validity/version tag plus Type/Alphabet association |
+| Permanent move ID | `$d9e5-$d9e6` | 2 | Stable identity, not a transient move ID or only an order index |
+| Cursor row | `$d9e7` | 1 | Row 0-7, sufficient to reconstruct the viewport |
+
+Eight padding bytes remain. Keep `wLastMovesDexSort` at `$d9e3`, the next
+scene field at `$d9f0`, all existing save offsets and both copy lengths unchanged.
+The fields are already inside saved `wPlayerData`/`wGameData`: normal primary
+and backup copying, checksums, Continue and New Game clearing cover them.
+There is no custom SRAM write, discovery-record migration or new save version.
+Old zeroed padding has no valid bookmark tag and defaults to the first entry
+of the independently restored sort. Validate tag, matching sort, ID membership
+and row before accepting any saved data; malformed values use the same default.
+
+Restore after the initializer's 48-byte workspace clear, existing sort restore
+and search reset, before the first list draw. Find the permanent ID in the
+active existing ROM order, then derive:
+
+```text
+ordinal = position of saved move in the current order
+scroll = clamp(ordinal - saved_row, 0, max(move_count - 8, 0))
+cursor = ordinal - scroll
+```
+
+This exactly preserves the original viewport when the order is unchanged.
+After future additions or reordered data it retains the selected identity and
+its row where legal, clamping at list boundaries. If the ID is absent, start at
+the beginning. Unseen entries follow the same path without changing discovery
+or bypassing the existing unknown-name/details renderer.
+
+Remember the identity/row after each completed ordinary-list redraw, using
+the existing `wMovesModeSelected`, not through new per-frame work. The helper
+must reject active Search Results. Search form drawing also shares/changes
+state, so do not capture from a generic input/state-machine hook: the form
+clears `wMovesSearchActive` even while the selected-move scratch can still
+describe a previous result. The ordinary-list draw hook avoids that hazard.
+The current search entry backup and cancel restoration already preserve the
+unfiltered cursor/scroll. Leaving directly from Results must retain the last
+ordinary bookmark; returning to the form and canceling restores that bookmark.
+
+Changed sort already zeroes cursor/scroll and redraws, which replaces the single
+bookmark with the new order's first entry. Same-sort confirmation and popup
+cancellation redraw the unchanged position. Browsing updates WRAM immediately;
+only normal Save persists it to battery. Save cancellation/power-off without
+saving must not change the previously saved bookmark.
+
+Estimated incremental resource costs, decimal bytes:
+
+| Resource | Estimate |
+| --- | ---: |
+| ROMX helpers and call sites | 200-350; requires a prototype link to measure |
+| Saved-player padding newly assigned | 4 |
+| Additional allocated WRAMX / SRAM | 0 / 0 |
+| ROM0 / WRAM0 / HRAM | 0 / 0 / 0 |
+| Graphics, VRAM, OAM, new display buffers | 0 |
+
+Use registers/stack and restore the incoming WRAM bank; no permanent scratch
+or shared interrupt changes are needed. Both order tables currently share the
+Moves code bank, allowing a bounded direct scan of at most 333 entries on
+entry only. No runtime sorting or inverse-order tables are required; two new
+16-bit inverse tables would instead cost 1,332 ROMX bytes at the current count.
+The proposed lookup should be small, but neither its milliseconds nor its
+display-frame impact has been measured. Even sub-frame work can cross a reveal
+boundary. Compare worst-case/median entry, navigation and Save/Continue against
+this exact production baseline before acceptance; do not promise zero frames.
+
+Implementation complexity is low. Risk is low-to-moderate until qualification,
+concentrated in shared-workspace clearing, Search isolation, malformed saved
+data and bank/register restoration, not graphics/battle/interrupt code. The
+larger part of the work is testing:
+
+- Exhaustive valid viewport/identity restoration in both orders: 2,608 legal
+  cursor/scroll pairs per order, 5,216 total at the current 333 moves. A host-only
+  arithmetic sanity check of the proposed formula passes all 5,216; this is not
+  native emulator qualification. Include invalid tags/IDs/rows, mismatched sort,
+  all WRAM banks and adjacent-data/discovery preservation in helper tests.
+- Normal-input B/Select exits, complete Dex reopen, all eight rows, wrap and
+  full-page movement, same/changed/canceled sort, Search/keyboard/result/cancel
+  paths, zero results, direct Results exit and both Pokemon-mode origins.
+- Cold Save/Continue, primary/backup precedence and corruption, interrupted
+  normal saves, legacy padding, New Game, canceled overwrite/save and deletion.
+- Full existing Dex/Moves/discovery/gameplay/audio/battle regression, retaining
+  current known exceptions and independent Battle Tower addendum policy.
+
+Extend the current-link sort-memory/Search test adapters with explicit bookmark
+fixtures. Historical frozen reports remain unchanged; update any live test
+that incorrectly assumes every Moves reentry starts at row/scroll zero.
 
 ## Current Branch Battle Follow-Ups
 
