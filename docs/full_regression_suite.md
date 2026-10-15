@@ -46,6 +46,17 @@ interrupt rule, see [Battle Animation Interrupt Timing Contract](battle_animatio
 
 ## 1. Testing Principles
 
+The later October 14 [Unown transition qualification](pokedex_unown_transition_regression.md)
+reuses this full suite for the private 51-byte fast-map candidate. Its dedicated
+`unown_transition_campaign` driver freezes both links, requires exact rebuilds,
+runs standard/supplementary phases, and gates finalization on matching binary
+identities, case counts, negative controls and unchanged artwork/RAM. The
+report records the corrected artifact-audit sidecar filter and unchanged
+production exceptions. The qualification phase left production unchanged;
+after manual acceptance, a separate production rebuild matched the qualified
+ROM byte-for-byte. Its fresh root-link smoke checks and receipt are documented
+in [Production Integration](pokedex_unown_transition_regression.md#production-integration).
+
 1. Freeze a production baseline and a candidate. Compare fresh evidence for
    those exact binaries, with matching symbols, maps, and source trees.
 2. Do not modify the player's battery or production ROM. All fixtures, saves,

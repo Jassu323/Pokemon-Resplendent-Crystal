@@ -988,10 +988,16 @@ Pokedex_InitUnownMode:
 	and a
 	jr z, .mapped
 	farcall PokedexUnown_Publish
+	farcall PokedexUnown_PrepareLayout
+	ld de, vBGMap0
+	farcall PokedexPerf_FastTownMap
+	call Pokedex_ApplyUsualPals
+	jr .reveal
 .mapped
 	call WaitBGMap
 	ld a, SCGB_POKEDEX_UNOWN_MODE
 	call Pokedex_GetSGBLayout
+.reveal
 	farcall PokedexListing_RevealMenu
 	call Pokedex_IncrementDexPointer
 	ret
@@ -1010,7 +1016,6 @@ Pokedex_UpdateUnownMode:
 	ld [wPokedexSelectedState], a
 	ld a, DEXSTATE_OPTION_SCR
 	ld [wJumptableIndex], a
-	call DelayFrame
 .done
 	ret
 

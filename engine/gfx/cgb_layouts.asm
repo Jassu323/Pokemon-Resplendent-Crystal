@@ -751,6 +751,15 @@ BillsPCOrangePalette:
 INCLUDE "gfx/pc/orange.pal"
 
 _CGB_PokedexUnownMode:
+	call PokedexUnown_PrepareLayout
+	call ApplyAttrmap
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+PokedexUnown_PrepareLayout:
+; Build software attributes/palette sources without exposing them yet.
 	ld hl, PokedexUnownUIPalette
 	ld de, wBGPals1
 	call LoadHLPaletteIntoDE
@@ -798,12 +807,7 @@ _CGB_PokedexUnownMode:
 	hlcoord 4, 15, wAttrmap
 	lb bc, 1, 12
 	call FillBoxCGB
-	call InitPartyMenuOBPals
-	call ApplyAttrmap
-	call ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ret
+	jp InitPartyMenuOBPals
 
 PokedexUnownUIPalette:
 	; Unown's inverted glyphs and panel fill share a solid black background.
@@ -1457,18 +1461,21 @@ _CGB_BetaPikachuMinigame:
 	ret
 
 _CGB_PokedexSearchOption:
+	call PokedexMenu_PrepareLayout
+	call ApplyAttrmap
+	call ApplyPals
+	ld a, TRUE
+	ldh [hCGBPalUpdate], a
+	ret
+
+PokedexMenu_PrepareLayout:
 	ld hl, PartyMenuOBPals
 	ld de, wOBPals1
 	call LoadHLPaletteIntoDE
 	ld hl, PokedexUIPalette
 	ld de, wBGPals1
 	call LoadHLPaletteIntoDE
-	call WipeAttrmap
-	call ApplyAttrmap
-	call ApplyPals
-	ld a, TRUE
-	ldh [hCGBPalUpdate], a
-	ret
+	jp WipeAttrmap
 
 _CGB_PackPals:
 ; pack pals

@@ -621,12 +621,24 @@ PokedexListing_InitModeScreen:
 	jr nz, .arrow_row
 .arrow_ready
 	ld [hl], '▶'
-	xor a
-	ld [wPokedexSelectedState], a
 	call PokedexListing_ModeDescription
+	ld a, [wPokedexSelectedState]
+	cp DEXSELECT_STATE_UNOWN_RETURN
+	jr nz, .ordinary_publish
+; The Unown return is already hidden and owns the existing map buffers.
+	farcall PokedexMenu_PrepareLayout
+	ld de, vBGMap0
+	farcall PokedexPerf_FastTownMap
+	ld a, 1
+	ldh [hBGMapMode], a
+	jr .palettes
+.ordinary_publish
 	call WaitBGMap
 	ld b, SCGB_POKEDEX_SEARCH_OPTION
 	call GetSGBLayout
+.palettes
+	xor a
+	ld [wPokedexSelectedState], a
 	farcall Pokedex_ApplyUsualPals
 	call PokedexListing_RevealMenu
 	farcall Pokedex_IncrementDexPointer

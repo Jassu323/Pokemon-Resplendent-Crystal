@@ -1,5 +1,12 @@
 # Pokedex Backlog Reconciliation
 
+Latest follow-up 2026-10-14: `DEX-PERF-04` is manually accepted and integrated.
+The root ROM matches the fully tested +51-ROMX-byte candidate exactly:
+`942d1495404ac2ee41793ee4871ac5c4b4f57016102a50ef4fda8a0a161095bc`.
+Fresh root-build transition checks pass; see
+[integration evidence](pokedex_unown_transition_regression.md#production-integration).
+The hashes and pending-review notes in earlier records below are historical.
+
 Follow-up 2026-10-14: the prioritized
 [Info-to-Description investigation](pokedex_info_description_latency_investigation.md)
 isolates publication starvation, superseding the initial preparation/admission
@@ -60,6 +67,7 @@ take precedence over older paragraphs describing an unpromoted prototype.
 | Type Matchups and shared arrow blink | Accepted runtime mode-7 implementation, chart changes, immediate cursor-driven lower panel, layout and shared blinking are integrated. The precomputed alternative is archived. See [integration](pokedex_type_runtime_integration.md). |
 | `DEX-PERF-01`, `DEX-EXIT-01` | Repaired Stage opening/closing is accepted and integrated. Current qualification includes 336 lifecycle cases and 88 exit replays, without early colored reveal or shell displacement. |
 | `DEX-PERF-03` | Idle animation cache warming is removed from regular Dex modes. |
+| `DEX-PERF-04` | Manually accepted and integrated byte-for-byte after full qualification. +51 ROMX bytes, no added RAM. Post-Info medians: entry 242.27 to 125.07 ms, return 249.55 to 98.86 ms; form paging remains approximately 49.02 ms. [Production verification](pokedex_unown_transition_regression.md#production-integration). |
 | `NEWDEX-UI-02` option A | Accepted visual-only Description layout and red footer are in production. Original post-catch A/B flow remains. Option B is not an unfinished part of A. |
 | `DEX-CLEAN-01` | Approved cleanup is integrated and accepted: 2,970 decimal ROMX bytes reclaimed from the accepted New Entry build; 2,693 net against prior production. Original graphics remain archived. |
 | `NEWDEX-ANIM-01`, `NEWDEX-UI-01`, `QA-CLEANUP-01` | Registration scheduling/text work and temporary encounter/instrumentation cleanup are complete, retaining the accepted Mewtwo presentation caveat. |
@@ -101,7 +109,6 @@ silently delete its earlier reproduction or label it a proven causal fix.
 | `DEX-DATA-04` | Regroup later-generation relatives/babies in the authored Evolves order shared by Modern and Legacy. National/Alphabet remain independent. |
 | `DEX-PREF-01` | Durable Pokémon listing position/viewport remembrance. |
 | `DEX-PREF-02` | Durable Moves listing position/viewport remembrance, separate from already completed sort remembrance. |
-| `DEX-PERF-04` | Optional further Modes-to-Unown and Unown-to-Modes latency reduction. Current cleanup's eight post-Info transition cases complete in about 249.33-249.79 ms entering and 249.59-249.60 ms returning, around 14.9 display frames. Correctness passes; the old 350 ms entry baseline is no longer current. |
 | `DEX-PERF-02` | Accepted Selected-tab iteration and the `DEX-INFO-03` publication correction are complete. Keep only broader future performance review as an umbrella; opening/closing, idle warming and Unown form paging are already integrated. |
 
 Future options, not pending approved implementation: New Entry `Desc/Info/Mov/End`

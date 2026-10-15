@@ -1986,7 +1986,26 @@ Acceptance:
 
 ### DEX-PERF-04: Optimize Unown Dex Mode Entry And Return
 
-Status: Optional transition optimization deferred; form paging is already complete
+Status: Complete; manually accepted and production-integrated 2026-10-14
+
+The subsequent [full standard and supplementary campaign](pokedex_unown_transition_regression.md)
+passes on the approved exact ROM, with no new regressions. All 333 move
+animations retain exact renderer timing/pixels, the 100-move matrix retains
+exact durations, and six-model Unown/Type/return checks pass. After the user's
+manual acceptance and authorization, the production rebuild matches that exact
+candidate byte-for-byte. Fresh root-build transition checks pass. The final
+delta is +51 decimal ROMX bytes with no added RAM. See
+[production integration](pokedex_unown_transition_regression.md#production-integration).
+
+2026-10-14 investigation: a two-line wait-removal alternative costs -1 ROMX
+byte and saves four entry frames/about one return frame. The recommended
+existing-uploader reuse candidate costs +51 ROMX bytes, no additional RAM,
+and completes post-Info entry in 125.07 ms / 7.47 display frames and return
+in 98.86 ms / 5.90 frames, versus production 242.27 ms / 14.47 and
+249.55 ms / 14.90 in the same eight-phase sample. Focused forms, menus,
+transition pixels, return playback and six CGB revisions pass. These are
+pre-integration comparisons; the +51-byte candidate is now production. See the
+[investigation and review builds](pokedex_unown_transition_optimization.md).
 
 Current-link reconciliation 2026-10-14: the accepted static decoder/atomic
 publication improves form paging and initial preparation. Eight post-Info
@@ -1994,7 +2013,7 @@ transition cases now complete Modes-to-Unown in 249.33-249.79 ms and return
 in 249.59-249.60 ms, about 14.9 display frames each. The old 350 ms entry
 baseline below is historical. Further Modes transition optimization remains
 separate from the completed fast form-selection work. See
-[current costs and status](pokedex_backlog_reconciliation.md#still-outstanding).
+[current costs and status](pokedex_backlog_reconciliation.md#complete-and-integrated).
 
 The user accepts the stage-and-reveal corrections and requests a later
 performance pass on entering and returning from Unown Dex Mode. Do not undo
