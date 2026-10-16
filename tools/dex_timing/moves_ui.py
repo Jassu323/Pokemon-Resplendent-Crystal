@@ -83,8 +83,9 @@ def content_audit(repo, name, page, ui, manifest):
 def run_case(task):
     config, index, name, phase = task
     rom = Path(config.get('rom', ROOT / 'pokecrystal.gbc'))
-    repo = Repository(ROOT, rom, Path(config.get('sym', ROOT / 'pokecrystal.sym')))
-    manifest = json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+    root = Path(config.get('root', ROOT))
+    repo = Repository(root, rom, Path(config.get('sym', root / 'pokecrystal.sym')))
+    manifest = json.loads((root / 'build/dex-moves-assets/manifest.json').read_text())
     out = Path(config['output'])
     driver = Driver(config['core'], rom, BOOT, config['battery'], out / f'{name}-{phase}.log')
     issues, timings, pages, playback = [], [], [], []
@@ -145,7 +146,7 @@ def run_case(task):
         press(driver, 'left')
         press(driver, 'a')
         ui = info_ready(driver, 0)
-        compiler = Compiler()
+        compiler = Compiler(root)
         info_issues = info_audit(compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols), target_name, 0, ui, repo)
         issues += ['info:' + issue for issue in info_issues]
         if info_issues:
@@ -178,8 +179,9 @@ def run_case(task):
 def run_stress(task):
     config, index, name, age, family = task
     rom = Path(config.get('rom', ROOT / 'pokecrystal.gbc'))
-    repo = Repository(ROOT, rom, Path(config.get('sym', ROOT / 'pokecrystal.sym')))
-    manifest = json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+    root = Path(config.get('root', ROOT))
+    repo = Repository(root, rom, Path(config.get('sym', root / 'pokecrystal.sym')))
+    manifest = json.loads((root / 'build/dex-moves-assets/manifest.json').read_text())
     out = Path(config['output'])
     label = f'{name}-{age}-{family}'
     driver = Driver(config['core'], rom, BOOT, config['battery'], out / f'{label}.log')
@@ -251,7 +253,7 @@ def run_stress(task):
             select_footer(1)
             activate_footer()
             ui = info_ready(driver, 0)
-            compiler = Compiler()
+            compiler = Compiler(root)
             issues += info_audit(compiler, compiler.compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols), name, 0, ui, repo) + type_audit(repo, name, ui)
             if ui['moves_state']:
                 issues.append('moves_job_survived_info')

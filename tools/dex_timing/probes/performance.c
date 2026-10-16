@@ -272,11 +272,12 @@ static void perf_observe(unsigned bank, unsigned pc)
 #endif
         printf("{\"event\":\"perf_phase\",\"name\":\"%s\",\"t\":%" PRIu64
                ",\"ly\":%u,\"bc\":%u,\"de\":%u,\"hl\":%u,\"svbk\":%u,\"vbk\":%u,"
-               "\"speed\":%u,\"lcdc\":%u,\"tma\":%u,\"tac\":%u,\"remaining\":%u,\"anim_id\":%u,\"turn\":%u}\n",
+               "\"speed\":%u,\"lcdc\":%u,\"tma\":%u,\"tac\":%u,\"remaining\":%u,\"anim_id\":%u,\"turn\":%u,\"stat\":%u,\"nr52\":%u,\"ie\":%u}\n",
                perf_points[i].name, now, gb.io_registers[0x44], gb.bc, gb.de, gb.hl,
                gb.cgb_ram_bank, gb.cgb_vram_bank, gb.cgb_double_speed,
                gb.io_registers[0x40], gb.io_registers[0x06], gb.io_registers[0x07],
-               sampled_blocks, word(S_wFXAnimID), byte(S_hBattleTurn));
+               sampled_blocks, word(S_wFXAnimID), byte(S_hBattleTurn),
+               gb.io_registers[0x41], gb.io_registers[0x26], gb.interrupt_enable);
 #ifdef DEX_BATTLE_TIMING_TRACE
         if (!strcmp(perf_points[i].name, "anim_ready")) {
             unsigned peak = 0, over = 0, height = gb.io_registers[0x40] & 4 ? 16 : 8;

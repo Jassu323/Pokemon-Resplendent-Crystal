@@ -32,7 +32,7 @@ def main():
     structural = {}
     for old in source['configurations']:
         rom = old['rom']
-        repo = Repository(ROOT, Path(rom), Path(old['sym']))
+        repo = Repository(Path(old.get('root', ROOT)), Path(rom), Path(old['sym']))
         if rom not in binaries:
             folder = args.output / (old['variant'] + '-core')
             folder.mkdir(exist_ok=True)

@@ -704,6 +704,8 @@ Pokedex_BeginDescriptionAnimation:
 	ld hl, wPokedexAnimOwner
 	cp [hl]
 	ret nz
+Pokedex_BeginPreparedDescriptionAnimation::
+; Fixed-species registration enters after the Listing-only checks.
 	ld a, [wPokedexAnimPlaybackState]
 	cp POKEDEX_ANIM_PLAYBACK_WAITING
 	ret nz

@@ -94,7 +94,7 @@ def factory(repo, output):
 
 def prepare(config, output, visit, quarter):
     output.mkdir(parents=True, exist_ok=True)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     bank, pc = repo.symbols['SampledCry_RestartCH3']
     if repo.rom[offset((bank, pc)) + 23] != 0xc9:
         raise RuntimeError('Linked CH3 restart body changed')
@@ -187,7 +187,25 @@ def compare_playback(baseline, candidate):
     if len(baseline['segments']) != len(candidate['segments']):
         return ['sampled segment count changed']
     for index, (a, b) in enumerate(zip(baseline['segments'], candidate['segments'])):
-        for key in ('expected_blocks', 'blocks', 'wave_sha256', 'timer_configs', 'frequencies', 'speed_values'):
+        registration_clock_change = (baseline.get('context') == candidate.get('context') == 'catch' and
+            baseline.get('registration_owner') == 'resident' and
+            candidate.get('registration_owner') == 'streaming' and
+            a['start_t'] >= baseline['registration_t'] and b['start_t'] >= candidate['registration_t'])
+        keys = ('expected_blocks', 'blocks', 'wave_sha256', 'frequencies')
+        if registration_clock_change:
+            # The production timer uses 64 CPU ticks; double speed uses 256
+            # with half counts, alternating floor/ceil for an odd period.
+            timers = {tuple(row) for row in a['timer_configs']}
+            expected = {(7, (-count) & 255) for tac, tma in timers
+                        for count in ((256-tma)//2, (257-tma)//2) if tac == 6}
+            if not timers or any(tac != 6 for tac, _ in timers) or \
+                    {tuple(row) for row in b['timer_configs']} != expected:
+                issues.append(f'segment {index}: timer_configs changed outside registration clock policy')
+            if a['speed_values'] != [0] or b['speed_values'] != [1]:
+                issues.append(f'segment {index}: speed_values violate registration clock policy')
+        else:
+            keys += ('timer_configs', 'speed_values')
+        for key in keys:
             if a[key] != b[key]:
                 issues.append(f'segment {index}: {key} changed')
         stop = lambda row: [(e['event'], e.get('remaining')) for e in row['stops']]
@@ -216,7 +234,7 @@ def compare_reports(paths, output):
 
 def execute(job):
     config, name, context = job
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     output = Path(config['output']) / f'{name}-{context}'
     output.mkdir(exist_ok=True)
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / 'run.log')
@@ -273,16 +291,26 @@ def execute(job):
                     tap(driver, repo, 'right', 4, 30)
                 else:
                     raise RuntimeError('Balls pouch not reached')
-                until(driver, repo, 'NewPokedexEntry')
+                entered = until(driver, repo, 'NewPokedexEntry')
+                interactive = 'NewDexRegistration_Loop' in repo.symbols
+                result['registration_owner'] = 'streaming' if interactive else 'resident'
+                result['registration_t'] = entered['t']
                 driver.command(f'save {output / "registration.s0"}')
-                until(driver, repo, 'NewPokedexEntry.WaitPressAorB_AnimateFrontpic', key=None)
+                until(driver, repo, 'NewDexRegistration_Loop' if interactive else
+                      'NewPokedexEntry.WaitPressAorB_AnimateFrontpic', key=None)
                 run(driver, repo, frames=240)
         driver.command('perfaudio -')
         result['speed_after'] = driver.command('peek')['double_speed']
         result['segments'] = audio_segments(driver.events)
         result['known_misses'] = [e for e in driver.events if e['event'] == 'audio_miss']
         expected_speed = config.get('expected_double_speed', 0)
-        if result['speed_after'] != expected_speed or any(s['speed_values'] != [expected_speed] for s in result['segments']):
+        registration_speed = 1 if result.get('registration_owner') == 'streaming' else expected_speed
+        result['expected_speed_after'] = registration_speed
+        result['expected_segment_speeds'] = [registration_speed
+            if s['start_t'] >= result.get('registration_t', float('inf')) else expected_speed
+            for s in result['segments']]
+        if result['speed_after'] != registration_speed or any(s['speed_values'] != [speed]
+                for s, speed in zip(result['segments'], result['expected_segment_speeds'])):
             result['issues'].append('audio context changed the expected CPU speed')
         if repo.load([name])[0].sample_blocks and not result['segments']:
             result['issues'].append('expected sampled cry never started')
@@ -294,7 +322,7 @@ def execute(job):
     except Exception as error:
         result['issues'].append(str(error))
     finally:
-        if raw.exists():
+        if raw.exists() and (output / 'audio.wav').exists():
             raw.unlink()
         with gzip.open(output / 'events.jsonl.gz', 'wt') as log:
             log.write(''.join(json.dumps(e) + '\n' for e in driver.events))

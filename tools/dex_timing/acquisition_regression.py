@@ -113,7 +113,7 @@ def run(output, baseline, action, jobs):
         tasks = []
         for local in prepared:
             folder = Path(local['output'])
-            repo = Repository(ROOT, Path(local['rom']), Path(local['sym']))
+            repo = Repository(Path(local['root']), Path(local['rom']), Path(local['sym']))
             factory = audio.factory(repo, folder)
             table = offset(repo.symbols['NewPokedexOrder'])
             for name in audio.SPECIES:

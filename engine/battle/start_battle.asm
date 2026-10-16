@@ -254,3 +254,5 @@ BattleSpeed_LeaveNormal::
 	ldh [rIE], a
 	ei
 	ret
+
+INCLUDE "engine/battle/capture_speed.asm"

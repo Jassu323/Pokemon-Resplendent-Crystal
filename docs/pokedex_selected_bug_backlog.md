@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-15. This is the live issue/status list, not the chronological
+Updated 2026-10-16. This is the live issue/status list, not the chronological
 scheduler investigation. The accepted production implementation and cleanup
 are complete. See [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
 for the complete disposition, exact current build and fresh focused evidence.
@@ -12,8 +12,11 @@ Latest statuses below take precedence over historical prototype paragraphs.
   Info/Moves/Area work, Listing options and sort-cache repair, Pokemon Search
   and colored Results, Moves Dex discovery/search/sort memory, Type Matchups,
   shared blinking, Unown correctness and fast form paging, ancestors, repaired
-  Stage opening/closing, no warming, visual-only New Entry, approved cleanup,
-  fast Unown transitions and session-only Pokemon/Moves position remembrance.
+  Stage opening/closing, no warming, interactive New Entry (superseding the
+  earlier visual-only flow), approved cleanup, fast Unown transitions and
+  session-only Pokemon/Moves position remembrance. Interactive registration
+  includes the accepted LCD-on capture handoff, Pay Day preservation and all
+  67 reviewed evolution links, retaining the 20 approved temporary requirements.
   Search/sort/ancestors/cleanup are not awaiting another promotion.
 - **Historical, not reproduced on current production:** `DEX-INFO-04`,
   `DEX-RETURN-02`, `DEX-RETURN-04`, `DEX-GRID-02`, `DEX-GRID-04`. Fresh badge
@@ -24,19 +27,22 @@ Latest statuses below take precedence over historical prototype paragraphs.
   after internal paging had publication starvation. The chosen +9 ROMX fix is
   applied to production source with no new RAM. Fresh 1,492-case and six-model
   return matrices pass, reaching a 60.45 ms / 3.61-frame catalog median. Fresh
-  full emulator regression passes with no new failures. Manual review remains
-  pending; the atomic portrait flag dependency is documented in the linked
+  full emulator regression passes with no new failures. Manual review was
+  subsequently accepted; the atomic portrait flag dependency is documented in the linked
   investigation and beside both producer/consumer in the source.
 - **Explicitly deferred:** `DEX-SEARCH-04` official National labels;
-  `DEX-DATA-01/02/03/04` content, real evolution data, egg inheritance and
+  `DEX-DATA-01/02/03/04` content, final evolution requirements, egg inheritance and
   family ordering.
   `DEX-INFO-02` is an alias of the evolution-data work, not a second renderer fix.
 - **Optional future performance/audit:** `DEX-PERF-02` retains only the broader
   future performance umbrella; the +51-byte `DEX-PERF-04` transition fix is
   already integrated and separate from accepted fast form paging. Its
   accepted Selected-tab iteration and later lifecycle work are complete.
-  New Entry option B and the broader Selected implementation audit are future
-  options, not unfinished parts of the approved visual-only registration page.
+  The broader Selected implementation/code-space audit remains optional.
+  New Entry option B is now [accepted and integrated](pokedex_interactive_registration_integration.md),
+  not pending review. Its five approximately two-frame Info timing tails are
+  accepted and may be revisited here; the 20 temporary evolution requirements
+  do not close final species-data approval.
 - **Adjacent, not Dex completion:** Sand Tomb and other battle/overworld
   follow-ups retain their separate statuses below. Standalone Stats is
   qualified; the nested battle cry owner remains deferred. `BT-REWARD-01`
@@ -325,7 +331,14 @@ do not suppress its badge check. See [preflight evidence](pokedex_info_return_pr
 
 ### DEX-INFO-02: Added-species evolution pages and added branches are missing
 
-Status: Confirmed; deferred 2026-10-03 into DEX-DATA-02, not solved
+Status: Missing-link defect resolved by the accepted 2026-10-16 graph;
+final requirements remain deferred under DEX-DATA-02
+
+All 67 missing links are configured and the 373-species / 190-link audit
+passes. The user explicitly retained 20 reviewed temporary requirements in
+production. Rendering now follows that complete graph; final mechanics and
+species content remain a separate data pass. The missing-link reproduction
+and original deferral below are historical, not current restrictions.
 
 The user will address evolution/family records while revising species learnsets,
 base stats and other species data. Do not add gameplay evolution links or
@@ -361,7 +374,7 @@ deferred with these source records. See [full data audit and fix choices](pokede
 
 ### DEX-INFO-03: Switching lower tabs waits for frontpic animation completion
 
-Status: +9 fix implemented and full emulator regression passed; manual review pending, 2026-10-14
+Status: +9 fix integrated and manually accepted; full emulator regression passed
 
 Latest [cause, attribution, fixes and costs](pokedex_info_description_latency_investigation.md)
 supersede the initial preparation/admission hypothesis below. Text is ready in
@@ -378,7 +391,7 @@ zero RAM/ROM0/HRAM/SRAM and pass exact playback/content checks. The user chose
 the scoped +9 fix, now applied to production source; it preserves
 full-restore/actual-portrait separation. Fresh exact-link qualification is
 recorded in the investigation's Production Integration section. Full regression
-passes with no new failures; manual review is pending. The dispatcher/publisher comments
+passes with no new failures; the user subsequently accepted the result. The dispatcher/publisher comments
 reference its Atomic Portrait Contract; revisit that before changing the map
 pending flag or introducing partial visible-map/attribute publication.
 
@@ -1469,6 +1482,14 @@ unknown height/weight values.
 
 Status: Deferred by the user 2026-10-03; includes confirmed DEX-INFO-02
 
+2026-10-16 update: the reviewed 190-link gameplay graph is complete and now
+integrated with interactive registration. It adds 67 links (47 canonical,
+20 temporary existing-method equivalents) and corrects Delcatty's first-stage
+record. The user explicitly approved keeping the temporary requirements in
+production. Final requirements, unsupported original mechanics and the broader
+species/learnset/stat pass remain deferred. This is no longer a report that
+all those links are absent. The source audit below is historical evidence.
+
 The user will review species learnsets, updated base stats and related species
 data in a later content pass. Complete actual gameplay evolution links and
 their requirements during that work, then regenerate Dex Info. Missing
@@ -1499,9 +1520,11 @@ Status: Deferred by the user 2026-10-03; coordinate with DEX-DATA-02
 The integrated Moves renderer shares each configured evolution family's existing
 egg-move list across all of its members. It uses actual gameplay evolution
 links, including branches and baby species, and does not infer missing links
-or change breeding behavior. Consequently, deferred families and newer branches
-such as Sneasel/Weavile and Eevee/Leafeon/Glaceon still need their real species
-data completed before they inherit the expected Breeding pages.
+or change breeding behavior. Previously missing branches, including
+Sneasel/Weavile and Eevee/Leafeon/Glaceon, are configured in the accepted
+2026-10-16 graph and pass the generated-content checks. Final egg lists,
+learnsets and evolution mechanics still require the deferred content pass;
+graph completeness alone does not sign off that content.
 
 During the species pass, complete evolution links and egg lists, rebuild, then
 verify every member's Breeding content, category-separated page count and wrap.
@@ -1772,11 +1795,20 @@ promotion; do not delete merely old-looking routines speculatively.
 
 ### NEWDEX-UI-02: Match Registration To Selected Description
 
-Status: Complete for accepted visual-only option A; production-integrated 2026-10-14
+Status: Complete; interactive option B accepted and production-integrated 2026-10-16
 
-The production link matches the tested combined candidate byte-for-byte. The
-two-page A/B post-catch flow and red footer are retained. Option B remains
-deferred. Historical standalone prototype results follow.
+The production ROM, symbols and map match the fully qualified corrected
+interactive prototype exactly. Desc/Info/Mov/End reuses Selected-style streaming
+without interrupting authored portrait/cry playback on tab changes. B/End exits
+to the original continuation. The LCD-on synchronized capture handoff and
+three-byte Pay Day preservation are included; normal battle timing is retained.
+All 67 reviewed evolution links, including 20 explicitly approved temporary
+requirements, are integrated. Cost is +5332 decimal ROMX bytes with no allocated
+RAM growth. Fresh root checks pass. See
+[production integration](pokedex_interactive_registration_integration.md).
+
+Historical option-A scope and standalone prototype results follow; their
+normal-speed registration requirement and option-B deferral are superseded.
 
 The user selected A. See [visual prototype results](pokedex_new_entry_visual_prototype.md).
 The review build reuses Description artwork and adds 277 ROMX bytes with no
@@ -1811,6 +1843,13 @@ Then update `DEX-CLEAN-01` against the new live references before removal.
 ### DEX-PERF-02: Profile And Optimize The Completed Dex
 
 Status: Accepted Selected-tab iteration complete; broader future review remains
+
+2026-10-16: interactive registration is accepted and integrated. Five
+phase-sensitive Info operations in the qualification scan add approximately
+33.578-33.756 ms / 2.006-2.016 physical display frames versus ordinary Selected;
+these are accepted timing warnings, not content, audio or portrait errors.
+The [local scheduling scope](pokedex_registration_local_scheduling_scope.md)
+remains optional future tuning, not a required promotion fix.
 
 Reconciliation 2026-10-14: opening/closing is complete under `DEX-PERF-01`,
 idle warming removal under `DEX-PERF-03`, and Unown form paging is integrated.

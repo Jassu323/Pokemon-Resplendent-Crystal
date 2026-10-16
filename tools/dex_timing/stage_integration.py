@@ -120,7 +120,10 @@ def lifecycle():
     tasks = []
     for variant in ('baseline', 'integrated'):
         models = ('E',) if variant == 'baseline' else ('0', 'A', 'B', 'C', 'D', 'E')
-        folder = SOURCE / 'rollback' if variant == 'baseline' else SOURCE / 'candidate'
+        baseline_source = CAMPAIGN / 'baseline/candidate'
+        if not baseline_source.is_dir():
+            baseline_source = SOURCE / 'rollback'
+        folder = baseline_source if variant == 'baseline' else SOURCE / 'candidate'
         repo = Repository(
             folder, folder / 'pokecrystal.gbc', folder / 'pokecrystal.sym')
         for model in models:
@@ -139,7 +142,7 @@ def lifecycle():
                 f'-DDEX_TEST_MODEL=GB_MODEL_CGB_{model}'))
             config = dict(core=str(binary), rom=str(repo.rom_path),
                 sym=str(folder / 'pokecrystal.sym'), battery=str(SOURCE / 'pokecrystal-dex-types.sav'),
-                variants={variant: dict(rom=str(repo.rom_path))}, fixtures={})
+                root=str(repo.root), variants={variant: dict(rom=str(repo.rom_path))}, fixtures={})
             for style in (0, 1):
                 for order in (0, 1, 2):
                     battery = target / f'{style}-{order}.sav'

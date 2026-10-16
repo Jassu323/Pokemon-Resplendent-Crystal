@@ -459,6 +459,13 @@ PokedexInfo_PlanStats:
 	add hl, hl
 	ld de, PokedexInfoNumbers
 	add hl, de
+; Stats prepare no minis; the old committed mini pixels live in VRAM.
+; Borrow eight dead staging bytes for one banked number-pointer row.
+	ld de, wPokedexInfoMiniGFX
+	ld bc, 8
+	ld a, BANK(PokedexInfoNumbers)
+	call FarCopyBytes
+	ld hl, wPokedexInfoMiniGFX
 	ld b, 4
 .number
 	ld a, [hli]

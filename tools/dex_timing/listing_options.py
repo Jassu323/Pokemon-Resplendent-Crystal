@@ -161,7 +161,7 @@ def prepare(output, battery):
     config = performance.prepare(output / 'pokecrystal-dex-options.gbc',
                                  output / 'pokecrystal-dex-options.sym',
                                  seed, output / 'modern')
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     config['core'] = str(performance.core(repo, output / 'popover-core', POINTS).resolve())
     (output / 'modern/config.json').write_text(json.dumps(config, indent=2) + '\n')
     prepare_legacy(output / 'legacy', config)
@@ -171,7 +171,7 @@ def prepare(output, battery):
 def species_case(task):
     config, index, mode, manifest, output = task
     output = Path(output)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     name = config['names'][index]
     asset = repo.load([name])[0]
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / f'{index:03}-{mode}.log')
@@ -261,7 +261,7 @@ def qualify(output, jobs):
 
 def edges(output, presentation=0):
     config = configuration(output, 'legacy' if presentation else 'modern')
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     manifest = json.loads((output / 'sort-manifest.json').read_text())
     target = output / ('edges-legacy' if presentation else 'edges')
     target.mkdir(exist_ok=True)
@@ -335,7 +335,7 @@ def capture(driver, directory, name):
 def integration(output, jobs):
     from .dex_modes import row_case, mode_ids
     config = configuration(output)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     target = output / 'integration'
     target.mkdir(exist_ok=True)
     records, mode_tasks = [], []
@@ -419,7 +419,7 @@ def integration(output, jobs):
 def measure(output):
     from PIL import Image
     config = configuration(output)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     target = output / 'visuals'
     target.mkdir(exist_ok=True)
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], target / 'capture.log')
@@ -501,7 +501,7 @@ def visual_case(task):
                     output / f'{name}-{mode}-{phase}.log')
     result = dict(species=name, mode=mode, phase=phase,
                   presentation=config.get('listing_style', 'modern'), issues=[])
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     manifest = json.loads((Path(config['rom']).parent / 'sort-manifest.json').read_text())
     original_species = manifest['orders'][LABELS[0]][index]
     destination_species = manifest['orders'][LABELS[mode]][0] if mode else original_species
@@ -696,7 +696,7 @@ def modal_case(task):
     config, index, phase, output = task
     output = Path(output)
     issues = []
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / f'{index}-{phase}.log')
     try:
         driver.command(f'load {config["states"]}/listing-{index:03}.s0')

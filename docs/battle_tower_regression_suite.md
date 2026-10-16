@@ -1,6 +1,6 @@
 # Battle Tower Regression Suite
 
-Maintained: 2026-10-14. This is an independently runnable addendum to
+Maintained: 2026-10-15. This is an independently runnable addendum to
 [Full Regression Suite](full_regression_suite.md), not a replacement for it.
 It describes implemented tests, fixture limitations, required manual coverage,
 and failure handling. A future thread must not interpret the coverage matrix
@@ -244,6 +244,20 @@ after fainting. It must not repeatedly press A on a fainted first slot or keep
 sending navigation during a text prompt. Observe menu state before diagnosing
 such a run as a game hang. The direct owner remains at normal clock speed on
 return; map setup, not this owner, restores overworld double speed.
+
+The October 15 interactive-Dex qualification found a specific driver trap:
+after a Struggle win, both active HP fields can be zero and the stale
+`wPartyMenuActionText` can remain 2, despite `wBattleEnded=1`. Party steering
+must first require `wBattleEnded=0`; otherwise it sends directions forever at
+victory text. This is a host-input fix, not a game fix. Retained matching-ROM
+checkpoints finish with A, and four fresh cross-variant cases recheck the
+original battle/restoration assertions. Do not increase the timeout or force
+`wBattleTowerBattleEnded` to hide this. Full evidence is under
+`build/interactive-registration-full-20261015/orchestration/tower-victory-input-repair/`.
+Six focused input tests now cover release cadence, live-slot steering, live
+battlers, other prompts, no survivors and stale party flags after victory.
+Run them with the four existing oracle/gate controls using
+`PYTHONPATH=tools:. python3 -B -m unittest tools.test_battle_tower_suite -v`.
 
 ## 6. PR 16 And Retired Mobile Boundaries
 

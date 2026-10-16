@@ -136,7 +136,7 @@ def audio_registers():
         binary = core(repo, target, life.PROFILE, ('-DDEX_LIFECYCLE_TRACE',
             f'-DDEX_LIFECYCLE_SYMBOLS="{header.resolve()}"', '-DDEX_LIFECYCLE_APU_TRACE'))
         cfg = dict(core=str(binary), rom=str(repo.rom_path), sym=str(source / 'pokecrystal.sym'), battery=str(BASE / 'pokecrystal-dex-types.sav'),
-                   fixtures={}, variants={variant: dict(rom=str(repo.rom_path))})
+                   root=str(repo.root), fixtures={}, variants={variant: dict(rom=str(repo.rom_path))})
         for style in (0, 1):
             for order in (0, 1, 2):
                 battery = target / f'{style}-{order}.sav'

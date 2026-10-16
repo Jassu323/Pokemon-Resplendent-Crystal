@@ -87,12 +87,12 @@ def names():
             for n in re.findall(r'^\s*dw (\w+)\s*$', (ROOT / 'data/pokemon/dex_order_new.asm').read_text(), re.M)]
 
 
-def prepare(rom, sym, battery, output):
+def prepare(rom, sym, battery, output, root=ROOT):
     from .legacy_listing import private_battery
-    repo = Repository(ROOT, rom, sym)
+    repo = Repository(root, rom, sym)
     compiled = core(repo, output)
     seed = output / 'modern-input.sav'
-    private_battery(dict(rom=str(rom), sym=str(sym), battery=str(battery)), seed,
+    private_battery(dict(root=str(root.resolve()), rom=str(rom), sym=str(sym), battery=str(battery)), seed,
                     presentation=0, order_mode=0)
     copied = output / 'private.sav'
     fixture(seed, copied)
@@ -106,7 +106,7 @@ def prepare(rom, sym, battery, output):
         driver.close()
     config = dict(core=str(compiled.resolve()), rom=str(rom.resolve()), sym=str(sym.resolve()),
                   battery=str(copied.resolve()), states=str(states.resolve()), names=names(),
-                  output=str(output.resolve()), hashes=repo.hashes)
+                  output=str(output.resolve()), root=str(root.resolve()), hashes=repo.hashes)
     (output / 'config.json').write_text(json.dumps(config, indent=2) + '\n')
     return config
 
@@ -237,7 +237,7 @@ def run_case(job):
             accepted = driver.run(('footer_accept', 'animation_miss', 'audio_miss'), key='a')
             driver.run(('animation_miss', 'audio_miss'), frames=1)
             ui = moves_ready(driver, 0)
-            manifest = json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+            manifest = json.loads((repo.root / 'build/dex-moves-assets/manifest.json').read_text())
             result['issues'] += content_audit(repo, name, 0, ui, manifest)
             hash_key = 'lower'
         elif action == 'rapid':

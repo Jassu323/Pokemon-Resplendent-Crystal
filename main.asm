@@ -347,6 +347,7 @@ PokedexInfoAncestorTitleGFX:
 INCBIN "build/dex-info-assets/titles.2bpp", 16 tiles, 13 tiles
 PokedexInfoAncestorTitleGFXEnd:
 ASSERT PokedexInfoAncestorTitleGFXEnd - PokedexInfoAncestorTitleGFX == 13 tiles
+INCLUDE "build/dex-info-assets/numbers.asm"
 
 INCLUDE "engine/pokedex/performance_fast.asm"
 

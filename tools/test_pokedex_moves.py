@@ -7,14 +7,59 @@ import unittest
 from dex_timing.assets import Repository, offset
 from dex_timing.cold_listing import ROOT
 from dex_timing.costs import machine
-from pokedex_info_assets import species, constants
+from pokedex_info_assets import species, constants, evolution_graph
 from pokedex_moves_assets import compile as compile_moves
+
+
+def raw_move_sources(root):
+    names = species(root)
+    levels, eggs, pointers = {}, {}, {}
+    for suffix in ('kanto', 'johto', 'custom'):
+        for kind, stem in (('level', 'evos_attacks'), ('egg', 'egg_moves')):
+            text = (root / f'data/pokemon/{stem}_{suffix}.asm').read_text()
+            header, body = text.split('.IndirectEnd', 1)
+            labels = re.findall(r'^\s*dw (\w+)\s*(?:;[^\n]*)?$', header, re.M)
+            blocks = dict(re.findall(r'^(\w+):\s*\n(.*?)(?=^\w+:|\Z)', body, re.M | re.S))
+            target = levels if kind == 'level' else eggs
+            first = len(target)
+            for name, label in zip(names[first:first + len(labels)], labels):
+                if kind == 'level':
+                    learnset = re.split(r'\bdb 0\b', blocks[label], maxsplit=1)[1]
+                    target[name] = [(int(level), move) for level, move in
+                                    re.findall(r'^\s*dbw\s+(\d+),\s*(\w+)', learnset, re.M)]
+                else:
+                    target[name] = [(0, move) for move in
+                                    re.findall(r'^\s*dw\s+([A-Z][A-Z_0-9]*)\s*$', blocks[label], re.M)]
+                    pointers[name] = label
+    if list(levels) != names or list(eggs) != names:
+        raise AssertionError('Raw move pointer tables do not cover the catalog')
+    graph = {name: set() for name in names}
+    for parent, edges in evolution_graph(root).items():
+        for child, _ in edges:
+            graph[parent].add(child)
+            graph[child].add(parent)
+    inherited = {}
+    for name in names:
+        family, pending = set(), [name]
+        while pending:
+            member = pending.pop()
+            if member not in family:
+                family.add(member)
+                pending.extend(graph[member] - family)
+        sources = [member for member in names if member in family and eggs[member]]
+        if len({tuple(eggs[member]) for member in sources}) > 1:
+            raise AssertionError('Conflicting raw breeding lists: ' + name)
+        source = sources[0] if sources else name
+        inherited[name] = dict(source=source, pointer=pointers[source], rows=eggs[source])
+    return levels, inherited
+
 
 class MovesTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
         cls.manifest = json.loads((ROOT / 'build/dex-moves-assets/manifest.json').read_text())
+        cls.raw_levels, cls.raw_eggs = raw_move_sources(ROOT)
 
     def read(self, bank, at, length):
         start = offset((bank, at))
@@ -31,11 +76,11 @@ class MovesTests(unittest.TestCase):
             verifier.data = verifier.compiler.compile()
             verifier.test_runtime_moves_streams_match_all_authoritative_sources()
             return
-        names = species()
+        names = species(ROOT)
         ids = constants(ROOT / 'constants/move_constants.asm')
         at = offset(repo.symbols['PokedexMovesSpecies'])
         split = names.index('HARIYAMA') + 1
-        total = 0
+        total, expected_total = 0, 0
         for i, name in enumerate(names):
             with self.subTest(species=name):
                 data = self.manifest[name]
@@ -47,6 +92,14 @@ class MovesTests(unittest.TestCase):
                 flags = int.from_bytes(stats[24:32], 'little')
                 eligible = [[n+1 for n in range(57) if flags & (1 << n)],
                             [n+1 for n in range(3) if flags & (1 << (n+57))]]
+                eggs = self.raw_eggs[name]
+                self.assertEqual(data['streams'][0], [list(row) for row in self.raw_levels[name]])
+                self.assertEqual(data['streams'][3], [list(row) for row in eggs['rows']])
+                self.assertEqual(data['egg_source'], eggs['source'])
+                self.assertEqual(data['egg_pointer'], eggs['pointer'])
+                expected_total += sum((count + 4) // 5 for count in
+                                      (len(self.raw_levels[name]), len(eligible[0]),
+                                       len(eligible[1]), len(eggs['rows'])))
                 for kind in range(4):
                     count, bank, lo, hi = record[1 + kind*4:5 + kind*4]
                     address = lo | hi << 8
@@ -62,7 +115,9 @@ class MovesTests(unittest.TestCase):
                     else:
                         self.assertEqual(list(self.read(bank, address, count)), eligible[kind - 1])
                 total += len(data['pages'])
-        self.assertEqual(total, 2576)
+        self.assertEqual(total, expected_total)
+        if all(self.raw_eggs[name]['source'] == name for name in ('WEAVILE', 'LEAFEON', 'GLACEON')):
+            self.assertEqual(total, 2576)
 
     def test_every_badge_from_1_through_19_preserves_the_visible_buffer(self):
         repo = self.repo
@@ -102,8 +157,12 @@ class MovesTests(unittest.TestCase):
 
     def test_deferred_evolution_links_are_not_invented(self):
         for name in ('WEAVILE', 'LEAFEON', 'GLACEON'):
-            self.assertEqual(self.manifest[name]['streams'][3], [])
-            self.assertEqual(self.manifest[name]['egg_source'], name)
+            expected = self.raw_eggs[name]
+            self.assertEqual(self.manifest[name]['streams'][3], [list(row) for row in expected['rows']])
+            self.assertEqual(self.manifest[name]['egg_source'], expected['source'])
+            self.assertEqual(self.manifest[name]['egg_pointer'], expected['pointer'])
+            if expected['source'] == name:
+                self.assertEqual(self.manifest[name]['streams'][3], [])
 
     def test_existing_chains_branches_and_babies_share_egg_sources(self):
         families = {

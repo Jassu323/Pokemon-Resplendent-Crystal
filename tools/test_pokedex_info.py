@@ -5,11 +5,13 @@ from dex_timing.assets import Repository, offset
 from dex_timing.cold_listing import ROOT
 from dex_timing.costs import machine
 
+REFERENCE_ROOT = None
+
 
 class InfoAssetTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.compiler = Compiler()
+        cls.compiler = Compiler(ROOT)
         cls.data = cls.compiler.compile()
 
     def test_quantization_and_endpoint_cap(self):
@@ -17,7 +19,7 @@ class InfoAssetTests(unittest.TestCase):
                          [0, 2, 4, 18, 98, 100, 101])
 
     def test_skitty_uses_the_game_moon_stone_link(self):
-        self.assertEqual(evolution_graph()['SKITTY'],
+        self.assertEqual(evolution_graph(ROOT)['SKITTY'],
                          [('DELCATTY', ['EVOLVE_ITEM', 'MOON_STONE'])])
         records = self.data['roots']['SKITTY']
         self.assertEqual([self.data['records'][r][2] for r in records],
@@ -25,12 +27,12 @@ class InfoAssetTests(unittest.TestCase):
         self.assertEqual(self.data['roots']['DELCATTY'], [])
 
     def test_all_future_stages_not_only_the_next_stage(self):
-        targets = [target for target, _ in future_stages(evolution_graph(), 'CHIKORITA')]
+        targets = [target for target, _ in future_stages(evolution_graph(ROOT), 'CHIKORITA')]
         self.assertEqual(targets, ['BAYLEEF', 'MEGANIUM'])
         self.assertEqual(self.data['stats']['CHIKORITA'], [45, 49, 65, 49, 65, 45])
 
     def test_branching_methods_and_empty_third_lines(self):
-        graph = evolution_graph()
+        graph = evolution_graph(ROOT)
         for name in ('EEVEE', 'TYROGUE', 'POLIWAG', 'ODDISH'):
             self.assertEqual(len(self.data['roots'][name]), len(future_stages(graph, name)))
         texts = [r[2] for r in self.data['records']]
@@ -75,6 +77,8 @@ class InfoAssetTests(unittest.TestCase):
 
     def test_every_species_fits_the_double_buffered_atlas(self):
         data = self.data
+        graph = evolution_graph(ROOT)
+        page_counts = []
         self.assertEqual(len(data['names']), 373)
         for name in data['names']:
             with self.subTest(species=name):
@@ -82,11 +86,16 @@ class InfoAssetTests(unittest.TestCase):
                 used.update(t for stat in data['stats'][name] for t in data['numbers'][stat])
                 self.assertLessEqual(len(used), 40)
                 records = data['roots'][name]
-                self.assertLessEqual(1 + (len(records) + 1) // 2, 4)
+                pages = 1 + (len(records) + 1) // 2
+                self.assertEqual(pages, 1 + (len(future_stages(graph, name)) + 1) // 2)
+                self.assertLessEqual(pages, 19)
+                page_counts.append(pages)
                 for first in range(0, len(records), 2):
                     used = {t for i in records[first:first + 2]
                             for line in data['records'][i][1] for t in data['lines'][line][1]}
                     self.assertLessEqual(len(used), 40)
+        if sum(map(len, graph.values())) == 123:
+            self.assertEqual(max(page_counts), 4)
 
     def test_bar_segments_come_from_the_editable_source_sheet(self):
         compiler = self.compiler
@@ -262,17 +271,33 @@ class InfoLinkedTests(unittest.TestCase):
 
     def test_stats_slice_cpu_cost_is_bounded_for_all_values(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
+        banked = repo.symbols['PokedexInfoNumbers'][0] != repo.symbols['PokedexInfo_PlanStats'][0]
+        reference = None
+        if banked:
+            self.assertIsNotNone(REFERENCE_ROOT, 'Banked Stats requires a matching production reference')
+            reference = Repository(REFERENCE_ROOT, REFERENCE_ROOT / 'pokecrystal.gbc',
+                                   REFERENCE_ROOT / 'pokecrystal.sym')
+            gate = offset(repo.symbols['PokedexPerf_InfoLatestLY']) + 2
+            reference_gate = offset(reference.symbols['PokedexPerf_InfoLatestLY']) + 2
+            self.assertEqual(repo.rom[gate], reference.rom[reference_gate])
+            budget = (144 - repo.rom[gate]) * 456 - 2048 - 8182
         for row in range(6):
             for value in range(256):
-                cpu = machine(repo)
-                cpu.write(0xff70, 3)
-                cpu.field('wPokedexInfoState', 2)
-                cpu.field('wPokedexInfoCaught', 1)
-                cpu.field('wPokedexInfoRow', row)
-                cpu.field('wPokedexInfoTileCount', 15 + row * 4)
-                cpu.field('wPokedexInfoStats', value << (row * 8), 6)
-                cpu.run('PokedexInfo_Step')
-                self.assertLessEqual(cpu.cycles, 14000, (row, value))
+                costs = []
+                for linked in (reference, repo) if banked else (repo,):
+                    cpu = machine(linked)
+                    cpu.write(0xff70, 3)
+                    cpu.field('wPokedexInfoState', 2)
+                    cpu.field('wPokedexInfoCaught', 1)
+                    cpu.field('wPokedexInfoRow', row)
+                    cpu.field('wPokedexInfoTileCount', 15 + row * 4)
+                    cpu.field('wPokedexInfoStats', value << (row * 8), 6)
+                    cpu.run('PokedexInfo_Step')
+                    costs.append(cpu.cycles)
+                self.assertLessEqual(costs[0], 14000, (row, value))
+                if banked:
+                    self.assertEqual(costs[1] - costs[0], 672, (row, value))
+                    self.assertLessEqual(costs[1], budget, (row, value))
 
     def test_atlas_avoids_portrait_slots_and_icon_buffers(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')

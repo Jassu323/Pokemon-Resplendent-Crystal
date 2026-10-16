@@ -329,7 +329,7 @@ def case(task):
     base, variant, style, order, phase = task
     base = Path(base)
     config = json.loads((base / 'config.json').read_text())
-    repo = Repository(ROOT, Path(config['variants'][variant]['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['variants'][variant]['rom']), Path(config['sym']))
     folder = base / variant / f'style-{style}-order-{order}-q{phase}'
     folder.mkdir(parents=True, exist_ok=True)
     driver = Driver(config['core'], repo.rom_path, BOOT, config['fixtures'][f'{style}-{order}'],
@@ -496,7 +496,7 @@ def route_case(task):
     base, variant, style, route, battery = task
     base = Path(base)
     config = json.loads((base / 'config.json').read_text())
-    repo = Repository(ROOT, Path(config['variants'][variant]['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['variants'][variant]['rom']), Path(config['sym']))
     folder = base / 'routes' / variant / f'{style}-{route}'
     folder.mkdir(parents=True, exist_ok=True)
     driver = Driver(config['core'], repo.rom_path, BOOT, battery, folder / 'driver.log')

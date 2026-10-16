@@ -14,7 +14,7 @@ def prepare(output):
     target.mkdir(exist_ok=True)
     stem = output / 'pokecrystal-dex-moves-search'
     config = performance.prepare(stem.with_suffix('.gbc'), stem.with_suffix('.sym'),
-                                 output / 'all-seen-tests.sav', target / 'modern')
+                                 output / 'all-seen-tests.sav', target / 'modern', root=output / 'candidate')
     repo = Repository(output / 'candidate', Path(config['rom']), Path(config['sym']))
     config['core'] = str(performance.core(repo, target / 'popover-core', listing_options.POINTS).resolve())
     (target / 'modern/config.json').write_text(json.dumps(config, indent=2) + '\n')

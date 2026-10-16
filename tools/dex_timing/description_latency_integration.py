@@ -144,7 +144,7 @@ def models(jobs):
                                  (f'-DDEX_TEST_MODEL=GB_MODEL_CGB_{model}',))
         battery, states = modern / 'private.sav', modern / 'listing-states'
         seed = modern / 'modern-input.sav'
-        legacy_listing.private_battery(dict(rom=str(repo.rom_path),
+        legacy_listing.private_battery(dict(root=str(repo.root), rom=str(repo.rom_path),
             sym=str(source / 'pokecrystal-dex-types.sym'),
             battery=str(source / 'pokecrystal-dex-types.sav')), seed,
             presentation=0, order_mode=0)
@@ -159,7 +159,7 @@ def models(jobs):
         config = dict(core=str(binary.resolve()), rom=str(repo.rom_path),
             sym=str(source / 'pokecrystal-dex-types.sym'), battery=str(battery),
             states=str(states), names=performance.names(), output=str(modern),
-            hashes=repo.hashes, listing_style='modern', exact_playback=True, model=model)
+            root=str(repo.root), hashes=repo.hashes, listing_style='modern', exact_playback=True, model=model)
         write(modern / 'config.json', config)
         legacy = legacy_listing.prepare_legacy(target / 'legacy', config)
         tasks = []

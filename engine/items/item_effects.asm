@@ -1092,6 +1092,7 @@ Text_GotchaMonWasCaught:
 	push bc
 	ld de, MUSIC_NONE
 	call PlayMusic
+	farcall BattleSpeed_CaptureHandoff
 	call DelayFrame
 	ld de, MUSIC_CAPTURE
 	call PlayMusic

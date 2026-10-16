@@ -68,5 +68,41 @@ class BattleTowerSuiteTests(unittest.TestCase):
         self.assertFalse(result['no_new_failures'])
 
 
+class BattleTowerInputTests(unittest.TestCase):
+    def key(self, step=1, **changes):
+        values = dict(wBattleEnded=0, wPartyMenuActionText=2, wBattleMonHP=0,
+                      wPartyMon1HP=0, wPartyMon2HP=0, wPartyMon3HP=999, wMenuCursorY=2)
+        values.update(changes)
+        def read(driver, symbols, name, count=1):
+            return values[name].to_bytes(count, 'big')
+        with patch.object(tower, 'get', side_effect=read):
+            return tower.interactive_key(None, None, step)
+
+    def test_release_does_not_read_or_steer(self):
+        with patch.object(tower, 'get') as read:
+            self.assertEqual(tower.interactive_key(None, None, 0), 0)
+            read.assert_not_called()
+
+    def test_active_forced_switch_selects_a_live_slot(self):
+        self.assertEqual(self.key(), tower.KEY['down'])
+        self.assertEqual(self.key(wPartyMon1HP=999), tower.KEY['up'])
+        self.assertEqual(self.key(wMenuCursorY=3), tower.KEY['a'])
+
+    def test_victory_ignores_stale_party_navigation(self):
+        for ended in (1, 128, 255):
+            with self.subTest(ended=ended):
+                self.assertEqual(self.key(wBattleEnded=ended), tower.KEY['a'])
+        self.assertEqual(self.key(wBattleEnded=0), tower.KEY['down'])
+
+    def test_live_battler_does_not_trigger_party_steering(self):
+        self.assertEqual(self.key(wBattleMonHP=999), tower.KEY['a'])
+
+    def test_other_party_action_does_not_trigger_steering(self):
+        self.assertEqual(self.key(wPartyMenuActionText=0), tower.KEY['a'])
+
+    def test_no_survivor_does_not_send_navigation_forever(self):
+        self.assertEqual(self.key(wPartyMon3HP=0), tower.KEY['a'])
+
+
 if __name__ == '__main__':
     unittest.main()

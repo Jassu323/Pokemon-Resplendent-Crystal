@@ -39,6 +39,7 @@ GameCornerPrizeMonCheckDex:
 	ld a, [wScriptVar]
 	ld [wNamedObjectIndex], a
 	farcall NewPokedexEntry
+	call ReturnToMapFromSubmenu
 	call ExitAllMenus
 	ret
 

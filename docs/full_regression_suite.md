@@ -1,6 +1,6 @@
 # Full Regression Suite
 
-Maintained reference: 2026-10-14. This documents the campaigns actually run for
+Maintained reference: 2026-10-15. This documents the campaigns actually run for
 the Dex branch, including the isolated Type Matchups prototypes. It is a
 reusable test specification and local execution runbook, not a claim that
 every possible game state has been exhaustively tested.
@@ -74,6 +74,16 @@ in [Production Integration](pokedex_unown_transition_regression.md#production-in
    would make the test circular.
 7. Rebuild/recreate fixtures after a new link. Saved CPU state contains PCs,
    banked addresses, and caller state and cannot safely be reused across ROMs.
+8. Include relevant recordings and captures with scoping/prototype assessments
+   for manual verification: labeled production/candidate audio A/B, screenshots
+   or short videos. Keep real-time playback separate from slowed diagnostics;
+   passing register/content checks is not listening or visual approval.
+
+The focused successful-capture clock qualification is documented in
+[Gotcha Boundary Prototype Results](pokedex_new_entry_description_scope.md#gotcha-boundary-prototype-results).
+It independently exercises catch EXP, learning, naming, post-battle evolution,
+overworld return and following-battle ownership, with RGB/publication controls
+and paired recordings. It supplements, rather than replaces, the global suite.
 
 Counts below describe the October 12 catalog: **373 species, 333 moves,
 18 types, and 122 music entries including silence**. Several counts overlap,
@@ -960,7 +970,13 @@ both audio stresses, visual equivalence, and the retained chart-start-phase
 investigation. This aggregator is specific to the two Type variants, not a
 universal gate for an arbitrary unrelated branch.
 
-### Known Baseline Limitations At This Reference Date
+### Historical Type Comparison Limitations
+
+These counts belong to the original Type comparison reference, not an automatic
+allowlist for the latest production link. In particular, the current linked
+host group no longer permits the old LY64 failure. Use the fresh paired reports
+and exact exception identities for each run; the interactive qualification
+report records its current results separately.
 
 - Linked host: 85/86 pass; Info ready-handoff at LY64 fails equally on both.
 - Historical host: six failures, sixteen errors, 103 skips among 187 checks,
@@ -1132,3 +1148,193 @@ both 122-song owner stresses and focused Selected acceptance. Final reports
 must all carry the integrated ROM hash. The `precomputed` campaign alias names
 the retained Selected renderer; Type Matchups still uses its chosen runtime
 owner, not the archived precomputed Type implementation.
+
+## 18. Interactive Registration Qualification
+
+The [interactive prototype report](pokedex_interactive_registration_prototype.md)
+records the current private link, implementation, approved temporary evolution
+data, results and media. A fixed-species registration owner is not equivalent
+to a regular Listing entry, and the retained resident New Entry helper matrix
+does not qualify its streaming behavior.
+
+Use `tools.dex_timing.interactive_full_regression` to freeze matching baseline
+and candidate source, rebuild each to its exact input hash, protect production
+and main saves, and execute the standard campaign plus supplementary animation,
+display/model, Selected, description, lifecycle, routes, audio, catch-tail and
+independent Tower campaigns. It has a locked action ledger; do not run multiple
+writers in the same campaign. Original failed logs and retry records must remain
+available. Review `orchestration/inventory.json` for the expanded commands and
+fixture requirements before starting.
+
+```sh
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_full_regression inventory \
+  --base build/interactive-full-FRESH
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_full_regression prepare \
+  --base build/interactive-full-FRESH \
+  --baseline-source build/dex-position-memory-20261014/candidate \
+  --candidate-source build/interactive-registration-dev07-20261015/candidate
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_full_regression run \
+  --base build/interactive-full-FRESH --jobs 6
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_full_regression audit \
+  --base build/interactive-full-FRESH
+```
+
+Its audit intentionally calls this `support_campaign_complete`, not full
+qualification. The separately owned all-species registration suite and evolution
+audit must also pass. Existing Tower failures must match the frozen baseline;
+complete Tower coverage is not synonymous with a clean Tower.
+
+Run the native all-species suite into another fresh directory. Each ROM creates
+its own checkpoints. The generated species/form contexts derive from a native
+successful-capture donor; they are declared fixtures, not 373 normal wild catches.
+Regular Selected controls enter through normal Dex inputs. Initial all-species
+content checks, every internal page, all six directed tab pairs, B/End from each
+committed page, pending exit attempts, four-phase input stresses and recorded
+animation/cry deadlines are separate required dimensions.
+The `all` action also replays queued-page checkpoints with physical one-frame
+footer taps and combined Right+A, observing actual pending work at the leave
+boundary. Pre-input queued state is not interchangeable with dispatch-time
+cancellation proof; keep unobserved Description/Info-End cases explicit.
+
+```sh
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_registration_regression all \
+  --candidate build/interactive-registration-dev07-20261015/candidate \
+  --output build/interactive-tabs-FRESH --jobs 6 --final-link --record
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_registration_regression latency-probes \
+  --output build/interactive-tabs-FRESH --jobs 6 --detailed
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.interactive_registration_regression finalize \
+  --output build/interactive-tabs-FRESH
+```
+
+Require the exact 373-species/398-species-and-form coverage plan, complete
+committed exits, 12,736 stress cases, no missing completions, and successful
+negative controls. Report latency warnings separately from correctness and
+playback failures; do not widen a tolerance to hide a phase-dependent delay.
+Compare the 20 declared representative species with identical data on regular
+Selected. Report both publication and first subsequent complete displayed
+frame, in milliseconds and physical display frames. An earlier identical page
+cannot count as a new completion. Checkpoint-replay exit records use independent
+time epochs and are not a continuous-session latency dataset.
+
+Special-return integration is separately runnable through
+`tools.dex_timing.interactive_registration_returns`; use its CLI help for current
+source/output parameters. Cover actual Transform behavior and both Game Corner
+scripts, as well as declared contest/Celebi battle types and a separate forced
+ID-GC case. Do not describe a declared battle type as full event-script coverage
+or a direct collector call as normal-input gameplay.
+
+Every source-aware test must use that link's matching `Repository` and generated
+Info/Mov metadata. New evolution rows change page counts. A root-checkout
+`Compiler` paired with a private-ROM `Repository` is an invalid mixed oracle and
+can crash on otherwise valid pages. Correct both source and expectations without
+skipping the new pages; retain and replay the failed native cases.
+
+Run `tools/test_interactive_registration.py` against the frozen candidate, the
+linked numeric planner cases through the support runner's `numbers` action,
+and `tools/audit_evolution_data.py` against the pinned reference cache. Verify
+the context alias boundary, permanent-ID lock restoration, live/dead producer
+state, direct-call bank correctness, animation WAITING guard, numeric glyph
+parity/budget, shared ISR byte identity, all direct/forward/ancestor/family data,
+learnset preservation, ordered-method reachability and audit negative controls.
+
+The review publisher copies only private artifacts, constructs/checks a private
+Continue save, and packages silent videos plus unretimed A/B audio. Publishing
+does not itself confer a qualification pass. Keep automated checks, human visual
+review and human listening approval explicitly distinct.
+
+For no-Dex catches derive `STATUSFLAGS_POKEDEX_F` from the matching source,
+inspect the actual `CheckReceivedDex` zero result and require zero registration
+entries. Bit 1 is Unown Dex, not Pokedex. The older fixture used the wrong
+literal mask and held A could silently dismiss resident registration, producing
+a false-positive bypass. Preserve that correction and negative evidence.
+Following-catch drivers must also handle a genuinely unseen second encounter
+opening registration; do not assume every later catch uses `skip_pokedex` or
+pre-mark the species caught to bypass the feature being tested.
+
+### Capture Wallet And Visible Handoff Addendum (2026-10-16)
+
+See [the capture handoff investigation](pokedex_registration_capture_handoff_investigation.md)
+for the false Pay Day reproduction, memory alias and independent options.
+Capture qualification must snapshot the three-byte big-endian `wMoney` and
+`wPayDayMoney`, not just party/EXP/delivery. In no-attack Master Ball fixtures,
+require an unchanged wallet after both the first capture and following battle.
+The stronger native oracle must pass production and reject the known-bad
+interactive prototype; automatically dismissing text is not a money check.
+
+Also seed the context helper with legitimate nonzero amounts and test actual
+Pay Day earnings natively, with/without Amulet Coin and at the wallet cap.
+Clearing the accumulator to hide the symptom is not an acceptable fix.
+
+Keep capture-tail speed ownership explicit in the candidate contract. The
+independent mode-3 experiment intentionally permits an LCD-on switch only at
+the verified capture helper return PC, normal-to-double with sound inactive.
+Do not globally relax the existing LCD-off/audio-off switch assertions. Preserve
+the normal-speed battle animation owner, hidden follow-up battle/map switches,
+and the ROM0/shared-interrupt byte-identity controls. The combined prototype's
+general runner now permits that narrow exception only when its linked symbols
+identify the synchronized helper, its STOP opcode/layout match, and a recorded
+mode-3 STOP proves normal speed with sound and interrupts inactive. Old ROMs
+without that helper retain the original LCD-off contract. Tutorial and
+already-double-speed guard paths must preserve registers and stack state.
+
+Measure completed scanouts and physical time around Gotcha and registration
+entry. Capture labeled current/candidate video and separate native soundtracks.
+Use independent model boots; emulated CGB revisions do not replace another
+core or real-hardware checks. Retain the known Dusknoir introduction cutoff as
+a baseline exception, not as a passing complete sample. Human listening and
+visual approval remain distinct from automatic block/hash checks.
+
+The repeatable legitimate-earnings supplement is:
+
+```sh
+PYTHONPATH=tools:. python3 -B -m tools.dex_timing.registration_payday \
+  --baseline build/interactive-registration-fixed-full-20261016/baseline-source \
+  --candidate build/interactive-registration-fixed-full-20261016/candidate \
+  --output build/registration-payday-FRESH --jobs 6
+```
+
+It allocates the real Pay Day move ID in a declared pre-enemy fixture, gives a
+level-6 party a level-10 opponent, then uses Pay Day through normal battle input
+before catching. Check the actual command, accumulator, registration return,
+payout, Amulet Coin multiplier and 999,999 wallet cap in both ROMs. An earlier
+fixture accidentally retained the level-32 seed party and knocked out the
+opponent; that timeout is not evidence of a capture or speed-switch failure.
+`tools/test_capture_handoff.py` independently rejects a wrong LCD phase, active
+audio/interrupts, missing STOP evidence, a wrong return PC, and a live reverse
+switch. Keep those negative controls when changing the handoff.
+
+For paired capture delivery, independently booted ROMs can generate different
+wild DVs before Gotcha. Never silently discard all DV/stat differences. Replay
+each matching-ROM `fixture.s0` to the Gotcha callback before the handoff, record
+the native enemy DVs/stats, and prove that delivery and map return preserve
+those values. Only after that proof may the pair comparator exclude the newly
+caught individual's initial DVs/stats (boxed storage has DVs but not party
+stats). Keep the existing party and every other delivered field strict. Preserve
+the original raw comparison. `gotcha_boundary_review delivery` performs this
+104-case proof before `analyze`; the review publisher gates on both reports.
+Negative controls must reject changed received DVs/stats and still detect
+changes to existing party members, caught moves and pre-delivery snapshots.
+
+The standard current-host comparison reruns only candidate failures against
+production; an empty baseline-failure log is not a full baseline run. The
+interactive support campaign's `baseline-host` action independently executes
+the complete 87-test host group on the frozen production source and records
+its real count before final coverage aggregation.
+
+For production promotion, keep the pre-integration source/ROM/symbols frozen.
+Pass that source explicitly as `tools/test_interactive_registration.py
+--baseline PATH` when checking actual root production with `--root .`.
+Do not use the newly promoted root as its own before-baseline: identity and
+numeric-copy cost checks would compare the candidate to itself. Retain the
+positive-overhead and bounded CPU-cost assertions. The integration driver in
+`tools/dex_timing/registration_integration.py` records exact reviewed build
+identity, protected-save hashes and fresh root checks. Its first failed
+mutable-baseline attempt is preserved separately from the corrected passing
+run; the test correction does not change or requalify different ROM bytes.
+
+The all-species registration timing diagnostics must derive their targets from
+the current build's actual timing alerts, not a fixed list from an earlier
+build. Retain historical alert species as additional controls, match the exact
+operation, and decode the linked admission cutoffs. Preserve both the original
+continuous-scan deltas and the diagnostic replays: delayed publication during
+active playback is a responsiveness warning, not a content or audio failure.

@@ -395,7 +395,9 @@ def map_id(source, name):
 def interactive_key(driver, symbols, step):
     if not step % 2:
         return 0
-    if byte(driver, symbols, 'wPartyMenuActionText') == 2 and not any(get(driver, symbols, 'wBattleMonHP', 2)):
+    if (not byte(driver, symbols, 'wBattleEnded') and
+            byte(driver, symbols, 'wPartyMenuActionText') == 2 and
+            not any(get(driver, symbols, 'wBattleMonHP', 2))):
         alive = [slot for slot in range(1, 4) if any(get(driver, symbols, f'wPartyMon{slot}HP', 2))]
         cursor = byte(driver, symbols, 'wMenuCursorY')
         if alive and 1 <= cursor <= 4 and cursor != alive[0]:

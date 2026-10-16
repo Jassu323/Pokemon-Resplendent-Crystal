@@ -375,9 +375,12 @@ def pc_catch(driver, repo, row, output, variant, full_party=True):
             break
         menu.tap(driver, repo, 'right', released=30)
     audio.until(driver, repo, 'NewPokedexEntry')
-    audio.until(driver, repo, 'NewPokedexEntry.WaitPressAorB_AnimateFrontpic', key=None)
+    interactive = 'NewDexRegistration_Loop' in repo.symbols
+    audio.until(driver, repo, 'NewDexRegistration_Loop' if interactive else
+                'NewPokedexEntry.WaitPressAorB_AnimateFrontpic', key=None)
     menu.run(driver, repo, frames=240)
-    audio.until(driver, repo, 'NewPokedexEntry.ReturnFromDexRegistration')
+    audio.until(driver, repo, 'NewPokedexEntry_ReturnFromDexRegistration' if interactive else
+                'NewPokedexEntry.ReturnFromDexRegistration', key='b' if interactive else 'a')
     if full_party:
         audio.until(driver, repo, 'PokeBallEffect.SendToPC', key='b')
     row['sent_to_pc'] = full_party

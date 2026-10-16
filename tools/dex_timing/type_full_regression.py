@@ -166,6 +166,8 @@ def host(output):
         module.__file__ = str(candidate / 'tools' / (name + '.py'))
         if hasattr(module, 'ROOT'):
             module.ROOT = candidate
+        if hasattr(module, 'REFERENCE_ROOT'):
+            module.REFERENCE_ROOT = output / 'baseline/candidate'
         modules.append(module)
     suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromModule(module) for module in modules)
     with (target / 'host.log').open('w') as log:

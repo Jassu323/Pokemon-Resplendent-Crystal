@@ -97,7 +97,7 @@ def history(jobs):
     for variant, source in HISTORY.items():
         for style in ('modern', 'legacy'):
             config = configuration(source, style)
-            repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+            repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
             if repo.hashes != config['hashes']:
                 raise ValueError('Historical checkpoint provenance mismatch')
             target = folder / variant / style
@@ -159,7 +159,7 @@ def test(variant, jobs, all_species=False):
     tasks = []
     for style in ('modern', 'legacy'):
         config = configuration(source / 'focused', style)
-        repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+        repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
         if repo.hashes != config['hashes']:
             raise ValueError('Private checkpoint mismatch')
         target = folder / style
@@ -179,7 +179,7 @@ def trace(variant, jobs):
     tasks = []
     for style in ('modern',):
         config = configuration(source / 'focused', style)
-        repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+        repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
         target = folder / style
         target.mkdir()
         header = target / 'description-symbols.h'

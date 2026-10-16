@@ -124,7 +124,7 @@ def layout_audit(repo, state, ui, unseen=(), uncaught=(), order=None):
 def listing_case(task):
     config, index = task
     out = Path(config['output'])
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], out / f'{index:03}.log')
     issues, timings, pages = [], [], 0
     try:
@@ -211,7 +211,7 @@ def navigation_case(task):
     from PIL import Image
 
     config, index, key = task
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     output = Path(config['output'])
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'],
                     output / f'{index:03}-{key}.log')
@@ -287,7 +287,7 @@ def private_battery(config, target, *, presentation=1, unseen=(), uncaught=(),
     def address(name):
         bank, at = symbols[name]
         return bank * 8192 + at - 0xa000
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     order = offset(repo.symbols['NewPokedexOrder'])
     for prefix in ('s', 'sBackup'):
         at = address(prefix + 'PlayerData') + ram('wLastDexPresentation') - ram('wPlayerData')
@@ -317,7 +317,7 @@ def private_battery(config, target, *, presentation=1, unseen=(), uncaught=(),
 
 def mode_tests(output):
     config = json.loads((output / 'legacy/config.json').read_text())
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     records = []
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / 'mode-tests.log')
     try:
@@ -407,7 +407,7 @@ def menu_tests(output):
     from .shared_menu_fixtures import make_fixture
 
     config = json.loads((output / 'legacy/config.json').read_text())
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     records = []
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], output / 'search-tests.log')
     try:

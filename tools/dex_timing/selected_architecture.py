@@ -31,7 +31,7 @@ def prepare(source):
     target.mkdir(exist_ok=True)
     stem = source / 'pokecrystal-dex-selected-runtime'
     config = performance.prepare(stem.with_suffix('.gbc'), stem.with_suffix('.sym'),
-                                 stem.with_suffix('.sav'), target / 'modern')
+                                 stem.with_suffix('.sav'), target / 'modern', root=source / 'candidate')
     repo = Repository(source / 'candidate', stem.with_suffix('.gbc'), stem.with_suffix('.sym'))
     config['core'] = str(performance.core(repo, target / 'popover-core', listing_options.POINTS).resolve())
     write(target / 'modern/config.json', config)
@@ -55,7 +55,7 @@ def feature(source, jobs):
     folder.mkdir(exist_ok=True)
     stem = source / 'pokecrystal-dex-selected-runtime'
     repo = Repository(source / 'candidate', stem.with_suffix('.gbc'), stem.with_suffix('.sym'))
-    data = Compiler().compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
+    data = Compiler(source / 'candidate').compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
     tasks = []
     names = ('bayleef', 'meganium', 'crobat', 'politoed', 'kingdra', 'weavile',
              'dusknoir', 'chansey', 'blissey', 'porygonz', 'steelix', 'charizard')
@@ -274,7 +274,7 @@ def host(source, jobs):
 
 def return_case(task):
     config, name, page, delay = task
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     label = f'{name}-p{page}-cancel{delay}'
     folder = Path(config['output'])
     driver = Driver(config['core'], config['rom'], BOOT, config['battery'], folder / (label + '.log'))
@@ -324,7 +324,7 @@ def returns(source, jobs):
     folder.mkdir(exist_ok=True)
     config = dict(listing_options.configuration(source / 'focused', 'modern'), output=str(folder))
     repo = Repository(source / 'candidate', Path(config['rom']), Path(config['sym']))
-    data = Compiler().compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
+    data = Compiler(repo.root).compile(ancestors='PokedexInfoEvolvesFromTitle' in repo.symbols)
     names = ('chikorita', 'eevee', 'tyrogue', 'slowpoke', 'onix', 'kingdra', 'politoed',
              'dusknoir', 'weavile', 'mew', 'chansey', 'porygonz')
     tasks = []

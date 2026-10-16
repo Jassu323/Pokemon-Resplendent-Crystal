@@ -326,8 +326,9 @@ class Compiler:
         asm += ['PokedexInfoShared:'] + ['\tdw ' + pointer(tile) for tile in data['shared']]
         asm += ['PokedexInfoLabelTiles:']
         asm += ['\tdb ' + ', '.join(map(str, row + [255] * (3 - len(row)))) for row in data['labels']]
-        asm += ['PokedexInfoNumbers:']
-        asm += ['\tdw ' + ', '.join(map(pointer, row)) for row in data['numbers']]
+        numbers = ['; Generated numeric glyph pointers.', 'PokedexInfoNumbers:']
+        numbers += ['\tdw ' + ', '.join(map(pointer, row)) for row in data['numbers']]
+        (destination / 'numbers.asm').write_text('\n'.join(numbers) + '\n')
         for text, title in data['titles'].items():
             label = 'EvolvesFrom' if text == 'Evolves from' else text
             asm += [f'PokedexInfo{label}Title:',

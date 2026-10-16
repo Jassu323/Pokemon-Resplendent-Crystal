@@ -47,7 +47,7 @@ def idle_case(task):
                       after={key: after[key] for key in WORK_FIELDS})
         if result['before'] != result['after']:
             result['issues'].append('idle_animation_work')
-        asset = Repository(ROOT, Path(config['rom']), Path(config['sym'])).load([name])[0]
+        asset = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym'])).load([name])[0]
         if after['loaded'] != asset.width ** 2 or after['dictionary_services'] or after['upload_services']:
             result['issues'].append('not_base_only_after_hover')
         if after['index'] != index or after['double_speed'] != 1:
@@ -82,7 +82,7 @@ def entry_case(task):
         driver.run(frames=3)
         rendered = driver.command('perf 0')
         events = list(driver.events)
-        asset = Repository(ROOT, Path(config['rom']), Path(config['sym'])).load([name])[0]
+        asset = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym'])).load([name])[0]
         playback = audit(asset, accepted, events, final,
                          cold=variant == 'candidate', expected_double_speed=1)
         result['issues'] += playback['issues']

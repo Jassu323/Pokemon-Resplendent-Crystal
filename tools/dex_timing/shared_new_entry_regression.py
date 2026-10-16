@@ -18,13 +18,13 @@ from .new_entry import (compile_core, audit_publication, audit_resident_layout,
 from .new_entry_sweep import ORIGINAL, ADDITIONAL, cases, run_case
 
 
-def prepare(root, donor, output, sameboy):
+def prepare(root, donor, output, sameboy, expected_speed=0):
     output.mkdir(parents=True, exist_ok=True)
     repo = Repository(root, root / 'pokecrystal.gbc', root / 'pokecrystal.sym')
     names = list(ORIGINAL + ADDITIONAL)
     assets = {asset.name: asset for asset in repo.load(names)}
-    trace = compile_core(repo, sameboy, output, 'trace')
-    factory = compile_core(repo, sameboy, output, 'fixture')
+    trace = compile_core(repo, sameboy, output, 'trace', expected_speed=expected_speed)
+    factory = compile_core(repo, sameboy, output, 'fixture', expected_speed=expected_speed)
     order = re.findall(r'^\s*dw (\w+)\s*$',
                        (root / 'data/pokemon/dex_order_new.asm').read_text(), re.M)
     aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}

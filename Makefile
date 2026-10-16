@@ -166,6 +166,8 @@ build/dex-info-assets/tables.asm: $(info_asset_inputs)
 	python3 -B tools/pokedex_info_assets.py --ancestors
 build/dex-info-assets/tiles.2bpp: build/dex-info-assets/tables.asm
 	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
+build/dex-info-assets/numbers.asm: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
 build/dex-info-assets/titles.2bpp: build/dex-info-assets/tables.asm
 	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
 define DEP

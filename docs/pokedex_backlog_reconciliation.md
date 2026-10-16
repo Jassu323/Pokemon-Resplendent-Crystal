@@ -1,6 +1,17 @@
 # Pokedex Backlog Reconciliation
 
-Latest follow-up 2026-10-15: `DEX-PREF-01/02` are manually accepted and integrated.
+Latest follow-up 2026-10-16: interactive registration (`NEWDEX-UI-02` option B)
+is manually accepted and integrated, including the synchronized LCD-on capture
+handoff, Pay Day preservation and 67 added evolution links. The user explicitly
+retained all 20 reviewed temporary requirements. Root ROM/symbols/map exactly
+match the fully qualified review build; fresh root checks pass. Cost is 5332
+decimal ROMX bytes, with no allocated RAM/ROM0/HRAM/SRAM growth. Root ROM SHA-256:
+`d1ce69a431dc138fdbbecb834c050097e5ebf807856d2d16323d32f644d95ff0`.
+The player's main save is unchanged. See
+[production integration](pokedex_interactive_registration_integration.md).
+Earlier build hashes and pending-review notes below are historical.
+
+Follow-up 2026-10-15: `DEX-PREF-01/02` are manually accepted and integrated.
 Shared Modern/Legacy and independent Moves bookmarks are session-only; reset
 starts first without losing sort/presentation preferences. Root ROM/symbols/map
 exactly match the fully qualified prototype, with 28,836 additional fresh
@@ -63,7 +74,7 @@ take precedence over older paragraphs describing an unpromoted prototype.
 | `DEX-CRY-01/02/04/05` | Accepted Selected sampled-cry playback, outgoing cancellation, synthesized-cry resumption and header ownership corrections. Other owners are separate. |
 | `DEX-INFO-01/05/06` | Accepted retained-panel return, timer-shutdown race correction and bounded/coalesced Info paging. Current Info/content/stress/return checks pass. |
 | `DEX-INFO-07` | Ancestors are integrated and manually accepted. Production retains precomputed rendering; the runtime/VRAM alternative is archived. See [ancestors integration](pokedex_ancestors_production_integration.md). |
-| `DEX-INFO-03` | +9 ROMX publication fix implemented; fresh 1,492-case, six-model and full emulator regressions pass. No added RAM. Dependency and timing ceiling documented in the linked investigation; manual review pending. |
+| `DEX-INFO-03` | +9 ROMX publication fix implemented and subsequently accepted. Fresh 1,492-case, six-model and full emulator regressions pass. No added RAM. Dependency and timing ceiling documented in the linked investigation. |
 | `DEX-PAGE-01`, `DEX-DESC-01` | Shared buffered indicators and bounded Description page changes are complete. |
 | `DEX-TRANS-01/02/03`, `DEX-NAV-01/02` | Accepted internal handoff, identity/graphics publication, boundary wrapping and fresh-axis input corrections. |
 | `DEX-RETURN-01/03`, `DEX-GRID-01/03` | Accepted LCD-on Listing restoration, palette publication and stable presence metadata. |
@@ -78,7 +89,7 @@ take precedence over older paragraphs describing an unpromoted prototype.
 | `DEX-PERF-01`, `DEX-EXIT-01` | Repaired Stage opening/closing is accepted and integrated. Current qualification includes 336 lifecycle cases and 88 exit replays, without early colored reveal or shell displacement. |
 | `DEX-PERF-03` | Idle animation cache warming is removed from regular Dex modes. |
 | `DEX-PERF-04` | Manually accepted and integrated byte-for-byte after full qualification. +51 ROMX bytes, no added RAM. Post-Info medians: entry 242.27 to 125.07 ms, return 249.55 to 98.86 ms; form paging remains approximately 49.02 ms. [Production verification](pokedex_unown_transition_regression.md#production-integration). |
-| `NEWDEX-UI-02` option A | Accepted visual-only Description layout and red footer are in production. Original post-catch A/B flow remains. Option B is not an unfinished part of A. |
+| `NEWDEX-UI-02` options A/B | Visual-only A was accepted first; interactive B supersedes it in production as of 2026-10-16. Desc/Info/Mov/End, uninterrupted Selected-style playback, synchronized LCD-on capture handoff and Pay Day preservation are accepted and integrated. Full qualified-build identity and fresh root checks pass. [Integration](pokedex_interactive_registration_integration.md). |
 | `DEX-CLEAN-01` | Approved cleanup is integrated and accepted: 2,970 decimal ROMX bytes reclaimed from the accepted New Entry build; 2,693 net against prior production. Original graphics remain archived. |
 | `NEWDEX-ANIM-01`, `NEWDEX-UI-01`, `QA-CLEANUP-01` | Registration scheduling/text work and temporary encounter/instrumentation cleanup are complete, retaining the accepted Mewtwo presentation caveat. |
 
@@ -114,14 +125,16 @@ silently delete its earlier reproduction or label it a proven causal fix.
 | --- | --- |
 | `DEX-SEARCH-04` | Official National labels remain deferred. Current display can show internal species numbers for added species. |
 | `DEX-DATA-01` | Finish placeholder descriptions and height/weight data. |
-| `DEX-DATA-02`, alias `DEX-INFO-02` | Complete real gameplay evolution/species records and added branches during the planned species/learnset/stat pass. Ancestor rendering does not supply absent gameplay links. These are one underlying work item, not two fixes. |
-| `DEX-DATA-03` | Revalidate family egg-move inheritance after the actual evolution/egg records are updated. Current generated content correctly reflects configured data. |
+| `DEX-DATA-02`, alias `DEX-INFO-02` | Final species/learnset/stat and evolution-requirement pass remains deferred. The reviewed 190-link graph is now complete and integrated, but 20 requirements are approved temporary equivalents rather than final mechanics. These are one underlying content item, not two renderer fixes. |
+| `DEX-DATA-03` | Revalidate family egg-move inheritance after final evolution/egg/learnset edits. Previously missing branches are now configured; current generated content passes. Final content approval and the learnset-expansion page bounds remain deferred. |
 | `DEX-DATA-04` | Regroup later-generation relatives/babies in the authored Evolves order shared by Modern and Legacy. National/Alphabet remain independent. |
-| `DEX-PERF-02` | Accepted Selected-tab iteration and the `DEX-INFO-03` publication correction are complete. Keep only broader future performance review as an umbrella; opening/closing, idle warming and Unown form paging are already integrated. |
+| `DEX-PERF-02` | Optional broader performance review only. Selected-tab iteration, `DEX-INFO-03`, entry/exit, warming removal and Unown optimizations are integrated. The accepted registration Info timing tails can be revisited here if worthwhile; they are not a functional blocker. |
 
-Future options, not pending approved implementation: New Entry `Desc/Info/Mov/End`
-navigation (option B) and the requested future Selected-screen implementation
-audit. The user chose the completed visual-only flow for now.
+The requested future Selected-screen implementation/code-space audit remains
+optional. Retained precomputed display assets and archived alternative renderers
+are intentional choices. Re-audit old registration helpers against the new
+streaming owner before proposing further removal; no extra cleanup is approved
+by this integration. There is no approved Dex feature awaiting promotion.
 
 ### DEX INFO 03 Historical Pre-Fix Reproduction And Timings
 

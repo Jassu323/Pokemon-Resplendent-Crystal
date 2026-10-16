@@ -47,7 +47,7 @@ def main():
     args = parser.parse_args()
     config = json.loads(args.config.read_text())
     config['expected_double_speed'] = int(args.expected_double_speed)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     assets = {asset.name: asset for asset in repo.load(config['names'])}
     tasks = []
     important = {'chikorita', 'meganium', 'dusknoir', 'weavile', 'luxray', 'garchomp',

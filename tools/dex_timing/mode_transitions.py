@@ -95,7 +95,7 @@ def case(task):
     config, fixture, presentation, index, phase, output = task
     output = Path(output) / f'{presentation}-{index:03}-{phase}'
     output.mkdir(exist_ok=True)
-    repo = Repository(ROOT, Path(config['rom']), Path(config['sym']))
+    repo = Repository(Path(config.get('root', ROOT)), Path(config['rom']), Path(config['sym']))
     driver = Driver(config['core'], config['rom'], BOOT, fixture, output / 'trace.log')
     records, issues, playback = {}, [], None
     try:
@@ -171,7 +171,7 @@ def case(task):
         if 'PokedexInfoEvolvesFromTitle' in repo.symbols:
             from pokedex_info_assets import Compiler
             from .info_ui import info_audit
-            compiler = Compiler()
+            compiler = Compiler(repo.root)
             data = compiler.compile(ancestors=True)
             press(driver, 'right')
             press(driver, 'a')
