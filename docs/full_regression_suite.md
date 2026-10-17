@@ -1,9 +1,38 @@
 # Full Regression Suite
 
-Maintained reference: 2026-10-15. This documents the campaigns actually run for
+Maintained reference: 2026-10-17. This documents the campaigns actually run for
 the Dex branch, including the isolated Type Matchups prototypes. It is a
 reusable test specification and local execution runbook, not a claim that
 every possible game state has been exhaustively tested.
+
+The [species-information prototype](pokedex_species_information_prototype.md)
+adds a Dex-only multipage addendum. Description readers and registration
+catalogs must enumerate actual counts, not assume two pages. Its independent
+source/offset controls, all-page captures, P.3/P.4 Area returns and rapid-Desc
+tests are required for future Description changes. Keep the accepted text
+sources and assessment cache under `build/`; a matching runtime/oracle alone
+does not prove that an entry's final page exists. The initial October 16 result
+was Dex-only. Its subsequent [full follow-up](pokedex_species_information_prototype.md#full-regression-follow-up)
+reruns the broader standard and supplementary campaigns, **excluding Battle
+Tower**, on the exact reviewed link. It keeps the baseline-matching rapid-input
+exception and real phase-sensitive timing changes explicit rather than claiming
+every raw test is clean.
+
+The October 17 [combined responsiveness qualification](pokedex_responsiveness_prototype.md)
+repeats the full suite excluding Battle Tower on the final accepted link,
+including the full Description/registration coverage above. Mov uses twelve
+bounded slices and wrap-aware admission; Info READY uses cutoff 108. Keep the
+linked cutoff guard, independent 36-state staging budget and exact interrupt
+body comparisons: do not change a hard-coded test expectation without measuring
+the new work. The reviewed build is now production-integrated byte-for-byte;
+its promotion receipt distinguishes fresh root checks from the retained full
+qualification and the user's manual timing acceptance.
+
+The registration coverage plan must sum each catalog row's real
+`description_pages` for both page coverage and unique committed B/End exits.
+Retain the two-page default only for older catalogs without that field. The
+two coverage-plan unit controls distinguish three/four-page rows from that
+legacy default; the native exit sweep must still visit the actual later pages.
 
 Battle Tower coverage is a separate, independently runnable addendum:
 [Battle Tower Regression Suite](battle_tower_regression_suite.md). Its
@@ -1223,6 +1252,14 @@ scripts, as well as declared contest/Celebi battle types and a separate forced
 ID-GC case. Do not describe a declared battle type as full event-script coverage
 or a direct collector call as normal-input gameplay.
 
+For contest inventory, `PokeBallEffect.return_from_capture` is the start of
+continuation, before `.used_park_ball` decrements the counter. Record the value
+there, but require the exact initial ball count minus observed native throws
+only after the normal overworld return. Checking consumption at that earlier
+label produces the same false failure on the accepted baseline. The October 16
+full follow-up preserves both failed runs and the corrected B/End replays;
+registration restoration and cancellation assertions remain unchanged.
+
 Every source-aware test must use that link's matching `Repository` and generated
 Info/Mov metadata. New evolution rows change page counts. A root-checkout
 `Compiler` paired with a private-ROM `Repository` is an invalid mixed oracle and
@@ -1338,3 +1375,73 @@ build. Retain historical alert species as additional controls, match the exact
 operation, and decode the linked admission cutoffs. Preserve both the original
 continuous-scan deltas and the diagnostic replays: delayed publication during
 active playback is a responsiveness warning, not a content or audio failure.
+
+### Selected Footprint Asset Addendum (2026-10-16)
+
+The independently runnable `tools.dex_timing.footprints` suite builds a private
+asset-only candidate and boots fresh matching-link Modern/Legacy states. Its
+`build`, `prepare`, `host`, `run`, and `qualify` actions cover all 373 species,
+both Description pages, Info/Mov, internal paging in both directions and
+B-return/reentry. See [the footprint qualification](pokedex_footprint_prototype.md)
+for exact commands, source archive and retained native screenshots.
+
+Do not use the converted PNG or linked ROM as the only oracle for new imports:
+derive expected mark masks independently from the verified original artwork.
+Check source/linked data, uploaded VRAM, actual tile order/bank/palette and all
+256 completed-screen pixels, including blank images. Preserve wrong-polarity,
+padding, orientation and stale-blank negative controls. Compare the paired
+complete screen outside only the actual footprint rectangle; no broad text,
+portrait or cursor mask should conceal unrelated differences. Retain the
+existing exact authored playback audit while reaching each species.
+
+The supporting banked-Stats cost test needs its frozen unbanked reference;
+current production already includes the relocation and cannot measure that
+historical +672-cycle delta against itself. Keep that reference distinct from
+the fresh production ROM used for native screenshot/playback comparisons.
+
+The registration bank guard still compares ROM0 interrupt/delay bodies and the
+whole Dex-dispatch bank. A content/rendering change may relocate normal callee
+addresses without adding interrupt instructions: the October 16 follow-up has
+five changed immediate bytes in named mainline farcalls before dispatch. Only
+those exact caller/callee instruction patterns are normalized against symbols;
+all opcodes, handler bytes, other bank bytes and caller positions remain strict.
+Wrong call targets and changed interrupt opcodes must fail the two new negative
+controls. Never replace this with a broad relocation mask or infer that an
+unchanged source filename alone proves unchanged linked interrupt work.
+
+### Selected Scheduling Addendum (2026-10-17)
+
+The Selected Mov wrap-aware admission and twelve-slice prototype is documented
+in [the scheduling scope](pokedex_selected_stall_optimization_scope.md).
+Preserve the per-slice clock/playback checks, portrait-first service order and
+atomic lower-panel publication. Test later pages and wrap, not only first Mov
+opening. Tangrowth's second/third pages, Toxicroak's wrap and Togekiss's third
+page expose the former scheduling stalls. Include ordinary Selected and the
+fixed-species registration owner, active and finished playback, and four input
+phases. Compare complete workflows as well as individual buttons: removing an
+earlier wait changes the portrait phase at later requests.
+
+The optional Info READY cutoff is 108 instead of 84. Its unchanged guard and
+finishing reserve leave 6,186 normal-speed CPU T-cycles at that cutoff.
+`test_info_ready_staging_fits_its_declared_budget` runs the complete READY
+service for two pages with a healthy sampled-cry cache, checks the staging
+transition, and checks stack/WRAM bank restoration. This is a bounded staging
+test, not permission to relax heavy Info states or interrupt publication gates.
+Re-measure after changes to palette/OAM staging, bank calls or service overhead;
+retain native animation/sample deadline audits in addition to the CPU test.
+The current matrix has 36 combinations: Stats/evolution pages, zero/two active
+miniatures, inactive/exact-threshold/healthy sampled caches, and caller WRAM
+banks 1/3/5. Preserve per-case CPU costs; its maximum is 4,216 T-cycles against
+the 6,186-T budget at cutoff 108.
+The all-scanline Info host test must derive the supported READY cutoff from the
+linked table (84 or 108) instead of rejecting every line at or beyond 84. Test
+the audio/portrait/clock guards at the last admitted line of that same policy;
+neither arbitrary cutoff values nor a failed staging-cost bound are accepted.
+
+The dispatch-bank relocation guard now also recognizes the exact mainline
+`PokedexBadge_Prepare` farcall inside the Description-badge window. Its target
+can move with other ROMX code; no handler instruction is masked. A separate
+wrong-badge-target negative control must fail, alongside the existing wrong
+call-target and interrupt-opcode controls. The current context suite has
+fourteen tests; preserve and investigate older failed receipts rather than
+overwriting them after a harness correction.

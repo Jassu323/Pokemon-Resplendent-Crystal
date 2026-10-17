@@ -49,4 +49,9 @@ PokedexPerf_AdmitInfo:
 
 PokedexPerf_InfoLatestLY:
     ; idle, clear, plan, copy, upload, ready, initialize, mini, record
-    db 0, 65, 81, 104, 87, 84, 113, 94, 108
+    ; READY only stages prepared palettes/OAM. At LY 108, retain the 2048-T
+    ; guard and 8182-T finishing reserve: the full path must fit in 6186 T.
+    ; Remeasure after changing staging/banking/overhead; do not widen uploads
+    ; or IRQ publication. See docs/pokedex_selected_stall_optimization_scope.md
+    ; and test_info_ready_staging_fits_its_declared_budget.
+    db 0, 65, 81, 104, 87, 108, 113, 94, 108

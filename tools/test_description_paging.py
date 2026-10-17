@@ -198,7 +198,7 @@ class LinkedDescriptionTextTests(unittest.TestCase):
         cpu.ram[0xff70] = 3
         cpu.allowed_io.add(0xff44)
         cpu.allowed_io.add(0xff41)
-        cpu.field('wPokedexBadgeActive', 1 - page)
+        cpu.field('wPokedexBadgeActive', 1 - (page & 1))
         cpu.field('hCGB', 1)
         cpu.field('wPokemonIndexTableEntries', index + 1, 2)
         cpu.field('wPokedexSelectedSpecies', 1)

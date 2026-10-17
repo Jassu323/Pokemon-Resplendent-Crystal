@@ -127,8 +127,15 @@ PokedexSelectedMon_ToggleDescriptionPage:
 	farcall PokedexInfo_ReturnDescription
 	jr .queue_description
 .description
+	ld a, [wPokedexSelectedSpecies]
+	call PokedexDescription_GetPageCount
+	ld b, a
 	ld a, [wPokedexDescriptionPage]
-	xor 1
+	inc a
+	cp b
+	jr c, .page_ready
+	xor a
+.page_ready
 	ld [wPokedexDescriptionPage], a
 	ld [wPokedexStatus], a
 .queue_description

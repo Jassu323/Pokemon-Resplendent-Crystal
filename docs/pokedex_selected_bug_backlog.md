@@ -1,6 +1,6 @@
 # Pokedex Selected-Mon Bug Backlog
 
-Updated 2026-10-16. This is the live issue/status list, not the chronological
+Updated 2026-10-17. This is the live issue/status list, not the chronological
 scheduler investigation. The accepted production implementation and cleanup
 are complete. See [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
 for the complete disposition, exact current build and fresh focused evidence.
@@ -17,6 +17,11 @@ Latest statuses below take precedence over historical prototype paragraphs.
   session-only Pokemon/Moves position remembrance. Interactive registration
   includes the accepted LCD-on capture handoff, Pay Day preservation and all
   67 reviewed evolution links, retaining the 20 approved temporary requirements.
+  `DEX-DATA-01` is also complete: all 122 later-species footprints, sourced
+  descriptions, measurement corrections and two-to-four-page rendering are
+  integrated with the accepted Mov/Info responsiveness improvements. The root
+  ROM/symbols/map match the fully qualified reviewed build exactly; see
+  [production integration](pokedex_responsiveness_prototype.md#production-integration).
   Search/sort/ancestors/cleanup are not awaiting another promotion.
 - **Historical, not reproduced on current production:** `DEX-INFO-04`,
   `DEX-RETURN-02`, `DEX-RETURN-04`, `DEX-GRID-02`, `DEX-GRID-04`. Fresh badge
@@ -31,7 +36,7 @@ Latest statuses below take precedence over historical prototype paragraphs.
   subsequently accepted; the atomic portrait flag dependency is documented in the linked
   investigation and beside both producer/consumer in the source.
 - **Explicitly deferred:** `DEX-SEARCH-04` official National labels;
-  `DEX-DATA-01/02/03/04` content, final evolution requirements, egg inheritance and
+  `DEX-DATA-02/03/04` final species/evolution requirements, egg inheritance and
   family ordering.
   `DEX-INFO-02` is an alias of the evolution-data work, not a second renderer fix.
 - **Optional future performance/audit:** `DEX-PERF-02` retains only the broader
@@ -40,8 +45,9 @@ Latest statuses below take precedence over historical prototype paragraphs.
   accepted Selected-tab iteration and later lifecycle work are complete.
   The broader Selected implementation/code-space audit remains optional.
   New Entry option B is now [accepted and integrated](pokedex_interactive_registration_integration.md),
-  not pending review. Its five approximately two-frame Info timing tails are
-  accepted and may be revisited here; the 20 temporary evolution requirements
+  not pending review. Its phase-sensitive Info/Description timing tails and
+  the October 17 combined optimization tradeoffs are accepted and may be
+  revisited here; the 20 temporary evolution requirements
   do not close final species-data approval.
 - **Adjacent, not Dex completion:** Sand Tomb and other battle/overworld
   follow-ups retain their separate statuses below. Standalone Stats is
@@ -1473,10 +1479,58 @@ frames. This ID remains a closed cross-reference, not another active item.
 
 ### DEX-DATA-01: Custom entries contain placeholder data
 
-Status: Content backlog
+Status: Complete; manually accepted and production-integrated 2026-10-17
+
+The accepted production build now includes every later-species footprint,
+all 122 sourced Emerald/Platinum descriptions, the approved measurement
+corrections and direct-offset two-to-four-page rendering. The reviewed combined
+Mov/Info responsiveness adjustments are included. Root ROM/symbols/map exactly
+match the fully qualified candidate, SHA-256
+`302099f5836115c776de6606379820fbc661c82824aee438364afd4e7f7834e9`.
+The user accepted the content and phase-sensitive timing tradeoffs before
+promotion. The main save is unchanged. See
+[production integration](pokedex_responsiveness_prototype.md#production-integration).
+This closes placeholder Dex content only; DEX-DATA-02/03/04 remain deferred.
+The assessment and pending-promotion paragraphs below are historical.
 
 Some custom Pokemon entries still have blank or placeholder descriptions and
 unknown height/weight values.
+
+2026-10-16 footprint follow-up: all 122 later-species placeholder footprints
+are replaced in a [qualified private prototype](pokedex_footprint_prototype.md),
+with inverted native artwork and 23 normal blank records. All 373 species in
+both Listing presentations pass the Selected-screen footprint checks. User
+visual review accepted; production promotion remains pending. Description and measurement
+content is unchanged; this does not close the remaining prose/data work.
+
+2026-10-16 description/measurement assessment: all 122 added entries were
+sourced using Emerald prose for Gen 3 and Platinum prose for Gen 4. The
+[read-only scope](pokedex_species_information_scope.md) finds 31 two-page,
+60 three-page and 31 four-page entries, requiring a localized pagination
+extension and a split of the custom data section. Encoded text/data growth is
+12,767 ROMX bytes before pagination metadata/code. Measurements already exist;
+Cradily and Claydol have discrepancies, with a separate historical rounding
+choice for Torkoal. No entry, renderer, ROM or save is changed by the assessment.
+The follow-up [renderer scope](pokedex_description_multipage_scope.md) recommends
+a 366-byte direct-page-offset table, reused text workspace and unchanged
+publication interrupts. That scope's renderer budgets are planning allowances,
+not linked allocation measurements.
+
+2026-10-16 implementation: the [species-information prototype](pokedex_species_information_prototype.md)
+now includes all 122 sourced descriptions, direct-offset pagination, retained
+footprints and the approved measurement corrections. Linked growth is 13,233
+ROMX bytes (12,767 content plus 466 renderer/metadata), with no RAM/ROM0 growth.
+The initial Dex-only campaign passes, including all species/pages and
+registration, late-page Area returns, Moves, Unown, Type Matchups and stress.
+The follow-up full regression now covers broader gameplay, all battle animations,
+saving/discovery, audio, all-species interactive registration and six CGB models;
+Battle Tower is explicitly excluded. No new correctness failure is identified.
+One raw rapid-input stress failure also reproduces on the accepted baseline;
+it remains recorded as failed rather than being silently marked passed. Selected
+opening and active-Info timing changes are documented for review under
+`DEX-PERF-02`. The user reviewed several screens favorably. The exact prototype
+and main save are unchanged; this story remains open until explicit production
+promotion. DEX-DATA-02/03/04 remain separate deferred work.
 
 ### DEX-DATA-02: Complete Species Data During The Planned Species Revision
 
@@ -1507,8 +1561,8 @@ explicitly chosen; approve absent items or unsupported methods separately.
 Acceptance: independently verify intended family completeness and requirements,
 regenerate Info and confirm all future stages/conditions/pages, then test actual
 gameplay evolution behavior and relevant species/learnset/stat consumers.
-`DEX-DATA-01` remains the separate placeholder Dex prose/height/weight backlog;
-coordinate that content where appropriate without silently closing it.
+`DEX-DATA-01` is the separate Dex prose/height/weight item, completed and
+integrated 2026-10-17. Its completion does not sign off final gameplay data.
 Shared pagination (`DEX-PAGE-01`) is renderer work and may proceed before this
 species pass without changing the data. No content implementation is approved
 by this deferral, and no completion date is assigned.
@@ -1842,7 +1896,20 @@ Then update `DEX-CLEAN-01` against the new live references before removal.
 
 ### DEX-PERF-02: Profile And Optimize The Completed Dex
 
-Status: Accepted Selected-tab iteration complete; broader future review remains
+Status: Current iteration accepted and integrated 2026-10-17; broader future review remains optional
+
+2026-10-17: the [combined responsiveness build](pokedex_responsiveness_prototype.md)
+is manually accepted and integrated with the completed species information.
+Mov uses wrap-aware admission and twelve bounded slices; Info READY's cutoff
+is 108. The optimization itself adds four ROMX bytes and no RAM. Every measured
+Mov request and all 746 complete browsing workflows are faster than the prior
+content-identical prototype; the paired full-workflow median saving is
+418.568 ms / 25 display frames. The 203 frame-scale slower requests across 117
+species are documented and explicitly accepted, not seven residual defects.
+Broader future profiling and the Selected implementation/code-space audit
+remain optional. Earlier unapproved/private statuses below are superseded by
+this acceptance. The historical one-frame-pulse polling edge was not a game
+fix in this iteration; the new full registration stress campaign passed.
 
 2026-10-16: interactive registration is accepted and integrated. Five
 phase-sensitive Info operations in the qualification scan add approximately
@@ -1850,6 +1917,26 @@ phase-sensitive Info operations in the qualification scan add approximately
 these are accepted timing warnings, not content, audio or portrait errors.
 The [local scheduling scope](pokedex_registration_local_scheduling_scope.md)
 remains optional future tuning, not a required promotion fix.
+
+2026-10-16 species-information follow-up: the unchanged reviewed private ROM's
+[full regression report](pokedex_species_information_prototype.md#measured-changes)
+adds fresh timing evidence. Selected opening has zero paired median delta but
+up to +16.743 ms / 1 frame for some Weavile, Garchomp, Rayquaza and Metagross
+workflows after replacing placeholder descriptions. Seven within-ROM Info
+operations exceed the existing two-frame registration-versus-Selected warning
+threshold. Matched baseline probes show active changes up to +33.485 ms /
+2 frames, while settled increases are at most +0.3233 ms / 0.01931 frames.
+These are admission-phase effects, not missed audio/portrait deadlines, and
+remain unapproved responsiveness findings rather than a new runtime fix.
+The report includes a real-time baseline/prototype Igglybuff comparison video.
+
+The same run also exposes a baseline input-polling edge: Houndoom can miss a
+turbo-like sequence of sixteen one-frame-down/one-frame-up A pulses at a narrow
+phase. Fresh baseline and candidate replays both miss the same pulse patterns;
+two-frame presses and in-session recovery/B return pass. Keep this separate
+from page corruption or a new description renderer failure. Its sole raw
+registration-stress failure is preserved in the report, not cleared by changing
+the test expectation. No input or scheduling behavior was changed here.
 
 Reconciliation 2026-10-14: opening/closing is complete under `DEX-PERF-01`,
 idle warming removal under `DEX-PERF-03`, and Unown form paging is integrated.

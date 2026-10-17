@@ -63,7 +63,9 @@ PokedexMoves_Service:
 	ld a, [wPokedexOwnerTransition]
 	and a
 	jr nz, .request
-	ld b, 3
+	; Fill otherwise idle time, but recheck the existing gate for every slice.
+	; See docs/pokedex_selected_stall_optimization_scope.md before raising 12.
+	ld b, 12
 .slice
 	ld a, [wPokedexMovesState]
 	and a
@@ -76,6 +78,10 @@ PokedexMoves_Service:
 	cp [hl]
 	jr nz, .done
 	ldh a, [rLY]
+	; Late VBlank precedes a fresh visible frame, not the next deadline.
+	; This only admits hidden preparation; atomic publication is unchanged.
+	cp LY_VBLANK
+	jr nc, .admit
 	cp 64
 	jr nc, .done
 .admit

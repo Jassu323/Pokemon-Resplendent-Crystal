@@ -185,32 +185,11 @@ DisplayDexEntry:
 	pop de
 	inc de
 	pop af
-	hlcoord 2, 10
-	push af
-	call PlaceFarString
-	pop bc
-	ld a, [wPokedexStatus]
-	or a ; check for page 2
-	ret z
-
-; Page 2
-	push bc
-	push de
-	lb bc, 5, SCREEN_WIDTH - 2
-	hlcoord 2, 10
-	call ClearBox
-	hlcoord 1, 8
-	ld bc, SCREEN_WIDTH - 1
-	ld a, $55
-	call ByteFill
-	; page number
-	hlcoord 1, 9
-	ld [hl], $56 ; P.
-	inc hl
-	ld [hl], $58 ; 2
-	pop de
-	inc de
-	pop af
+	ld b, a
+	ld a, [wPokedexDescriptionPage]
+	ld c, a
+	farcall PokedexDescription_SeekStaticPage
+	ld a, b
 	hlcoord 2, 10
 	call PlaceFarString
 	ret

@@ -181,7 +181,7 @@ def main():
             driver.run(('accept',), key='a')
             settle(driver)
             pages = description_pages(repo, name)
-            for page in (0, 1, 0):
+            for page in (*range(len(pages)), 0):
                 driver.run(frames=2)
                 settle_description_text(driver, pages[page])
                 ui = driver.command('ui')

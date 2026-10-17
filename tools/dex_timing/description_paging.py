@@ -161,7 +161,8 @@ def description_pages(repo, name):
                        (repo.root / 'constants/pokemon_constants.asm').read_text().split('DEF NUM_POKEMON')[0], re.M)
     aliases = {'UNOWN': 'unown_a', 'PORYGON_Z': 'porygonz'}
     names = [aliases.get(n, n.lower()) for n in names]
-    at = offset(repo.symbols['PokedexDataPointerTable']) + names.index(name) * 3
+    index = names.index(name)
+    at = offset(repo.symbols['PokedexDataPointerTable']) + index * 3
     pointer = repo.rom[at:at + 3]
     at = offset((pointer[0], int.from_bytes(pointer[1:], 'little')))
     at = repo.rom.index(0x50, at) + 5
@@ -170,7 +171,12 @@ def description_pages(repo, name):
     pokemon_at = offset(repo.symbols['PlacePOKeText'])
     pokemon = repo.rom[pokemon_at:pokemon_at + 4]
     result = []
-    for page in (0, 1):
+    count = 2
+    if index >= 251 and 'PokedexDescriptionPageOffsets' in repo.symbols:
+        metadata = offset(repo.symbols['PokedexDescriptionPageOffsets']) + (index - 251) * 3
+        offsets = repo.rom[metadata:metadata+3]
+        count = max(i+2 for i,value in enumerate(offsets) if value)
+    for page in range(count):
         end = repo.rom.index(0x50, at)
         text = repo.rom[at:end]
         if any(c < 0x60 and c not in (0x4e, 0x54) for c in text):
@@ -178,8 +184,8 @@ def description_pages(repo, name):
         tiles = bytearray(shell[8 * 20:15 * 20])
         for y in range(10, 15):
             tiles[(y - 8) * 20 + 2:(y - 8) * 20 + 20] = bytes([0x7f] * 18)
-        tiles[2] = 0x79 if page else shell[8 * 20 + 2]
-        tiles[21:23] = bytes((0x77, 0x7a if page else 0x78))
+        tiles[2] = 0x79 if page & 1 else shell[8 * 20 + 2]
+        tiles[21:23] = bytes((0x77, 0x7a if page & 1 else 0x78))
         row, col = 10, 2
         for c in text:
             if c == 0x4e:
@@ -228,7 +234,7 @@ def summarize_trace(trace, asset, pages=None):
             physical_pages.append(pages.index(text) if text in pages else None)
     pixel_text_errors = []
     if frames and 'text_hash' in frames[0] and pages:
-        known = {frames[i]['text_hash'] for page in (0, 1)
+        known = {frames[i]['text_hash'] for page in range(len(pages))
                  for i in (next((i for i in reversed(range(1, len(frames)))
                                if physical_pages[i] == page), None),) if i is not None}
         pixel_text_errors = [e['display'] for e in frames[1:] if e['text_hash'] not in known]

@@ -168,6 +168,26 @@ PokedexSelectedMon_RenderDescriptionTextChunk:
 	inc a
 	ld [wPokedexDescriptionTextSource + 1], a
 .category_skipped
+	push hl
+	push bc
+	ld a, [wPokedexDescriptionTextPage]
+	ld c, a
+	ld a, [wPokedexSelectedSpecies]
+	call PokedexDescription_GetPageOffset
+	pop bc
+	pop hl
+	jr nc, .original_page
+	push hl
+	ld hl, wPokedexDescriptionTextSource
+	add [hl]
+	ld [hli], a
+	jr nc, .offset_ready
+	inc [hl]
+.offset_ready
+	pop hl
+	ld a, POKEDEX_DESCRIPTION_TEXT_RENDER
+	jr .state
+.original_page
 	ld a, [wPokedexDescriptionTextPage]
 	and a
 	ld a, POKEDEX_DESCRIPTION_TEXT_SKIP_PAGE

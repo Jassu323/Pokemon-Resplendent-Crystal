@@ -1,6 +1,19 @@
 # Pokedex Backlog Reconciliation
 
-Latest follow-up 2026-10-16: interactive registration (`NEWDEX-UI-02` option B)
+Latest follow-up 2026-10-17: `DEX-DATA-01` is manually accepted and integrated,
+including later-species footprints, all 122 sourced descriptions, measurement
+corrections and direct-offset multipage rendering. The accepted combined
+Mov/Info responsiveness iteration under `DEX-PERF-02` is integrated too.
+Production ROM/symbols/map exactly match the fully qualified reviewed build,
+SHA-256 `302099f5836115c776de6606379820fbc661c82824aee438364afd4e7f7834e9`.
+Total growth versus previous production is 13,237 decimal ROMX bytes: 12,767
+content, 466 renderer/metadata and four optimization bytes. No allocated RAM,
+ROM0, HRAM or SRAM growth; the player's main save is unchanged. The full suite
+excluding Battle Tower is retained for this exact link, and the user accepted
+the documented phase-sensitive slower requests. See
+[production integration](pokedex_responsiveness_prototype.md#production-integration).
+
+Follow-up 2026-10-16: interactive registration (`NEWDEX-UI-02` option B)
 is manually accepted and integrated, including the synchronized LCD-on capture
 handoff, Pay Day preservation and 67 added evolution links. The user explicitly
 retained all 20 reviewed temporary requirements. Root ROM/symbols/map exactly
@@ -82,6 +95,7 @@ take precedence over older paragraphs describing an unpromoted prototype.
 | `DEX-UNOWN-01/02/03/04` | Accepted blank tiles, bounded form counts, red backdrop and black panels. |
 | Unown form paging | Static decoding and atomic picture/map publication are integrated. Current CGB E median complete selection remains 49.02 ms. This is distinct from Modes transitions. See [Unown performance](pokedex_unown_performance_prototype.md). |
 | `DEX-UI-01/02`, `DEX-AREA-01` | Footprint/category corrections and Area owner/return integration are complete. |
+| `DEX-DATA-01` | Complete and production-integrated 2026-10-17. All 122 later-species footprints, descriptions, approved measurements and two-to-four-page rendering are accepted. [Integration and exact-link evidence](pokedex_responsiveness_prototype.md#production-integration). |
 | `DEX-SEARCH-01/02/03/05` | Slowpoke palette/OAM, colored Results, small cursor/caught ball, compact icons, alphabetical controls and ranked type matching are integrated and manually accepted. |
 | Moves Dex | Visual layout, scrollbar, discovery persistence/migration, acquisition/learning/battle hooks, initial Struggle discovery, sort remembrance, substring/type Search, themed text entry and standard cursor behavior are complete. Session-only position remembrance is also integrated, as noted below. See [original production integration](pokedex_moves_search_prototype.md#production-integration). |
 | `DEX-PREF-01/02` | Manually accepted and production-integrated 2026-10-15. One shared Modern/Legacy species/viewport bookmark and an independent Moves bookmark; both reset on game restart. Exact qualified-ROM match and 28,836 fresh production checks pass. +518 decimal ROMX bytes, eight existing padding bytes, no allocation growth. [Integration and retained qualification](pokedex_session_position_prototype.md#production-integration). |
@@ -124,11 +138,10 @@ silently delete its earlier reproduction or label it a proven causal fix.
 | Story | Current scope |
 | --- | --- |
 | `DEX-SEARCH-04` | Official National labels remain deferred. Current display can show internal species numbers for added species. |
-| `DEX-DATA-01` | Finish placeholder descriptions and height/weight data. |
 | `DEX-DATA-02`, alias `DEX-INFO-02` | Final species/learnset/stat and evolution-requirement pass remains deferred. The reviewed 190-link graph is now complete and integrated, but 20 requirements are approved temporary equivalents rather than final mechanics. These are one underlying content item, not two renderer fixes. |
 | `DEX-DATA-03` | Revalidate family egg-move inheritance after final evolution/egg/learnset edits. Previously missing branches are now configured; current generated content passes. Final content approval and the learnset-expansion page bounds remain deferred. |
 | `DEX-DATA-04` | Regroup later-generation relatives/babies in the authored Evolves order shared by Modern and Legacy. National/Alphabet remain independent. |
-| `DEX-PERF-02` | Optional broader performance review only. Selected-tab iteration, `DEX-INFO-03`, entry/exit, warming removal and Unown optimizations are integrated. The accepted registration Info timing tails can be revisited here if worthwhile; they are not a functional blocker. |
+| `DEX-PERF-02` | Optional broader performance review only. The combined Mov/Info scheduling iteration is accepted and integrated 2026-10-17, alongside the earlier Selected, entry/exit, warming-removal and Unown work. Accepted Info/Description timing tails are not functional blockers. |
 
 The requested future Selected-screen implementation/code-space audit remains
 optional. Retained precomputed display assets and archived alternative renderers

@@ -1,9 +1,11 @@
 """Linked fixed-species registration context and ownership contracts."""
 import argparse
 import json
+from itertools import product
 from pathlib import Path
 import re
 import struct
+from types import SimpleNamespace
 import unittest
 
 from dex_timing.assets import Repository, offset
@@ -21,9 +23,49 @@ FIELDS = '''hMapAnims hSCX hSCY hWX hWY hVBlank hOAMUpdate hBGMapMode
 CONTEXT_SIZE = 32 + len(FIELDS) + 4
 
 
+def normalize_mainline_farcall_relocations(repo, reference):
+    bank = reference.symbols['Pokedex_VBlankDispatch'][0]
+    if repo.symbols['Pokedex_VBlankDispatch'] != reference.symbols['Pokedex_VBlankDispatch']:
+        raise ValueError('Shared dispatch moved')
+    start = bank * 0x4000
+    original = reference.rom[start:start+0x4000]
+    normalized = bytearray(repo.rom[start:start+0x4000])
+    # These mainline calls precede interrupt dispatch. Only their linked
+    # callee operands may relocate; no opcode, handler or other bank byte may.
+    callers = (
+        ('Pokedex_CopyBackingToBG', 'Pokedex_CopyBackingToMap',
+         ('Pokedex_IsDescriptionLayout', 'Pokedex_CopyDescriptionRightEdge')),
+        ('Pokedex_RestoreListingAfterSelectedMon', 'Pokedex_ReloadNormalFootprint',
+         ('PokedexSelectedMon_NormalizeLinearReturn',)),
+        ('Pokedex_StageOwnerTransitionMaps', 'Pokedex_PublishOrStageDescriptionBacking',
+         ('Pokedex_IsDescriptionLayout', 'Pokedex_StageDescriptionRightEdge')),
+        ('Pokedex_PublishOrStageDescriptionBacking.description_badge',
+         'Pokedex_PublishOrStageDescriptionBacking.lower_ready',
+         ('PokedexBadge_Prepare',)))
+    def encoded_call(source, label):
+        target_bank, address = source.symbols[label]
+        return bytes((0x3e, target_bank, 0x21, address & 255, address >> 8, 0xcf))
+    for begin, end, targets in callers:
+        if any(repo.symbols[name] != reference.symbols[name] for name in (begin, end)):
+            raise ValueError('Mainline relocation window moved')
+        lo, hi = reference.symbols[begin][1]-0x4000, reference.symbols[end][1]-0x4000
+        if reference.symbols[begin][0] != bank or hi > reference.symbols['Pokedex_VBlankDispatch'][1]-0x4000:
+            raise ValueError('Relocation window overlaps interrupt dispatch')
+        for label in targets:
+            old, new = encoded_call(reference, label), encoded_call(repo, label)
+            if original[lo:hi].count(old) != 1:
+                raise ValueError('Expected one mainline farcall: ' + label)
+            at = original.index(old, lo, hi)
+            if normalized[at:at+6] != new:
+                raise ValueError('Unexpected mainline farcall bytes: ' + label)
+            normalized[at:at+6] = old
+    return bytes(normalized), original
+
+
 class RegistrationContracts(unittest.TestCase):
     number_row_costs = []
     number_glyph_comparisons = 0
+    ready_staging_costs = []
     stats_cpu_budget_t = None
     @classmethod
     def setUpClass(cls):
@@ -129,9 +171,63 @@ class RegistrationContracts(unittest.TestCase):
             start = baseline.symbols[begin][1]
             stop = baseline.symbols[end][1] if end else 0x4000
             self.assertEqual(self.repo.rom[start:stop], baseline.rom[start:stop], begin)
-        bank = baseline.symbols['Pokedex_VBlankDispatch'][0]
-        self.assertEqual(self.repo.rom[bank*0x4000:(bank+1)*0x4000],
-                         baseline.rom[bank*0x4000:(bank+1)*0x4000])
+        actual, original = normalize_mainline_farcall_relocations(self.repo, baseline)
+        self.assertEqual(actual, original)
+
+    def test_interrupt_bank_guard_rejects_handler_opcode_change(self):
+        baseline = Repository(BASELINE, BASELINE / 'pokecrystal.gbc', BASELINE / 'pokecrystal.sym')
+        data = bytearray(self.repo.rom)
+        data[offset(self.repo.symbols['Pokedex_VBlankDispatch'])] ^= 1
+        changed = SimpleNamespace(rom=data, symbols=self.repo.symbols)
+        actual, original = normalize_mainline_farcall_relocations(changed, baseline)
+        self.assertNotEqual(actual, original)
+
+    def test_interrupt_bank_guard_rejects_wrong_mainline_target(self):
+        baseline = Repository(BASELINE, BASELINE / 'pokecrystal.gbc', BASELINE / 'pokecrystal.sym')
+        data = bytearray(self.repo.rom)
+        lo = offset(self.repo.symbols['Pokedex_CopyBackingToBG'])
+        hi = offset(self.repo.symbols['Pokedex_CopyBackingToMap'])
+        # The first farcall follows the native CALL in this small mainline body.
+        at = data.index(0x3e, lo, hi)
+        data[at+3] ^= 1
+        with self.assertRaises(ValueError):
+            normalize_mainline_farcall_relocations(SimpleNamespace(rom=data, symbols=self.repo.symbols), baseline)
+
+    def test_interrupt_bank_guard_rejects_wrong_badge_target(self):
+        baseline = Repository(BASELINE, BASELINE / 'pokecrystal.gbc', BASELINE / 'pokecrystal.sym')
+        data = bytearray(self.repo.rom)
+        lo = offset(self.repo.symbols['Pokedex_PublishOrStageDescriptionBacking.description_badge'])
+        hi = offset(self.repo.symbols['Pokedex_PublishOrStageDescriptionBacking.lower_ready'])
+        bank, address = self.repo.symbols['PokedexBadge_Prepare']
+        encoded = bytes((0x3e, bank, 0x21, address & 255, address >> 8, 0xcf))
+        at = data.index(encoded, lo, hi)
+        data[at+3] ^= 1
+        with self.assertRaises(ValueError):
+            normalize_mainline_farcall_relocations(SimpleNamespace(rom=data, symbols=self.repo.symbols), baseline)
+
+    def test_info_ready_staging_fits_its_declared_budget(self):
+        cutoff = self.repo.rom[offset(self.repo.symbols['PokedexPerf_InfoLatestLY']) + 5]
+        self.assertIn(cutoff, (84, 108))
+        budget = (144-cutoff)*456 - 2048 - 8182
+        for page, miniatures, cache, bank in product((0, 1), (0, 2), (0, 5, 6), (1, 3, 5)):
+            with self.subTest(page=page, cutoff=cutoff, miniatures=miniatures, cache=cache, bank=bank):
+                cpu = self.cpu()
+                cpu.allowed_io.add(0xff44)
+                cpu.ram[0xff44] = cutoff - 1
+                cpu.ram[0xff70] = bank
+                for name, value in dict(hCGB=1, wPokedexSelectedView=1,
+                    wPokedexAnimPlaybackState=2, wPokedexInfoState=5,
+                    wPokedexInfoPage=page, wPokedexInfoActiveMiniCount=miniatures,
+                    hSampledCryTimer=int(bool(cache)), hSampledCryBlocks=8,
+                    wSampledCryCacheCount=cache).items():
+                    cpu.field(name, value)
+                elapsed = cpu.run('PokedexInfo_Service')
+                type(self).ready_staging_costs.append(dict(page=page, miniatures=miniatures,
+                    cache=cache, caller_bank=bank, cutoff=cutoff, cpu_t=elapsed, budget_t=budget))
+                self.assertEqual(self.get(cpu, 'wPokedexOwnerTransition'), 5)
+                self.assertLessEqual(elapsed, budget)
+                self.assertEqual(cpu.ram[0xff70], bank)
+                self.assertEqual(cpu.sp, 0xc0f0)
 
     def test_previous_lock_is_recovered_after_transient_id_reuse(self):
         cpu = self.cpu()
@@ -225,5 +321,6 @@ if __name__ == '__main__':
             numeric_glyph_comparisons=RegistrationContracts.number_glyph_comparisons,
             stats_cpu_budget_t=RegistrationContracts.stats_cpu_budget_t,
             number_row_costs=RegistrationContracts.number_row_costs,
+            ready_staging_costs=RegistrationContracts.ready_staging_costs,
             timing_scope='CPU-only path counter, not display/audio timing'), indent=2)+'\n')
     raise SystemExit(not program.result.wasSuccessful())

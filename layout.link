@@ -320,9 +320,8 @@ ROMX $72
 ROMX $73
 	"Pokedex Entries 129-192"
 ROMX $74
-	; Reserved for custom Pokedex entries and dex order data.
+	; Original final entries and dex order; custom prose uses overflow banks.
 	"Pokedex Entries 193-251"
-	"Pokedex Entries Custom"
 	"Pokedex Order"
 ROMX $75
 	"16-bit ID stuff"
@@ -543,7 +542,9 @@ ROMX $b9
 ROMX $ba
 	"Pokedex Legacy"
 ROMX $bb
+	"Pokedex Entries Custom"
 ROMX $bc
+	"Pokedex Entries Custom 2"
 ROMX $bd
 ROMX $be
 ROMX $bf

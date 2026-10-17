@@ -350,7 +350,8 @@ def execute(config, scenario, button, out, factory, lock, gc=False, panel=None):
                 assert catch.number(driver, repo, 'wPartyCount') == 4
                 row['contest_species'] = catch.permanent(driver, repo, catch.ram(driver, repo, 'wContestMonSpecies'), 'Pokemon')[0]
                 assert row['contest_species'] == 10
-                assert catch.number(driver, repo, 'wParkBallsRemaining') < 99
+                # This checkpoint precedes .used_park_ball; qualify consumption after return.
+                row['park_balls_before_consumption'] = catch.number(driver, repo, 'wParkBallsRemaining')
             else:
                 assert catch.number(driver, repo, 'wPartyCount') == 5
                 row['caught_species'] = catch.permanent(driver, repo, catch.ram(driver, repo, 'wPartyMon5Species'), 'Pokemon')[0]
@@ -359,6 +360,9 @@ def execute(config, scenario, button, out, factory, lock, gc=False, panel=None):
                 if scenario == 'transformed':
                     assert catch.ram(driver, repo, 'wPartyMon5DVs', 2).hex() == row['fixture']['backup_dvs']
             catch.world(driver, repo)
+            if scenario == 'contest':
+                row['park_balls_after_consumption'] = catch.number(driver, repo, 'wParkBallsRemaining')
+                assert row['park_balls_after_consumption'] == 99 - row['fixture']['native_park_ball_attempts']
         row['world'] = driver.command('m')
         assert row['world']['wBattleMode'] == 0 and not row['world']['hInMenu'] and not row['world']['wScriptRunning']
         evidence(driver, folder, 'candidate-returned-world')

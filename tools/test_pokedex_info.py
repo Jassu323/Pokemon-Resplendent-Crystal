@@ -234,9 +234,11 @@ class InfoLinkedTests(unittest.TestCase):
 
     def test_ready_handoff_obeys_the_active_playback_budget(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
-        # READY uses the measured 84-line cutoff, not the old shared 64-line gate.
+        cutoff = repo.rom[offset(repo.symbols['PokedexPerf_InfoLatestLY']) + 5]
+        # Both measured READY policies retain their independent staging budget.
+        self.assertIn(cutoff, (84, 108))
         for line in range(154):
-            expected = 5 if line < 84 else 0
+            expected = 5 if line < cutoff else 0
             with self.subTest(line=line):
                 cpu = machine(repo)
                 cpu.field('wPokedexSelectedView', 1)
@@ -248,6 +250,8 @@ class InfoLinkedTests(unittest.TestCase):
 
     def test_ready_handoff_retains_animation_and_audio_admission_guards(self):
         repo = Repository(ROOT, ROOT / 'pokecrystal.gbc', ROOT / 'pokecrystal.sym')
+        cutoff = repo.rom[offset(repo.symbols['PokedexPerf_InfoLatestLY']) + 5]
+        self.assertIn(cutoff, (84, 108))
         cases = (
             ('frame_changed', {'hVBlankCounter': 1}, 0),
             ('portrait_upload_busy', {'wPokedexAnimSchedulerControl': 4}, 0),
@@ -264,7 +268,7 @@ class InfoLinkedTests(unittest.TestCase):
                 cpu.field('wPokedexAnimPlaybackState', 2)
                 for field, value in fields.items():
                     cpu.field(field, value)
-                cpu.write(0xff44, 83)
+                cpu.write(0xff44, cutoff - 1)
                 cpu.run('PokedexInfo_Service')
                 self.assertEqual(cpu.read(repo.symbols['wPokedexOwnerTransition'][1]), expected)
                 self.assertEqual(cpu.ram[0xff70], 1)

@@ -81,13 +81,7 @@ Pokedex_DisplayDescriptionEntry:
 	ld [hl], POKEDEX_DESCRIPTION_GFX_TILE + 6
 	inc hl
 	ld [hl], POKEDEX_DESCRIPTION_GFX_TILE + 7
-	ld a, [wPokedexDescriptionPage]
-	and a
-	ret z
-	hlcoord 2, 8
-	ld [hl], POKEDEX_DESCRIPTION_GFX_TILE + 8
-	hlcoord 2, 9
-	ld [hl], POKEDEX_DESCRIPTION_GFX_TILE + 9
+	; Staging prepares the actual numeric badge before any CGB reveal.
 	ret
 
 Pokedex_StageDescriptionRightEdge:

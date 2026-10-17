@@ -296,6 +296,7 @@ def catalog(repo, include_forms=True):
                 listing_index=order.index(constant), info_pages=1 + len(info['pages'][constant]),
                 info_headings=info['headings'][constant],
                 moves_pages=max(1, len(moves[constant]['pages'])),
+                description_pages=len(description_pages(repo, name)),
                 move_categories=sorted({page[0] for page in moves[constant]['pages']}),
                 cry='sampled' if asset.sample_blocks else 'synthesized',
                 authored_frames=sum(e.duration for e in asset.events)))
@@ -304,7 +305,9 @@ def catalog(repo, include_forms=True):
 
 def operations(row):
     # Every page, wraps, Description 2, and all six directed tab-return pairs.
-    result = [dict(name='desc-2', view=0, page=1), dict(name='desc-1', view=0, page=0)]
+    result = [dict(name=f'desc-{page+1}', view=0, page=page)
+              for page in range(1, row.get('description_pages', 2))]
+    result.append(dict(name='desc-1', view=0, page=0))
     for view, key in ((1, 'info_pages'), (2, 'moves_pages')):
         result += [dict(name=f'view{view}-page{p}', view=view, page=p)
                    for p in range(row[key])]
@@ -926,6 +929,13 @@ def stress_species(task):
             for _ in range(16):
                 anchor('Info-A'); tap(driver, 'a', 1, 1)
             ready(driver, 1)
+        elif family == 'rapid-desc':
+            for _ in range(16):
+                anchor('Desc-A'); tap(driver, 'a', 1, 1)
+            accepted=sum(e['event']=='interactive_phase' and e['point']=='desc_request'
+                         for e in driver.events)
+            expected=accepted % row.get('description_pages',2)
+            ready(driver,0,expected)
         elif family == 'held-a':
             anchor('hold-A-120'); run(driver, 120, 'a'); run(driver, 4)
             ready(driver, 0, 1)
@@ -1575,12 +1585,12 @@ def media(config):
 
 def coverage_plan(rows):
     return dict(base_species=len({r['base'] for r in rows}), species_and_forms=len(rows),
-        description_pages=len(rows) * 2,
+        description_pages=sum(r.get('description_pages', 2) for r in rows),
         info_pages=sum(r['info_pages'] for r in rows),
         moves_pages=sum(r['moves_pages'] for r in rows),
         directed_tab_pairs=len(rows) * 6,
         page_and_tab_requests=sum(len(operations(r)) for r in rows),
-        committed_B_End_exits=2 * sum(2 + r['info_pages'] + r['moves_pages'] for r in rows),
+        committed_B_End_exits=2 * sum(r.get('description_pages', 2) + r['info_pages'] + r['moves_pages'] for r in rows),
         pending_exit_policy='B and End on each observed queued-page checkpoint; baseline pending_at_input is sampled before physical button signal, not at dispatch. Supplemental probe records actual leave-boundary state.',
         input_stress_cases=len(rows) * 4 * len(STRESS_FAMILIES),
         phases_t=[0, FRAME // 4, FRAME // 2, 3 * FRAME // 4],
