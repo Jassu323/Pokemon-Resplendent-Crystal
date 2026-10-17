@@ -24,7 +24,7 @@ TABLES = ('dex-area-assets', 'dex-info-assets', 'dex-moves-assets',
           'dex-moves-mode-assets', 'dex-sort-assets')
 STEMS = ('pokecrystal-dex-types', 'pokecrystal-dex-selected-runtime',
          'pokecrystal-dex-unown-fast')
-DEFAULT_BASELINE = ROOT / 'build/dex-position-memory-20261014/candidate'
+DEFAULT_BASELINE = ROOT
 DEFAULT_BATTERY = ROOT / 'build/dex-moves-search-final-review-20261011/legacy-input.sav'
 STANDARD = tuple('standard:' + phase for phase in PHASES + ('arrows',))
 EXTRAS = ('animations', 'displays', 'selected', 'description', 'models', 'contracts', 'numbers',
@@ -128,7 +128,7 @@ def inventory(base, jobs):
 
 
 def snapshot(source, target):
-    ignore = shutil.ignore_patterns('.git', '.agents', '.codex', '.aws', 'build', '__pycache__',
+    ignore = shutil.ignore_patterns('.git', '.agents', '.codex', '.aws', 'build', 'research_artifacts', '__pycache__',
                                    '*.o', '*.d', '*.pyc', '*.sav', '*.s0')
     shutil.copytree(source, target, ignore=ignore)
     for name in TABLES:

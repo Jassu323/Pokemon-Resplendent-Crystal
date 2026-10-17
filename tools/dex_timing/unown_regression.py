@@ -357,6 +357,8 @@ def run(output, jobs, smoke):
     units = draw_units(output, target)
     controls = []
     if not smoke:
+        from .regression_fixtures import native_controls
+        native_controls(keyboard=False)
         base = Path(manifest.get('original_defect_base', manifest['base']))
         old = json.loads((base / 'dex-regression/modern/config.json').read_text())
         old['red_background'] = config['red_background']

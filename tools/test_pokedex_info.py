@@ -278,9 +278,10 @@ class InfoLinkedTests(unittest.TestCase):
         banked = repo.symbols['PokedexInfoNumbers'][0] != repo.symbols['PokedexInfo_PlanStats'][0]
         reference = None
         if banked:
-            self.assertIsNotNone(REFERENCE_ROOT, 'Banked Stats requires a matching production reference')
-            reference = Repository(REFERENCE_ROOT, REFERENCE_ROOT / 'pokecrystal.gbc',
-                                   REFERENCE_ROOT / 'pokecrystal.sym')
+            from dex_timing.regression_fixtures import numeric_reference
+            reference_root = REFERENCE_ROOT or numeric_reference()
+            reference = Repository(reference_root, reference_root / 'pokecrystal.gbc',
+                                   reference_root / 'pokecrystal.sym')
             gate = offset(repo.symbols['PokedexPerf_InfoLatestLY']) + 2
             reference_gate = offset(reference.symbols['PokedexPerf_InfoLatestLY']) + 2
             self.assertEqual(repo.rom[gate], reference.rom[reference_gate])

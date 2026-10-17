@@ -1,5 +1,11 @@
 # Pokedex Backlog Reconciliation
 
+Storage follow-up 2026-10-17: the user approved disposing of the completed
+egg test prototype and historical run outputs. Component explanations and
+measured results remain in `docs/`; strictly required regression inputs now
+live in `tools/regression_fixtures/`. The [retirement map](pokedex_build_retirement.md)
+supersedes older statements that a review ROM/video or raw run is retained.
+
 Latest follow-up 2026-10-17: `DEX-DATA-01` is manually accepted and integrated,
 including later-species footprints, all 122 sourced descriptions, measurement
 corrections and direct-offset multipage rendering. The accepted combined
@@ -139,7 +145,7 @@ silently delete its earlier reproduction or label it a proven causal fix.
 | --- | --- |
 | `DEX-SEARCH-04` | Official National labels remain deferred. Current display can show internal species numbers for added species. |
 | `DEX-DATA-02`, alias `DEX-INFO-02` | Final species/learnset/stat and evolution-requirement pass remains deferred. The reviewed 190-link graph is now complete and integrated, but 20 requirements are approved temporary equivalents rather than final mechanics. These are one underlying content item, not two renderer fixes. |
-| `DEX-DATA-03` | Revalidate family egg-move inheritance after final evolution/egg/learnset edits. Previously missing branches are now configured; current generated content passes. Final content approval and the learnset-expansion page bounds remain deferred. |
+| `DEX-DATA-03` | Revalidate family egg-move inheritance after final evolution/egg/learnset edits. Private two/three-page qualification across 42 families completes 2026-10-17 with no new correctness regressions; the completed prototype was then discarded with approval, not promoted. Reusable long-list controls remain in tools. Final content approval and its page/bank bounds remain deferred. See [Egg Page Qualification](pokedex_egg_placeholder_prototype.md); the separate production TM-inheritance bug is not a renderer failure. |
 | `DEX-DATA-04` | Regroup later-generation relatives/babies in the authored Evolves order shared by Modern and Legacy. National/Alphabet remain independent. |
 | `DEX-PERF-02` | Optional broader performance review only. The combined Mov/Info scheduling iteration is accepted and integrated 2026-10-17, alongside the earlier Selected, entry/exit, warming-removal and Unown work. Accepted Info/Description timing tails are not functional blockers. |
 

@@ -33,11 +33,9 @@ class MultipageContracts(unittest.TestCase):
         cls.repo=Repository(ROOT,ROOT/'pokecrystal.gbc',ROOT/'pokecrystal.sym')
         if 'PokedexDescriptionPageOffsets' not in cls.repo.symbols:
             raise unittest.SkipTest('multipage prototype required')
-        scope=Path(__file__).resolve().parents[1]
-        while not (scope/'build/dex-species-information-scope-20261016/assessment.json').is_file():
-            if scope==scope.parent: raise RuntimeError('Missing pinned assessment inputs')
-            scope=scope.parent
-        rows=json.loads((scope/'build/dex-species-information-scope-20261016/assessment.json').read_text())['records']
+        from dex_timing.regression_fixtures import require
+        assessment = require('build/dex-species-information-scope-20261016/assessment.json')
+        rows=json.loads(assessment.read_text())['records']
         cls.counts=[2]*251+[r['pages'] for r in rows]
         cls.rows=rows
 

@@ -10,6 +10,36 @@ sys.path.insert(0,str(ROOT/'tools'))
 from build_battle_motion_prototype import interpolate, curves, finish_surf
 from dex_timing.battle_pacing import playback_signature
 from tools.build_battle_motion_expansion import burst_plan, retime_bursts
+from pokedex_info_assets import constants
+
+
+def synthetic_curve_reference():
+    """Declared unit poses, not a substitute for native timing measurements."""
+    values = constants(ROOT / 'constants/battle_anim_constants.asm')
+
+    def obj(function, param=0, lifetime=63):
+        samples = []
+        for frame, x, y in ((0, 64, 255), (2, 68, 1)):
+            data = [0] * 20
+            data[8:13] = [x, y, x, y, param]
+            samples.append(dict(t=frame * 70224, data=data))
+        return dict(function=values['BATTLE_ANIM_FUNC_' + function],
+                    lifetime=lifetime, samples=samples)
+
+    water = [obj('WATER_PULSE_DRIFT_BUBBLE', n) for n in range(5)]
+    water += [obj('USER_TO_TARGET_DISAPPEAR')]
+    water += [obj('WATERFALL_BUBBLE', n) for n in range(4)]
+    rows = []
+    for move, side, objects in (
+        ('WATER_PULSE', 'player', water),
+        ('CAUSTIC', 'player', [obj('CAUSTIC_BUBBLE', n) for n in (0x92, 0xb3, 0xf4)]),
+        ('CAUSTIC', 'foe', [obj('CAUSTIC_BUBBLE', n) for n in (0x92, 0xb3, 0xf4)]),
+        ('SUPERPOWER', 'player', [obj('SUPERPOWER_ROCK_CHIP', n, age)
+                                 for n, age in enumerate((37, 81, 127, 193, 255))]),
+    ):
+        rows.append(dict(variant='production', move=move, side=side, quarter=0,
+                         invocations=[dict(scripts=[dict(objects=objects)])]))
+    return dict(fixture='Synthetic unit poses; no recorded playback/timing claim', rows=rows)
 
 
 class MotionTests(unittest.TestCase):
@@ -29,10 +59,16 @@ class MotionTests(unittest.TestCase):
         self.assertEqual(interpolate(points,1),[[0,0]])
 
     def test_all_generated_tables_fit_the_byte_age(self):
-        source,metadata=curves()
-        self.assertEqual(metadata['payload'],4114)
+        reference = synthetic_curve_reference()
+        source,metadata=curves(reference)
+        # Thirty count bytes, 1,364 fixed target poses and five declared chip ages.
+        self.assertEqual(metadata['payload'],30 + 2 * (1364 + 37 + 81 + 127 + 193 + 255))
         self.assertIn('BANK[$ba]',source)
         self.assertNotIn('DelayFrame',source)
+        for age in (1, 256):
+            with self.subTest(invalid_age=age), self.assertRaises(AssertionError):
+                reference['rows'][-1]['invocations'][0]['scripts'][0]['objects'][0]['lifetime'] = age
+                curves(reference)
 
     def test_runtime_has_no_clock_or_new_workspace(self):
         source=(ROOT/'tools/dex_timing/probes/battle_motion_functions.asm').read_text()

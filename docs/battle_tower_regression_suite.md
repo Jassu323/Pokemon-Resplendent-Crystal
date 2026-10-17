@@ -1,10 +1,16 @@
 # Battle Tower Regression Suite
 
-Maintained: 2026-10-15. This is an independently runnable addendum to
+Maintained: 2026-10-17. This is an independently runnable addendum to
 [Full Regression Suite](full_regression_suite.md), not a replacement for it.
 It describes implemented tests, fixture limitations, required manual coverage,
 and failure handling. A future thread must not interpret the coverage matrix
 as a claim that every possible Tower battle or save interruption was tested.
+
+October 17 storage update: historical campaign outputs are retired. The
+necessary donor battery is now in the portable
+[tools fixture bundle](../tools/regression_fixtures/README.md). Restore it before
+preparation; use fresh matching production/candidate source trees, not the old
+October 14 paths. The suite's code and independent execution remain unchanged.
 
 ## 1. Purpose And Current Result
 
@@ -85,17 +91,23 @@ git -C ~/Documents/GitHub/SameBoy rev-parse HEAD
 
 The current default donor is
 `build/dex-moves-search-final-review-20261011/legacy-input.sav`.
-It is a retained local dependency, not available on every clean clone. Supply
-`--battery` with another valid battery when necessary. Its checksums, save
+Restore it from the repository fixture bundle:
+
+```sh
+PYTHONPATH=tools:. python3 -m tools.dex_timing.regression_fixtures restore
+```
+
+Alternatively supply `--battery` with another valid private battery. Its checksums, save
 layout, party records and permanent-ID extensions must match this game.
 Never use a foreign ROM's battery simply because its length is correct.
 
 ## 4. Running Independently
 
-Example using the retained October 14 frozen trees and a fresh output:
+Example using the current production checkout and an already built private
+candidate source tree, with a fresh output (no concurrent edits/builds):
 
 ```sh
-python3 -m tools.dex_timing.battle_tower prepare --output build/battle-tower-new-review --baseline-source build/dex-cleanup-20261014/runtime-regression/baseline/candidate --candidate-source build/dex-cleanup-20261014/candidate --battery build/dex-moves-search-final-review-20261011/legacy-input.sav
+python3 -m tools.dex_timing.battle_tower prepare --output build/battle-tower-new-review --baseline-source . --candidate-source build/new-candidate-source --battery build/dex-moves-search-final-review-20261011/legacy-input.sav
 python3 -m tools.dex_timing.battle_tower all --output build/battle-tower-new-review
 ```
 

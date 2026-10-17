@@ -10,7 +10,8 @@ adds a Dex-only multipage addendum. Description readers and registration
 catalogs must enumerate actual counts, not assume two pages. Its independent
 source/offset controls, all-page captures, P.3/P.4 Area returns and rapid-Desc
 tests are required for future Description changes. Keep the accepted text
-sources and assessment cache under `build/`; a matching runtime/oracle alone
+sources and the independent expectations in `tools/regression_fixtures/`;
+restore the small assessment input under `build/` for a run. A matching runtime/oracle alone
 does not prove that an entry's final page exists. The initial October 16 result
 was Dex-only. Its subsequent [full follow-up](pokedex_species_information_prototype.md#full-regression-follow-up)
 reruns the broader standard and supplementary campaigns, **excluding Battle
@@ -33,6 +34,15 @@ The registration coverage plan must sum each catalog row's real
 Retain the two-page default only for older catalogs without that field. The
 two coverage-plan unit controls distinguish three/four-page rows from that
 legacy default; the native exit sweep must still visit the actual later pages.
+
+The final October 17 [build retirement](pokedex_build_retirement.md) supersedes
+the earlier conservative cleanup. The completed egg prototype, historical
+source copies, review cartridges/saves, audio/video/images, reports and run
+outputs are discarded with approval. Only the strictly required fixture inputs
+are preserved in the compact portable bundle under `tools/regression_fixtures/`.
+The component guides and measured qualifications remain in `docs/`; old build
+links are provenance, not retained downloads. Production and the main battery
+are unchanged. Generate fresh matching-link evidence for future campaigns.
 
 Battle Tower coverage is a separate, independently runnable addendum:
 [Battle Tower Regression Suite](battle_tower_regression_suite.md). Its
@@ -169,8 +179,15 @@ as acceptance for a new ROM simply because the filename is unchanged.
 
 ### Retained Fixture Dependencies
 
-The current local adapter is **not self-contained on a clean clone**. It uses
-retained ignored build artifacts as fixture definitions:
+The current local adapter uses a source-controlled compact fixture bundle,
+not loose historical build trees. Before a campaign, restore and verify it:
+
+```sh
+PYTHONPATH=tools:. python3 -m tools.dex_timing.regression_fixtures verify
+PYTHONPATH=tools:. python3 -m tools.dex_timing.regression_fixtures restore --compile-controls
+```
+
+It recreates only these historical-path fixture definitions under `build/`:
 
 - `build/dex-moves-search-final-review-20261011/`: `all-seen-tests.sav`,
   `legacy-input.sav`, `sort-manifest.json`, and `moves-mode-manifest.json`.
@@ -178,13 +195,15 @@ retained ignored build artifacts as fixture definitions:
   `battle-review/` donor battery and matching manifest.
 - `build/dex-unown-black-20261011/unown-manifest.json` and the old ROM/symbol/save
   paths referenced for the Unown negative controls.
-- The retained Type/cursor source and rollback inputs when rebuilding mode-7
-  variants through `tools/build_dex_types_mode7.py`.
+- The one known-bad Moves keyboard control, pre-relocation numeric-cost
+  reference and independent description/footprint expectations.
 
-Follow the manifest paths before cleaning any historical build directories.
 Fixture manifests provide data/setup definitions, **not historical pass
 evidence**. The current campaign recreates cores, checkpoints, and assertions
-against the new link.
+against the new link. Observers are rebuilt from current tools, not retained
+machine executables. The bundle remaps checkout paths and refuses conflicting
+existing files. Its isolated safety controls are in
+`tools/test_regression_fixtures.py` (five controls, including concurrent restore).
 
 The October 12 integration uses `--baseline-source` on `prepare` to select frozen
 pre-integration ROM/symbol/map files while protecting the newly integrated root
@@ -200,44 +219,60 @@ Keep each snapshot's matching generated tables. A pre-ancestor baseline uses
 three-byte Info headers while the integrated ancestor build uses six-byte
 headers; copying candidate tables over the baseline invalidates that comparison.
 
-If the historical Moves visual/donor paths have been compressed, restore only
-the verified negative-control inputs and rebuild their observers before `moves`:
+Bind the restored Moves visual/donor controls into each new campaign before
+`moves`:
 
 ```sh
 python3 -m tools.dex_timing.unown_fast_campaign restore-negative --output build/regression-new-review
 ```
 
-Despite its historical module name, this helper restores the Moves keyboard
-negative-control source/cartridge and Struggle-grant donor batteries for an
-ordinary full campaign. It verifies archive receipts and changes only private
-test setup. Preserve the initial failed setup logs before retrying.
+Despite its historical module name, this helper now uses the tools fixture
+bundle for the Moves keyboard cartridge and Struggle-grant batteries. It no
+longer requires the large ignored Dex build-history archives. It changes only
+private test setup. Preserve failed setup logs before retrying.
 
-After approved cleanup, compact archives live under
-`research_artifacts/dex-build-history-20261012/`, outside disposable builds.
-Required historical fixture batteries/manifests, Unown negative-control cores,
-ROMs/configs/source/converted graphics remain at their original live paths.
-Other old source/reports/ROMs/saves/screenshots can be recovered from verified
-family archives. Raw traces, temporary states, captured PCM and intermediate
-observers are deliberately retired, not promised recoverable. Recreate fresh
-evidence rather than attempting to rerun an archived report against missing
-temporary checkpoints. See the integration report for actual cleanup results.
-The destructive retention workflow has six isolated safety tests:
+The old family archives and loose source snapshots are retired. The previous
+`tools/cleanup_dex_builds.py --verify` command describes the superseded archive
+layout, not the current retention boundary. Use the bundle verification instead:
 
 ```sh
-python3 -m unittest tools.test_dex_build_retention
-python3 tools/cleanup_dex_builds.py --verify
+PYTHONPATH=tools:. python3 -m unittest tools.test_regression_fixtures
+PYTHONPATH=tools:. python3 -m tools.dex_timing.regression_fixtures verify
 ```
 
-For durable reuse on another machine, archive the batteries, source archive,
-negative-control ROMs, manifests, dependency versions, and hashes together.
-The adapter's fixed paths must then be parameterized/remapped explicitly.
+For durable reuse on another machine, retain `tools/regression_fixtures/` with
+the source checkout and install the external toolchain/boot ROM listed above.
+Freeze fresh baseline/candidate sources rather than recovering an obsolete
+whole-game candidate. Experimental builders for old architectures may require
+their documented baselines to be reconstructed; their historical outputs are
+not current-suite prerequisites. The two deliberately retained fallback
+implementations have separate documented restoration archives.
 An all-moves-seen fixture is for UI coverage; it does not replace empty/mixed
 discovery fixtures or prove that gameplay discovery hooks work.
 
 ## 3. Full Campaign Execution
 
 Use a fresh output under `build/`. Preparation rejects an existing output.
-These examples use one existing final Type source and a new campaign directory:
+For current changes, use the generic fresh-link preparation first. The private
+`build/new-candidate-source` placeholder below must already contain the candidate
+source and its matching built ROM/symbols/map. The baseline defaults to the
+current production checkout, not a retired October 14 candidate:
+
+```sh
+PYTHONPATH=tools:. python3 -m tools.dex_timing.regression_fixtures restore --compile-controls
+PYTHONPATH=tools:. python3 -m tools.dex_timing.interactive_full_regression prepare --base build/regression-new-review --baseline-source . --candidate-source build/new-candidate-source --battery build/dex-moves-search-final-review-20261011/legacy-input.sav --jobs 6
+PYTHONPATH=tools:. python3 -m tools.dex_timing.unown_fast_campaign restore-negative --output build/regression-new-review/runtime-regression
+```
+
+Preparation freezes fresh baseline/candidate snapshots and creates the common
+aliases. The standard phases below then target
+`build/regression-new-review/runtime-regression`, not the parent directory.
+Keep the supplementary registration, multipage, bookmark, capture and all-move
+coverage described later; the standard phase list alone is not the full suite.
+
+The lower-level examples below document the original Type adapter. Substitute
+your fresh `BASE/runtime` and `BASE/runtime-regression` for the retired source
+and output paths. Do not attempt to retrieve the removed historical directory:
 
 ```sh
 python3 -m tools.dex_timing.type_full_regression prepare --source build/dex-types-mode7-audio-20261012/runtime --output build/regression-new-review
@@ -403,6 +438,41 @@ For each style, exercise all 373 species in cold, paging, and warm suites:
 2,238 playback cases per candidate. Check actual picture frames, timelines,
 resident tiles, upload/decode services, queue ownership, and cry completion.
 Idle listing checks verify 120 hover frames do not resume cache warming.
+
+### Long Breeding Lists
+
+`tools/test_pokedex_egg_pages.py` creates disposable source fixtures under
+`build/`; it does not require retaining artificial lists in production. Run:
+
+```sh
+PYTHONPATH=tools:. python3 -m unittest tools.test_pokedex_egg_pages -v
+```
+
+The four tests cover 6/10/11/15 moves (two/three pages, partial/full final
+pages), move indices 1/255/256/333, family inheritance, unchanged non-Breeding
+streams and unrelated species, the 19-page aggregate Mov limit, rejection at
+20 pages, invalid moves and conflicting descendant lists. Check real linked
+bank capacity too: successful host generation does not prove that the data
+will fit beside its current neighboring sections.
+
+For a private native qualification, add clearly labeled lists only to suitable
+empty families, preserve existing lists and empty controls, and freeze both
+links before testing. Enumerate each species' actual page counts for Selected,
+registration, committed/pending B/End exits and rapid/held/canceled input.
+Verify row contents, category transitions, partial-page clearing, badges,
+page wrap, portraits, cries, caller banks/registers and complete displayed
+pixels. Include Legacy presentation and input-phase controls; a Modern-only
+contact sheet is not whole-Dex acceptance. Record new-page timings separately
+from matched production pages, which may not exist in the empty baseline.
+
+The retained October 17 fixture and native helper recipe are documented in
+[Egg Page Qualification Prototype](pokedex_egg_placeholder_prototype.md).
+Its direct `GetEggMove`/`InitEggMoves` calls exercise real linked routines on
+cold-booted cores, not a complete naturally generated egg/hatch session.
+`BREED-MOVE-01` in the separate [Breeding Bug Backlog](breeding_bug_backlog.md)
+is a baseline TM-fallback failure, not an explicit egg-list or Dex-renderer
+failure. Keep its strict raw reproduction and baseline comparison visible;
+do not treat a scoped egg-list pass as a clean bill of health for breeding.
 
 ### Selected Runtime Display Qualification
 

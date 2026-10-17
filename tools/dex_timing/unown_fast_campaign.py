@@ -126,34 +126,17 @@ def listing_timing(output, jobs):
 
 
 def restore_negative(output):
+    from .regression_fixtures import require, restore, KEYBOARD_CONTROL
     from .moves_search import prepare
-    family = 'dex-moves-search-keyboard-20261010'
-    archive = campaign.ROOT / 'research_artifacts/dex-build-history-20261012' / (family + '.tar.gz')
-    receipt = json.loads(gzip.open(archive.with_name(family + '.json.gz'), 'rt').read())
-    assert sha256(archive.read_bytes()) == receipt['archive_sha256']
-    target = output / 'negative-controls'
-    target.mkdir(exist_ok=True)
-    with tarfile.open(archive) as source:
-        keep = [m for m in source.getmembers() if m.name.startswith(family + '/candidate/')
-                or m.name in [family + '/' + n for n in ('pokecrystal-dex-moves-search.gbc',
-                    'pokecrystal-dex-moves-search.sym', 'pokecrystal-dex-moves-search.map',
-                    'pokecrystal-dex-moves-search.sav', 'all-seen-tests.sav')]]
-        source.extractall(target, members=keep, filter='data')
-    restored = target / family
-    prepare(restored)
+    restore()
+    restored = require(KEYBOARD_CONTROL / 'pokecrystal-dex-moves-search.gbc').parent
+    if not (restored / 'search-tests/config.json').is_file():
+        prepare(restored)
     manifest = output / 'moves-mode-manifest.json'
     data = json.loads(manifest.read_text())
     data['visual_rollback'] = str(restored)
-    family = 'dex-moves-struggle-grant-20261008'
-    archive = archive.with_name(family + '.tar.gz')
-    receipt = json.loads(gzip.open(archive.with_name(family + '.json.gz'), 'rt').read())
-    assert sha256(archive.read_bytes()) == receipt['archive_sha256']
-    with tarfile.open(archive) as source:
-        keep = [m for m in source.getmembers() if m.name in [family + '/' + n for n in (
-            'moves-mode-manifest.json', 'pokecrystal-dex-moves-battle-use.sav',
-            'battle-review/pokecrystal-dex-moves-battle-use.sav')]]
-        source.extractall(target, members=keep, filter='data')
-    data['sort_memory_source'] = str(target / family)
+    donor = require('build/dex-moves-struggle-grant-20261008/moves-mode-manifest.json').parent
+    data['sort_memory_source'] = str(donor)
     manifest.write_text(json.dumps(data, indent=2) + '\n')
     print(json.dumps(dict(restored_negative_control=str(restored), archived_batteries_restored=True,
                           archive_verified=True)), flush=True)

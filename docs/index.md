@@ -4,6 +4,11 @@ Start here for this fork's maintained systems, validation procedures and open
 issues. Historical experiments are retained separately so their old build
 addresses and proposed fixes are not mistaken for current instructions.
 
+The [October 17 build retirement](pokedex_build_retirement.md) indexes all Dex
+component guides and supersedes historical promises to retain review outputs.
+Only compact reusable regression inputs remain under `tools/regression_fixtures/`;
+the completed egg prototype and historical run recordings/builds are retired.
+
 ## Current Systems
 
 - [Production CPU clock and Dex performance](production_clock_policy.md): double-speed world, normal-speed battle envelope, retained Dex optimizations, generated Area index, audio timer contract, current resource budget and fresh qualification.

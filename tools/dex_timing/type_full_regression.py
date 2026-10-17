@@ -28,7 +28,8 @@ def prepare(source, output, baseline_source=None):
     if output.exists() or not output.is_relative_to(ROOT / 'build'):
         raise ValueError('Use a fresh private build directory')
     output.mkdir(parents=True)
-    reference = ROOT / 'build/dex-moves-search-final-review-20261011'
+    from .regression_fixtures import require
+    reference = require('build/dex-moves-search-final-review-20261011/moves-mode-manifest.json').parent
     production = {str(ROOT / f'pokecrystal.{ext}'): sha256((ROOT / f'pokecrystal.{ext}').read_bytes())
                   for ext in ('gbc', 'sym', 'map')}
     baseline_files = baseline_source or ROOT
@@ -167,7 +168,8 @@ def host(output):
         if hasattr(module, 'ROOT'):
             module.ROOT = candidate
         if hasattr(module, 'REFERENCE_ROOT'):
-            module.REFERENCE_ROOT = output / 'baseline/candidate'
+            from .regression_fixtures import numeric_reference
+            module.REFERENCE_ROOT = numeric_reference()
         modules.append(module)
     suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromModule(module) for module in modules)
     with (target / 'host.log').open('w') as log:

@@ -170,6 +170,9 @@ def qualify(output):
 
 @lru_cache(maxsize=8)
 def context(root, rom, sym):
+    if not SOURCES.is_file():
+        from .regression_fixtures import require
+        require(SOURCES.relative_to(ROOT))
     repo = Repository(Path(root), Path(rom), Path(sym))
     assets = {a.name: a for a in repo.load()}
     table = re.findall(r'INCBIN "([^"]+[.]1bpp)"', (repo.root / 'gfx/footprints.asm').read_text())

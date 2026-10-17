@@ -27,8 +27,9 @@ def interpolate(points, frames, signed=False):
     return result
 
 
-def curves():
-    reference = json.loads((OUTPUT / 'reference.json').read_text())
+def curves(reference=None):
+    if reference is None:
+        reference = json.loads((OUTPUT / 'reference.json').read_text())
     values = constants(ROOT / 'constants/battle_anim_constants.asm')
     tables = {}
     metadata = []

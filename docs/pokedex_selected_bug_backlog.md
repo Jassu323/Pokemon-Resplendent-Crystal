@@ -6,6 +6,11 @@ are complete. See [Backlog Reconciliation](pokedex_backlog_reconciliation.md)
 for the complete disposition, exact current build and fresh focused evidence.
 Latest statuses below take precedence over historical prototype paragraphs.
 
+The completed egg-placeholder prototype was discarded with approval on
+October 17, without production changes. Historical run outputs are also
+retired; see the [component documentation and minimal fixture map](pokedex_build_retirement.md).
+Reusable regression inputs remain under `tools/regression_fixtures/`.
+
 ## Reconciled Review Queue
 
 - **Complete and integrated:** accepted Selected animation/cry/Description/
@@ -1587,6 +1592,19 @@ than silently choosing or merging them; explicitly resolve any such content
 conflict. Retain the 19-page limit and review its build errors after learnset
 expansion. Do not close this story merely because existing configured families
 pass the renderer's regression suite.
+
+2026-10-17 private technical qualification: the user approved artificial
+two/three-page lists for testing, not final egg content. The retained
+[egg-page prototype](pokedex_egg_placeholder_prototype.md) supplies 42 empty
+families (91 members), with 6/10/11/15 entries and 16-bit move boundaries.
+Focused page/family and explicit native egg-list checks pass. The fresh full
+regression excluding Battle Tower completes with no new correctness failure
+identities; the report keeps matching baseline exceptions explicit. The larger data
+exceeds the old bank's capacity and is privately relocated without RAM or
+engine changes. An unrelated production TM-inheritance failure is recorded as
+`BREED-MOVE-01` in the separate [Breeding Bug Backlog](breeding_bug_backlog.md).
+Keep the prototype until the user authorizes its promotion or disposal. Final
+legitimate content and its later validation remain deferred.
 
 The Moves index is automatically regenerated from species constants, evolution/
 level-up pointer tables, egg pointers/lists and base-stat compatibility. Adding
