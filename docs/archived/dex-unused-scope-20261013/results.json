@@ -1,0 +1,319 @@
+[
+  {
+    "group": "old-options",
+    "build_exit_code": 0,
+    "groups": [
+      "old-options"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-options.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 116,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-mode-explanations",
+    "build_exit_code": 0,
+    "groups": [
+      "old-mode-explanations"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-mode-explanations.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 244,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-list-printer",
+    "build_exit_code": 0,
+    "groups": [
+      "old-list-printer"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-list-printer.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 138,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "large-oam-cursors",
+    "build_exit_code": 0,
+    "groups": [
+      "large-oam-cursors"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/large-oam-cursors.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 454,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-selected-navigation",
+    "build_exit_code": 0,
+    "groups": [
+      "old-selected-navigation"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-selected-navigation.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 81,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "unused-helper-stubs",
+    "build_exit_code": 0,
+    "groups": [
+      "unused-helper-stubs"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/unused-helper-stubs.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 5,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "results-type-text",
+    "build_exit_code": 0,
+    "groups": [
+      "results-type-text"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/results-type-text.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 34,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-bg-mode-wrappers",
+    "build_exit_code": 0,
+    "groups": [
+      "old-bg-mode-wrappers"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-bg-mode-wrappers.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 22,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-animation-stop",
+    "build_exit_code": 0,
+    "groups": [
+      "old-animation-stop"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-animation-stop.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 55,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-grid-refill",
+    "build_exit_code": 0,
+    "groups": [
+      "old-grid-refill"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-grid-refill.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 48,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-batch-guard",
+    "build_exit_code": 0,
+    "groups": [
+      "old-batch-guard"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-batch-guard.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 38,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "old-info-copy",
+    "build_exit_code": 0,
+    "groups": [
+      "old-info-copy"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/old-info-copy.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 63,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "unused-page-graphics",
+    "build_exit_code": 0,
+    "groups": [
+      "unused-page-graphics"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/unused-page-graphics.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 64,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "orphan-printer-helper",
+    "build_exit_code": 0,
+    "groups": [
+      "orphan-printer-helper"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/orphan-printer-helper.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 35,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "test-only-discovery-apis",
+    "build_exit_code": 0,
+    "groups": [
+      "test-only-discovery-apis"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/test-only-discovery-apis.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 43,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "unused-strings",
+    "build_exit_code": 0,
+    "groups": [
+      "unused-strings"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/unused-strings.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 5,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "combined-safe",
+    "build_exit_code": 0,
+    "groups": [
+      "old-options",
+      "old-mode-explanations",
+      "old-list-printer",
+      "large-oam-cursors",
+      "old-selected-navigation",
+      "unused-helper-stubs",
+      "results-type-text",
+      "old-bg-mode-wrappers",
+      "old-animation-stop",
+      "old-grid-refill",
+      "old-batch-guard",
+      "old-info-copy",
+      "unused-page-graphics",
+      "orphan-printer-helper",
+      "unused-strings"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/combined-safe.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 1402,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  },
+  {
+    "group": "combined-with-test-apis",
+    "build_exit_code": 0,
+    "groups": [
+      "old-options",
+      "old-mode-explanations",
+      "old-list-printer",
+      "large-oam-cursors",
+      "old-selected-navigation",
+      "unused-helper-stubs",
+      "results-type-text",
+      "old-bg-mode-wrappers",
+      "old-animation-stop",
+      "old-grid-refill",
+      "old-batch-guard",
+      "old-info-copy",
+      "unused-page-graphics",
+      "orphan-printer-helper",
+      "test-only-discovery-apis",
+      "unused-strings"
+    ],
+    "log": "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/build/dex-unused-scope-20261013/trials/combined-with-test-apis.log",
+    "reclaimed": {
+      "ROM0": 0,
+      "ROMX": 1445,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    }
+  }
+]

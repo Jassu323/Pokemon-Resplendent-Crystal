@@ -756,6 +756,51 @@ wPokedexDisplayNumber:: dw
 wDexLastSeenIndex:: db ; index into wPokedexSeen containing the last non-zero value
 wDexLastSeenValue:: db ; value at index
 wDexTempCounter:: dw
+wPokedexGridOccupied:: ds 9 ; 0 = empty, 1 = valid order entry (including unseen)
+wPokedexGridFlags:: ds 9
+wPokedexGridIconPalettes:: ds 9
+wPokedexGridTopPhysicalRow:: db
+wPokedexGridScrollDirection:: db
+wPokedexGridScrollFlags:: db
+wPokedexGridIconAnimFrame:: db
+wPokedexGridCacheRowOffsets:: ds 2 * 5
+wPokedexGridPendingRowOffset:: dw
+wPokedexGridPendingPhysicalRow:: db
+wPokedexListingSavedScrollOffset:: dw
+wPokedexRenderedSelectionKey:: db ; species ID, or -1 for the shared unseen rendering
+wPokedexResidentFootprintSpecies:: db
+wPokedexSelectedIndex:: dw
+wPokedexSelectedPendingIndex:: dw
+wPokedexSelectedSpecies:: db
+wPokedexSelectedView:: db
+wPokedexSelectedState:: db
+wPokedexSelectedGeneration:: db
+wPokedexSelectedReturnState:: db
+wPokedexDescriptionPage:: db
+wPokedexOwnerTransition:: db
+wPokedexSelectedBGPaletteDirty:: db
+wPokedexSelectedOBJPaletteDirty:: db
+wPokedexAnimOwner:: db
+wPokedexAnimFlags:: db
+wPokedexAnimStageSlot:: db
+wPokedexAnimDisplaySlot:: db
+wPokedexAnimStageDuration:: db
+wPokedexAnimStageTileCount:: db
+wPokedexAnimStageFrameID:: db
+wPokedexAnimResidentFrameIDs:: ds 2
+wPokedexAnimUploadOffset:: db
+wPokedexAnimPlaybackState:: db
+wPokedexAnimDeadline:: db
+wPokedexAnimFrontpicDim:: db
+	ds 2 ; retired counter; preserve the established owner/pointer layout
+wPokedexAnimDictionaryBank:: db
+wPokedexAnimDictionaryAddress:: dw
+wPokedexAnimDictionaryDestination:: dw
+wPokedexAnimDictionaryTilesRemaining:: db
+wPokedexAnimDictionaryTileCount:: db
+wPokedexAnimStageRequiredTiles:: db
+wPokedexAnimDictionaryTarget:: db
+wPokedexAnimTimelineAddress:: dw
 wPokedexDataEnd::
 
 wPrevDexEntry:: dw
@@ -763,7 +808,11 @@ wPrevDexEntryBackup:: dw
 wPrevDexEntryJumptableIndex:: db
 
 wPokedexNameBuffer:: ds MON_NAME_LENGTH
-	ds 231
+; Production scheduler state, outside the owner block cleared on cancellation.
+wPokedexAnimLoopTick:: db
+wPokedexAnimWorkTick:: db
+wPokedexAnimSchedulerControl:: db
+wPokedexListingPresentation:: db
 
 NEXTU
 ; pokegear
@@ -902,6 +951,14 @@ wOverworldMapBlocksEnd::
 
 SECTION UNION "Overworld Map", WRAM0
 
+; Pokedex-only scratch space. StartMenu_Pokedex rebuilds the overwritten
+; overworld block data before CloseSubmenu returns to the map.
+wPokedexWRAM0Scratch:: ds wOverworldMapBlocksEnd - wOverworldMapBlocks
+wPokedexWRAM0ScratchEnd::
+
+
+SECTION UNION "Overworld Map", WRAM0
+
 ; reclaimed GB Printer data
 wReclaimedPrinterWRAM0:: ds $40c
 wReclaimedPrinterWRAM0End::
@@ -909,23 +966,24 @@ wReclaimedPrinterWRAM0End::
 
 SECTION UNION "Overworld Map", WRAM0
 
-; Battle-only scratch for prepared sampled cries. This overlays the overworld
-; map buffer, so do not use it from menus/stats screens.
-wPreparedSampledCryState:: db
-wPreparedSampledCryBank:: db
-wPreparedSampledCryHeader:: dw
-wPreparedSampledCryPeriod:: db
-wPreparedSampledCryFrameCounter:: db
-
-
-SECTION UNION "Overworld Map", WRAM0
-
 ; Battle-only VRAM state. This overlays the overworld map buffer, so do not use
-; it from overworld/menu paths. Keep it after the prepared sampled-cry state,
-; since failed-catch cleanup can clear those bytes during battle.
-	ds 6
+; it from overworld/menu paths.
 wBattleMenuGFXFlags:: db
 wBattleMenuSavedBGPals:: ds 2 palettes
+wBattleFrontpicProducerState:: db
+wBattleFrontpicProducerBank:: db
+wBattleFrontpicProducerAddress:: dw
+wBattleFrontpicProducerTilesRemaining:: db
+wBattleFrontpicProducerStagedTiles:: db
+wBattleFrontpicProducerStageOffset:: db
+wBattleFrontpicProducerVRAMAddress:: dw
+wBattleFrontpicProducerTransferBank:: db
+	ds $20 - (@ - wBattleMenuGFXFlags)
+wBattleFrontpicProducerBuffer:: ds 7 * 7 tiles
+wBattleFrontpicProducerBufferEnd::
+
+assert (wBattleFrontpicProducerBuffer & $f) == 0
+assert wBattleFrontpicProducerBufferEnd - wBattleMenuGFXFlags <= wOverworldMapBlocksEnd - wOverworldMapBlocks
 
 
 SECTION UNION "Overworld Map", WRAM0
@@ -3001,7 +3059,7 @@ wPokegearFlags::
 	db
 wRadioTuningKnob:: db
 wLastDexMode:: db
-	ds 1
+wLastDexPresentation:: db ; reuses saved padding; 0 Modern, 1 Legacy
 wWhichRegisteredItem:: db
 wRegisteredItem:: db
 
@@ -3015,7 +3073,14 @@ wMooMooBerries:: db
 wUndergroundSwitchPositions:: db
 wFarfetchdPosition:: db
 
-	ds 13
+wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
+wMovesDexBookmarkTag:: db ; session-only; Continue discards saved padding
+wMovesDexBookmarkMove:: dw ; permanent move identity
+wMovesDexBookmarkRow:: db ; zero-based visible row, 0-7
+wPokemonDexBookmarkTag:: db ; session-only; presentation/order association
+wPokemonDexBookmarkSpecies:: dw ; permanent species identity, not a transient ID
+wPokemonDexBookmarkCell:: db ; Modern cell 0-8 or Legacy row 0-6
+	ds 4
 
 ; map scene ids
 wPokecenter2FSceneID::                            db
@@ -3385,17 +3450,21 @@ wGameDataEnd::
 
 SECTION "Pic Animations", WRAMX
 
+wNewDexEntryAnimPairs:: ; registration owns the first 98 bytes
 wTempTilemap::
 ; 20x18 grid of 8x8 tiles
 	ds SCREEN_AREA
 
 ; PokeAnim data
 wPokeAnimStruct::
+wNewDexEntryAnimFlags::
 wPokeAnimSceneIndex:: db
+wNewDexEntryAnimTimeline::
 wPokeAnimPointer:: dw
 wPokeAnimSpecies:: db
 wPokeAnimUnownLetter:: db
 wPokeAnimSpeciesOrUnown:: db
+wNewDexEntryAnimBaseCount::
 wPokeAnimGraphicStartTile:: db
 wPokeAnimCoord:: dw
 wPokeAnimFrontpicHeight:: db
@@ -3409,18 +3478,25 @@ wPokeAnimBitmaskBank:: db
 wPokeAnimBitmaskAddr:: dw
 wPokeAnimFrame:: db
 wPokeAnimJumptableIndex:: db
+wNewDexEntryAnimSavedVBlank::
 wPokeAnimRepeatTimer:: db
+wNewDexEntryAnimSavedOAM::
 wPokeAnimCurBitmask:: db
+wNewDexEntryAnimDeadline::
 wPokeAnimWaitCounter:: db
+wNewDexEntryAnimFrameID::
 wPokeAnimCommand:: db
+wNewDexEntryAnimDuration::
 wPokeAnimParameter:: db
-	ds 1
+wPokeAnimDexPlanBank:: db
 wPokeAnimBitmaskCurCol:: db
 wPokeAnimBitmaskCurRow:: db
 wPokeAnimBitmaskCurBit:: db
 wPokeAnimBitmaskBuffer:: ds 7
-	ds 2
+wPokeAnimDexPlanAddr:: dw
 wPokeAnimStructEnd::
+wNewDexEntryAnimMap::
+wPokeAnimFrameTiles:: ds 7 * 7
 
 
 SECTION "16-bit WRAM tables", WRAMX
@@ -3429,12 +3505,18 @@ SECTION "16-bit WRAM tables", WRAMX
 	wram_conversion_table wMoveIndexTable, MOVE_TABLE
 
 
+SECTION "Move Discovery Flags", WRAMX, BANK[2]
+wMoveDiscoverySeen:: ds 64
+wMoveDiscoveryStatus:: db
+wMoveDiscoveryWriteBlocked:: db
+wMoveDiscoveryEnd::
+
 SECTION "Bug Contest WRAM", WRAMX, BANK[2]
 
 wContestMon:: party_struct wContestMon
 
 
-SECTION "Battle Tower RAM", WRAMX
+SECTION UNION "Battle Tower RAM", WRAMX
 
 w3_d000:: ds 1
 w3_d001:: ds 1
@@ -3504,6 +3586,83 @@ w3_de00:: ds $200
 ENDU
 
 
+SECTION UNION "Battle Tower RAM", WRAMX
+
+; The Pokedex and Battle Tower are mutually exclusive. These aligned buffers
+; hold complete 32x18 BG maps for an owner handoff during one VBlank.
+wPokedexOwnerTilemapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
+wPokedexOwnerAttrmapBuffer:: ds TILEMAP_WIDTH * SCREEN_HEIGHT
+
+; Selected Description text jobs reuse the otherwise inactive Battle Tower
+; union. The publication source remains in the existing padded tilemap.
+wPokedexDescriptionTextState:: db
+wPokedexDescriptionTextBank:: db
+wPokedexDescriptionTextSource:: dw
+wPokedexDescriptionTextCursor:: dw
+wPokedexDescriptionTextOwnerCursor:: dw
+wPokedexDescriptionTextRow:: db
+wPokedexDescriptionTextPage:: db
+wPokedexDescriptionTextChunk:: ds 24
+wPokedexDescriptionTextChunkEnd::
+	ds 14 ; align the reusable lower-panel GDMA payload
+wPokedexInfoGFX:: ds 40 * TILE_SIZE
+wPokedexInfoMiniGFX:: ds 16 * TILE_SIZE
+wPokedexInfoOAM:: ds 8 * 4
+wPokedexInfoTileSources:: ds 40 * 2
+wPokedexInfoState:: db
+wPokedexInfoPage:: db
+wPokedexInfoPageCount:: db
+wPokedexInfoRow:: db
+wPokedexInfoTileCount:: db
+wPokedexInfoCopyTile:: db
+wPokedexInfoUploadTile:: db
+wPokedexInfoAtlasBuffer:: db
+wPokedexInfoActiveAtlasBuffer:: db
+wPokedexInfoListingCacheDirty:: db
+wPokedexInfoCaught:: db
+wPokedexInfoMiniCount:: db
+wPokedexInfoMiniBuffer:: db
+wPokedexInfoActiveMiniCount:: db
+wPokedexInfoActiveMiniBuffer:: db
+wPokedexInfoMiniPhase:: db
+wPokedexInfoMiniPalettes:: ds 2 * PAL_SIZE
+wPokedexInfoEvolutionList:: dw
+wPokedexInfoEvolutionRecord:: dw
+wPokedexInfoStats:: ds 6
+wPokedexInfoWidth:: db
+wPokedexInfoMapCursor:: dw
+wPokedexInfoAttrCursor:: dw
+wPokedexInfoPalette:: db
+wPokedexInfoScratch:: db
+wPokedexInfoRestoreDescription:: db
+wPokedexInfoLineRemaining:: db
+wPokedexInfoLineSource:: dw
+; Committed pages survive cancellation and reuse of the inactive workspaces.
+; Each atlas retains seven map rows, forty ROM glyph pointers and its count.
+wPokedexInfoReturnRecordA:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
+wPokedexInfoReturnRecordB:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
+wPokedexInfoVisible:: db
+wPokedexMovesState:: db
+wPokedexMovesPage:: db
+wPokedexMovesPageCount:: db
+wPokedexMovesRow:: db
+wPokedexMovesCategory:: db
+wPokedexMovesSourceBank:: db
+wPokedexMovesSource:: dw
+wPokedexMovesRemaining:: db
+wPokedexMovesScratch:: db
+wPokedexBadgeActive:: db
+wPokedexBadgePending:: db
+wPokedexBadgePage:: db
+wPokedexBadgeGFX:: ds 2 * TILE_SIZE
+wPokedexInfoPendingPage:: db
+wPokedexPerfRetainedInfo:: db
+wPokedexInfoWorkspaceEnd::
+ASSERT wPokedexInfoWorkspaceEnd <= $dc00
+ASSERT LOW(wPokedexInfoGFX) & $f == 0
+ASSERT LOW(wPokedexInfoMiniGFX) & $f == 0
+
+
 SECTION "Sampled Cry RAM", WRAMX
 
 w4_d000::
@@ -3511,17 +3670,19 @@ wSampledCryDecodedBuffer::
 wSampledCryWaveBuffer:: ds AUD3WAVE_SIZE
 	ds SAMPLED_CRY_DECODED_BUFFER_SIZE - AUD3WAVE_SIZE
 wSampledCryDecodedBufferEnd::
-wSampledCryMinMax2BitLevels:: ds SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
-wSampledCryMinMax2BitLevelsEnd::
-wSampledCryLevel0:: db
-wSampledCryLevel1:: db
-wSampledCryLevel2:: db
-wSampledCryLevel3:: db
+wSampledCryCompressedStaging:: ds SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryCompressedStagingEnd::
+	ds SAMPLED_CRY_DECODER_WORKSPACE_SIZE - SAMPLED_CRY_PAIR_STAGE_SIZE
+wSampledCryFillBlocksRemaining:: db
+wSampledCryStagedBlocks:: db
+	ds 2
 wSampledCryCacheCount:: db
 wSampledCryCompressedBlocks:: dw
 wSampledCryCompressedAddress:: dw
 wSampledCryCacheWriteAddress:: dw
 wSampledCryBlockPeriod:: db
+; Odd-period sampled timer alternation reuses bank-4 tail padding.
+wSampledCryTimerStep:: db
 	ds $1000 - (@ - w4_d000)
 
 

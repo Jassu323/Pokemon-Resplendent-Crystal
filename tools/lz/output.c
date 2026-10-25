@@ -89,15 +89,20 @@ void write_command_to_textfile (FILE * fp, struct command command, const unsigne
 void write_commands_to_file (const char * file, const struct command * commands, unsigned count, const unsigned char * input_stream, unsigned char alignment) {
   FILE * fp = file ? fopen(file, "wb") : stdout;
   if (!fp) error_exit(1, "could not open file %s for writing", file);
+  unsigned length = write_commands_to_stream(fp, commands, count, input_stream);
+  length = ~length & ((1 << alignment) - 1);
+  while (length --) if (putc(0, fp) == EOF) error_exit(1, "could not write padding to compressed output");
+  if (file) fclose(fp);
+}
+
+unsigned write_commands_to_stream (FILE * fp, const struct command * commands, unsigned count, const unsigned char * input_stream) {
   unsigned length = 0;
   while (count --) {
     write_command_to_file(fp, *commands, input_stream);
     length += command_size(*(commands ++));
   }
   if (putc(-1, fp) == EOF) error_exit(1, "could not write terminator to compressed output");
-  length = ~length & ((1 << alignment) - 1);
-  while (length --) if (putc(0, fp) == EOF) error_exit(1, "could not write padding to compressed output");
-  if (file) fclose(fp);
+  return length;
 }
 
 void write_command_to_file (FILE * fp, struct command command, const unsigned char * input_stream) {

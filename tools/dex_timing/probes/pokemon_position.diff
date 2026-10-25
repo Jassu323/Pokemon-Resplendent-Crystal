@@ -1,0 +1,643 @@
+--- a/engine/menus/intro_menu.asm
++++ b/engine/menus/intro_menu.asm
+@@ -358,6 +358,18 @@
+ 	jr .FailToLoad
+ 
+ .Check2Pass:
++	; Both Dex bookmarks are session-only; discard loaded save positions.
++	; Keep this in Continue, not shared save loading used during gameplay.
++	xor a
++	ld hl, wMovesDexBookmarkTag
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hl], a
+ 	ld a, $8
+ 	ld [wMusicFade], a
+ 	ld a, LOW(MUSIC_NONE)
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -286,6 +286,7 @@
+ 
+ 	farcall Pokedex_OrderMonsByMode
+ 	farcall Pokedex_InitListingPresentation
++	call Pokedex_RestoreListingPosition
+ 	ld a, [wPokedexListingPresentation]
+ 	and a
+ 	jr nz, .grid_cache_ready
+@@ -337,107 +338,7 @@
+ 	ld [wPokedexListingSavedScrollOffset + 1], a
+ 	ret
+ 
+-Pokedex_InitCursorPosition:
+-	xor a
+-	ld [wDexListingScrollOffset], a
+-	ld [wDexListingScrollOffset + 1], a
+-	ld [wDexListingCursor], a
+-	ld hl, wPrevDexEntry + 1
+-	ld a, [hld]
+-	ld c, [hl]
+-	ld b, a
+-	if NUM_POKEMON <= $FF
+-		and a
+-		ret nz
+-	else
+-		cp HIGH(NUM_POKEMON)
+-		jr c, .check_zero
+-		ret nz
+-		if LOW(NUM_POKEMON) < $FF
+-			ld a, c
+-			cp LOW(NUM_POKEMON) + 1
+-			ret nc
+-		endc
+-		jr .go
+-	endc
+-.check_zero
+-	or c
+-	ret z
+-
+-.go
+-	; ensure we have a list terminator
+-	ld hl, wDexListingEnd
+-	ld a, [hli]
+-	ld d, [hl]
+-	ld e, a
+-	push de
+-	sla e
+-	rl d
+-	ldh a, [rSVBK]
+-	push af
+-	ld a, BANK(wPokedexOrder)
+-	ldh [rSVBK], a
+-	ld hl, wPokedexOrder
+-	push hl
+-	add hl, de
+-	ld a, -1
+-	ld [hli], a
+-	ld [hl], a
+-
+-	; and look for the entry in the list
+-	ld de, 2
+-	pop hl
+-	call IsInWordArray ;returns carry and pointer in hl if found
+-	pop de
+-	ld a, d
+-	ldh [rSVBK], a
+-	pop de
+-	ret nc
+-	ld bc, $10000 - wPokedexOrder ;ld bc, -wPokedexOrder -- see https://github.com/rednex/rgbds/issues/279
+-	add hl, bc
+-	srl h
+-	rr l
+-
+-	; hl contains the index of wPrevDexEntry into wPokedexOrder, and de contains wDexListingEnd (therefore hl < de)
+-	; if de <= 7, then we only have one page; wDexListingScrollOffset must be zero and wDexListingCursor = hl (= l)
+-	ld a, d
+-	and a
+-	jr nz, .can_scroll
+-	ld a, e
+-	cp 8
+-	jr nc, .can_scroll
+-	ld a, l
+-	ld [wDexListingCursor], a
+-	ret
+-
+-.can_scroll
+-	; otherwise, if hl <= (de - 7), then wDexListingScrollOffset = hl, wDexListingCursor = 0 (default)
+-	; else, wDexListingScrollOffset = de - 7, wDexListingCursor = hl - wDexListingScrollOffset
+-	ld a, e
+-	sub 7
+-	ld e, a
+-	ld [wDexListingScrollOffset], a
+-	jr nc, .no_carry
+-	dec d
+-.no_carry
+-	ld a, l
+-	sub e
+-	ld c, a
+-	ld a, h
+-	sbc d
+-	jr c, .not_last_page
+-	ld a, d
+-	ld [wDexListingScrollOffset + 1], a
+-	ld a, c
+-	ld [wDexListingCursor], a
+-	ret
+-
+-.not_last_page
+-	ld a, l
+-	ld [wDexListingScrollOffset], a
+-	ld a, h
+-	ld [wDexListingScrollOffset + 1], a
+-	ret
++INCLUDE "engine/pokedex/pokedex_position.asm"
+ 
+ Pokedex_GetLandmark:
+ 	ld a, [wMapGroup]
+@@ -766,6 +667,7 @@
+ 	ret
+ 
+ .b
++	call Pokedex_RememberListingPosition
+ 	call Pokedex_StopGridIconAnimation
+ 	ld a, DEXSTATE_EXIT
+ 	ld [wJumptableIndex], a
+--- a/engine/pokedex/pokedex_legacy.asm
++++ b/engine/pokedex/pokedex_legacy.asm
+@@ -9,7 +9,6 @@
+ .legacy
+ 	ld a, POKEDEX_LEGACY_HEIGHT
+ 	ld [wDexListingHeight], a
+-	farcall Pokedex_InitCursorPosition
+ 	ret
+ 
+ PokedexLegacy_LoadStaticGFX:
+--- a/engine/pokedex/pokedex_moves_mode.asm
++++ b/engine/pokedex/pokedex_moves_mode.asm
+@@ -42,6 +42,7 @@
+     ld [wPokedexResidentFootprintSpecies], a
+     call PokedexMovesMode_RestoreSort
+     call PokedexMovesSearch_Reset
++    call PokedexMovesMode_RestorePosition
+     call ClearSprites
+     farcall Pokedex_CancelAnimationPrefetch
+     call PokedexMovesMode_SnapshotSeen
+@@ -524,7 +525,8 @@
+     jr nz, .row
+ .rows_done
+     call PokedexMovesMode_DrawScrollbar
+-    jp PokedexMovesMode_Publish
++    call PokedexMovesMode_Publish
++    jp PokedexMovesMode_RememberPosition
+ .Unknown
+     db "-----@"
+ 
+@@ -1294,6 +1296,169 @@
+     pop af
+     ret
+ 
++DEF MOVES_POSITION_MEMORY_TAG EQU $b0
++ASSERT NUM_ATTACKS >= 8
++DEF MOVES_POSITION_MAX_SCROLL EQU NUM_ATTACKS - 8
++ASSERT BANK(PokedexMovesModeTypeOrder) == BANK(PokedexMovesMode_RestorePosition)
++ASSERT BANK(PokedexMovesModeNameOrder) == BANK(PokedexMovesMode_RestorePosition)
++ASSERT BANK(wMovesDexBookmarkTag) == BANK(wMovesDexBookmarkMove)
++ASSERT BANK(wMovesDexBookmarkTag) == BANK(wMovesDexBookmarkRow)
++ASSERT wMovesDexBookmarkRow == wMovesDexBookmarkMove + 2
++
++; Restore identity/row after scratch clearing. Invalid/old bookmarks start first.
++; Use the resident order directly; never allocate transient move IDs.
++PokedexMovesMode_RestorePosition::
++    push af
++    push bc
++    push de
++    push hl
++    ldh a, [rSVBK]
++    push af
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    xor a
++    ld [wMovesModeCursor], a
++    ld [wMovesModeScroll], a
++    ld [wMovesModeScroll + 1], a
++    ld a, [wMovesModeSort]
++    or MOVES_POSITION_MEMORY_TAG
++    ld c, a
++    ld a, BANK(wMovesDexBookmarkTag)
++    ldh [rSVBK], a
++    ld a, [wMovesDexBookmarkTag]
++    cp c
++    jr nz, .done
++    ld a, [wMovesDexBookmarkRow]
++    cp 8
++    jr nc, .done
++    push af
++    ld a, [wMovesDexBookmarkMove]
++    ld e, a
++    ld a, [wMovesDexBookmarkMove + 1]
++    ld d, a
++    ld hl, PokedexMovesModeTypeOrder
++    bit 0, c
++    jr z, .order
++    ld hl, PokedexMovesModeNameOrder
++.order
++    ld bc, 0
++.scan
++    ld a, [hli]
++    cp e
++    jr nz, .next
++    ld a, [hl]
++    cp d
++    jr z, .found
++.next
++    inc hl
++    inc bc
++    ld a, b
++    cp HIGH(NUM_ATTACKS)
++    jr nz, .scan
++    ld a, c
++    cp LOW(NUM_ATTACKS)
++    jr nz, .scan
++    pop af
++    jr .done
++.found
++    pop af
++    ld h, b
++    ld l, c
++    ld e, a
++    ld a, l
++    sub e
++    ld l, a
++    ld a, h
++    sbc 0
++    ld h, a
++    jr nc, .maximum
++    ld hl, 0
++.maximum
++    ld a, h
++    cp HIGH(MOVES_POSITION_MAX_SCROLL)
++    jr c, .clamped
++    jr nz, .last
++    ld a, l
++    cp LOW(MOVES_POSITION_MAX_SCROLL)
++    jr c, .clamped
++.last
++    ld hl, MOVES_POSITION_MAX_SCROLL
++.clamped
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    ld a, l
++    ld [wMovesModeScroll], a
++    ld a, h
++    ld [wMovesModeScroll + 1], a
++    ld a, c
++    sub l
++    ld [wMovesModeCursor], a
++.done
++    pop af
++    ldh [rSVBK], a
++    pop hl
++    pop de
++    pop bc
++    pop af
++    ret
++
++; Only ordinary list draws own the durable bookmark. Forms clear the active
++; flag too, so keep this hook out of generic input/search state handling.
++PokedexMovesMode_RememberPosition::
++    push af
++    push bc
++    push de
++    push hl
++    ldh a, [rSVBK]
++    push af
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    ld a, [wMovesSearchActive]
++    and a
++    jr nz, .done
++    ld a, [wMovesModeSort]
++    cp 2
++    jr nc, .done
++    or MOVES_POSITION_MEMORY_TAG
++    ld e, a
++    ld a, [wMovesModeCursor]
++    cp 8
++    jr nc, .done
++    ld d, a
++    ld a, [wMovesModeSelected]
++    ld c, a
++    ld a, [wMovesModeSelected + 1]
++    ld b, a
++    or c
++    jr z, .done
++    ld a, b
++    cp HIGH(NUM_ATTACKS)
++    jr c, .valid
++    jr nz, .done
++    ld a, c
++    cp LOW(NUM_ATTACKS)
++    jr c, .valid
++    jr nz, .done
++.valid
++    ld a, BANK(wMovesDexBookmarkTag)
++    ldh [rSVBK], a
++    ld hl, wMovesDexBookmarkMove
++    ld a, c
++    ld [hli], a
++    ld a, b
++    ld [hli], a
++    ld [hl], d
++    ld a, e
++    ld [wMovesDexBookmarkTag], a
++.done
++    pop af
++    ldh [rSVBK], a
++    pop hl
++    pop de
++    pop bc
++    pop af
++    ret
++
+ 
+ ; Reuse the inactive Battle Tower workspace, away from Search's VBlank mailbox.
+ DEF wMovesSearchActive EQU $dc40
+--- /dev/null
++++ b/engine/pokedex/pokedex_position.asm
+@@ -0,0 +1,275 @@
++DEF POKEDEX_POSITION_TAG EQU $c0
++ASSERT BANK(wPokemonDexBookmarkTag) == BANK(wMovesDexBookmarkTag)
++ASSERT wPokemonDexBookmarkTag == wMovesDexBookmarkRow + 1
++ASSERT wPokemonDexBookmarkCell == wMovesDexBookmarkTag + 7
++ASSERT wPokemonDexBookmarkCell + 1 <= wPokecenter2FSceneID
++
++; Only ordinary Listing B-exit owns this bookmark. Other owners retain their
++; existing live Listing state; Search and Selected-result orders never record it.
++Pokedex_RememberListingPosition:
++	push af
++	push bc
++	push de
++	push hl
++	ldh a, [rSVBK]
++	push af
++	call Pokedex_ListingPositionTag
++	jp c, .done
++	ld a, [wPokedexListingPresentation]
++	and a
++	ld a, [wDexListingCursor]
++	jr z, .grid_cell
++	cp POKEDEX_LEGACY_HEIGHT
++	jp nc, .done
++	jr .cell_valid
++.grid_cell
++	cp POKEDEX_GRID_SIZE
++	jp nc, .done
++.cell_valid
++	ld hl, wDexListingScrollOffset
++	ld a, [hli]
++	ld h, [hl]
++	ld l, a
++	ld a, [wDexListingCursor]
++	ld e, a
++	ld d, 0
++	add hl, de
++	jp c, .done
++	ld a, [wDexListingEnd]
++	ld e, a
++	ld a, [wDexListingEnd + 1]
++	ld d, a
++	ld a, h
++	cp d
++	jr c, .valid_index
++	jr nz, .done
++	ld a, l
++	cp e
++	jr nc, .done
++.valid_index
++	add hl, hl
++	ld de, wPokedexOrder
++	add hl, de
++	ld a, BANK(wPokedexOrder)
++	ldh [rSVBK], a
++	ld a, [hli]
++	ld c, a
++	ld a, [hl]
++	ld b, a
++	or c
++	jr z, .done
++	ld a, b
++	cp HIGH(NUM_POKEMON)
++	jr c, .valid_species
++	jr nz, .done
++	ld a, c
++	cp LOW(NUM_POKEMON) + 1
++	jr nc, .done
++.valid_species
++	ld a, BANK(wPokemonDexBookmarkTag)
++	ldh [rSVBK], a
++	ld hl, wPokemonDexBookmarkSpecies
++	ld a, c
++	ld [hli], a
++	ld a, b
++	ld [hli], a
++	ld a, [wDexListingCursor]
++	ld [hl], a
++	call Pokedex_ListingPositionTag
++	ld [wPokemonDexBookmarkTag], a
++.done
++	pop af
++	ldh [rSVBK], a
++	pop hl
++	pop de
++	pop bc
++	pop af
++	ret
++
++; Run after order/layout setup and before cache priming or portrait preparation.
++; Restore by permanent identity so newly seen Alphabet entries cannot retarget it.
++Pokedex_RestoreListingPosition:
++	push af
++	push bc
++	push de
++	push hl
++	ldh a, [rSVBK]
++	push af
++	xor a
++	ld [wDexListingCursor], a
++	ld [wDexListingScrollOffset], a
++	ld [wDexListingScrollOffset + 1], a
++	call Pokedex_ListingPositionTag
++	jp c, .done
++	ld c, a
++	ld a, BANK(wPokemonDexBookmarkTag)
++	ldh [rSVBK], a
++	ld a, [wPokemonDexBookmarkTag]
++	cp c
++	jp nz, .done
++	ld a, [wPokemonDexBookmarkCell]
++	ld b, a
++	ld a, [wPokedexListingPresentation]
++	and a
++	ld a, b
++	jr z, .modern_cell
++	cp POKEDEX_LEGACY_HEIGHT
++	jp nc, .done
++	jr .cell_valid
++.modern_cell
++	cp POKEDEX_GRID_SIZE
++	jp nc, .done
++.cell_valid
++	push af
++	ld a, [wPokemonDexBookmarkSpecies]
++	ld e, a
++	ld a, [wPokemonDexBookmarkSpecies + 1]
++	ld d, a
++	ld a, [wDexListingEnd]
++	ld c, a
++	ld a, [wDexListingEnd + 1]
++	or c
++	jr z, .not_found
++	ld a, BANK(wPokedexOrder)
++	ldh [rSVBK], a
++	ld hl, wPokedexOrder
++	ld bc, 0
++.scan
++	ld a, [hli]
++	cp e
++	jr nz, .next
++	ld a, [hl]
++	cp d
++	jr z, .found
++.next
++	inc hl
++	inc bc
++	ld a, [wDexListingEnd]
++	cp c
++	jr nz, .scan
++	ld a, [wDexListingEnd + 1]
++	cp b
++	jr nz, .scan
++.not_found
++	pop af
++	jp .done
++.found
++	pop af
++	push bc
++	ld e, a
++	ld h, b
++	ld l, c
++	ld a, [wPokedexListingPresentation]
++	and a
++	jr nz, .position
++	call Pokedex_AlignPositionRow
++	ld a, e
++	cp 2 * POKEDEX_GRID_WIDTH
++	jr nc, .third_row
++	cp POKEDEX_GRID_WIDTH
++	ld e, 0
++	jr c, .position
++	ld e, POKEDEX_GRID_WIDTH
++	jr .position
++.third_row
++	ld e, 2 * POKEDEX_GRID_WIDTH
++.position
++	ld a, l
++	sub e
++	ld l, a
++	ld a, h
++	sbc 0
++	ld h, a
++	jr nc, .maximum
++	ld hl, 0
++.maximum
++	push hl
++	ld a, [wDexListingEnd]
++	ld l, a
++	ld a, [wDexListingEnd + 1]
++	ld h, a
++	ld a, [wPokedexListingPresentation]
++	and a
++	ld de, POKEDEX_LEGACY_HEIGHT
++	jr nz, .subtract_height
++	inc hl
++	inc hl
++	call Pokedex_AlignPositionRow
++	ld de, POKEDEX_GRID_SIZE
++.subtract_height
++	ld a, l
++	sub e
++	ld e, a
++	ld a, h
++	sbc d
++	ld d, a
++	jr nc, .clamp
++	ld de, 0
++.clamp
++	pop hl
++	ld a, h
++	cp d
++	jr c, .store
++	jr nz, .last
++	ld a, l
++	cp e
++	jr c, .store
++.last
++	ld h, d
++	ld l, e
++.store
++	ld a, l
++	ld [wDexListingScrollOffset], a
++	ld a, h
++	ld [wDexListingScrollOffset + 1], a
++	pop bc
++	ld a, c
++	sub l
++	ld [wDexListingCursor], a
++.done
++	pop af
++	ldh [rSVBK], a
++	pop hl
++	pop de
++	pop bc
++	pop af
++	ret
++
++; Carry rejects unknown layout/order values; no transient identities are touched.
++Pokedex_ListingPositionTag:
++	ld a, [wCurDexMode]
++	cp DEXMODE_ABC + 1
++	jr nc, .invalid
++	ld c, a
++	ld a, [wPokedexListingPresentation]
++	cp DEXLIST_LEGACY + 1
++	jr nc, .invalid
++	add a
++	add a
++	or c
++	or POKEDEX_POSITION_TAG
++	and a
++	ret
++.invalid
++	scf
++	ret
++
++; Align HL down to a three-entry row. BC is scratch; DE is preserved.
++Pokedex_AlignPositionRow:
++	ld a, l
++	add h
++	jr nc, .reduce
++	inc a
++.reduce
++	cp POKEDEX_GRID_WIDTH
++	jr c, .remainder
++	sub POKEDEX_GRID_WIDTH
++	jr .reduce
++.remainder
++	ld c, a
++	ld a, l
++	sub c
++	ld l, a
++	ret nc
++	dec h
++	ret
+--- a/ram/wram.asm
++++ b/ram/wram.asm
+@@ -3074,7 +3074,13 @@
+ wFarfetchdPosition:: db
+ 
+ wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
+-	ds 12
++wMovesDexBookmarkTag:: db ; session-only; Continue discards saved padding
++wMovesDexBookmarkMove:: dw ; permanent move identity
++wMovesDexBookmarkRow:: db ; zero-based visible row, 0-7
++wPokemonDexBookmarkTag:: db ; session-only; presentation/order association
++wPokemonDexBookmarkSpecies:: dw ; permanent species identity, not a transient ID
++wPokemonDexBookmarkCell:: db ; Modern cell 0-8 or Legacy row 0-6
++	ds 4
+ 
+ ; map scene ids
+ wPokecenter2FSceneID::                            db

@@ -295,6 +295,7 @@ DoNPCTrade:
 	dec a
 	ld [wCurPartyMon], a
 	farcall ComputeNPCTrademonStats
+	move_discovery_hook MoveDiscovery_LastParty
 	pop af
 	ld [wCurPartyMon], a
 	pop hl

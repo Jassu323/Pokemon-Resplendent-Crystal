@@ -21,3 +21,12 @@ MACRO homecall
 	pop af
 	rst Bankswitch
 ENDM
+
+; Discovery hooks preserve caller flags and pointers.
+MACRO move_discovery_hook
+	push af
+	push hl
+	farcall \1
+	pop hl
+	pop af
+ENDM

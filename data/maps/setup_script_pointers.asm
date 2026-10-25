@@ -13,7 +13,8 @@ ENDM
 
 MapSetupCommands:
 	add_mapsetup EnableLCD ; 00
-	add_mapsetup DisableLCD ; 01
+DisableLCD_MapSetupCmd:
+	dba BattleSpeed_MapDisableLCD ; 01: same command ID
 	add_mapsetup InitSound ; 02
 	add_mapsetup PlayMapMusic ; 03
 	add_mapsetup RestartMapMusic ; 04

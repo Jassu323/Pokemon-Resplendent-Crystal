@@ -1,0 +1,20 @@
+diff --git a/engine/pokedex/pokedex.asm b/engine/pokedex/pokedex.asm
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -1778,7 +1778,15 @@
+ 	ret
+ 
+ Pokedex_DrawUnownModeBG:
+-	call Pokedex_FillBackgroundColor2
++	hlcoord 0, 0
++	ld bc, SCREEN_AREA
++	ldh a, [hCGB]
++	and a
++	ld a, $32
++	jr z, .fill_background
++	ld a, $31 ; CGB outer backdrop is red; keep panel interiors dark gray.
++.fill_background
++	call ByteFill
+ 	hlcoord 2, 1
+ 	lb bc, 10, 13
+ 	call Pokedex_PlaceBorder

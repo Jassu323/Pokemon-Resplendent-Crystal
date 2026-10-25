@@ -353,6 +353,28 @@ PokeAnim_InitAnim:
 	ldh [rWBK], a
 	ret
 
+PokeAnim_InitDexFrameProducer::
+; Initialize only the species metadata needed by the Dex frame-plan producer.
+; Return the frontpic dimension in c and the fixed-bank timeline pointer in de.
+	ld h, d
+	ld l, e
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wPokeAnimStruct)
+	ldh [rWBK], a
+	ld bc, 0
+	ld d, 0
+	call PokeAnim_InitPicAttributes
+	call GetMonDexAnimationPlanPointer
+	call GetMonDexAnimationTimelinePointer
+	ld d, h
+	ld e, l
+	ld a, [wPokeAnimFrontpicHeight]
+	ld c, a
+	pop af
+	ldh [rWBK], a
+	ret
+
 PokeAnim_DoAnimScript:
 	xor a
 	ldh [hBGMapMode], a
@@ -437,6 +459,14 @@ PokeAnim_GetFrame:
 	push hl
 	call PokeAnim_CopyBitmaskToBuffer
 	pop hl
+	push hl
+	call PokeAnim_CountBitmaskTiles
+	pop hl
+	ld b, 0
+	ld de, wPokeAnimFrameTiles
+	ld a, [wPokeAnimFramesBank]
+	call FarCopyBytes
+	ld de, wPokeAnimFrameTiles
 	call PokeAnim_ConvertAndApplyBitmask
 	ret
 
@@ -546,6 +576,25 @@ PokeAnim_CopyBitmaskToBuffer:
 
 .Sizes: db 4, 5, 7
 
+PokeAnim_CountBitmaskTiles:
+	xor a
+	ld [wPokeAnimBitmaskCurBit], a
+	ld [wPokeAnimBitmaskCurRow], a
+	ld [wPokeAnimBitmaskCurCol], a
+	ld c, a
+.loop
+	push bc
+	call PokeAnim_IsCurBitSet
+	ld a, b
+	pop bc
+	add c
+	ld c, a
+	push bc
+	call PokeAnim_NextBit
+	pop bc
+	jr nc, .loop
+	ret
+
 MACRO poke_anim_box
 	for y, 1, \1 + 1
 		for x, 7 - \1, 7
@@ -560,28 +609,25 @@ PokeAnim_ConvertAndApplyBitmask:
 	ld [wPokeAnimBitmaskCurRow], a
 	ld [wPokeAnimBitmaskCurCol], a
 .loop
-	push hl
-	call .IsCurBitSet
-	pop hl
+	push de
+	call PokeAnim_IsCurBitSet
+	pop de
 	ld a, b
 	and a
 	jr z, .next
 
-	ld a, [wPokeAnimFramesBank]
-	call GetFarByte
-	inc hl
-	push hl
-	call .ApplyFrame
-	pop hl
+	ld a, [de]
+	inc de
+	push de
+	call PokeAnim_ApplyFrame
+	pop de
 
 .next
-	push hl
-	call .NextBit
-	pop hl
+	call PokeAnim_NextBit
 	jr nc, .loop
 	ret
 
-.IsCurBitSet:
+PokeAnim_IsCurBitSet:
 ; which byte
 	ld a, [wPokeAnimBitmaskCurBit]
 	and $f8
@@ -618,7 +664,7 @@ PokeAnim_ConvertAndApplyBitmask:
 	inc [hl]
 	ret
 
-.ApplyFrame:
+PokeAnim_ApplyFrame:
 	push af
 	call .GetCoord
 	pop af
@@ -758,7 +804,7 @@ PokeAnim_ConvertAndApplyBitmask:
 	add hl, bc
 	ret
 
-.NextBit:
+PokeAnim_NextBit:
 	ld a, [wPokeAnimBitmaskCurRow]
 	inc a
 	ld [wPokeAnimBitmaskCurRow], a
@@ -1018,6 +1064,115 @@ GetMonFramesPointer:
 	ld [wPokeAnimFramesAddr], a
 	ld a, HIGH(EggFrames)
 	ld [wPokeAnimFramesAddr + 1], a
+	ret
+
+GetMonDexAnimationPlanPointer:
+	call PokeAnim_IsEgg
+	jr z, .egg
+
+	call PokeAnim_IsUnown
+	ld hl, DexAnimationPlanPointers - 3
+	ld a, BANK(DexAnimationPlanPointers)
+	ld c, 3
+	jr nz, .got_plans
+	ld hl, UnownDexAnimationPlanPointers - 3
+	ld a, BANK(UnownDexAnimationPlanPointers)
+.got_plans
+
+	push af
+	push hl
+	ld a, [wPokeAnimSpeciesOrUnown]
+	ld l, a
+	ld h, 0
+	call nz, GetPokemonIndexFromID
+	ld a, c
+	ld c, l
+	ld b, h
+	pop hl
+	call AddNTimes
+	pop af
+	ld c, a
+	call GetFarByte
+	ld [wPokeAnimDexPlanBank], a
+	inc hl
+	ld a, c
+	call GetFarWord
+	ld a, l
+	ld [wPokeAnimDexPlanAddr], a
+	ld a, h
+	ld [wPokeAnimDexPlanAddr + 1], a
+	ret
+
+.egg
+	ld a, BANK(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanBank], a
+	ld a, LOW(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanAddr], a
+	ld a, HIGH(EggDexAnimationPlan)
+	ld [wPokeAnimDexPlanAddr + 1], a
+	ret
+
+GetMonDexAnimationTimelinePointer:
+	call PokeAnim_IsEgg
+	jr z, .egg
+
+	call PokeAnim_IsUnown
+	ld hl, DexAnimationTimelinePointers - 2
+	ld a, BANK(DexAnimationTimelinePointers)
+	jr nz, .got_timelines
+	ld hl, UnownDexAnimationTimelinePointers - 2
+.got_timelines
+
+	push af
+	push hl
+	ld a, [wPokeAnimSpeciesOrUnown]
+	ld l, a
+	ld h, 0
+	call nz, GetPokemonIndexFromID
+	ld c, l
+	ld b, h
+	pop hl
+	add hl, bc
+	add hl, bc
+	pop af
+	call GetFarWord
+	ret
+
+.egg
+	ld hl, EggDexAnimationTimeline
+	ret
+
+PokeAnim_GetDexFramePlanPointer::
+; Return the selected frame plan in d:hl. The frame ID in b is one-based.
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wPokeAnimStruct)
+	ldh [rWBK], a
+	ld a, [wPokeAnimDexPlanBank]
+	ld c, a
+	ld a, [wPokeAnimDexPlanAddr]
+	ld e, a
+	ld a, [wPokeAnimDexPlanAddr + 1]
+	ld d, a
+	pop af
+	ldh [rWBK], a
+
+	ld h, d
+	ld l, e
+	ld a, b
+	dec a
+	add a
+	push bc
+	ld b, 0
+	ld c, a
+	add hl, bc
+	pop bc
+	push de
+	ld a, c
+	call GetFarWord
+	pop de
+	add hl, de
+	ld d, c
 	ret
 
 GetMonBitmaskPointer:

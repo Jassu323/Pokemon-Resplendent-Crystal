@@ -252,127 +252,127 @@ INCBIN "gfx/footprints/tyranitar.1bpp"
 INCBIN "gfx/footprints/lugia.1bpp"
 INCBIN "gfx/footprints/ho_oh.1bpp"
 INCBIN "gfx/footprints/celebi.1bpp"
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; treecko placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; grovyle placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; sceptile placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; torchic placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; combusken placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; blaziken placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; mudkip placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; marshtomp placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; swampert placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; poochyena placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; mightyena placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; wingull placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; pelipper placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; ralts placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; kirlia placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; gardevoir placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; gallade placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; shroomish placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; breloom placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; makuhita placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; hariyama placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; skitty placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; delcatty placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; sableye placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; mawile placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; aron placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lairon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; aggron placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; meditite placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; medicham placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; electrike placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; manectric placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; roselia placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; roserade placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; carvanha placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; sharpedo placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; numel placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; camerupt placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; torkoal placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; trapinch placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; vibrava placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; flygon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; swablu placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; altaria placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; zangoose placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; seviper placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lunatone placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; solrock placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; barboach placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; whiscash placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; corphish placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; crawdaunt placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; baltoy placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; claydol placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lileep placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; cradily placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; anorith placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; armaldo placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; feebas placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; milotic placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; shuppet placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; banette placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; duskull placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; dusclops placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; dusknoir placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; absol placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; snorunt placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; glalie placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; froslass placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; spheal placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; sealeo placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; walrein placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; bagon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; shelgon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; salamence placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; beldum placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; metang placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; metagross placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; regirock placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; regice placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; registeel placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; kyogre placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; groudon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; rayquaza placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; shinx placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; luxio placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; luxray placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; cranidos placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; rampardos placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; shieldon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; bastiodon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; ambipom placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; buneary placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lopunny placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; mismagius placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; honchkrow placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; bronzor placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; bronzong placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; gible placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; gabite placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; garchomp placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; riolu placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lucario placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; skorupi placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; drapion placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; croagunk placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; toxicroak placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; snover placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; abomasnow placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; weavile placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; magnezone placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; lickilicky placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; rhyperior placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; tangrowth placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; togekiss placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; yanmega placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; leafeon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; glaceon placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; gliscor placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; mamoswine placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; porygon-z placeholder
-INCBIN "gfx/footprints/bulbasaur.1bpp" ; regigigas placeholder
+INCBIN "gfx/footprints/treecko.1bpp"
+INCBIN "gfx/footprints/grovyle.1bpp"
+INCBIN "gfx/footprints/sceptile.1bpp"
+INCBIN "gfx/footprints/torchic.1bpp"
+INCBIN "gfx/footprints/combusken.1bpp"
+INCBIN "gfx/footprints/blaziken.1bpp"
+INCBIN "gfx/footprints/mudkip.1bpp"
+INCBIN "gfx/footprints/marshtomp.1bpp"
+INCBIN "gfx/footprints/swampert.1bpp"
+INCBIN "gfx/footprints/poochyena.1bpp"
+INCBIN "gfx/footprints/mightyena.1bpp"
+INCBIN "gfx/footprints/wingull.1bpp"
+INCBIN "gfx/footprints/pelipper.1bpp"
+INCBIN "gfx/footprints/ralts.1bpp"
+INCBIN "gfx/footprints/kirlia.1bpp"
+INCBIN "gfx/footprints/gardevoir.1bpp"
+INCBIN "gfx/footprints/gallade.1bpp"
+INCBIN "gfx/footprints/shroomish.1bpp"
+INCBIN "gfx/footprints/breloom.1bpp"
+INCBIN "gfx/footprints/makuhita.1bpp"
+INCBIN "gfx/footprints/hariyama.1bpp"
+INCBIN "gfx/footprints/skitty.1bpp"
+INCBIN "gfx/footprints/delcatty.1bpp"
+INCBIN "gfx/footprints/sableye.1bpp"
+INCBIN "gfx/footprints/mawile.1bpp"
+INCBIN "gfx/footprints/aron.1bpp"
+INCBIN "gfx/footprints/lairon.1bpp"
+INCBIN "gfx/footprints/aggron.1bpp"
+INCBIN "gfx/footprints/meditite.1bpp"
+INCBIN "gfx/footprints/medicham.1bpp"
+INCBIN "gfx/footprints/electrike.1bpp"
+INCBIN "gfx/footprints/manectric.1bpp"
+INCBIN "gfx/footprints/roselia.1bpp"
+INCBIN "gfx/footprints/roserade.1bpp"
+INCBIN "gfx/footprints/carvanha.1bpp"
+INCBIN "gfx/footprints/sharpedo.1bpp"
+INCBIN "gfx/footprints/numel.1bpp"
+INCBIN "gfx/footprints/camerupt.1bpp"
+INCBIN "gfx/footprints/torkoal.1bpp"
+INCBIN "gfx/footprints/trapinch.1bpp"
+INCBIN "gfx/footprints/vibrava.1bpp"
+INCBIN "gfx/footprints/flygon.1bpp"
+INCBIN "gfx/footprints/swablu.1bpp"
+INCBIN "gfx/footprints/altaria.1bpp"
+INCBIN "gfx/footprints/zangoose.1bpp"
+INCBIN "gfx/footprints/seviper.1bpp"
+INCBIN "gfx/footprints/lunatone.1bpp"
+INCBIN "gfx/footprints/solrock.1bpp"
+INCBIN "gfx/footprints/barboach.1bpp"
+INCBIN "gfx/footprints/whiscash.1bpp"
+INCBIN "gfx/footprints/corphish.1bpp"
+INCBIN "gfx/footprints/crawdaunt.1bpp"
+INCBIN "gfx/footprints/baltoy.1bpp"
+INCBIN "gfx/footprints/claydol.1bpp"
+INCBIN "gfx/footprints/lileep.1bpp"
+INCBIN "gfx/footprints/cradily.1bpp"
+INCBIN "gfx/footprints/anorith.1bpp"
+INCBIN "gfx/footprints/armaldo.1bpp"
+INCBIN "gfx/footprints/feebas.1bpp"
+INCBIN "gfx/footprints/milotic.1bpp"
+INCBIN "gfx/footprints/shuppet.1bpp"
+INCBIN "gfx/footprints/banette.1bpp"
+INCBIN "gfx/footprints/duskull.1bpp"
+INCBIN "gfx/footprints/dusclops.1bpp"
+INCBIN "gfx/footprints/dusknoir.1bpp"
+INCBIN "gfx/footprints/absol.1bpp"
+INCBIN "gfx/footprints/snorunt.1bpp"
+INCBIN "gfx/footprints/glalie.1bpp"
+INCBIN "gfx/footprints/froslass.1bpp"
+INCBIN "gfx/footprints/spheal.1bpp"
+INCBIN "gfx/footprints/sealeo.1bpp"
+INCBIN "gfx/footprints/walrein.1bpp"
+INCBIN "gfx/footprints/bagon.1bpp"
+INCBIN "gfx/footprints/shelgon.1bpp"
+INCBIN "gfx/footprints/salamence.1bpp"
+INCBIN "gfx/footprints/beldum.1bpp"
+INCBIN "gfx/footprints/metang.1bpp"
+INCBIN "gfx/footprints/metagross.1bpp"
+INCBIN "gfx/footprints/regirock.1bpp"
+INCBIN "gfx/footprints/regice.1bpp"
+INCBIN "gfx/footprints/registeel.1bpp"
+INCBIN "gfx/footprints/kyogre.1bpp"
+INCBIN "gfx/footprints/groudon.1bpp"
+INCBIN "gfx/footprints/rayquaza.1bpp"
+INCBIN "gfx/footprints/shinx.1bpp"
+INCBIN "gfx/footprints/luxio.1bpp"
+INCBIN "gfx/footprints/luxray.1bpp"
+INCBIN "gfx/footprints/cranidos.1bpp"
+INCBIN "gfx/footprints/rampardos.1bpp"
+INCBIN "gfx/footprints/shieldon.1bpp"
+INCBIN "gfx/footprints/bastiodon.1bpp"
+INCBIN "gfx/footprints/ambipom.1bpp"
+INCBIN "gfx/footprints/buneary.1bpp"
+INCBIN "gfx/footprints/lopunny.1bpp"
+INCBIN "gfx/footprints/mismagius.1bpp"
+INCBIN "gfx/footprints/honchkrow.1bpp"
+INCBIN "gfx/footprints/bronzor.1bpp"
+INCBIN "gfx/footprints/bronzong.1bpp"
+INCBIN "gfx/footprints/gible.1bpp"
+INCBIN "gfx/footprints/gabite.1bpp"
+INCBIN "gfx/footprints/garchomp.1bpp"
+INCBIN "gfx/footprints/riolu.1bpp"
+INCBIN "gfx/footprints/lucario.1bpp"
+INCBIN "gfx/footprints/skorupi.1bpp"
+INCBIN "gfx/footprints/drapion.1bpp"
+INCBIN "gfx/footprints/croagunk.1bpp"
+INCBIN "gfx/footprints/toxicroak.1bpp"
+INCBIN "gfx/footprints/snover.1bpp"
+INCBIN "gfx/footprints/abomasnow.1bpp"
+INCBIN "gfx/footprints/weavile.1bpp"
+INCBIN "gfx/footprints/magnezone.1bpp"
+INCBIN "gfx/footprints/lickilicky.1bpp"
+INCBIN "gfx/footprints/rhyperior.1bpp"
+INCBIN "gfx/footprints/tangrowth.1bpp"
+INCBIN "gfx/footprints/togekiss.1bpp"
+INCBIN "gfx/footprints/yanmega.1bpp"
+INCBIN "gfx/footprints/leafeon.1bpp"
+INCBIN "gfx/footprints/glaceon.1bpp"
+INCBIN "gfx/footprints/gliscor.1bpp"
+INCBIN "gfx/footprints/mamoswine.1bpp"
+INCBIN "gfx/footprints/porygon-z.1bpp"
+INCBIN "gfx/footprints/regigigas.1bpp"
 
 	assert_table_length NUM_POKEMON

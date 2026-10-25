@@ -1,0 +1,33 @@
+diff --git a/engine/gfx/cgb_layouts.asm b/engine/gfx/cgb_layouts.asm
+--- a/engine/gfx/cgb_layouts.asm
++++ b/engine/gfx/cgb_layouts.asm
+@@ -752,13 +752,13 @@
+ 
+ _CGB_PokedexUnownMode:
+-	ld hl, PokedexUIPalette
++	ld hl, PokedexUnownUIPalette
+ 	ld de, wBGPals1
+ 	call LoadHLPaletteIntoDE
+ 	ld a, [wCurPartySpecies]
+ 	call GetMonPalettePointer
+ 	call LoadPalette_White_Col1_Col2_Black
+ 	call WipeAttrmap
+-	hlcoord 7, 5, wAttrmap
++	hlcoord 6, 5, wAttrmap
+ 	lb bc, 7, 7
+ 	ld a, $1 ; mon palette
+ 	call FillBoxCGB
+@@ -808,6 +808,13 @@
+ 	ldh [hCGBPalUpdate], a
+ 	ret
+ 
++PokedexUnownUIPalette:
++	; Unown's inverted glyphs and panel fill share a solid black background.
++	RGB 31, 31, 31
++	RGB 26, 10, 06
++	RGB 00, 00, 00
++	RGB 00, 00, 00
++
+ _CGB_SlotMachine:
+ 	ld hl, SlotMachinePals
+ 	ld de, wBGPals1

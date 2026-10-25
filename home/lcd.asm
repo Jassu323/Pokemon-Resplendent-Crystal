@@ -1,5 +1,12 @@
 ; LCD handling
 
+; TIMING CONTRACT: DO NOT ADD OVERHEAD TO THE ORDINARY LCD INTERRUPT PATH.
+; Battle raster effects run this path repeatedly within each display frame.
+; A rejected Type-page check added 20 T-cycles here; with 32 extra T-cycles
+; in VBlank_Normal, 314/333 moves changed duration (Waterfall up to +553 ms).
+; Logical updates still matched: counters/clean returns do not prove timing.
+; Preserve ordinary-path cycle budgets and qualify both sides/start phases.
+; Evidence and acceptance: docs/battle_animation_interrupt_timing_contract.md
 LCD::
 	push af
 	ldh a, [hLCDCPointer]

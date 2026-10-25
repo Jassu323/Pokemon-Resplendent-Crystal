@@ -422,9 +422,17 @@ StatsScreenPals:
 INCLUDE "gfx/stats/stats.pal"
 
 _CGB_Pokedex:
+	ld a, [wJumptableIndex]
+	cp DEXSTATE_MAIN_SCR
+	jp z, _CGB_PokedexList
+	cp DEXSTATE_UPDATE_MAIN_SCR
+	jp z, _CGB_PokedexList
+	call CGB_PokedexBuildSelectedMonLayout
+	jr CGB_PokedexApplyLayout
+
+CGB_PokedexBuildSelectedMonLayout:
+	ld hl, PokedexUIPalette
 	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
 	call LoadHLPaletteIntoDE ; dex interface palette
 	ld a, [wCurPartySpecies]
 	cp $ff
@@ -442,23 +450,251 @@ _CGB_Pokedex:
 	lb bc, 7, 7
 	ld a, $1 ; green question mark palette
 	call FillBoxCGB
+	ld a, [wJumptableIndex]
+	cp DEXSTATE_SELECTED_MON_ENTER
+	jr c, .skip_footprint
+	cp DEXSTATE_SELECTED_MON_RESERVED + 1
+	jr nc, .skip_footprint
+	ld a, [wPokedexResidentFootprintSpecies]
+	cp -1
+	jr z, .skip_footprint
+	hlcoord 18, 1, wAttrmap
+	lb bc, 2, 2
+	ld a, BG_BANK1 | POKEDEX_DESCRIPTION_FOOTPRINT_PAL
+	call FillBoxCGB
+	farcall Pokedex_SetDescriptionTypeAttrsAndPals
+.skip_footprint
 	call InitPartyMenuOBPals
 	ld hl, PokedexCursorPalette
 	ld de, wOBPals1 palette 7 ; green cursor palette
 	ld bc, 1 palettes
 	ld a, BANK(wOBPals1)
 	call FarCopyWRAM
+	ld a, [wJumptableIndex]
+	sub DEXSTATE_SEARCH_RESULTS_SCR
+	cp 2
+	ret nc
+	ld hl, PokedexListDarkGray
+	ld de, wOBPals1 palette 7 + 3 colors
+	ld bc, 1 colors
+	ld a, BANK(wOBPals1)
+	call FarCopyWRAM
+	ret
+
+CGB_PokedexApplyLayout:
 	call ApplyAttrmap
 	call ApplyPals
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
 
+CGB_PokedexStageSelectedMonLayout::
+; Build the Selected Mon attrmap and palette buffers without changing the
+; currently visible Pokédex owner.
+	call ResetBGPals
+	call CGB_PokedexBuildSelectedMonLayout
+	jp ApplyPals
+
 PokedexQuestionMarkPalette:
 INCLUDE "gfx/pokedex/question_mark.pal"
 
 PokedexCursorPalette:
 INCLUDE "gfx/pokedex/cursor.pal"
+
+_CGB_PokedexList:
+	call CGB_PokedexBuildListLayout
+	jr CGB_PokedexApplyLayout
+
+CGB_PokedexBuildListLayout:
+	ld hl, PokedexUIPalette
+	ld de, wBGPals1 palette 0
+	call LoadHLPaletteIntoDE
+	call CGB_PokedexLoadFrontpicPalette
+	ld a, [wPokedexListingPresentation]
+	and a
+	call z, CGB_PokedexLoadListIconPalettes
+
+	ld hl, PokedexListCursorPalette
+	ld de, wOBPals1 palette 0
+	call LoadHLPaletteIntoDE
+	ld hl, PokedexListCaughtBallPalette
+	ld de, wOBPals1 palette 1
+	call LoadHLPaletteIntoDE
+	ld hl, PokedexListScrollThumbPalette
+	ld de, wOBPals1 palette 5
+	call LoadHLPaletteIntoDE
+
+	call WipeAttrmap
+	hlcoord 1, 1, wAttrmap
+	lb bc, 7, 7
+	ld a, [wCurPartySpecies]
+	cp $ff
+	ld a, 1
+	jr nz, .got_frontpic_attr
+	or BG_BANK1
+.got_frontpic_attr
+	call FillBoxCGB
+	hlcoord 0, 8, wAttrmap
+	lb bc, 1, 7
+	ld a, [wPokedexListingPresentation]
+	and a
+	jr z, .joined_width_ready
+	inc c
+.joined_width_ready
+	ld a, BG_BANK1
+	call FillBoxCGB
+	ld a, [wPokedexListingPresentation]
+	and a
+	ret z
+	hlcoord 8, 16, wAttrmap
+	ld [hl], BG_YFLIP
+	ret
+
+CGB_PokedexStageListLayout::
+; Build the Listing attrmap and palette buffers while its Window is hidden.
+	call ResetBGPals
+	call CGB_PokedexBuildListLayout
+	jp ApplyPals
+
+CGB_PokedexLoadListIconPalettes:
+	ld a, [wPokedexGridIconPalettes + 0]
+	ld de, wBGPals1 palette 2
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 2]
+	ld de, wBGPals1 palette 3
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 3]
+	ld de, wBGPals1 palette 4
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 5]
+	ld de, wBGPals1 palette 5
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 6]
+	ld de, wBGPals1 palette 6
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 8]
+	ld de, wBGPals1 palette 7
+	call .LoadBGIconPalette
+	ld a, [wPokedexGridIconPalettes + 1]
+	ld de, wOBPals1 palette 2
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 4]
+	ld de, wOBPals1 palette 3
+	call .LoadIconPalette
+	ld a, [wPokedexGridIconPalettes + 7]
+	ld de, wOBPals1 palette 4
+	call .LoadIconPalette
+	ret
+
+.LoadBGIconPalette:
+	push de
+	call .LoadIconPalette
+	pop de
+	ld hl, PokedexListDarkGray
+	ld bc, 1 colors
+	ld a, BANK(wBGPals1)
+	jp FarCopyWRAM
+
+.LoadIconPalette:
+; a = PartyMenuOBPals palette, de = destination palette
+	and $f
+	add a
+	add a
+	add a
+	ld l, a
+	ld h, 0
+	ld bc, PartyMenuOBPals
+	add hl, bc
+	ld bc, 1 palettes
+	ld a, BANK(wBGPals1)
+	jp FarCopyWRAM
+
+CGB_PokedexStageListPalettes::
+; Build the complete selection-dependent palette state immediately before the
+; scroll transaction copies it to hardware.
+	call CGB_PokedexLoadFrontpicPalette
+	call CGB_PokedexLoadListIconPalettes
+	jp ApplyPals
+
+CGB_PokedexPrepareFrontpicPalette::
+; Stage the selected frontpic palette without making it visible yet.
+	ldh a, [hCGB]
+	and a
+	ret z
+	jp CGB_PokedexLoadFrontpicPalette
+
+CGB_PokedexCommitFrontpicPalette::
+; Copy only the staged frontpic palette into the active buffer and hardware.
+; The caller schedules this after the old portrait's final visible scanline.
+	ldh a, [hCGB]
+	and a
+	ret z
+	ld hl, wBGPals1 palette 1
+	ld de, wBGPals2 palette 1
+	ld bc, 1 palettes
+	ld a, BANK(wGBCPalettes)
+	call FarCopyWRAM
+
+	ldh a, [rWBK]
+	push af
+	ld a, BANK(wBGPals2)
+	ldh [rWBK], a
+	ld hl, wBGPals2 palette 1
+	ld a, BGPI_AUTOINC palette 1
+	ldh [rBGPI], a
+	ld c, LOW(rBGPD)
+	ld b, 1 palettes
+.copy
+.wait_palette
+	ldh a, [rSTAT]
+	and STAT_BUSY
+	jr nz, .wait_palette
+	ld a, [hli]
+	ldh [c], a
+	dec b
+	jr nz, .copy
+	pop af
+	ldh [rWBK], a
+	ret
+
+CGB_PokedexLoadFrontpicPalette:
+	ld de, wBGPals1 palette 1
+	ld a, [wCurPartySpecies]
+	cp $ff
+	jr nz, .pokemon_palette
+	ld hl, PokedexQuestionMarkPalette
+	jp LoadHLPaletteIntoDE
+
+.pokemon_palette
+	call GetMonPalettePointer
+	jp LoadPalette_White_Col1_Col2_Black
+
+PokedexUIPalette:
+	RGB 31, 31, 31
+	RGB 26, 10, 06
+	RGB 05, 05, 05
+	RGB 00, 00, 00
+
+PokedexListCursorPalette:
+	RGB 00, 00, 00
+	RGB 11, 23, 00
+	RGB 00, 00, 00
+	RGB 00, 00, 00
+
+PokedexListCaughtBallPalette:
+	RGB 00, 00, 00
+	RGB 31, 31, 31
+	RGB 31, 20, 10
+	RGB 31, 07, 01
+
+PokedexListScrollThumbPalette:
+	RGB 00, 00, 00
+	RGB 27, 31, 27
+	RGB 31, 07, 01
+	RGB 00, 00, 00
+
+PokedexListDarkGray:
+	RGB 05, 05, 05
 
 _CGB_BillsPC:
 	ld de, wBGPals1
@@ -515,24 +751,70 @@ BillsPCOrangePalette:
 INCLUDE "gfx/pc/orange.pal"
 
 _CGB_PokedexUnownMode:
-	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
-	call LoadHLPaletteIntoDE
-	ld a, [wCurPartySpecies]
-	call GetMonPalettePointer
-	call LoadPalette_White_Col1_Col2_Black
-	call WipeAttrmap
-	hlcoord 7, 5, wAttrmap
-	lb bc, 7, 7
-	ld a, $1 ; mon palette
-	call FillBoxCGB
-	call InitPartyMenuOBPals
+	call PokedexUnown_PrepareLayout
 	call ApplyAttrmap
 	call ApplyPals
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+PokedexUnown_PrepareLayout:
+; Build software attributes/palette sources without exposing them yet.
+	ld hl, PokedexUnownUIPalette
+	ld de, wBGPals1
+	call LoadHLPaletteIntoDE
+	ld a, [wCurPartySpecies]
+	call GetMonPalettePointer
+	call LoadPalette_White_Col1_Col2_Black
+	call WipeAttrmap
+	hlcoord 6, 5, wAttrmap
+	lb bc, 7, 7
+	ld a, $1 ; mon palette
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 3, wAttrmap
+	lb bc, 1, 11
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 4, wAttrmap
+	lb bc, 8, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 14, 4, wAttrmap
+	lb bc, 7, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 3, 2, wAttrmap
+	lb bc, 1, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 5, 2, wAttrmap
+	lb bc, 1, 9
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 15, 2, wAttrmap
+	lb bc, 1, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 3, 4, wAttrmap
+	lb bc, 8, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 15, 4, wAttrmap
+	lb bc, 7, 1
+	call FillBoxCGB
+	ld a, BG_BANK1
+	hlcoord 4, 15, wAttrmap
+	lb bc, 1, 12
+	call FillBoxCGB
+	jp InitPartyMenuOBPals
+
+PokedexUnownUIPalette:
+	; Unown's inverted glyphs and panel fill share a solid black background.
+	RGB 31, 31, 31
+	RGB 26, 10, 06
+	RGB 00, 00, 00
+	RGB 00, 00, 00
 
 _CGB_SlotMachine:
 	ld hl, SlotMachinePals
@@ -1179,16 +1461,21 @@ _CGB_BetaPikachuMinigame:
 	ret
 
 _CGB_PokedexSearchOption:
-	ld de, wBGPals1
-	ld a, PREDEFPAL_POKEDEX
-	call GetPredefPal
-	call LoadHLPaletteIntoDE
-	call WipeAttrmap
+	call PokedexMenu_PrepareLayout
 	call ApplyAttrmap
 	call ApplyPals
 	ld a, TRUE
 	ldh [hCGBPalUpdate], a
 	ret
+
+PokedexMenu_PrepareLayout:
+	ld hl, PartyMenuOBPals
+	ld de, wOBPals1
+	call LoadHLPaletteIntoDE
+	ld hl, PokedexUIPalette
+	ld de, wBGPals1
+	call LoadHLPaletteIntoDE
+	jp WipeAttrmap
 
 _CGB_PackPals:
 ; pack pals
@@ -1340,3 +1627,27 @@ _CGB_TrainerOrMonFrontpicPals:
 	call ApplyAttrmap
 	call ApplyPals
 	ret
+
+CGB_PokedexResultsAttributes:
+    xor a
+    hlcoord 0, 0, wAttrmap
+    ld bc, SCREEN_AREA
+    call ByteFill
+    hlcoord 1, 1, wAttrmap
+    lb bc, 7, 7
+    ld a, 1
+    call FillBoxCGB
+    ret
+
+CGB_PokedexResultsStagePalettes:
+    call ResetBGPals
+    ld hl, PokedexUIPalette
+    ld de, wBGPals1 palette 0
+    call LoadHLPaletteIntoDE
+    call CGB_PokedexLoadFrontpicPalette
+    ld hl, PokedexListCursorPalette
+    ld de, wOBPals1 palette 0
+    call LoadHLPaletteIntoDE
+    ld hl, PokedexListCaughtBallPalette
+    ld de, wOBPals1 palette 1
+    jp LoadHLPaletteIntoDE

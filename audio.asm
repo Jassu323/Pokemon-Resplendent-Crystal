@@ -6,6 +6,7 @@ INCLUDE "audio/music_pointers.asm"
 INCLUDE "audio/music/nothing.asm"
 INCLUDE "audio/cry_pointers.asm"
 INCLUDE "audio/sfx_pointers.asm"
+INCLUDE "engine/pokedex/pokedex_types_audio.asm"
 
 SECTION "Songs 1", ROMX
 
@@ -186,5 +187,5 @@ INCLUDE "audio/cries.asm"
 
 SECTION "Sampled Cries", ROMX
 
-INCLUDE "audio/sampled_cry_player.asm"
 INCLUDE "audio/sampled_cries.asm"
+INCLUDE "audio/sampled_cry_pair_lookup.asm"

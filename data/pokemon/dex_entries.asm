@@ -351,6 +351,8 @@ RegisteelPokedexEntry::  INCLUDE "data/pokemon/dex_entries/registeel.asm"
 KyogrePokedexEntry::     INCLUDE "data/pokemon/dex_entries/kyogre.asm"
 GroudonPokedexEntry::    INCLUDE "data/pokemon/dex_entries/groudon.asm"
 RayquazaPokedexEntry::   INCLUDE "data/pokemon/dex_entries/rayquaza.asm"
+SECTION "Pokedex Entries Custom 2", ROMX
+
 ShinxPokedexEntry::      INCLUDE "data/pokemon/dex_entries/shinx.asm"
 LuxioPokedexEntry::      INCLUDE "data/pokemon/dex_entries/luxio.asm"
 LuxrayPokedexEntry::     INCLUDE "data/pokemon/dex_entries/luxray.asm"

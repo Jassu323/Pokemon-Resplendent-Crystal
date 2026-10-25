@@ -1,0 +1,64 @@
+--- a/data/pokemon/evos_attacks_custom.asm
++++ b/data/pokemon/evos_attacks_custom.asm
+@@ -126,11 +126,13 @@
+ .IndirectEnd
+ 
+ TreeckoEvosAttacks:
++	dbbw EVOLVE_LEVEL, 16, GROVYLE
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+ 
+ GrovyleEvosAttacks:
++	dbbw EVOLVE_LEVEL, 36, SCEPTILE
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+@@ -141,11 +143,13 @@
+ 	db 0 ; no more level-up moves
+ 
+ TorchicEvosAttacks:
++	dbbw EVOLVE_LEVEL, 16, COMBUSKEN
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+ 
+ CombuskenEvosAttacks:
++	dbbw EVOLVE_LEVEL, 36, BLAZIKEN
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+@@ -156,11 +160,13 @@
+ 	db 0 ; no more level-up moves
+ 
+ MudkipEvosAttacks:
++	dbbw EVOLVE_LEVEL, 16, MARSHTOMP
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+ 
+ MarshtompEvosAttacks:
++	dbbw EVOLVE_LEVEL, 36, SWAMPERT
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	db 0 ; no more level-up moves
+--- a/data/pokemon/evos_attacks_johto.asm
++++ b/data/pokemon/evos_attacks_johto.asm
+@@ -1003,6 +1003,7 @@
+ 	db 0 ; no more level-up moves
+ 
+ PiloswineEvosAttacks:
++	dbbw EVOLVE_LEVEL, 40, MAMOSWINE
+ 	db 0 ; no more evolutions
+ 	dbw 1, HORN_ATTACK
+ 	dbw 1, POWDER_SNOW
+--- a/data/pokemon/evos_attacks_kanto.asm
++++ b/data/pokemon/evos_attacks_kanto.asm
+@@ -1240,6 +1240,7 @@
+ 	db 0 ; no more level-up moves
+ 
+ MagnetonEvosAttacks:
++	dbbw EVOLVE_LEVEL, 40, MAGNEZONE
+ 	db 0 ; no more evolutions
+ 	dbw 1, TACKLE
+ 	dbw 1, THUNDERSHOCK

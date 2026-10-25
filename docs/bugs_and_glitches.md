@@ -35,7 +35,7 @@ Fixes in the [multi-player battle engine](#multi-player-battle-engine) category 
   - [Present damage is incorrect in link battles](#present-damage-is-incorrect-in-link-battles)
   - [Return and Frustration deal no damage when the user's happiness is low or high, respectively](#return-and-frustration-deal-no-damage-when-the-users-happiness-is-low-or-high-respectively)
   - [Dragon Scale, not Dragon Fang, boosts Dragon-type moves](#dragon-scale-not-dragon-fang-boosts-dragon-type-moves)
-  - [Switching out or switching against a Pokémon with max HP below 4 freezes the game](#switching-out-or-switching-against-a-pok%C3%A9mon-with-max-HP-below-4-freezes-the-game)
+  - [Switching out or switching against a Pokémon with max HP below 4 freezes the game](#switching-out-or-switching-against-a-pok%C3%A9mon-with-max-hp-below-4-freezes-the-game)
   - [Moves that do damage and increase your stats do not increase stats after a KO](#moves-that-do-damage-and-increase-your-stats-do-not-increase-stats-after-a-ko)
 - [Single-player battle engine](#single-player-battle-engine)
   - [A Transformed Pokémon can use Sketch and learn otherwise unobtainable moves](#a-transformed-pok%C3%A9mon-can-use-sketch-and-learn-otherwise-unobtainable-moves)
@@ -52,7 +52,7 @@ Fixes in the [multi-player battle engine](#multi-player-battle-engine) category 
   - [Glacier Badge may not boost Special Defense depending on the value of Special Attack](#glacier-badge-may-not-boost-special-defense-depending-on-the-value-of-special-attack)
   - ["Smart" AI encourages Mean Look if its own Pokémon is badly poisoned](#smart-ai-encourages-mean-look-if-its-own-pok%C3%A9mon-is-badly-poisoned)
   - ["Smart" AI discourages Conversion2 after the first turn](#smart-ai-discourages-conversion2-after-the-first-turn)
-  - ["Smart" AI does not encourage Solar Beam, Flame Wheel, or Moonlight during Sunny Day](#smart-ai-does-not-encourage-solar-beam-flame-wheel-or-moonlight-during-sunny-day)
+  - ["Smart" AI does not encourage Sunny Day when it knows Solar Beam, Flame Wheel, or Moonlight](#smart-ai-does-not-encourage-sunny-day-when-it-knows-solar-beam-flame-wheel-or-moonlight)
   - ["Cautious" AI may fail to discourage residual moves](#cautious-ai-may-fail-to-discourage-residual-moves)
   - [AI does not discourage Future Sight when it's already been used](#ai-does-not-discourage-future-sight-when-its-already-been-used)
   - [AI makes a false assumption about `CheckTypeMatchup`](#ai-makes-a-false-assumption-about-checktypematchup)
@@ -2830,6 +2830,8 @@ If `IsInArray` returns `nc`, data at `bc` will be executed as code.
  	ret
 ```
 
+
+<a id="battleanimcmd_clearobjs-only-clears-the-first-6-objects"></a>
 
 ### `BattleAnimCmd_ClearObjs` only clears the first 6⅔ objects
 

@@ -384,15 +384,6 @@ PokeBallEffect:
 
 .fail_to_catch
 	ld [wWildMon], a
-	and a
-	jr z, .clear_prepared_sampled_cry
-	call PrepareBattleSampledCry
-	jr .prepared_sampled_cry
-
-.clear_prepared_sampled_cry
-	call ClearBattlePreparedSampledCry
-
-.prepared_sampled_cry
 	ld c, 20
 	call DelayFrames
 
@@ -565,6 +556,9 @@ PokeBallEffect:
 	call ClearSprites
 
 	predef TryAddMonToParty
+	jr nc, .discovery_party_done
+	move_discovery_hook MoveDiscovery_LastParty
+.discovery_party_done
 
 	farcall SetCaughtData
 
@@ -621,6 +615,9 @@ PokeBallEffect:
 	call ClearSprites
 
 	predef SendMonIntoBox
+	jr nc, .discovery_box_done
+	move_discovery_hook MoveDiscovery_FirstBox
+.discovery_box_done
 
 	farcall SetBoxMonCaughtData
 
@@ -1095,6 +1092,7 @@ Text_GotchaMonWasCaught:
 	push bc
 	ld de, MUSIC_NONE
 	call PlayMusic
+	farcall BattleSpeed_CaptureHandoff
 	call DelayFrame
 	ld de, MUSIC_CAPTURE
 	call PlayMusic

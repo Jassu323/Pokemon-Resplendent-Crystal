@@ -1,0 +1,81 @@
+--- a/engine/pokedex/pokedex_detail.asm
++++ b/engine/pokedex/pokedex_detail.asm
+@@ -248,9 +248,14 @@
+ 	ld hl, wPokedexSelectedGeneration
+ 	inc [hl]
+ 	call Pokedex_CancelAnimationPrefetch
++	; Area uses ordinary tile requests, not Selected's publication dispatcher.
++	xor a
++	ldh [hVBlank], a
+ 	call PokedexSelectedMon_BeginHiddenTransition
+ 	xor a
+ 	ldh [hSCX], a
++	ldh [hSCY], a
++	ldh [rVBK], a
+ 	ld a, $7
+ 	ldh [hWX], a
+ 	ld a, $90
+@@ -262,6 +267,7 @@
+ 	ld e, a
+ 	predef Pokedex_GetArea
+ 
++.map_returned
+ 	call PokedexSelectedMon_BeginHiddenTransition
+ 	ld a, $90
+ 	ldh [hWY], a
+--- a/engine/pokedex/pokedex_3.asm
++++ b/engine/pokedex/pokedex_3.asm
+@@ -1283,6 +1283,8 @@
+ .lower_ready
+ 	ld a, [wPokedexSelectedState]
+ 	cp DEXSELECT_STATE_SWITCHING_SPECIES
++	jr z, .internal
++	cp DEXSELECT_STATE_AREA_ACTIVE
+ 	jr z, .internal
+ 	cp DEXSELECT_STATE_ENTERING
+ 	jr nz, .publish
+--- a/engine/pokegear/pokegear.asm
++++ b/engine/pokegear/pokegear.asm
+@@ -2361,13 +2361,18 @@
+ 	call TownMapPals
+ 	hlbgcoord 0, 0
+ 	call TownMapBGUpdate
+-	ld b, SCGB_POKEGEAR_PALS
+-	call GetSGBLayout
+-	call SetDefaultBGPAndOBP
+ 	xor a
+ 	ldh [hBGMapMode], a
+ 	xor a ; JOHTO_REGION
+ 	call .GetAndPlaceNest
++	; Both region maps and the initial markers are complete before revealing.
++	farcall PokedexArea_LoadObjectPals
++	ld b, SCGB_POKEGEAR_PALS
++	call GetSGBLayout
++	call SetDefaultBGPAndOBP
++	xor a
++	ldh [hOAMUpdate], a
++	call DelayFrame
+ .loop
+ 	call JoyTextDelay
+ 	ld hl, hJoyPressed
+--- a/engine/gfx/color.asm
++++ b/engine/gfx/color.asm
+@@ -1747,6 +1747,18 @@
+ INCLUDE "data/pokemon/palettes.asm"
+ 
+ INCLUDE "data/trainers/palettes.asm"
++
++PokedexArea_LoadObjectPals::
++; Selected's type badges use the original red/blue OBJ slots.
++	ld a, [wTimeOfDayPal]
++	maskbits NUM_DAYTIMES
++	ld bc, 8 palettes
++	ld hl, MapObjectPals
++	call AddNTimes
++	ld de, wOBPals1
++	ld bc, 2 palettes
++	ld a, BANK(wOBPals1)
++	jp FarCopyWRAM
+ 
+ LoadMapPals:
+ 	farcall LoadSpecialMapPalette

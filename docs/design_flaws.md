@@ -14,7 +14,7 @@ These are parts of the code that do not work *incorrectly*, like [bugs and glitc
 - [The 6-bit caught level can only record up to level 63](#the-6-bit-caught-level-can-only-record-up-to-level-63)
 - [Identical sine wave code and data is repeated five times](#identical-sine-wave-code-and-data-is-repeated-five-times)
 - [`GetForestTreeFrame` works, but it's still bad](#getforesttreeframe-works-but-its-still-bad)
-- [The overworld scripting engine assumes no more than 127 banks](#the-overworld-scripting-engine-assumes-no-more-than-127-banks)
+- [Fixed: the overworld scripting engine assumes no more than 127 banks](#fixed-the-overworld-scripting-engine-assumes-no-more-than-127-banks)
 
 
 ## Pic banks are offset by `PICS_FIX`

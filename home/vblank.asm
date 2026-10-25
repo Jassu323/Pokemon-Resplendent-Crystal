@@ -32,6 +32,7 @@ VBlank::
 	pop de
 	pop bc
 	pop af
+.return
 	reti
 
 VBlankHandlers:
@@ -44,11 +45,69 @@ VBlankHandlers:
 	dw VBlank_Serial
 	dw VBlank_Credits
 	dw VBlank_DMATransfer
-	dw VBlank_Normal ; unused
+	dw VBlank_Pokedex
 	assert_table_length NUM_VBLANK_HANDLERS
+
+VBlank_Pokedex:
+	; Bit 4 tags the Type-only use of existing mode 7. No other IRQ pays this.
+	ldh a, [hVBlank]
+	bit 4, a
+	jr nz, .types
+; Let the Listing animate its resident mini-sprites while synchronous
+; frontpic preparation is running. Selection and scrolling transactions lock
+; OAM and perform their own final frame synchronization.
+; Avoid FarCall's shared scratch because this interrupt may occur inside an
+; unrelated farcall. The outer VBlank entry already preserves all registers.
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(Pokedex_VBlankGridIconAnimation)
+	rst Bankswitch
+	call Pokedex_VBlankDispatch
+	pop af
+	rst Bankswitch
+	jp VBlank_Normal
+.types
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_VBlank)
+	rst Bankswitch
+	call PokedexTypes_VBlank
+	pop af
+	rst Bankswitch
+	ret
+
+PokedexTypes_UpdateSound::
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_AudioUpdate)
+	rst Bankswitch
+	call PokedexTypes_AudioUpdate
+	pop af
+	rst Bankswitch
+	ret
+
+PokedexTypes_AudioYield::
+	push af
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(PokedexTypes_Yield)
+	rst Bankswitch
+	call PokedexTypes_Yield
+	pop af
+	rst Bankswitch
+	pop af
+	ret
 
 VBlank_Normal::
 ; normal operation
+; TIMING CONTRACT: DO NOT ADD OVERHEAD TO ORDINARY VBLANK WORK/DISPATCH.
+; Even an inactive-owner check changes battle setup/cleanup frame alignment.
+; Scripts use VBlank_CutsceneCGB, but surrounding VBlank_Normal still matters.
+; A Type-page check added 32 T-cycles here plus 20 per active LCD interrupt:
+; 314/333 moves changed duration despite identical logical animation updates.
+; Type-only EI was not taken in battle; rejecting its check still cost time.
+; Preserve budgets; verify physical timing, both sides, phases and owner exits.
+; Evidence and acceptance: docs/battle_animation_interrupt_timing_contract.md
 
 ; rng
 ; scx, scy, wy, wx
@@ -81,6 +140,9 @@ VBlank_Normal::
 	ldh a, [hROMBank]
 	ldh [hROMBankBackup], a
 
+	ldh a, [hVBlank]
+	add a ; owner bit 7 into carry; keep ordinary graphics on the short path
+	jp c, NewDexEntry_VBlankDispatch
 	ldh a, [hSCX]
 	ldh [rSCX], a
 	ldh a, [hSCY]
@@ -89,6 +151,7 @@ VBlank_Normal::
 	ldh [rWY], a
 	ldh a, [hWX]
 	ldh [rWX], a
+.viewport_owned
 
 	; There's only time to call one of these in one vblank.
 	; Calls are in order of priority.
@@ -114,7 +177,6 @@ VBlank_Normal::
 	jr nz, .done_oam
 	call hTransferShadowOAM
 .done_oam
-
 	; vblank-sensitive operations are done
 
 	xor a
@@ -180,6 +242,11 @@ VBlank_Cutscene::
 	ldh a, [hSCY]
 	ldh [rSCY], a
 
+	call DMATransfer
+	jr nc, .no_dma
+	xor a
+	ldh [rVBK], a
+.no_dma
 	call UpdatePals
 	jr c, .done
 
@@ -264,6 +331,11 @@ VBlank_CutsceneCGB::
 	ldh a, [hSCY]
 	ldh [rSCY], a
 
+	call DMATransfer
+	jr nc, .no_dma
+	xor a
+	ldh [rVBK], a
+.no_dma
 	ldh a, [hCGBPalUpdate]
 	and a
 	call nz, ForceUpdateCGBPals

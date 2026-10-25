@@ -210,6 +210,10 @@ INCLUDE "engine/rtc/rtc.asm"
 INCLUDE "engine/overworld/overworld.asm"
 INCLUDE "engine/overworld/tile_events.asm"
 INCLUDE "engine/menus/save.asm"
+INCLUDE "engine/pokedex/move_discovery.asm"
+INCLUDE "engine/pokedex/move_acquisition.asm"
+INCLUDE "engine/pokedex/move_battle_use.asm"
+INCLUDE "engine/pokedex/move_pokedex_gift.asm"
 INCLUDE "engine/overworld/spawn_points.asm"
 INCLUDE "engine/overworld/map_setup.asm"
 INCLUDE "engine/events/pokecenter_pc.asm"
@@ -308,6 +312,71 @@ INCLUDE "data/moves/moves.asm"
 INCLUDE "engine/pokemon/evolve.asm"
 
 
+SECTION "Pokedex Animation", ROMX
+
+INCLUDE "engine/pokedex/pokedex_animation.asm"
+INCLUDE "engine/pokedex/pokedex_animation_policy.asm"
+INCLUDE "engine/pokedex/pokedex_detail.asm"
+INCLUDE "engine/pokedex/pokedex_description.asm"
+INCLUDE "engine/pokedex/pokedex_description_text.asm"
+INCLUDE "engine/pokedex/pokedex_description_pages.asm"
+INCLUDE "gfx/pokemon/dex_animation_plan_pointers.asm"
+INCLUDE "gfx/pokemon/dex_animation_plans.asm"
+INCLUDE "gfx/pokemon/dex_animation_timelines.asm"
+INCLUDE "engine/pokedex/pokedex_animation_timeline.asm"
+INCLUDE "engine/pokedex/new_dex_entry_animation.asm"
+INCLUDE "engine/gfx/new_dex_entry_pics.asm"
+
+SECTION "Pokedex Info", ROMX
+INCLUDE "engine/pokedex/pokedex_info.asm"
+INCLUDE "engine/pokedex/pokedex_ancestors.asm"
+INCLUDE "engine/pokedex/performance_queue.asm"
+INCLUDE "engine/pokedex/performance_admission.asm"
+INCLUDE "engine/pokedex/performance_retained.asm"
+INCLUDE "build/dex-info-assets/tables.asm"
+
+SECTION "Pokedex Info Glyphs", ROMX
+PokedexInfoTileGFX:
+INCBIN "build/dex-info-assets/tiles.2bpp"
+PokedexInfoTileGFXEnd:
+ASSERT PokedexInfoTileGFXEnd - PokedexInfoTileGFX <= $4000
+PokedexInfoTitleGFX:
+INCBIN "build/dex-info-assets/titles.2bpp", 0, 16 tiles
+PokedexInfoTitleGFXEnd:
+ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
+PokedexInfoAncestorTitleGFX:
+INCBIN "build/dex-info-assets/titles.2bpp", 16 tiles, 13 tiles
+PokedexInfoAncestorTitleGFXEnd:
+ASSERT PokedexInfoAncestorTitleGFXEnd - PokedexInfoAncestorTitleGFX == 13 tiles
+INCLUDE "build/dex-info-assets/numbers.asm"
+
+INCLUDE "engine/pokedex/performance_fast.asm"
+
+SECTION "Dex Performance Index", ROMX, BANK[$b9]
+INCLUDE "engine/pokedex/performance_indexed.asm"
+
+SECTION "Pokedex Legacy", ROMX, BANK[$ba]
+INCLUDE "engine/pokedex/pokedex_legacy.asm"
+INCLUDE "engine/pokedex/pokedex_popover.asm"
+INCLUDE "engine/pokedex/pokedex_search.asm"
+INCLUDE "engine/pokedex/pokedex_moves_mode.asm"
+INCLUDE "engine/pokedex/pokedex_search_results.asm"
+
+SECTION "Pokedex Moves", ROMX
+INCLUDE "engine/pokedex/pokedex_moves.asm"
+
+SECTION "Pokedex Unown Static", ROMX
+INCLUDE "engine/pokedex/pokedex_unown_static.asm"
+
+SECTION "Pokedex Type Matchups", ROMX
+INCLUDE "engine/pokedex/pokedex_types_mode7_config.asm"
+INCLUDE "engine/pokedex/pokedex_types.asm"
+INCLUDE "engine/pokedex/pokedex_types_mode7.asm"
+
+SECTION "Pokedex Moves Index", ROMX
+INCLUDE "build/dex-moves-assets/tables.asm"
+
+
 SECTION "bank11", ROMX
 
 INCLUDE "engine/events/fruit_trees.asm"
@@ -394,6 +463,7 @@ INCLUDE "engine/link/init_list.asm"
 INCLUDE "engine/pokemon/experience.asm"
 INCLUDE "engine/pokemon/switchpartymons.asm"
 INCLUDE "engine/gfx/load_pics.asm"
+INCLUDE "engine/pokedex/pokedex_unown_decode.asm"
 INCLUDE "engine/pokemon/move_mon_wo_mail.asm"
 INCLUDE "data/pokemon/base_stats.asm"
 INCLUDE "data/pokemon/names.asm"
@@ -903,11 +973,13 @@ INCLUDE "data/moves/names.asm"
 INCLUDE "engine/overworld/landmarks.asm"
 
 
-SECTION "bank77", ROMX
+SECTION FRAGMENT "bank77", ROMX
 
 INCLUDE "engine/rtc/print_hours_mins.asm"
 INCLUDE "engine/events/diploma.asm"
 INCLUDE "engine/pokedex/pokedex_3.asm"
+INCLUDE "engine/pokedex/performance_no_lookahead.asm"
+INCLUDE "engine/pokedex/pokedex_info_publish.asm"
 INCLUDE "engine/events/catch_tutorial_input.asm"
 INCLUDE "engine/pokegear/townmap_convertlinebreakcharacters.asm"
 

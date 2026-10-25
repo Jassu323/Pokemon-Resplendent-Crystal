@@ -184,6 +184,10 @@ BattleMoveInfo_RestoreBattleAttrsGFX::
 	ld a, PAL_BATTLE_BG_EXP
 	ld [hli], a
 	ld [hl], a
+	hlcoord 9, 11, wAttrmap
+	ld [hli], a
+	ld [hli], a
+	ld [hl], a
 	ret
 
 BattleMenuGraphic_LoadGraphics:

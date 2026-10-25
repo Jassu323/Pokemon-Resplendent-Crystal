@@ -546,6 +546,13 @@ ReadMonMenuIcon:
 	ld a, [hl]
 	ret
 
+ReadMonMenuIconForPokedex:
+; Pass the species and palette through registers that survive a far call.
+	ld a, c
+	call ReadMonMenuIcon
+	ld c, a
+	ret
+
 INCLUDE "data/pokemon/menu_icons.asm"
 
 INCLUDE "gfx/icons.asm"

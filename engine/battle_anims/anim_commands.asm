@@ -330,6 +330,31 @@ BattleAnimRequestPals:
 
 BattleAnimDelayFrame:
 ; Like DelayFrame but wastes battery life.
+	ld a, [wBattleFrontpicProducerState]
+	and a
+	jr z, .wait_without_producer
+	ldh a, [rVBK]
+	push af
+	farcall BattleFrontpicProducer_Service
+.wait_for_producer_transfer
+	call .wait_for_vblank
+	ldh a, [hDMATransfer]
+	and a
+	jr z, .producer_transfer_done
+	ld a, [wBattleFrontpicProducerTransferBank]
+	ldh [rVBK], a
+	jr .wait_for_producer_transfer
+
+.producer_transfer_done
+	pop af
+	ldh [rVBK], a
+	ret
+
+.wait_without_producer
+	call .wait_for_vblank
+	ret
+
+.wait_for_vblank
 
 	ld a, 1
 	ld [wVBlankOccurred], a
@@ -341,7 +366,6 @@ BattleAnimDelayFrame:
 	jr .wait
 
 .done_wait
-	call ServicePreparedBattleSampledCryAsync
 	call ServiceSampledCryAsync
 	ret
 

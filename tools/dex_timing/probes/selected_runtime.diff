@@ -1,0 +1,764 @@
+--- a/main.asm
++++ b/main.asm
+@@ -328,21 +328,17 @@
+ 
+ SECTION "Pokedex Info", ROMX
+ INCLUDE "engine/pokedex/pokedex_info.asm"
++INCLUDE "engine/pokedex/pokedex_runtime_graphics.asm"
++INCLUDE "engine/pokedex/pokedex_runtime_data.asm"
+ INCLUDE "engine/pokedex/performance_queue.asm"
+ INCLUDE "engine/pokedex/performance_admission.asm"
+ INCLUDE "engine/pokedex/performance_retained.asm"
+ INCLUDE "engine/pokedex/performance_idle.asm"
+-INCLUDE "build/dex-info-assets/tables.asm"
+ 
+ SECTION "Pokedex Info Glyphs", ROMX
+-PokedexInfoTileGFX:
+-INCBIN "build/dex-info-assets/tiles.2bpp"
+-PokedexInfoTileGFXEnd:
+-ASSERT PokedexInfoTileGFXEnd - PokedexInfoTileGFX <= $4000
+-PokedexInfoTitleGFX:
+-INCBIN "build/dex-info-assets/titles.2bpp"
+-PokedexInfoTitleGFXEnd:
+-ASSERT PokedexInfoTitleGFXEnd - PokedexInfoTitleGFX == 16 tiles
++PokedexRuntimeBarGFX:
++INCBIN "gfx/pokedex/dex_stat_bar.2bpp", 0, TILE_SIZE
++INCBIN "gfx/pokedex/dex_stat_bar.2bpp", 4 tiles, 6 tiles
+ 
+ INCLUDE "engine/pokedex/performance_fast.asm"
+ 
+@@ -368,7 +364,7 @@
+ INCLUDE "engine/pokedex/pokedex_types_mode7.asm"
+ 
+ SECTION "Pokedex Moves Index", ROMX
+-INCLUDE "build/dex-moves-assets/tables.asm"
++INCLUDE "build/dex-runtime-display-assets/shared-name-pointers.asm"
+ 
+ 
+ SECTION "bank11", ROMX
+--- a/ram/wram.asm
++++ b/ram/wram.asm
+@@ -3600,7 +3600,10 @@
+ wPokedexDescriptionTextChunkEnd::
+ 	ds 14 ; align the reusable lower-panel GDMA payload
+ wPokedexInfoGFX:: ds 40 * TILE_SIZE
+-wPokedexInfoMiniGFX:: ds 16 * TILE_SIZE
++wPokedexInfoMiniGFX::
++wPokedexRuntimePreviousGlyph:: ds 16
++wPokedexRuntimeNumberSources:: ds 4 * 2
++	ds 16 * TILE_SIZE - 24
+ wPokedexInfoOAM:: ds 8 * 4
+ wPokedexInfoTileSources:: ds 40 * 2
+ wPokedexInfoState:: db
+@@ -3629,8 +3632,13 @@
+ wPokedexInfoPalette:: db
+ wPokedexInfoScratch:: db
+ wPokedexInfoRestoreDescription:: db
++wPokedexRuntimeRows::
++wPokedexRuntimePreviousChar::
++wPokedexRuntimeTextReady::
+ wPokedexInfoLineRemaining:: db
+-wPokedexInfoLineSource:: dw
++wPokedexInfoLineSource::
++wPokedexRuntimePhase:: db
++wPokedexRuntimeBits:: db
+ ; Committed pages survive cancellation and reuse of the inactive workspaces.
+ ; Each atlas retains seven map rows, forty ROM glyph pointers and its count.
+ wPokedexInfoReturnRecordA:: ds 7 * TILEMAP_WIDTH + 40 * 2 + 1
+@@ -3651,10 +3659,49 @@
+ wPokedexBadgeGFX:: ds 2 * TILE_SIZE
+ wPokedexInfoPendingPage:: db
+ wPokedexPerfRetainedInfo:: db
++wPokedexRuntimeReturnRepair:: db
++wPokedexRuntimeGlyph:: ds 8
++wPokedexRuntimeTile:: ds TILE_SIZE
++wPokedexRuntimeHash:: dw
++wPokedexRuntimeBarWidth:: db
++wPokedexRuntimeBarMask:: db
++wPokedexRuntimeDigits:: ds 3
++wPokedexRuntimeNumberTile:: db
++wPokedexRuntimeEvoCount:: db
++wPokedexRuntimeTarget:: dw
++wPokedexRuntimeLevelBank:: db
++wPokedexRuntimeLevelSource:: dw
++wPokedexRuntimeTextBuffer:: ds 32
++wPokedexRuntimeTextSource:: dw
++wPokedexRuntimeTextX:: db
++wPokedexRuntimeTextCompact:: db
++wPokedexRuntimeTextTile:: db
++wPokedexRuntimeTextTiles:: db
++wPokedexRuntimeGlyphMin:: db
++wPokedexRuntimeGlyphWidth:: db
++wPokedexRuntimeStatCompare:: db
++wPokedexRuntimeItemRemaining:: db
++wPokedexRuntimeItemSource:: dw
++wPokedexRuntimeTextAppend:: dw
++wPokedexRuntimeTextState:: db
++wPokedexRuntimeDrawPointer:: dw
++wPokedexRuntimeGlyphRow:: db
++wPokedexRuntimeLine:: ds 16 * 8
+ wPokedexInfoWorkspaceEnd::
+-ASSERT wPokedexInfoWorkspaceEnd <= $dc00
++ASSERT wPokedexInfoWorkspaceEnd <= $dc40
+ ASSERT LOW(wPokedexInfoGFX) & $f == 0
+ ASSERT LOW(wPokedexInfoMiniGFX) & $f == 0
++
++SECTION "Pokedex Runtime Cache", WRAMX[$d950], BANK[5]
++wPokedexRuntimeEvoRecords:: ds 36 * 5
++wPokedexRuntimeVisibleBGFX:: ds 40 * TILE_SIZE
++wPokedexRuntimeParents:: ds NUM_POKEMON * 2
++wPokedexRuntimeMovesStreams:: ds 4 * 4
++wPokedexRuntimeTMs:: ds NUM_TMS + NUM_HMS
++wPokedexRuntimeTutors:: ds NUM_TUTORS
++wPokedexRuntimeMovesPages:: db
++wPokedexRuntimeCacheEnd::
++ASSERT wPokedexRuntimeCacheEnd <= $e000
+ 
+ 
+ SECTION "Sampled Cry RAM", WRAMX
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -130,6 +130,7 @@
+ 	const POKEDEX_INFO_INITIALIZE
+ 	const POKEDEX_INFO_MINI_UPLOAD
+ 	const POKEDEX_INFO_RECORD
++	const POKEDEX_INFO_RUNTIME_NUMBER
+ DEF POKEDEX_RENDER_KEY_UNSEEN  EQU -1
+ 
+ DEF POKEDEX_GRID_ICON_ANIM_FRAME_F EQU 3
+--- a/engine/pokedex/pokedex_info.asm
++++ b/engine/pokedex/pokedex_info.asm
+@@ -2,26 +2,7 @@
+-; Font composition and evolution traversal are build-time work, not playback.
++; Runtime composition and native traversal stay outside shared interrupt paths.
+ 
+ PokedexInfo_LoadTitleGFX:
+-; Dex startup has the LCD off. These sixteen cells are unused font gaps.
+-	ldh a, [rVBK]
+-	push af
+-	xor a
+-	ldh [rVBK], a
+-	ld de, PokedexInfoTitleGFX
+-	ld hl, vTiles1 tile $4a
+-	lb bc, BANK(PokedexInfoTitleGFX), 6
+-	call Get2bpp
+-	ld de, PokedexInfoTitleGFX + 6 tiles
+-	ld hl, vTiles1 tile $57
+-	lb bc, BANK(PokedexInfoTitleGFX), 8
+-	call Get2bpp
+-	ld de, PokedexInfoTitleGFX + 14 tiles
+-	ld hl, vTiles1 tile $64
+-	lb bc, BANK(PokedexInfoTitleGFX), 2
+-	call Get2bpp
+-	pop af
+-	ldh [rVBK], a
+-	ret
++	jp PokedexRuntime_LoadTitles
+ 
+ PokedexInfo_Reset:
+ 	ldh a, [rSVBK]
+@@ -234,6 +215,8 @@
+ 	ld [wPokedexInfoMiniCount], a
+ 	ld [wPokedexInfoRestoreDescription], a
+ 	ld [wPokedexInfoLineRemaining], a
++	ld [wPokedexRuntimeTextState], a
++	ld [wPokedexRuntimeReturnRepair], a
+ 	ld a, [wPokedexInfoActiveAtlasBuffer]
+ 	xor 1
+ 	ld [wPokedexInfoAtlasBuffer], a
+@@ -244,26 +227,15 @@
+ 	ld a, [wPokedexInfoActiveMiniBuffer]
+ 	xor 1
+ 	ld [wPokedexInfoMiniBuffer], a
+-	ld a, [wPrevDexEntry]
+-	ld l, a
+-	ld a, [wPrevDexEntry + 1]
+-	ld h, a
+-	dec hl
+-	ld d, h
+-	ld e, l
+-	add hl, hl
+-	add hl, de
+-	ld de, PokedexInfoSpecies
+-	add hl, de
+-	inc hl
+-	ld a, [hli]
+-	ld h, [hl]
+-	ld l, a
++	ld hl, wPokedexRuntimeEvoRecords
+ 	ld a, [wPokedexInfoPage]
+ 	and a
+ 	jr z, .list
+ 	dec a
++	ld e, a
+ 	add a
++	add a
++	add e
+ 	add a
+ 	ld e, a
+ 	ld d, 0
+@@ -296,18 +268,8 @@
+ 	ldh [rSVBK], a
+ 	ld a, c
+ 	ld [wPokedexInfoCaught], a
+-	ld a, [wPrevDexEntry]
+-	ld l, a
+-	ld a, [wPrevDexEntry + 1]
+-	ld h, a
+-	dec hl
+-	ld d, h
+-	ld e, l
+-	add hl, hl
+-	add hl, de
+-	ld de, PokedexInfoSpecies
+-	add hl, de
+-	ld a, [hli]
++	call PokedexRuntime_PrepareData
++	ld a, [wPokedexRuntimeEvoCount]
+ 	inc a
+ 	srl a
+ 	inc a
+@@ -339,6 +301,8 @@
+ 
+ PokedexInfo_Step:
+ 	ld a, [wPokedexInfoState]
++	cp POKEDEX_INFO_RUNTIME_NUMBER
++	jp z, PokedexRuntime_NumberStep
+ 	cp POKEDEX_INFO_INITIALIZE
+ 	jp z, PokedexInfo_Initialize
+ 	cp POKEDEX_INFO_CLEAR
+@@ -440,12 +404,10 @@
+ 	ld a, [wPokedexInfoRow]
+ 	and a
+ 	jr nz, .row
+-	ld hl, PokedexInfoShared
+-	ld de, wPokedexInfoTileSources
+-	ld bc, POKEDEX_INFO_SHARED_TILES * 2
+-	call CopyBytes
+-	ld a, POKEDEX_INFO_SHARED_TILES
+-	ld [wPokedexInfoTileCount], a
++	ld a, [wPokedexInfoTileCount]
++	cp POKEDEX_INFO_SHARED_TILES
++	jr nc, .row
++	jp PokedexRuntime_BuildShared
+ .row
+ 	ld a, [wPokedexInfoRow]
+ 	ld e, a
+@@ -502,14 +464,12 @@
+ .next_label
+ 	dec b
+ 	jr nz, .label
+-	ld a, [wPokedexInfoScratch]
+-	ld l, a
+-	ld h, 0
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	ld de, PokedexInfoNumbers
+-	add hl, de
++	call PokedexRuntime_StartNumbers
++	ld a, POKEDEX_INFO_RUNTIME_NUMBER
++	ld [wPokedexInfoState], a
++	ret
++.numbers
++	ld hl, wPokedexRuntimeNumberSources
+ 	ld b, 4
+ .number
+ 	ld a, [hli]
+@@ -580,6 +540,8 @@
+ 	ld [hl], OAM_BANK1 | 4
+ .next
+ 	ld hl, wPokedexInfoRow
++	ld a, POKEDEX_INFO_PLAN
++	ld [wPokedexInfoState], a
+ 	inc [hl]
+ 	ld a, [hl]
+ 	cp 6
+@@ -612,27 +574,7 @@
+ 	ret
+ 
+ PokedexInfo_NewTile:
+-; de = ROM tile source. No allocator-owned species IDs survive here.
+-	ld hl, wPokedexInfoTileSources
+-	ld a, [wPokedexInfoTileCount]
+-	ld b, a
+-	ld c, 0
+-.find
+-	ld a, b
+-	and a
+-	jr z, .new
+-	ld a, [hli]
+-	cp e
+-	ld a, [hli]
+-	jr nz, .next
+-	cp d
+-	jr nz, .next
+-	ld a, c
+-	jr PokedexInfo_ExistingTile
+-.next
+-	inc c
+-	dec b
+-	jr .find
++	jp PokedexRuntime_NewTile
+ .new
+ 	ld a, [wPokedexInfoTileCount]
+ 	push af
+@@ -712,42 +654,37 @@
+ 	add a
+ 	add b
+ 	ld b, a
+-	ld a, [wPrevDexEntry]
+-	ld l, a
+-	ld a, [wPrevDexEntry + 1]
+-	ld h, a
+-	dec hl
+-	ld d, h
+-	ld e, l
+-	add hl, hl
+-	add hl, de
+-	ld de, PokedexInfoSpecies
+-	add hl, de
+-	ld a, b
++	ld a, b
++	ld hl, wPokedexRuntimeEvoCount
+ 	cp [hl]
+ 	jp nc, .copy
+ 	ld a, [wPokedexInfoEvolutionList]
+ 	ld l, a
+ 	ld a, [wPokedexInfoEvolutionList + 1]
+ 	ld h, a
+-	ld a, [hli]
++	ld a, BANK(wPokedexRuntimeEvoRecords)
++	call GetFarWRAMByte
++	inc hl
+ 	ld e, a
+-	ld a, [hli]
+-	ld d, a
+-	ld a, l
+-	ld [wPokedexInfoEvolutionList], a
+-	ld a, h
+-	ld [wPokedexInfoEvolutionList + 1], a
+-	ld h, d
+-	ld l, e
+-	ld a, [hli]
+-	ld e, a
+-	ld a, [hli]
++	ld a, BANK(wPokedexRuntimeEvoRecords)
++	call GetFarWRAMByte
++	inc hl
+ 	ld d, a
+ 	ld a, l
+ 	ld [wPokedexInfoEvolutionRecord], a
+ 	ld a, h
+ 	ld [wPokedexInfoEvolutionRecord + 1], a
++	ld a, e
++	ld [wPokedexRuntimeTarget], a
++	ld a, d
++	ld [wPokedexRuntimeTarget + 1], a
++	inc hl
++	inc hl
++	inc hl
++	ld a, l
++	ld [wPokedexInfoEvolutionList], a
++	ld a, h
++	ld [wPokedexInfoEvolutionList + 1], a
+ 	ld h, d
+ 	ld l, e
+ 	call GetPokemonIDFromIndex
+@@ -777,21 +714,9 @@
+ 	ld [wPokedexInfoState], a
+ 	ret
+ .text
+-	ld a, [wPokedexInfoLineRemaining]
++	ld a, [wPokedexRuntimeTextState]
+ 	and a
+ 	jr nz, .continue_text
+-	ld a, [wPokedexInfoEvolutionRecord]
+-	ld l, a
+-	ld a, [wPokedexInfoEvolutionRecord + 1]
+-	ld h, a
+-	ld a, [hli]
+-	ld e, a
+-	ld a, [hli]
+-	ld d, a
+-	ld a, l
+-	ld [wPokedexInfoEvolutionRecord], a
+-	ld a, h
+-	ld [wPokedexInfoEvolutionRecord + 1], a
+ 	ld a, [wPokedexInfoRow]
+ 	ld b, a
+ 	and 3
+@@ -804,53 +729,32 @@
+ .first_entry
+ 	add c
+ 	add 11
+-	push de
+ 	call PokedexInfo_RowCursor
+ 	call PokedexInfo_BlankCell
+ 	call PokedexInfo_BlankCell
+ 	call PokedexInfo_BlankCell
+ 	ld a, 1
+ 	ld [wPokedexInfoPalette], a
+-	pop hl
+-	ld b, [hl]
+-	inc hl
+-	ld a, l
+-	ld [wPokedexInfoLineSource], a
+-	ld a, h
+-	ld [wPokedexInfoLineSource + 1], a
+-	ld a, b
+-	ld [wPokedexInfoLineRemaining], a
++	ld a, [wPokedexInfoRow]
++	and 3
++	cp 1
++	jp z, PokedexRuntime_NameText
++	jp PokedexRuntime_RequirementText
+ .continue_text
+-	ld a, [wPokedexInfoLineSource]
+-	ld l, a
+-	ld a, [wPokedexInfoLineSource + 1]
+-	ld h, a
+-	ld b, 4
+-.glyph
+-	ld a, [wPokedexInfoLineRemaining]
+-	and a
+-	jr z, .next
+-	ld a, [hli]
+-	ld e, a
+-	ld d, [hl]
+-	inc hl
+-	push hl
+-	push bc
+-	call PokedexInfo_NewTile
+-	pop bc
+-	pop hl
+-	ld a, l
+-	ld [wPokedexInfoLineSource], a
+-	ld a, h
+-	ld [wPokedexInfoLineSource + 1], a
+-	push hl
+-	ld hl, wPokedexInfoLineRemaining
+-	dec [hl]
+-	pop hl
+-	jr z, .next
+-	dec b
+-	jr nz, .glyph
+-	ret
++	cp 1
++	jp z, PokedexRuntime_ItemTextStep
++	cp 2
++	jr nz, .tiles
++	call PokedexRuntime_TextGlyphStep
++	ld a, [wPokedexRuntimeTextState]
++	cp 2
++	ret nz
++	jp PokedexRuntime_TextGlyphStep
++.tiles
++	call PokedexRuntime_TextTileStep
++	jr c, .next
++	call PokedexRuntime_TextTileStep
++	ret nc
+ .next
+ 	ld hl, wPokedexInfoRow
+ 	inc [hl]
+@@ -978,51 +882,9 @@
+ 	ret
+ 
+ PokedexInfo_CopyTiles:
+-	farcall PokedexPerf_FastCopyTiles
+-	ret
++	jp PokedexRuntime_CopyTiles
+ PokedexInfo_CopyTiles_Legacy:
+-	ld b, 8
+-.tile
+-	ld a, [wPokedexInfoCopyTile]
+-	ld c, a
+-	ld a, [wPokedexInfoTileCount]
+-	cp c
+-	jr z, .ready
+-	push bc
+-	ld a, c
+-	add a
+-	ld l, a
+-	ld h, 0
+-	ld de, wPokedexInfoTileSources
+-	add hl, de
+-	ld a, [hli]
+-	ld h, [hl]
+-	ld l, a
+-	push hl
+-	ld h, 0
+-	ld l, c
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	ld de, wPokedexInfoGFX
+-	add hl, de
+-	ld d, h
+-	ld e, l
+-	pop hl
+-	ld bc, TILE_SIZE
+-	ld a, BANK(PokedexInfoTileGFX)
+-	call FarCopyBytes
+-	ld hl, wPokedexInfoCopyTile
+-	inc [hl]
+-	pop bc
+-	dec b
+-	jr nz, .tile
+-	ret
+-.ready
+-	ld a, POKEDEX_INFO_UPLOAD
+-	ld [wPokedexInfoState], a
+-	ret
++	jp PokedexRuntime_CopyTiles
+ 
+ PokedexInfo_UploadTiles:
+ ; At most eight already-copied glyphs into the inactive atlas. Never overwrite
+--- a/engine/pokedex/pokedex_info_return.asm
++++ b/engine/pokedex/pokedex_info_return.asm
+@@ -112,6 +112,8 @@
+ 	ld [wPokedexInfoAtlasBuffer], a
+ 	ld [wPokedexInfoCopyTile], a
+ 	ld [wPokedexInfoUploadTile], a
++	inc a
++	ld [wPokedexRuntimeReturnRepair], a
+ .copy
+ 	ld a, [wPokedexInfoCopyTile]
+ 	ld hl, wPokedexInfoTileCount
+@@ -127,6 +129,8 @@
+ 	call PokedexInfo_UploadTiles
+ 	jr .upload
+ .remap
++	xor a
++	ld [wPokedexRuntimeReturnRepair], a
+ 	; Only atlas-B glyphs use low IDs here. Bank-0 shell/title/page cells
+ 	; have IDs >= 40; future lower renderers must retain this invariant.
+ 	ld de, wPokedexOwnerTilemapBuffer + 9 * TILEMAP_WIDTH
+--- a/engine/pokedex/performance_admission.asm
++++ b/engine/pokedex/performance_admission.asm
+@@ -49,4 +49,4 @@
+ 
+ PokedexPerf_InfoLatestLY:
+     ; idle, clear, plan, copy, upload, ready, initialize, mini, record
+-    db 0, 65, 81, 104, 87, 84, 113, 94, 108
++    db 0, 65, 81, 104, 87, 84, 113, 94, 108, 81
+--- a/engine/pokedex/performance_fast.asm
++++ b/engine/pokedex/performance_fast.asm
+@@ -100,58 +100,7 @@
+ 	ret
+ 
+ PokedexPerf_FastCopyTiles:
+-; This function lives with the glyph pool, so bank switching occurs once.
+-	ld a, [wPokedexInfoCopyTile]
+-	ld c, a
+-	ld a, [wPokedexInfoTileCount]
+-	sub c
+-	jr z, .ready
+-	cp 9
+-	jr c, .count
+-	ld a, 8
+-.count
+-	ld b, a
+-	ld h, 0
+-	ld l, c
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	ld de, wPokedexInfoGFX
+-	add hl, de
+-	ld d, h
+-	ld e, l
+-	ld h, 0
+-	ld l, c
+-	add hl, hl
+-	ld a, LOW(wPokedexInfoTileSources)
+-	add l
+-	ld l, a
+-	ld a, HIGH(wPokedexInfoTileSources)
+-	adc h
+-	ld h, a
+-.tile
+-	ld a, [hli]
+-	ld c, [hl]
+-	inc hl
+-	push hl
+-	ld h, c
+-	ld l, a
+-REPT TILE_SIZE
+-	ld a, [hli]
+-	ld [de], a
+-	inc de
+-ENDR
+-	pop hl
+-	ld a, [wPokedexInfoCopyTile]
+-	inc a
+-	ld [wPokedexInfoCopyTile], a
+-	dec b
+-	jr nz, .tile
+-	ret
+-.ready
+-	ld a, POKEDEX_INFO_UPLOAD
+-	ld [wPokedexInfoState], a
++	farcall PokedexRuntime_CopyTiles
+ 	ret
+ 
+ PokedexPerf_TownPalTable:
+--- a/engine/pokedex/pokedex_moves.asm
++++ b/engine/pokedex/pokedex_moves.asm
+@@ -125,24 +125,11 @@
+ PokedexMoves_Initialize:
+ 	xor a
+ 	ld [wPokedexMovesRow], a
+-	ld a, [wPrevDexEntry]
+-	ld l, a
+-	ld a, [wPrevDexEntry + 1]
+-	ld h, a
+-	dec hl
+-	ld d, h
+-	ld e, l
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	add hl, hl
+-	add hl, de ; 17-byte record
+-	ld de, PokedexMovesSpecies
+-	add hl, de
+-	ld a, BANK(PokedexMovesSpecies)
+-	call GetFarByte
++	ld hl, wPokedexRuntimeMovesPages
++	ld a, BANK(wPokedexRuntimeMovesPages)
++	call GetFarWRAMByte
+ 	ld [wPokedexMovesPageCount], a
+-	inc hl
++	ld hl, wPokedexRuntimeMovesStreams
+ 	ld a, [wPokedexMovesPage]
+ 	ld [wPokedexMovesScratch], a
+ 	xor a
+@@ -157,8 +144,8 @@
+ 	ld [wPokedexMovesRemaining], a
+ 	jr .ready
+ .category
+-	ld a, BANK(PokedexMovesSpecies)
+-	call GetFarByte
++	ld a, BANK(wPokedexRuntimeMovesStreams)
++	call GetFarWRAMByte
+ 	ld [wPokedexMovesRemaining], a
+ 	ld b, 0
+ .pages
+@@ -197,12 +184,11 @@
+ .count
+ 	ld [wPokedexMovesRemaining], a
+ 	inc hl
+-	ld a, BANK(PokedexMovesSpecies)
+-	call GetFarByte
++	ld a, BANK(wPokedexRuntimeMovesStreams)
++	call GetFarWRAMByte
+ 	ld [wPokedexMovesSourceBank], a
+ 	inc hl
+-	ld a, BANK(PokedexMovesSpecies)
+-	call GetFarWord
++	call PokedexRuntime_ReadCacheWord
+ 	ld a, [wPokedexMovesCategory]
+ 	and a
+ 	ld b, 0
+@@ -301,7 +287,7 @@
+ 	ld a, [wPokedexMovesSource + 1]
+ 	ld h, a
+ 	ld a, [wPokedexMovesSourceBank]
+-	call GetFarByte
++	call PokedexRuntime_StreamByte
+ 	ld c, a
+ 	ld a, [wPokedexMovesCategory]
+ 	and a
+@@ -321,10 +307,10 @@
+ 	ld c, a
+ .machine
+ 	ld b, 0
+-	ld hl, PokedexMovesMachineMoves
++	ld hl, TMHMMoves
+ 	add hl, bc
+ 	add hl, bc
+-	ld a, BANK(PokedexMovesMachineMoves)
++	ld a, BANK(TMHMMoves)
+ 	call GetFarWord
+ 	ld d, h
+ 	ld e, l
+@@ -595,4 +581,21 @@
+ 	INCBIN "gfx/pokedex/pokedex_page_numbers_double_digits.2bpp"
+ PokedexBadgePermanentGFX:
+ 	INCBIN "gfx/pokedex/pokedex_page_numbers_double_digits.2bpp", 4 tiles, 2 tiles
+-	INCBIN "build/dex-moves-assets/level.2bpp"
++
++PokedexRuntime_ReadCacheWord:
++	push de
++	ld a, BANK(wPokedexRuntimeMovesStreams)
++	call GetFarWRAMByte
++	ld e, a
++	inc hl
++	ld a, BANK(wPokedexRuntimeMovesStreams)
++	call GetFarWRAMByte
++	ld h, a
++	ld l, e
++	pop de
++	ret
++
++PokedexRuntime_StreamByte:
++	bit 7, h
++	jp z, GetFarByte
++	jp GetFarWRAMByte
+--- a/engine/pokedex/pokedex_description.asm
++++ b/engine/pokedex/pokedex_description.asm
+@@ -27,8 +27,9 @@
+ 	call Get2bpp
+ 	ld de, PokedexBadgePermanentGFX
+ 	ld hl, vTiles2 tile $7b
+-	lb bc, BANK(PokedexBadgePermanentGFX), 3
++	lb bc, BANK(PokedexBadgePermanentGFX), 2
+ 	call Get2bpp
++	farcall PokedexRuntime_LoadLevelMarker
+ 	ld a, 1
+ 	ldh [rVBK], a
+ 	ld de, PokedexInfoHPEndpointGFX
+--- a/data/pokemon/evos_attacks.asm
++++ b/data/pokemon/evos_attacks.asm
+@@ -26,4 +26,3 @@
+ INCLUDE "data/pokemon/evos_attacks_kanto.asm"
+ INCLUDE "data/pokemon/evos_attacks_johto.asm"
+ INCLUDE "data/pokemon/evos_attacks_custom.asm"
+-INCLUDE "build/dex-moves-assets/evos_exports.asm"
+--- a/data/pokemon/egg_moves.asm
++++ b/data/pokemon/egg_moves.asm
+@@ -18,4 +18,3 @@
+ INCLUDE "data/pokemon/egg_moves_kanto.asm"
+ INCLUDE "data/pokemon/egg_moves_johto.asm"
+ INCLUDE "data/pokemon/egg_moves_custom.asm"
+-INCLUDE "build/dex-moves-assets/egg_exports.asm"
+--- a/Makefile
++++ b/Makefile
+@@ -168,6 +168,8 @@
+ 	@test -f $@ || python3 -B tools/pokedex_info_assets.py
+ build/dex-info-assets/titles.2bpp: build/dex-info-assets/tables.asm
+ 	@test -f $@ || python3 -B tools/pokedex_info_assets.py
++build/dex-runtime-display-assets/shared-name-pointers.asm: tools/pokedex_runtime_display_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm data/moves/names.asm $(wildcard data/pokemon/evos_attacks_*.asm)
++	python3 -B tools/pokedex_runtime_display_assets.py
+ define DEP
+ $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
+ 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<
+--- a/gfx/font.asm
++++ b/gfx/font.asm
+@@ -66,3 +66,5 @@
+ 
+ FontsExtra2_UpArrowGFX:
+ INCBIN "gfx/font/up_arrow.2bpp"
++
++INCLUDE "engine/pokedex/pokedex_runtime_font.asm"
+--- a/data/items/names.asm
++++ b/data/items/names.asm
+@@ -260,3 +260,5 @@
+ 	li "Teru-Sama"
+ 	li "?"
+ 	assert_list_length $100
++
++INCLUDE "engine/pokedex/pokedex_runtime_item_names.asm"

@@ -267,14 +267,8 @@ CopyMobileEZChatToC608:
 	ld bc, MON_NAME_LENGTH - 1
 	jr .copy_string
 
+; Retired EZ Chat screen; preserve the special entry ID. See docs/battle_tower_regression_suite.md.
 Function11c1ab:
-	ldh a, [hInMenu]
-	push af
-	ld a, $1
-	ldh [hInMenu], a
-	call Function11c1b9
-	pop af
-	ldh [hInMenu], a
 	ret
 
 Function11c1b9:
@@ -315,9 +309,6 @@ Function11c1b9:
 	ld de, vTiles2
 	ld bc, $60
 	call CopyBytes
-	ld hl, EZChatSlowpokeLZ
-	ld de, vTiles0
-	call Decompress
 	call EnableLCD
 	farcall HDMATransferTilemapAndAttrmap_Overworld
 	farcall ClearSpriteAnims
@@ -3232,8 +3223,6 @@ INCLUDE "data/pokemon/ezchat_order.asm"
 SelectStartGFX:
 INCBIN "gfx/mobile/select_start.2bpp"
 
-EZChatSlowpokeLZ:
-INCBIN "gfx/pokedex/slowpoke.2bpp.lz"
 
 MobileEZChatCategoryNames:
 ; entries correspond to EZCHAT_* constants

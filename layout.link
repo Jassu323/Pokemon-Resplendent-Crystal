@@ -96,6 +96,7 @@ ROMX $13
 	"bank13_2"
 ROMX $14
 	"bank14"
+	"New Dex Entry Pics"
 ROMX $15
 	"Map Scripts 1"
 ROMX $16
@@ -319,9 +320,8 @@ ROMX $72
 ROMX $73
 	"Pokedex Entries 129-192"
 ROMX $74
-	; Reserved for custom Pokedex entries and dex order data.
+	; Original final entries and dex order; custom prose uses overflow banks.
 	"Pokedex Entries 193-251"
-	"Pokedex Entries Custom"
 	"Pokedex Order"
 ROMX $75
 	"16-bit ID stuff"
@@ -496,15 +496,25 @@ ROMX $9f
 	"Battle Move Info GFX"
 ROMX $a0
 	; MBC30 high ROM bank.
-	; Reserved for front/back pic overflow.
+	; Reserved for front/back pic overflow and Dex animation streaming.
 	"Pics 29"
+	"Pokedex Animation"
 ROMX $a1
+	"Dex Animation Plans 1"
 ROMX $a2
+	"Dex Animation Plans 2"
 ROMX $a3
+	"Dex Animation Plans 3"
 ROMX $a4
+	"Sampled Cry Pair Lookup"
 ROMX $a5
+	"Dex Animation Timelines"
+	"Dex Animation Timeline Reader"
+	"New Dex Entry Animation"
 ROMX $a6
+	"Pokedex Info"
 ROMX $a7
+	"Pokedex Info Glyphs"
 ROMX $a8
 ROMX $a9
 ROMX $aa
@@ -519,13 +529,22 @@ ROMX $b2
 ROMX $b3
 ROMX $b4
 ROMX $b5
+	; Front/back pic overflow for chunked animated frontpics.
+	"Pics 30"
 ROMX $b6
+	; Front/back pic overflow for chunked animated frontpics.
+	"Pics 31"
 ROMX $b7
+	"Pokedex Moves"
 ROMX $b8
+	"Pokedex Moves Index"
 ROMX $b9
 ROMX $ba
+	"Pokedex Legacy"
 ROMX $bb
+	"Pokedex Entries Custom"
 ROMX $bc
+	"Pokedex Entries Custom 2"
 ROMX $bd
 ROMX $be
 ROMX $bf
@@ -620,6 +639,7 @@ WRAMX 2
 	"Pic Animations"
 	align 8
 	"16-bit WRAM tables"
+	"Move Discovery Flags"
 WRAMX 3
 	"Battle Tower RAM"
 WRAMX 4

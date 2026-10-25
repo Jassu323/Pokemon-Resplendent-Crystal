@@ -90,7 +90,10 @@ MrPokemonsHouse_OakScript:
 	writetext MrPokemonsHouse_GetDexText
 	playsound SFX_ITEM
 	waitsfx
+.ReceivePokedex:
 	setflag ENGINE_POKEDEX
+	callasm MoveDiscovery_PokedexGift
+.PokedexRecorded:
 	writetext MrPokemonsHouse_OakText2
 	waitbutton
 	closetext

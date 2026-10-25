@@ -98,6 +98,9 @@ _ResetWRAM:
 	ld hl, wMoveIndexTable
 	ld bc, wMoveIndexTableEnd - wMoveIndexTable
 	call ByteFill
+	ld hl, wMoveDiscoverySeen
+	ld bc, wMoveDiscoveryEnd - wMoveDiscoverySeen
+	call ByteFill
 
 	ld a, 1
 	ldh [rSVBK], a
@@ -355,6 +358,18 @@ Continue:
 	jr .FailToLoad
 
 .Check2Pass:
+	; Both Dex bookmarks are session-only; discard loaded save positions.
+	; Keep this in Continue, not shared save loading used during gameplay.
+	xor a
+	ld hl, wMovesDexBookmarkTag
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hli], a
+	ld [hl], a
 	ld a, $8
 	ld [wMusicFade], a
 	ld a, LOW(MUSIC_NONE)

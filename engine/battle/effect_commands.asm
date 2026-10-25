@@ -5221,6 +5221,7 @@ BattleCommand_Charge:
 	ld a, BATTLE_VARS_SUBSTATUS3
 	call GetBattleVarAddr
 	set SUBSTATUS_CHARGED, [hl]
+	move_discovery_hook MoveDiscovery_BattleUse
 
 	ld hl, IgnoredOrders2Text
 	ld a, [wAlreadyDisobeyed]

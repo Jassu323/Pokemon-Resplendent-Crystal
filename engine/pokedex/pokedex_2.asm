@@ -85,13 +85,13 @@ DisplayDexEntry:
 	call GetDexEntryPointer
 	ld a, b
 	push af
-	hlcoord 9, 5
+	hlcoord 9, 4
 	call PlaceFarString ; dex species
 	ld h, b
 	ld l, c
 	push de
 ; Print dex number
-	hlcoord 2, 8
+	hlcoord 9, 1
 	ld a, $5c ; No
 	ld [hli], a
 	ld a, $5d ; .
@@ -137,11 +137,11 @@ DisplayDexEntry:
 	ld hl, sp+0
 	ld d, h
 	ld e, l
-	hlcoord 12, 7
+	hlcoord 12, 5
 	lb bc, 2, (2 << 4) | 4
 	call PrintNum
 ; Replace the decimal point with a ft symbol
-	hlcoord 14, 7
+	hlcoord 14, 5
 	ld [hl], $5e
 	pop af
 	pop hl
@@ -163,7 +163,7 @@ DisplayDexEntry:
 	ld hl, sp+0
 	ld d, h
 	ld e, l
-	hlcoord 11, 9
+	hlcoord 11, 6
 	lb bc, 2, (4 << 4) | 5
 	call PrintNum
 	pop de
@@ -171,60 +171,28 @@ DisplayDexEntry:
 .skip_weight
 ; Page 1
 	lb bc, 5, SCREEN_WIDTH - 2
-	hlcoord 2, 11
+	hlcoord 2, 10
 	call ClearBox
-	hlcoord 1, 10
+	hlcoord 1, 8
 	ld bc, SCREEN_WIDTH - 1
-	ld a, $61 ; horizontal divider
+	ld a, $55 ; horizontal divider
 	call ByteFill
 	; page number
 	hlcoord 1, 9
-	ld [hl], $55
-	inc hl
-	ld [hl], $55
-	hlcoord 1, 10
 	ld [hl], $56 ; P.
 	inc hl
 	ld [hl], $57 ; 1
 	pop de
 	inc de
 	pop af
-	hlcoord 2, 11
-	push af
-	call PlaceFarString
-	pop bc
-	ld a, [wPokedexStatus]
-	or a ; check for page 2
-	ret z
-
-; Page 2
-	push bc
-	push de
-	lb bc, 5, SCREEN_WIDTH - 2
-	hlcoord 2, 11
-	call ClearBox
-	hlcoord 1, 10
-	ld bc, SCREEN_WIDTH - 1
-	ld a, $61
-	call ByteFill
-	; page number
-	hlcoord 1, 9
-	ld [hl], $55
-	inc hl
-	ld [hl], $55
-	hlcoord 1, 10
-	ld [hl], $56 ; P.
-	inc hl
-	ld [hl], $58 ; 2
-	pop de
-	inc de
-	pop af
-	hlcoord 2, 11
+	ld b, a
+	ld a, [wPokedexDescriptionPage]
+	ld c, a
+	farcall PokedexDescription_SeekStaticPage
+	ld a, b
+	hlcoord 2, 10
 	call PlaceFarString
 	ret
-
-POKeString: ; unreferenced
-	db "#@"
 
 GetDexEntryPointer:
 ; return dex entry pointer b:de
@@ -243,39 +211,6 @@ GetDexEntryPointer:
 	ld a, [hli]
 	ld e, a
 	ld d, [hl]
-	pop hl
-	ret
-
-GetDexEntryPagePointer:
-	call GetDexEntryPointer
-	push hl
-	ld h, d
-	ld l, e
-; skip species name
-.loop1
-	ld a, b
-	call GetFarByte
-	inc hl
-	cp '@'
-	jr nz, .loop1
-; skip height and weight
-rept 4
-	inc hl
-endr
-; if c != 1: skip entry
-	dec c
-	jr z, .done
-; skip entry
-.loop2
-	ld a, b
-	call GetFarByte
-	inc hl
-	cp '@'
-	jr nz, .loop2
-
-.done
-	ld d, h
-	ld e, l
 	pop hl
 	ret
 

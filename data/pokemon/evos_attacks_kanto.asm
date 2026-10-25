@@ -1240,6 +1240,8 @@ MagnemiteEvosAttacks:
 	db 0 ; no more level-up moves
 
 MagnetonEvosAttacks:
+	; TEST ONLY: level 40 replaces magnetic-field level-up.
+	dbbw EVOLVE_LEVEL, 40, MAGNEZONE
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	dbw 1, THUNDERSHOCK
@@ -1601,6 +1603,8 @@ HitmonchanEvosAttacks:
 	db 0 ; no more level-up moves
 
 LickitungEvosAttacks:
+	; TEST ONLY: level 33 replaces knowing Rollout.
+	dbbw EVOLVE_LEVEL, 33, LICKILICKY
 	db 0 ; no more evolutions
 	dbw 1, LICK
 	dbw 7, SUPERSONIC
@@ -1655,6 +1659,8 @@ RhyhornEvosAttacks:
 	db 0 ; no more level-up moves
 
 RhydonEvosAttacks:
+	; TEST ONLY: held Metal Coat replaces unavailable Protector.
+	dbbw EVOLVE_TRADE, METAL_COAT, RHYPERIOR
 	db 0 ; no more evolutions
 	dbw 1, HORN_ATTACK
 	dbw 1, TAIL_WHIP
@@ -1685,6 +1691,8 @@ ChanseyEvosAttacks:
 	db 0 ; no more level-up moves
 
 TangelaEvosAttacks:
+	; TEST ONLY: level 40 replaces knowing AncientPower.
+	dbbw EVOLVE_LEVEL, 40, TANGROWTH
 	db 0 ; no more evolutions
 	dbw 1, CONSTRICT
 	dbw 4, SLEEP_POWDER
@@ -1936,6 +1944,9 @@ EeveeEvosAttacks:
 	dbbw EVOLVE_ITEM, FIRE_STONE, FLAREON
 	dbbw EVOLVE_HAPPINESS, TR_MORNDAY, ESPEON
 	dbbw EVOLVE_HAPPINESS, TR_EVENITE, UMBREON
+	; TEST ONLY: distinct stones replace Moss Rock / Ice Rock level-ups.
+	dbbw EVOLVE_ITEM, LEAF_STONE, LEAFEON
+	dbbw EVOLVE_ITEM, MOON_STONE, GLACEON
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	dbw 1, TAIL_WHIP

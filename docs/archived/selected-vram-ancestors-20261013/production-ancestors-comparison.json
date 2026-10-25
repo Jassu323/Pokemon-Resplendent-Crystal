@@ -1,0 +1,2105 @@
+{
+  "production": {
+    "rom_sha256": "357d1699b916c87a850ea4b4fff8f4d382de1d3251d8941380c65283667faed0",
+    "baseline_sha256": "6ee2b0026f6b68fed2e28a5e15613c194310d6e7c5da9d5d0079268f41b48eac",
+    "delta": {
+      "ROM0": 0,
+      "ROMX": 5332,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    },
+    "production_integrated": true,
+    "temporary_evolution_fixture_included": false,
+    "method": "Precomputed glyphs, headings, numbers and display records retained"
+  },
+  "vram": {
+    "head": "f4182c81fc19a637feffa7b17e8fa01a7d4e77df",
+    "protected_inputs": {
+      "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/pokecrystal.gbc": "6ee2b0026f6b68fed2e28a5e15613c194310d6e7c5da9d5d0079268f41b48eac",
+      "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/pokecrystal.sym": "a49c82b14b61f7675b1c332e841d7555f001add3512dd53f34019c393273c817",
+      "/Users/jakeadams/Documents/GitHub/Pokemon-Resplendent-Crystal/pokecrystal.map": "b8cf27d505a797f726013006a0975d6b4b899c1ec7fabfda315b8cbe7261ac0f"
+    },
+    "stem": "pokecrystal-dex-selected-runtime",
+    "scope": "Selected Description/Info/Moves; Area unchanged",
+    "rom_sha256": "07bec143ad5138fed762476fdc8df9bd8f57011e121b6d4b1cbf1d5b4efb23d2",
+    "delta": {
+      "ROM0": 0,
+      "ROMX": -10256,
+      "SRAM": 0,
+      "WRAM0": 0,
+      "WRAMX": 0,
+      "HRAM": 0
+    },
+    "changed_ram_labels": [
+      "wPokedexInfoWorkspaceEnd"
+    ],
+    "production_unchanged": true
+  },
+  "vram_minus_production_bytes": {
+    "ROM0": 0,
+    "ROMX": -15588,
+    "SRAM": 0,
+    "WRAM0": 0,
+    "WRAMX": 0,
+    "HRAM": 0
+  },
+  "timings": {
+    "architecture-timing": {
+      "production_cases": 1072,
+      "vram_cases": 1072,
+      "vram_vs_production": {
+        "excluded_different_page_transitions": 0,
+        "groups": [
+          {
+            "style": "legacy",
+            "action": "cycle",
+            "phase": "0",
+            "first_visible": {
+              "count": 20,
+              "min": 66.95127487182617,
+              "median": 117.16938018798828,
+              "max": 133.98408889770508,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 20,
+              "min": 66.95127487182617,
+              "median": 117.16938018798828,
+              "max": 133.98408889770508,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "cycle",
+            "phase": "settled",
+            "first_visible": {
+              "count": 20,
+              "min": 66.94936752319336,
+              "median": 83.73165130615234,
+              "max": 100.50678253173828,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 20,
+              "min": 66.94936752319336,
+              "median": 83.73165130615234,
+              "max": 100.50678253173828,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "description-info",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": 33.48684310913086,
+              "median": 50.226449966430664,
+              "max": 66.99180603027344,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.48684310913086,
+              "median": 50.226449966430664,
+              "max": 66.99180603027344,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "description-info",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 33.463478088378906,
+              "median": 33.48374366760254,
+              "max": 33.5087776184082,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.463478088378906,
+              "median": 33.48374366760254,
+              "max": 33.5087776184082,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "description-moves",
+            "phase": "0",
+            "first_visible": {
+              "count": 24,
+              "min": -0.06532669067382812,
+              "median": -0.015974044799804688,
+              "max": 0.0457763671875,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.06532669067382812,
+              "median": -0.015974044799804688,
+              "max": 0.0457763671875,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "description-moves",
+            "phase": "settled",
+            "first_visible": {
+              "count": 24,
+              "min": -0.02193450927734375,
+              "median": -0.001430511474609375,
+              "max": 0.049591064453125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.02193450927734375,
+              "median": -0.001430511474609375,
+              "max": 0.049591064453125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-area-return",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -0.8020401000976562,
+              "median": -0.0040531158447265625,
+              "max": 0.029087066650390625,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.8020401000976562,
+              "median": 8.376836776733398,
+              "max": 16.771793365478516,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.7920265197753906,
+              "median": 8.393049240112305,
+              "max": 16.751766204833984,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-area-return",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": -16.76177978515625,
+              "median": 0.0019073486328125,
+              "max": 0.04673004150390625,
+              "slower_display_frame": 0,
+              "faster_display_frame": 3
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.025272369384765625,
+              "median": 0.010013580322265625,
+              "max": 16.78943634033203,
+              "slower_display_frame": 12,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.28896331787109375,
+              "median": 0.023603439331054688,
+              "max": 16.788005828857422,
+              "slower_display_frame": 12,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-moves",
+            "phase": "0",
+            "first_visible": {
+              "count": 24,
+              "min": -16.759395599365234,
+              "median": -0.02956390380859375,
+              "max": 16.76321029663086,
+              "slower_display_frame": 4,
+              "faster_display_frame": 6
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -16.759395599365234,
+              "median": -0.02956390380859375,
+              "max": 16.76321029663086,
+              "slower_display_frame": 4,
+              "faster_display_frame": 6
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-moves",
+            "phase": "settled",
+            "first_visible": {
+              "count": 24,
+              "min": -0.022411346435546875,
+              "median": -0.0002384185791015625,
+              "max": 0.05054473876953125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.022411346435546875,
+              "median": -0.0002384185791015625,
+              "max": 0.05054473876953125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "listing",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -83.71925354003906,
+              "median": 0.0016689300537109375,
+              "max": 85.25800704956055,
+              "slower_display_frame": 11,
+              "faster_display_frame": 9
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.019550323486328125,
+              "median": 0.001430511474609375,
+              "max": 1.5444755554199219,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -1.220703125,
+              "median": -0.00095367431640625,
+              "max": 3.117084503173828,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "listing",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 83.69112014770508,
+              "median": 83.71210098266602,
+              "max": 83.73403549194336,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.022411346435546875,
+              "median": -0.001430511474609375,
+              "max": 0.020503997802734375,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.5016326904296875,
+              "median": -0.002384185791015625,
+              "max": 0.286102294921875,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "moves-info",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": 33.48684310913086,
+              "median": 66.95675849914551,
+              "max": 83.73355865478516,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.48684310913086,
+              "median": 66.95675849914551,
+              "max": 83.73355865478516,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "moves-info",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 33.46109390258789,
+              "median": 33.484458923339844,
+              "max": 33.505916595458984,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.46109390258789,
+              "median": 33.484458923339844,
+              "max": 33.505916595458984,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "species",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -50.1866340637207,
+              "median": 0.0016689300537109375,
+              "max": 35.02988815307617,
+              "slower_display_frame": 11,
+              "faster_display_frame": 9
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.46586227416992,
+              "median": 33.48684310913086,
+              "max": 35.02988815307617,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "species",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 33.4630012512207,
+              "median": 33.48398208618164,
+              "max": 33.505916595458984,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 16.727924346923828,
+              "median": 33.48398208618164,
+              "max": 33.505916595458984,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "cycle",
+            "phase": "0",
+            "first_visible": {
+              "count": 20,
+              "min": 83.71973037719727,
+              "median": 117.2032356262207,
+              "max": 133.94689559936523,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 20,
+              "min": 83.71973037719727,
+              "median": 117.2032356262207,
+              "max": 133.94689559936523,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "cycle",
+            "phase": "settled",
+            "first_visible": {
+              "count": 20,
+              "min": 67.00944900512695,
+              "median": 84.33079719543457,
+              "max": 100.45337677001953,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 20,
+              "min": 67.00944900512695,
+              "median": 84.33079719543457,
+              "max": 100.45337677001953,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "description-info",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": 33.42771530151367,
+              "median": 50.25219917297363,
+              "max": 83.71210098266602,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.42771530151367,
+              "median": 50.25219917297363,
+              "max": 83.71210098266602,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "description-info",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 32.93609619140625,
+              "median": 33.48588943481445,
+              "max": 50.24003982543945,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 32.93609619140625,
+              "median": 33.48588943481445,
+              "max": 50.24003982543945,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "description-moves",
+            "phase": "0",
+            "first_visible": {
+              "count": 24,
+              "min": -0.058650970458984375,
+              "median": 0.00762939453125,
+              "max": 0.8273124694824219,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.058650970458984375,
+              "median": 0.00762939453125,
+              "max": 0.8273124694824219,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "description-moves",
+            "phase": "settled",
+            "first_visible": {
+              "count": 24,
+              "min": -0.21219253540039062,
+              "median": -0.00095367431640625,
+              "max": 0.6198883056640625,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.21219253540039062,
+              "median": -0.00095367431640625,
+              "max": 0.6198883056640625,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-area-return",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -0.040531158447265625,
+              "median": -0.00286102294921875,
+              "max": 0.5564689636230469,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.040531158447265625,
+              "median": -0.0019073486328125,
+              "max": 17.299175262451172,
+              "slower_display_frame": 16,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.10156631469726562,
+              "median": 0.2677440643310547,
+              "max": 17.290592193603516,
+              "slower_display_frame": 16,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-area-return",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": -0.00762939453125,
+              "median": 0.0011920928955078125,
+              "max": 1.247406005859375,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.00762939453125,
+              "median": 0.6382465362548828,
+              "max": 16.762256622314453,
+              "slower_display_frame": 16,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.5893707275390625,
+              "median": 0.6601810455322266,
+              "max": 16.77703857421875,
+              "slower_display_frame": 16,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-moves",
+            "phase": "0",
+            "first_visible": {
+              "count": 24,
+              "min": -16.80278778076172,
+              "median": 0.0045299530029296875,
+              "max": 16.770362854003906,
+              "slower_display_frame": 4,
+              "faster_display_frame": 6
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -16.80278778076172,
+              "median": 0.0045299530029296875,
+              "max": 16.770362854003906,
+              "slower_display_frame": 4,
+              "faster_display_frame": 6
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-moves",
+            "phase": "settled",
+            "first_visible": {
+              "count": 24,
+              "min": -0.21076202392578125,
+              "median": -0.002384185791015625,
+              "max": 0.6175041198730469,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 24,
+              "min": -0.21076202392578125,
+              "median": -0.002384185791015625,
+              "max": 0.6175041198730469,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "listing",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -150.74443817138672,
+              "median": 0.032901763916015625,
+              "max": 150.7115364074707,
+              "slower_display_frame": 15,
+              "faster_display_frame": 8
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -50.2009391784668,
+              "median": -0.00667572021484375,
+              "max": 66.9107437133789,
+              "slower_display_frame": 16,
+              "faster_display_frame": 12
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -0.9698867797851562,
+              "median": -0.0064373016357421875,
+              "max": 17.248153686523438,
+              "slower_display_frame": 3,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "listing",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 150.13647079467773,
+              "median": 150.68292617797852,
+              "max": 150.72298049926758,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": -0.5478858947753906,
+              "median": 16.650915145874023,
+              "max": 67.00944900512695,
+              "slower_display_frame": 20,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 40,
+              "min": -1.4963150024414062,
+              "median": -0.021219253540039062,
+              "max": 0.04863739013671875,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "moves-info",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": 33.42723846435547,
+              "median": 66.91408157348633,
+              "max": 83.74261856079102,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 33.42723846435547,
+              "median": 66.91408157348633,
+              "max": 83.74261856079102,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "moves-info",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 32.93943405151367,
+              "median": 33.48970413208008,
+              "max": 33.522605895996094,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 32.93943405151367,
+              "median": 33.48970413208008,
+              "max": 33.522605895996094,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "species",
+            "phase": "0",
+            "first_visible": {
+              "count": 40,
+              "min": -50.28820037841797,
+              "median": 0.032901763916015625,
+              "max": 33.51259231567383,
+              "slower_display_frame": 15,
+              "faster_display_frame": 9
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 16.748905181884766,
+              "median": 33.4930419921875,
+              "max": 50.20856857299805,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "species",
+            "phase": "settled",
+            "first_visible": {
+              "count": 40,
+              "min": 32.93752670288086,
+              "median": 33.48398208618164,
+              "max": 33.5240364074707,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 40,
+              "min": 32.93752670288086,
+              "median": 33.48398208618164,
+              "max": 33.5240364074707,
+              "slower_display_frame": 40,
+              "faster_display_frame": 0
+            }
+          }
+        ]
+      }
+    },
+    "feature-timing": {
+      "production_cases": 1056,
+      "vram_cases": 1056,
+      "vram_vs_production": {
+        "excluded_different_page_transitions": 0,
+        "groups": [
+          {
+            "style": "legacy",
+            "action": "cycle",
+            "phase": "0",
+            "first_visible": {
+              "count": 76,
+              "min": 16.70694351196289,
+              "median": 50.19855499267578,
+              "max": 150.7096290588379,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 76,
+              "min": 16.70694351196289,
+              "median": 50.19855499267578,
+              "max": 150.7096290588379,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "cycle",
+            "phase": "settled",
+            "first_visible": {
+              "count": 76,
+              "min": 33.360958099365234,
+              "median": 33.50257873535156,
+              "max": 117.19226837158203,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 76,
+              "min": 33.360958099365234,
+              "median": 33.50257873535156,
+              "max": 117.19226837158203,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-area-return",
+            "phase": "0",
+            "first_visible": {
+              "count": 88,
+              "min": -0.5583763122558594,
+              "median": 0.0,
+              "max": 0.030517578125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.5583763122558594,
+              "median": 16.742706298828125,
+              "max": 16.773223876953125,
+              "slower_display_frame": 60,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.1506080627441406,
+              "median": 16.61968231201172,
+              "max": 16.758441925048828,
+              "slower_display_frame": 60,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "info-area-return",
+            "phase": "settled",
+            "first_visible": {
+              "count": 88,
+              "min": -0.072479248046875,
+              "median": 0.0,
+              "max": 0.04673004150390625,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.0247955322265625,
+              "median": 16.738176345825195,
+              "max": 16.78943634033203,
+              "slower_display_frame": 64,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -0.28896331787109375,
+              "median": 16.721725463867188,
+              "max": 17.669200897216797,
+              "slower_display_frame": 64,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "listing",
+            "phase": "0",
+            "first_visible": {
+              "count": 88,
+              "min": -83.74881744384766,
+              "median": 0.019788742065429688,
+              "max": 100.42238235473633,
+              "slower_display_frame": 27,
+              "faster_display_frame": 15
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.037670135498046875,
+              "median": -0.001430511474609375,
+              "max": 16.709327697753906,
+              "slower_display_frame": 4,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.1286735534667969,
+              "median": -0.0011920928955078125,
+              "max": 16.723155975341797,
+              "slower_display_frame": 4,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "legacy",
+            "action": "listing",
+            "phase": "settled",
+            "first_visible": {
+              "count": 88,
+              "min": -83.740234375,
+              "median": 83.68825912475586,
+              "max": 84.22327041625977,
+              "slower_display_frame": 52,
+              "faster_display_frame": 16
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.12445449829101562,
+              "median": -0.007867813110351562,
+              "max": 0.5097389221191406,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.2497901916503906,
+              "median": -0.013828277587890625,
+              "max": 0.5340576171875,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "cycle",
+            "phase": "0",
+            "first_visible": {
+              "count": 76,
+              "min": 16.726970672607422,
+              "median": 50.23765563964844,
+              "max": 150.73156356811523,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 76,
+              "min": 16.726970672607422,
+              "median": 50.23765563964844,
+              "max": 150.73156356811523,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "cycle",
+            "phase": "settled",
+            "first_visible": {
+              "count": 76,
+              "min": 32.933712005615234,
+              "median": 33.48398208618164,
+              "max": 116.65105819702148,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 76,
+              "min": 32.933712005615234,
+              "median": 33.48398208618164,
+              "max": 116.65105819702148,
+              "slower_display_frame": 76,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-area-return",
+            "phase": "0",
+            "first_visible": {
+              "count": 88,
+              "min": -0.03814697265625,
+              "median": 0.0095367431640625,
+              "max": 1.3508796691894531,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.03814697265625,
+              "median": 16.7233943939209,
+              "max": 18.093585968017578,
+              "slower_display_frame": 52,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -0.07295608520507812,
+              "median": 16.719341278076172,
+              "max": 17.909526824951172,
+              "slower_display_frame": 52,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "info-area-return",
+            "phase": "settled",
+            "first_visible": {
+              "count": 88,
+              "min": -0.530242919921875,
+              "median": 0.0,
+              "max": 1.247406005859375,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -0.029087066650390625,
+              "median": 16.700029373168945,
+              "max": 17.859935760498047,
+              "slower_display_frame": 56,
+              "faster_display_frame": 0
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.2383460998535156,
+              "median": 16.100645065307617,
+              "max": 17.869949340820312,
+              "slower_display_frame": 56,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "listing",
+            "phase": "0",
+            "first_visible": {
+              "count": 88,
+              "min": -151.5049934387207,
+              "median": 0.026464462280273438,
+              "max": 150.7115364074707,
+              "slower_display_frame": 34,
+              "faster_display_frame": 11
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -66.94889068603516,
+              "median": -0.0069141387939453125,
+              "max": 66.96891784667969,
+              "slower_display_frame": 29,
+              "faster_display_frame": 28
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.2812614440917969,
+              "median": -0.01239776611328125,
+              "max": 17.248153686523438,
+              "slower_display_frame": 3,
+              "faster_display_frame": 0
+            }
+          },
+          {
+            "style": "modern",
+            "action": "listing",
+            "phase": "settled",
+            "first_visible": {
+              "count": 88,
+              "min": -133.9712142944336,
+              "median": 150.39539337158203,
+              "max": 152.2679328918457,
+              "slower_display_frame": 59,
+              "faster_display_frame": 20
+            },
+            "complete_visible": {
+              "count": 88,
+              "min": -67.0022964477539,
+              "median": -0.0152587890625,
+              "max": 49.67641830444336,
+              "slower_display_frame": 16,
+              "faster_display_frame": 32
+            },
+            "owner_ready_ms": {
+              "count": 88,
+              "min": -1.8510818481445312,
+              "median": -0.011205673217773438,
+              "max": 3.0994415283203125,
+              "slower_display_frame": 0,
+              "faster_display_frame": 0
+            }
+          }
+        ]
+      }
+    },
+    "production_vs_before": {
+      "excluded_different_page_transitions": 0,
+      "groups": [
+        {
+          "style": "legacy",
+          "action": "cycle",
+          "phase": "0",
+          "first_visible": {
+            "count": 20,
+            "min": -0.07581710815429688,
+            "median": 0.013828277587890625,
+            "max": 16.82138442993164,
+            "slower_display_frame": 1,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 20,
+            "min": -0.07581710815429688,
+            "median": 0.013828277587890625,
+            "max": 16.82138442993164,
+            "slower_display_frame": 1,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "cycle",
+          "phase": "settled",
+          "first_visible": {
+            "count": 20,
+            "min": -0.051975250244140625,
+            "median": 0.015497207641601562,
+            "max": 0.0514984130859375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 20,
+            "min": -0.051975250244140625,
+            "median": 0.015497207641601562,
+            "max": 0.0514984130859375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "description-info",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -18.233299255371094,
+            "median": -0.0050067901611328125,
+            "max": 16.70074462890625,
+            "slower_display_frame": 3,
+            "faster_display_frame": 3
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -18.233299255371094,
+            "median": -0.0050067901611328125,
+            "max": 16.70074462890625,
+            "slower_display_frame": 3,
+            "faster_display_frame": 3
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "description-info",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.023365020751953125,
+            "median": 0.00095367431640625,
+            "max": 0.050067901611328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.023365020751953125,
+            "median": 0.00095367431640625,
+            "max": 0.050067901611328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "description-moves",
+          "phase": "0",
+          "first_visible": {
+            "count": 24,
+            "min": -0.0762939453125,
+            "median": 0.010967254638671875,
+            "max": 0.07915496826171875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.0762939453125,
+            "median": 0.010967254638671875,
+            "max": 0.07915496826171875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "description-moves",
+          "phase": "settled",
+          "first_visible": {
+            "count": 24,
+            "min": -0.050067901611328125,
+            "median": 0.0016689300537109375,
+            "max": 0.050067901611328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.050067901611328125,
+            "median": 0.0016689300537109375,
+            "max": 0.050067901611328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "info-area-return",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -0.037670135498046875,
+            "median": 0.001430511474609375,
+            "max": 0.84686279296875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.037670135498046875,
+            "median": 0.0035762786865234375,
+            "max": 16.74652099609375,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.5955696105957031,
+            "median": -0.0095367431640625,
+            "max": 16.737937927246094,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "info-area-return",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.030994415283203125,
+            "median": 0.0045299530029296875,
+            "max": 1.1878013610839844,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.030994415283203125,
+            "median": 0.010013580322265625,
+            "max": 16.742706298828125,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.8502006530761719,
+            "median": 0.023603439331054688,
+            "max": 16.993045806884766,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "info-moves",
+          "phase": "0",
+          "first_visible": {
+            "count": 24,
+            "min": -0.07581710815429688,
+            "median": 0.011920928955078125,
+            "max": 0.07915496826171875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.07581710815429688,
+            "median": 0.011920928955078125,
+            "max": 0.07915496826171875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "info-moves",
+          "phase": "settled",
+          "first_visible": {
+            "count": 24,
+            "min": -0.05054473876953125,
+            "median": 0.0026226043701171875,
+            "max": 0.05054473876953125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.05054473876953125,
+            "median": 0.0026226043701171875,
+            "max": 0.05054473876953125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "listing",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -85.20269393920898,
+            "median": -0.003337860107421875,
+            "max": 83.67204666137695,
+            "slower_display_frame": 2,
+            "faster_display_frame": 3
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -1.4891624450683594,
+            "median": -0.011205673217773438,
+            "max": 0.07867813110351562,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -1.51824951171875,
+            "median": 0.0030994415283203125,
+            "max": 1.1858940124511719,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "listing",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.02193450927734375,
+            "median": 0.0019073486328125,
+            "max": 0.0514984130859375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.02193450927734375,
+            "median": 0.0019073486328125,
+            "max": 0.0514984130859375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.035762786865234375,
+            "median": 0.0057220458984375,
+            "max": 0.5002021789550781,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "moves-info",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -1.4896392822265625,
+            "median": -0.011920928955078125,
+            "max": 0.080108642578125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -1.4896392822265625,
+            "median": -0.011920928955078125,
+            "max": 0.080108642578125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "moves-info",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.019550323486328125,
+            "median": -0.0019073486328125,
+            "max": 0.052928924560546875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.019550323486328125,
+            "median": -0.0019073486328125,
+            "max": 0.052928924560546875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "species",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -34.97457504272461,
+            "median": -0.003337860107421875,
+            "max": 33.44392776489258,
+            "slower_display_frame": 2,
+            "faster_display_frame": 3
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -1.4891624450683594,
+            "median": -0.003814697265625,
+            "max": 15.254497528076172,
+            "slower_display_frame": 1,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "legacy",
+          "action": "species",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.02193450927734375,
+            "median": 0.0019073486328125,
+            "max": 0.0514984130859375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.02193450927734375,
+            "median": 0.00858306884765625,
+            "max": 16.757488250732422,
+            "slower_display_frame": 8,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "cycle",
+          "phase": "0",
+          "first_visible": {
+            "count": 20,
+            "min": -0.8368492126464844,
+            "median": -0.0095367431640625,
+            "max": -0.007152557373046875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 20,
+            "min": -0.8368492126464844,
+            "median": -0.0095367431640625,
+            "max": -0.007152557373046875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "cycle",
+          "phase": "settled",
+          "first_visible": {
+            "count": 20,
+            "min": -0.5059242248535156,
+            "median": -0.040531158447265625,
+            "max": 0.0019073486328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 20,
+            "min": -0.5059242248535156,
+            "median": -0.040531158447265625,
+            "max": 0.0019073486328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "description-info",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -16.741275787353516,
+            "median": -0.00858306884765625,
+            "max": 16.733169555664062,
+            "slower_display_frame": 1,
+            "faster_display_frame": 3
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -16.741275787353516,
+            "median": -0.00858306884765625,
+            "max": 16.733169555664062,
+            "slower_display_frame": 1,
+            "faster_display_frame": 3
+          }
+        },
+        {
+          "style": "modern",
+          "action": "description-info",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.050067901611328125,
+            "median": -0.024080276489257812,
+            "max": 0.0286102294921875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.050067901611328125,
+            "median": -0.024080276489257812,
+            "max": 0.0286102294921875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "description-moves",
+          "phase": "0",
+          "first_visible": {
+            "count": 24,
+            "min": -0.8358955383300781,
+            "median": -0.0095367431640625,
+            "max": 0.0,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.8358955383300781,
+            "median": -0.0095367431640625,
+            "max": 0.0,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "description-moves",
+          "phase": "settled",
+          "first_visible": {
+            "count": 24,
+            "min": -0.5068778991699219,
+            "median": -0.029802322387695312,
+            "max": 0.02765655517578125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.5068778991699219,
+            "median": -0.029802322387695312,
+            "max": 0.02765655517578125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "info-area-return",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -0.5269050598144531,
+            "median": 0.012159347534179688,
+            "max": 0.5645751953125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.5269050598144531,
+            "median": 0.012636184692382812,
+            "max": 16.75891876220703,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.7953643798828125,
+            "median": 0.010013580322265625,
+            "max": 16.75891876220703,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "info-area-return",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.017642974853515625,
+            "median": 0.01621246337890625,
+            "max": 0.4858970642089844,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.017642974853515625,
+            "median": 0.02574920654296875,
+            "max": 16.742706298828125,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.06389617919921875,
+            "median": 0.15401840209960938,
+            "max": 17.33875274658203,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "info-moves",
+          "phase": "0",
+          "first_visible": {
+            "count": 24,
+            "min": -0.8368492126464844,
+            "median": -0.0095367431640625,
+            "max": 0.0,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.8368492126464844,
+            "median": -0.0095367431640625,
+            "max": 0.0,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "info-moves",
+          "phase": "settled",
+          "first_visible": {
+            "count": 24,
+            "min": -0.5059242248535156,
+            "median": -0.02956390380859375,
+            "max": 0.030040740966796875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 24,
+            "min": -0.5059242248535156,
+            "median": -0.02956390380859375,
+            "max": 0.030040740966796875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "listing",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -150.68435668945312,
+            "median": -0.0095367431640625,
+            "max": 150.68578720092773,
+            "slower_display_frame": 1,
+            "faster_display_frame": 3
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.03337860107421875,
+            "median": -0.00858306884765625,
+            "max": 0.020503997802734375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -1.0213851928710938,
+            "median": -0.0171661376953125,
+            "max": 0.5025863647460938,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "listing",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.050067901611328125,
+            "median": -0.02384185791015625,
+            "max": 0.030040740966796875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.050067901611328125,
+            "median": -0.02384185791015625,
+            "max": 0.030040740966796875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "owner_ready_ms": {
+            "count": 40,
+            "min": -0.05054473876953125,
+            "median": -0.008821487426757812,
+            "max": 1.2331008911132812,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "moves-info",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -16.741275787353516,
+            "median": -0.009298324584960938,
+            "max": 0.019550323486328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 4
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -16.741275787353516,
+            "median": -0.009298324584960938,
+            "max": 0.019550323486328125,
+            "slower_display_frame": 0,
+            "faster_display_frame": 4
+          }
+        },
+        {
+          "style": "modern",
+          "action": "moves-info",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.05435943603515625,
+            "median": -0.024318695068359375,
+            "max": 0.024318695068359375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.05435943603515625,
+            "median": -0.024318695068359375,
+            "max": 0.024318695068359375,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          }
+        },
+        {
+          "style": "modern",
+          "action": "species",
+          "phase": "0",
+          "first_visible": {
+            "count": 40,
+            "min": -33.48541259765625,
+            "median": -0.0095367431640625,
+            "max": 33.48684310913086,
+            "slower_display_frame": 1,
+            "faster_display_frame": 6
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -16.75128936767578,
+            "median": -0.00762939453125,
+            "max": 16.744136810302734,
+            "slower_display_frame": 4,
+            "faster_display_frame": 3
+          }
+        },
+        {
+          "style": "modern",
+          "action": "species",
+          "phase": "settled",
+          "first_visible": {
+            "count": 40,
+            "min": -0.05054473876953125,
+            "median": -0.02384185791015625,
+            "max": 0.030040740966796875,
+            "slower_display_frame": 0,
+            "faster_display_frame": 0
+          },
+          "complete_visible": {
+            "count": 40,
+            "min": -0.050067901611328125,
+            "median": -0.008821487426757812,
+            "max": 16.696929931640625,
+            "slower_display_frame": 4,
+            "faster_display_frame": 0
+          }
+        }
+      ]
+    },
+    "startup_vram_vs_production": {
+      "modern": {
+        "count": 4,
+        "min": 8.027076721191406,
+        "median": 8.027315139770508,
+        "max": 8.02755355834961,
+        "slower_display_frame": 4,
+        "faster_display_frame": 0
+      },
+      "legacy": {
+        "count": 4,
+        "min": -7.045745849609375,
+        "median": -7.045745849609375,
+        "max": -7.045745849609375,
+        "slower_display_frame": 0,
+        "faster_display_frame": 0
+      }
+    },
+    "entry_vram_vs_production": [
+      {
+        "style": "legacy",
+        "hover": 0,
+        "first_visible": {
+          "count": 64,
+          "min": -1.5077590942382812,
+          "median": 0.0,
+          "max": 16.744613647460938,
+          "slower_display_frame": 13,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.742229461669922,
+          "max": 16.744613647460938,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.22602081298828125,
+          "median": 16.732454299926758,
+          "max": 17.81749725341797,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "legacy",
+        "hover": 4,
+        "first_visible": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.742706298828125,
+          "max": 16.744613647460938,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.742706298828125,
+          "max": 16.744613647460938,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.1583099365234517,
+          "median": 16.74342155456543,
+          "max": 17.868518829345703,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "legacy",
+        "hover": 30,
+        "first_visible": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.742229461669922,
+          "max": 16.744613647460938,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.742229461669922,
+          "max": 16.744613647460938,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.217437744140625,
+          "median": 16.741275787353516,
+          "max": 18.019676208496094,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "legacy",
+        "hover": 120,
+        "first_visible": {
+          "count": 64,
+          "min": -1.5077590942382812,
+          "median": 16.742229461669922,
+          "max": 16.744613647460938,
+          "slower_display_frame": 48,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -1.5077590942382812,
+          "median": 16.742229461669922,
+          "max": 16.744613647460938,
+          "slower_display_frame": 48,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -1.5320777893066406,
+          "median": 16.71123504638672,
+          "max": 16.793251037597656,
+          "slower_display_frame": 48,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "modern",
+        "hover": 0,
+        "first_visible": {
+          "count": 64,
+          "min": -0.021457672119140625,
+          "median": 0.031232833862304688,
+          "max": 17.812728881835938,
+          "slower_display_frame": 19,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.018596649169921875,
+          "median": 16.74342155456543,
+          "max": 17.812728881835938,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -1.1010169982910156,
+          "median": 16.736745834350586,
+          "max": 17.80414581298828,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "modern",
+        "hover": 4,
+        "first_visible": {
+          "count": 64,
+          "min": -0.019073486328125,
+          "median": 16.743183135986328,
+          "max": 17.32158660888672,
+          "slower_display_frame": 44,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.019073486328125,
+          "median": 16.743183135986328,
+          "max": 17.32158660888672,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.04863739013671875,
+          "median": 16.728878021240234,
+          "max": 17.312049865722656,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "modern",
+        "hover": 30,
+        "first_visible": {
+          "count": 64,
+          "min": -0.018596649169921875,
+          "median": 16.73436164855957,
+          "max": 17.812728881835938,
+          "slower_display_frame": 40,
+          "faster_display_frame": 0
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.018596649169921875,
+          "median": 16.743183135986328,
+          "max": 17.812728881835938,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.032901763916029836,
+          "median": 16.750335693359375,
+          "max": 17.812728881835938,
+          "slower_display_frame": 56,
+          "faster_display_frame": 0
+        }
+      },
+      {
+        "style": "modern",
+        "hover": 120,
+        "first_visible": {
+          "count": 64,
+          "min": -66.99132919311523,
+          "median": 16.733646392822266,
+          "max": 17.32158660888672,
+          "slower_display_frame": 34,
+          "faster_display_frame": 4
+        },
+        "complete_visible": {
+          "count": 64,
+          "min": -0.01811981201171875,
+          "median": 16.74342155456543,
+          "max": 17.32158660888672,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        },
+        "static_reveal_ms": {
+          "count": 64,
+          "min": -0.037670135498046875,
+          "median": 16.724109649658203,
+          "max": 17.618179321289062,
+          "slower_display_frame": 52,
+          "faster_display_frame": 0
+        }
+      }
+    ]
+  }
+}

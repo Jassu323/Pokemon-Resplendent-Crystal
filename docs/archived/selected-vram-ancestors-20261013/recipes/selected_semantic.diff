@@ -1,0 +1,89 @@
+--- a/main.asm
++++ b/main.asm
+@@ -336,6 +336,7 @@
+ INCLUDE "engine/pokedex/performance_admission.asm"
+ INCLUDE "engine/pokedex/performance_retained.asm"
+ INCLUDE "engine/pokedex/performance_idle.asm"
++INCLUDE "build/dex-runtime-display-assets/semantic-info.asm"
+ 
+ SECTION "Pokedex Info Glyphs", ROMX
+ PokedexRuntimeBarGFX:
+@@ -367,7 +368,7 @@
+ INCLUDE "engine/pokedex/pokedex_types_mode7.asm"
+ 
+ SECTION "Pokedex Moves Index", ROMX
+-INCLUDE "build/dex-runtime-display-assets/shared-name-pointers.asm"
++INCLUDE "build/dex-moves-assets/tables.asm"
+ 
+ 
+ SECTION "bank11", ROMX
+--- a/engine/pokedex/pokedex_info.asm
++++ b/engine/pokedex/pokedex_info.asm
+@@ -227,7 +227,21 @@
+ 	ld a, [wPokedexInfoActiveMiniBuffer]
+ 	xor 1
+ 	ld [wPokedexInfoMiniBuffer], a
+-	ld hl, wPokedexRuntimeEvoRecords
++	ld a, [wPrevDexEntry]
++	ld l, a
++	ld a, [wPrevDexEntry + 1]
++	ld h, a
++	dec hl
++	ld d, h
++	ld e, l
++	add hl, hl
++	add hl, de
++	ld de, PokedexInfoSemanticSpecies
++	add hl, de
++	inc hl
++	ld a, [hli]
++	ld h, [hl]
++	ld l, a
+ 	ld a, [wPokedexInfoPage]
+ 	and a
+ 	jr z, .list
+@@ -666,12 +680,12 @@
+ 	ld l, a
+ 	ld a, [wPokedexInfoEvolutionList + 1]
+ 	ld h, a
+-	ld a, BANK(wPokedexRuntimeEvoRecords)
+-	call GetFarWRAMByte
++	ld a, BANK(PokedexInfoSemanticSpecies)
++	call GetFarByte
+ 	inc hl
+ 	ld e, a
+-	ld a, BANK(wPokedexRuntimeEvoRecords)
+-	call GetFarWRAMByte
++	ld a, BANK(PokedexInfoSemanticSpecies)
++	call GetFarByte
+ 	inc hl
+ 	ld d, a
+ 	ld a, l
+--- a/ram/wram.asm
++++ b/ram/wram.asm
+@@ -3695,12 +3695,8 @@
+ 
+ SECTION "Pokedex Runtime Cache", WRAMX[$d950], BANK[5]
+-wPokedexRuntimeEvoRecords:: ds 36 * 5
++IF !DEF(DEX_RUNTIME_RESTORE_VRAM) && !DEF(DEX_RUNTIME_RESTORE_ROM)
+ wPokedexRuntimeVisibleBGFX:: ds 40 * TILE_SIZE
+-wPokedexRuntimeParents:: ds NUM_POKEMON * 2
+-wPokedexRuntimeMovesStreams:: ds 4 * 4
+-wPokedexRuntimeTMs:: ds NUM_TMS + NUM_HMS
+-wPokedexRuntimeTutors:: ds NUM_TUTORS
+-wPokedexRuntimeMovesPages:: db
++ENDC
+ wPokedexRuntimeCacheEnd::
+ ASSERT wPokedexRuntimeCacheEnd <= $e000
+ 
+--- a/Makefile
++++ b/Makefile
+@@ -170,6 +170,8 @@
+ 	@test -f $@ || python3 -B tools/pokedex_info_assets.py
+ build/dex-runtime-display-assets/shared-name-pointers.asm: tools/pokedex_runtime_display_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm data/moves/names.asm $(wildcard data/pokemon/evos_attacks_*.asm)
+ 	python3 -B tools/pokedex_runtime_display_assets.py
++build/dex-runtime-display-assets/semantic-info.asm: tools/pokedex_semantic_display_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm $(wildcard data/pokemon/evos_attacks_*.asm)
++	python3 -B tools/pokedex_semantic_display_assets.py
+ define DEP
+ $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
+ 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<

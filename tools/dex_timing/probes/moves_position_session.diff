@@ -1,0 +1,26 @@
+--- a/engine/menus/intro_menu.asm
++++ b/engine/menus/intro_menu.asm
+@@ -358,6 +358,14 @@
+ 	jr .FailToLoad
+ 
+ .Check2Pass:
++	; The Moves bookmark is session-only; discard the loaded save's position.
++	; Keep this in Continue, not shared save loading used during gameplay.
++	xor a
++	ld hl, wMovesDexBookmarkTag
++	ld [hli], a
++	ld [hli], a
++	ld [hli], a
++	ld [hl], a
+ 	ld a, $8
+ 	ld [wMusicFade], a
+ 	ld a, LOW(MUSIC_NONE)
+--- a/ram/wram.asm
++++ b/ram/wram.asm
+@@ -3076,5 +3076,5 @@
+ wLastMovesDexSort:: db ; saved padding; $a0 Type, $a1 Alphabet
+-wMovesDexBookmarkTag:: db ; $b0 Type, $b1 Alphabet; zero/other values invalid
++wMovesDexBookmarkTag:: db ; session-only; Continue discards saved padding
+ wMovesDexBookmarkMove:: dw ; permanent move identity
+ wMovesDexBookmarkRow:: db ; zero-based visible row, 0-7
+ 	ds 8

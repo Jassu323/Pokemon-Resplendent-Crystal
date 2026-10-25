@@ -1,0 +1,1999 @@
+--- a/engine/pokedex/pokedex.asm
++++ b/engine/pokedex/pokedex.asm
+@@ -21,6 +21,8 @@
+ 	const DEXSTATE_MOVES_OPTIONS
+ 	const DEXSTATE_MOVES_SEARCH
+ 	const DEXSTATE_MOVES_TEXT_ENTRY
++	const DEXSTATE_TYPES_INIT
++	const DEXSTATE_TYPES_UPDATE
+ 
+ 	const_def
+ 	const DEXSELECT_VIEW_DESCRIPTION
+@@ -38,6 +40,7 @@
+ 	const DEXSELECT_STATE_MENU_RETURN
+ 	const DEXSELECT_STATE_UNOWN_RETURN
+ 	const DEXSELECT_STATE_MOVES_RETURN
++	const DEXSELECT_STATE_TYPES_RETURN
+ 
+ 	const_def
+ 	const POKEDEX_OWNER_TRANSITION_NONE
+@@ -483,6 +486,15 @@
+ 	dw Pokedex_UpdateMovesOptions
+ 	dw Pokedex_UpdateMovesSearch
+ 	dw Pokedex_UpdateMovesTextEntry
++	dw Pokedex_InitTypes
++	dw Pokedex_UpdateTypes
++
++Pokedex_InitTypes:
++	farcall PokedexTypes_Initialize
++	ret
++Pokedex_UpdateTypes:
++	farcall PokedexTypes_Update
++	ret
+ 
+ Pokedex_InitMovesMode:
+ 	farcall PokedexMovesMode_Initialize
+@@ -2822,8 +2834,7 @@
+ 	xor a
+ 	ld [wDexArrowCursorPosIndex], a
+ 	ld [wDexArrowCursorDelayCounter], a
+-	ld [wDexArrowCursorBlinkCounter], a
+-	ret
++	jp Pokedex_ResetArrowCursorBlink
+ 
+ Pokedex_MoveArrowCursor:
+ ; bc = [de] - 1
+@@ -2886,8 +2897,7 @@
+ 	ld [hl], '▶'
+ 	ld a, 12
+ 	ld [wDexArrowCursorDelayCounter], a
+-	xor a
+-	ld [wDexArrowCursorBlinkCounter], a
++	call Pokedex_ResetArrowCursorBlink
+ 	scf
+ 	ret
+ 
+@@ -2919,18 +2929,28 @@
+ 	ret
+ 
+ Pokedex_BlinkArrowCursor:
++	call Pokedex_AdvanceArrowCursorBlink
++	ld a, ' '
++	jr nz, .tile
++	ld a, '▶'
++.tile
++	push af
++	call Pokedex_GetArrowCursorPos
++	pop af
++	ld [hl], a
++	ret
++
++Pokedex_ResetArrowCursorBlink::
++	xor a
++	ld [wDexArrowCursorBlinkCounter], a
++	ret
++
++; Shared by BG, shifted BG, and OBJ arrows. Z means visible for this update.
++Pokedex_AdvanceArrowCursorBlink::
+ 	ld hl, wDexArrowCursorBlinkCounter
+ 	ld a, [hl]
+ 	inc [hl]
+ 	and $8
+-	jr z, .blink_on
+-	call Pokedex_GetArrowCursorPos
+-	ld [hl], ' '
+-	ret
+-
+-.blink_on
+-	call Pokedex_GetArrowCursorPos
+-	ld [hl], '▶'
+ 	ret
+ 
+ Pokedex_ArrowCursorDelay:
+--- a/engine/pokedex/pokedex_legacy.asm
++++ b/engine/pokedex/pokedex_legacy.asm
+@@ -584,6 +584,16 @@
+ 	call PlaceString
+ 	farcall Pokedex_InitArrowCursor
+ 	ld a, [wPokedexSelectedState]
++	cp DEXSELECT_STATE_TYPES_RETURN
++	jr nz, .not_types_return
++	ld a, [wUnlockedUnownMode]
++	and a
++	ld a, 4
++	jr nz, .cursor
++	dec a
++	jr .cursor
++.not_types_return
++	ld a, [wPokedexSelectedState]
+ 	cp DEXSELECT_STATE_MOVES_RETURN
+ 	jr nz, .ordinary_return
+ 	ld a, [wUnlockedUnownMode]
+@@ -687,6 +697,13 @@
+ 	ld [wJumptableIndex], a
+ 	ret
+ .other
++	cp DEXMENU_TYPES
++	jr nz, .not_types
++	call PokedexListing_BeginMenuTransition
++	ld a, DEXSTATE_TYPES_INIT
++	ld [wJumptableIndex], a
++	ret
++.not_types
+ 	cp DEXMENU_MOVES
+ 	jr nz, .unown_check
+ 	call PokedexListing_BeginMenuTransition
+--- a/main.asm
++++ b/main.asm
+@@ -359,6 +359,9 @@
+ SECTION "Pokedex Moves", ROMX
+ INCLUDE "engine/pokedex/pokedex_moves.asm"
+ 
++SECTION "Pokedex Type Matchups", ROMX
++INCLUDE "engine/pokedex/pokedex_types.asm"
++
+ SECTION "Pokedex Moves Index", ROMX
+ INCLUDE "build/dex-moves-assets/tables.asm"
+ 
+--- a/home/lcd.asm
++++ b/home/lcd.asm
+@@ -1,10 +1,19 @@
+ ; LCD handling
+ 
++; TIMING CONTRACT: DO NOT ADD OVERHEAD TO THE ORDINARY LCD INTERRUPT PATH.
++; Battle raster effects run this path repeatedly within each display frame.
++; A rejected Type-page check added 20 T-cycles here; with 32 extra T-cycles
++; in VBlank_Normal, 314/333 moves changed duration (Waterfall up to +553 ms).
++; Logical updates still matched: counters/clean returns do not prove timing.
++; Preserve ordinary-path cycle budgets and qualify both sides/start phases.
++; Evidence and acceptance: docs/battle_animation_interrupt_timing_contract.md
+ LCD::
+ 	push af
+ 	ldh a, [hLCDCPointer]
+ 	and a
+ 	jr z, .done
++	cp $ff
++	jp z, PokedexTypes_LCD
+ 
+ ; At this point it's assumed we're in BANK(wLYOverrides)!
+ 	push bc
+@@ -22,6 +31,35 @@
+ .done
+ 	pop af
+ 	reti
++
++; This owner reads only unbanked Dex scratch. AF is already saved by LCD.
++PokedexTypes_LCD::
++	ldh a, [rLY]
++	cp SCREEN_HEIGHT_PX
++	jr nc, LCD.done
++	push hl
++	ld l, a
++	ld h, HIGH(wPokedexWRAM0Scratch + $100)
++	ld a, [hl]
++	and a
++	jr z, .idle
++	ld l, a
++	ldh a, [hLYOverrideStart]
++	ld h, a
++	push bc
++	ld c, LOW(rBCPD)
++FOR palette_id, 1, 5
++	ld a, $80 | palette_id * 8 + 4
++	ldh [rBCPS], a
++	ld a, [hli]
++	ldh [c], a
++	ld a, [hli]
++	ldh [c], a
++ENDR
++	pop bc
++.idle
++	pop hl
++	jp LCD.done
+ 
+ DisableLCD::
+ ; Turn the LCD off
+--- a/home/vblank.asm
++++ b/home/vblank.asm
+@@ -64,6 +64,14 @@
+ 
+ VBlank_Normal::
+ ; normal operation
++; TIMING CONTRACT: DO NOT ADD OVERHEAD TO ORDINARY VBLANK WORK/DISPATCH.
++; Even an inactive-owner check changes battle setup/cleanup frame alignment.
++; Scripts use VBlank_CutsceneCGB, but surrounding VBlank_Normal still matters.
++; A Type-page check added 32 T-cycles here plus 20 per active LCD interrupt:
++; 314/333 moves changed duration despite identical logical animation updates.
++; Type-only EI was not taken in battle; rejecting its check still cost time.
++; Preserve budgets; verify physical timing, both sides, phases and owner exits.
++; Evidence and acceptance: docs/battle_animation_interrupt_timing_contract.md
+ 
+ ; rng
+ ; scx, scy, wy, wx
+@@ -133,6 +141,13 @@
+ 	jr nz, .done_oam
+ 	call hTransferShadowOAM
+ .done_oam
++	; Type Matchups' ROM0 raster handler is bank-independent and preserves
++	; every register. Let it run during the non-graphics VBlank work.
++	ldh a, [hLCDCPointer]
++	cp $ff
++	jr nz, .raster_ready
++	ei
++.raster_ready
+ 
+ 	; vblank-sensitive operations are done
+ 
+--- a/data/types/type_matchups.asm
++++ b/data/types/type_matchups.asm
+@@ -1,132 +1,137 @@
+ TypeMatchups:
+-	;  attacker,     defender,     *=
+-	db NORMAL,       ROCK,         NOT_VERY_EFFECTIVE
+-	db NORMAL,       STEEL,        NOT_VERY_EFFECTIVE
+-	db FIRE,         FIRE,         NOT_VERY_EFFECTIVE
+-	db FIRE,         WATER,        NOT_VERY_EFFECTIVE
+-	db FIRE,         GRASS,        SUPER_EFFECTIVE
+-	db FIRE,         ICE,          SUPER_EFFECTIVE
+-	db FIRE,         BUG,          SUPER_EFFECTIVE
+-	db FIRE,         ROCK,         NOT_VERY_EFFECTIVE
+-	db FIRE,         DRAGON,       NOT_VERY_EFFECTIVE
+-	db FIRE,         STEEL,        SUPER_EFFECTIVE
+-	db WATER,        FIRE,         SUPER_EFFECTIVE
+-	db WATER,        WATER,        NOT_VERY_EFFECTIVE
+-	db WATER,        GRASS,        NOT_VERY_EFFECTIVE
+-	db WATER,        GROUND,       SUPER_EFFECTIVE
+-	db WATER,        ROCK,         SUPER_EFFECTIVE
+-	db WATER,        DRAGON,       NOT_VERY_EFFECTIVE
+-	db ELECTRIC,     WATER,        SUPER_EFFECTIVE
+-	db ELECTRIC,     ELECTRIC,     NOT_VERY_EFFECTIVE
+-	db ELECTRIC,     GRASS,        NOT_VERY_EFFECTIVE
+-	db ELECTRIC,     GROUND,       NO_EFFECT
+-	db ELECTRIC,     FLYING,       SUPER_EFFECTIVE
+-	db ELECTRIC,     DRAGON,       NOT_VERY_EFFECTIVE
+-	db GRASS,        FIRE,         NOT_VERY_EFFECTIVE
+-	db GRASS,        WATER,        SUPER_EFFECTIVE
+-	db GRASS,        GRASS,        NOT_VERY_EFFECTIVE
+-	db GRASS,        POISON,       NOT_VERY_EFFECTIVE
+-	db GRASS,        GROUND,       SUPER_EFFECTIVE
+-	db GRASS,        FLYING,       NOT_VERY_EFFECTIVE
+-	db GRASS,        BUG,          NOT_VERY_EFFECTIVE
+-	db GRASS,        ROCK,         SUPER_EFFECTIVE
+-	db GRASS,        DRAGON,       NOT_VERY_EFFECTIVE
+-	db GRASS,        STEEL,        NOT_VERY_EFFECTIVE
+-	db ICE,          WATER,        NOT_VERY_EFFECTIVE
+-	db ICE,          GRASS,        SUPER_EFFECTIVE
+-	db ICE,          ICE,          NOT_VERY_EFFECTIVE
+-	db ICE,          GROUND,       SUPER_EFFECTIVE
+-	db ICE,          FLYING,       SUPER_EFFECTIVE
+-	db ICE,          DRAGON,       SUPER_EFFECTIVE
+-	db ICE,          STEEL,        NOT_VERY_EFFECTIVE
+-	db ICE,          FIRE,         NOT_VERY_EFFECTIVE
+-	db FIGHTING,     NORMAL,       SUPER_EFFECTIVE
+-	db FIGHTING,     ICE,          SUPER_EFFECTIVE
+-	db FIGHTING,     POISON,       NOT_VERY_EFFECTIVE
+-	db FIGHTING,     FLYING,       NOT_VERY_EFFECTIVE
+-	db FIGHTING,     PSYCHIC_TYPE, NOT_VERY_EFFECTIVE
+-	db FIGHTING,     BUG,          NOT_VERY_EFFECTIVE
+-	db FIGHTING,     ROCK,         SUPER_EFFECTIVE
+-	db FIGHTING,     DARK,         SUPER_EFFECTIVE
+-	db FIGHTING,     STEEL,        SUPER_EFFECTIVE
+-	db FIGHTING,     FAIRY,        NOT_VERY_EFFECTIVE
+-	db POISON,       GRASS,        SUPER_EFFECTIVE
+-	db POISON,       POISON,       NOT_VERY_EFFECTIVE
+-	db POISON,       GROUND,       NOT_VERY_EFFECTIVE
+-	db POISON,       ROCK,         NOT_VERY_EFFECTIVE
+-	db POISON,       GHOST,        NOT_VERY_EFFECTIVE
+-	db POISON,       STEEL,        NO_EFFECT
+-	db POISON,       FAIRY,        SUPER_EFFECTIVE
+-	db GROUND,       FIRE,         SUPER_EFFECTIVE
+-	db GROUND,       ELECTRIC,     SUPER_EFFECTIVE
+-	db GROUND,       GRASS,        NOT_VERY_EFFECTIVE
+-	db GROUND,       POISON,       SUPER_EFFECTIVE
+-	db GROUND,       FLYING,       NO_EFFECT
+-	db GROUND,       BUG,          NOT_VERY_EFFECTIVE
+-	db GROUND,       ROCK,         SUPER_EFFECTIVE
+-	db GROUND,       STEEL,        SUPER_EFFECTIVE
+-	db FLYING,       ELECTRIC,     NOT_VERY_EFFECTIVE
+-	db FLYING,       GRASS,        SUPER_EFFECTIVE
+-	db FLYING,       FIGHTING,     SUPER_EFFECTIVE
+-	db FLYING,       BUG,          SUPER_EFFECTIVE
+-	db FLYING,       ROCK,         NOT_VERY_EFFECTIVE
+-	db FLYING,       STEEL,        NOT_VERY_EFFECTIVE
+-	db PSYCHIC_TYPE, FIGHTING,     SUPER_EFFECTIVE
+-	db PSYCHIC_TYPE, POISON,       SUPER_EFFECTIVE
+-	db PSYCHIC_TYPE, PSYCHIC_TYPE, NOT_VERY_EFFECTIVE
+-	db PSYCHIC_TYPE, DARK,         NO_EFFECT
+-	db PSYCHIC_TYPE, STEEL,        NOT_VERY_EFFECTIVE
+-	db BUG,          FIRE,         NOT_VERY_EFFECTIVE
+-	db BUG,          GRASS,        SUPER_EFFECTIVE
+-	db BUG,          FIGHTING,     NOT_VERY_EFFECTIVE
+-	db BUG,          POISON,       NOT_VERY_EFFECTIVE
+-	db BUG,          FLYING,       NOT_VERY_EFFECTIVE
+-	db BUG,          PSYCHIC_TYPE, SUPER_EFFECTIVE
+-	db BUG,          GHOST,        NOT_VERY_EFFECTIVE
+-	db BUG,          DARK,         SUPER_EFFECTIVE
+-	db BUG,          STEEL,        NOT_VERY_EFFECTIVE
+-	db BUG,          FAIRY,        SUPER_EFFECTIVE
+-	db ROCK,         FIRE,         SUPER_EFFECTIVE
+-	db ROCK,         ICE,          SUPER_EFFECTIVE
+-	db ROCK,         FIGHTING,     NOT_VERY_EFFECTIVE
+-	db ROCK,         GROUND,       NOT_VERY_EFFECTIVE
+-	db ROCK,         FLYING,       SUPER_EFFECTIVE
+-	db ROCK,         BUG,          SUPER_EFFECTIVE
+-	db ROCK,         STEEL,        NOT_VERY_EFFECTIVE
+-	db GHOST,        NORMAL,       NO_EFFECT
+-	db GHOST,        PSYCHIC_TYPE, SUPER_EFFECTIVE
+-	db GHOST,        DARK,         NOT_VERY_EFFECTIVE
+-	db GHOST,        STEEL,        NOT_VERY_EFFECTIVE
+-	db GHOST,        GHOST,        SUPER_EFFECTIVE
+-	db GHOST,        FAIRY,        NOT_VERY_EFFECTIVE
+-	db DRAGON,       DRAGON,       SUPER_EFFECTIVE
+-	db DRAGON,       STEEL,        NOT_VERY_EFFECTIVE
+-	db DRAGON,       FAIRY,        NO_EFFECT
+-	db DARK,         FIGHTING,     NOT_VERY_EFFECTIVE
+-	db DARK,         PSYCHIC_TYPE, SUPER_EFFECTIVE
+-	db DARK,         GHOST,        SUPER_EFFECTIVE
+-	db DARK,         DARK,         NOT_VERY_EFFECTIVE
+-	db DARK,         STEEL,        NOT_VERY_EFFECTIVE
+-	db DARK,         FAIRY,        NOT_VERY_EFFECTIVE
+-	db STEEL,        FIRE,         NOT_VERY_EFFECTIVE
+-	db STEEL,        WATER,        NOT_VERY_EFFECTIVE
+-	db STEEL,        ELECTRIC,     NOT_VERY_EFFECTIVE
+-	db STEEL,        ICE,          SUPER_EFFECTIVE
+-	db STEEL,        ROCK,         SUPER_EFFECTIVE
+-	db STEEL,        STEEL,        NOT_VERY_EFFECTIVE
+-	db STEEL,        FAIRY,        SUPER_EFFECTIVE
+-	db FAIRY,        BUG,          NOT_VERY_EFFECTIVE
+-	db FAIRY,        DARK,         SUPER_EFFECTIVE
+-	db FAIRY,        DRAGON,       SUPER_EFFECTIVE
+-	db FAIRY,        FIGHTING,     SUPER_EFFECTIVE
+-	db FAIRY,        GHOST,        SUPER_EFFECTIVE
+-	db FAIRY,        POISON,       NOT_VERY_EFFECTIVE
+-	db FAIRY,        STEEL,        NOT_VERY_EFFECTIVE
++	; attacker, defender, multiplier. Workbook chart, 2026-10-11.
++	db NORMAL       , ROCK         , NOT_VERY_EFFECTIVE
++	db NORMAL       , STEEL        , NOT_VERY_EFFECTIVE
++	db FIRE         , FIRE         , NOT_VERY_EFFECTIVE
++	db FIRE         , WATER        , NOT_VERY_EFFECTIVE
++	db FIRE         , GRASS        , SUPER_EFFECTIVE
++	db FIRE         , ICE          , SUPER_EFFECTIVE
++	db FIRE         , BUG          , SUPER_EFFECTIVE
++	db FIRE         , ROCK         , NOT_VERY_EFFECTIVE
++	db FIRE         , DRAGON       , NOT_VERY_EFFECTIVE
++	db FIRE         , STEEL        , SUPER_EFFECTIVE
++	db WATER        , FIRE         , SUPER_EFFECTIVE
++	db WATER        , WATER        , NOT_VERY_EFFECTIVE
++	db WATER        , GRASS        , NOT_VERY_EFFECTIVE
++	db WATER        , GROUND       , SUPER_EFFECTIVE
++	db WATER        , ROCK         , SUPER_EFFECTIVE
++	db WATER        , DRAGON       , NOT_VERY_EFFECTIVE
++	db WATER        , ICE          , NOT_VERY_EFFECTIVE
++	db ELECTRIC     , WATER        , SUPER_EFFECTIVE
++	db ELECTRIC     , ELECTRIC     , NO_EFFECT
++	db ELECTRIC     , GRASS        , NOT_VERY_EFFECTIVE
++	db ELECTRIC     , GROUND       , NO_EFFECT
++	db ELECTRIC     , FLYING       , SUPER_EFFECTIVE
++	db ELECTRIC     , DRAGON       , NOT_VERY_EFFECTIVE
++	db ELECTRIC     , ROCK         , NOT_VERY_EFFECTIVE
++	db ELECTRIC     , STEEL        , SUPER_EFFECTIVE
++	db GRASS        , FIRE         , NOT_VERY_EFFECTIVE
++	db GRASS        , WATER        , SUPER_EFFECTIVE
++	db GRASS        , GRASS        , NOT_VERY_EFFECTIVE
++	db GRASS        , POISON       , NOT_VERY_EFFECTIVE
++	db GRASS        , GROUND       , SUPER_EFFECTIVE
++	db GRASS        , FLYING       , NOT_VERY_EFFECTIVE
++	db GRASS        , BUG          , NOT_VERY_EFFECTIVE
++	db GRASS        , ROCK         , SUPER_EFFECTIVE
++	db GRASS        , DRAGON       , NOT_VERY_EFFECTIVE
++	db ICE          , WATER        , NOT_VERY_EFFECTIVE
++	db ICE          , GRASS        , SUPER_EFFECTIVE
++	db ICE          , ICE          , NOT_VERY_EFFECTIVE
++	db ICE          , GROUND       , SUPER_EFFECTIVE
++	db ICE          , FLYING       , SUPER_EFFECTIVE
++	db ICE          , DRAGON       , SUPER_EFFECTIVE
++	db ICE          , STEEL        , NOT_VERY_EFFECTIVE
++	db ICE          , FIRE         , NOT_VERY_EFFECTIVE
++	db ICE          , FIGHTING     , NOT_VERY_EFFECTIVE
++	db FIGHTING     , NORMAL       , SUPER_EFFECTIVE
++	db FIGHTING     , ICE          , SUPER_EFFECTIVE
++	db FIGHTING     , POISON       , NOT_VERY_EFFECTIVE
++	db FIGHTING     , FLYING       , NOT_VERY_EFFECTIVE
++	db FIGHTING     , PSYCHIC_TYPE , NOT_VERY_EFFECTIVE
++	db FIGHTING     , BUG          , NOT_VERY_EFFECTIVE
++	db FIGHTING     , ROCK         , SUPER_EFFECTIVE
++	db FIGHTING     , DARK         , SUPER_EFFECTIVE
++	db FIGHTING     , STEEL        , SUPER_EFFECTIVE
++	db FIGHTING     , FAIRY        , NOT_VERY_EFFECTIVE
++	db POISON       , GRASS        , SUPER_EFFECTIVE
++	db POISON       , POISON       , NOT_VERY_EFFECTIVE
++	db POISON       , GROUND       , NOT_VERY_EFFECTIVE
++	db POISON       , ROCK         , NOT_VERY_EFFECTIVE
++	db POISON       , STEEL        , NO_EFFECT
++	db POISON       , FAIRY        , SUPER_EFFECTIVE
++	db POISON       , BUG          , SUPER_EFFECTIVE
++	db GROUND       , FIRE         , SUPER_EFFECTIVE
++	db GROUND       , ELECTRIC     , SUPER_EFFECTIVE
++	db GROUND       , GRASS        , NOT_VERY_EFFECTIVE
++	db GROUND       , POISON       , SUPER_EFFECTIVE
++	db GROUND       , FLYING       , NO_EFFECT
++	db GROUND       , BUG          , NOT_VERY_EFFECTIVE
++	db GROUND       , ROCK         , SUPER_EFFECTIVE
++	db GROUND       , STEEL        , SUPER_EFFECTIVE
++	db GROUND       , GHOST        , NO_EFFECT
++	db GROUND       , ICE          , NOT_VERY_EFFECTIVE
++	db FLYING       , ELECTRIC     , NOT_VERY_EFFECTIVE
++	db FLYING       , GRASS        , SUPER_EFFECTIVE
++	db FLYING       , FIGHTING     , SUPER_EFFECTIVE
++	db FLYING       , BUG          , SUPER_EFFECTIVE
++	db FLYING       , ROCK         , NOT_VERY_EFFECTIVE
++	db FLYING       , STEEL        , NOT_VERY_EFFECTIVE
++	db PSYCHIC_TYPE , FIGHTING     , SUPER_EFFECTIVE
++	db PSYCHIC_TYPE , POISON       , SUPER_EFFECTIVE
++	db PSYCHIC_TYPE , PSYCHIC_TYPE , NOT_VERY_EFFECTIVE
++	db PSYCHIC_TYPE , DARK         , NO_EFFECT
++	db PSYCHIC_TYPE , STEEL        , NOT_VERY_EFFECTIVE
++	db BUG          , FIRE         , NOT_VERY_EFFECTIVE
++	db BUG          , GRASS        , SUPER_EFFECTIVE
++	db BUG          , POISON       , NOT_VERY_EFFECTIVE
++	db BUG          , FLYING       , NOT_VERY_EFFECTIVE
++	db BUG          , PSYCHIC_TYPE , SUPER_EFFECTIVE
++	db BUG          , DARK         , SUPER_EFFECTIVE
++	db BUG          , STEEL        , NOT_VERY_EFFECTIVE
++	db BUG          , FAIRY        , SUPER_EFFECTIVE
++	db BUG          , ROCK         , NOT_VERY_EFFECTIVE
++	db ROCK         , FIRE         , SUPER_EFFECTIVE
++	db ROCK         , ICE          , NOT_VERY_EFFECTIVE
++	db ROCK         , FIGHTING     , NOT_VERY_EFFECTIVE
++	db ROCK         , GROUND       , NOT_VERY_EFFECTIVE
++	db ROCK         , FLYING       , SUPER_EFFECTIVE
++	db ROCK         , BUG          , SUPER_EFFECTIVE
++	db ROCK         , STEEL        , NOT_VERY_EFFECTIVE
++	db GHOST        , NORMAL       , NO_EFFECT
++	db GHOST        , PSYCHIC_TYPE , SUPER_EFFECTIVE
++	db GHOST        , DARK         , NOT_VERY_EFFECTIVE
++	db GHOST        , GHOST        , SUPER_EFFECTIVE
++	db GHOST        , FAIRY        , NOT_VERY_EFFECTIVE
++	db DRAGON       , DRAGON       , SUPER_EFFECTIVE
++	db DRAGON       , FAIRY        , NO_EFFECT
++	db DRAGON       , ICE          , NOT_VERY_EFFECTIVE
++	db DARK         , FIGHTING     , NOT_VERY_EFFECTIVE
++	db DARK         , PSYCHIC_TYPE , SUPER_EFFECTIVE
++	db DARK         , GHOST        , SUPER_EFFECTIVE
++	db DARK         , DARK         , NOT_VERY_EFFECTIVE
++	db DARK         , STEEL        , NOT_VERY_EFFECTIVE
++	db DARK         , FAIRY        , NOT_VERY_EFFECTIVE
++	db STEEL        , FIRE         , NOT_VERY_EFFECTIVE
++	db STEEL        , WATER        , NOT_VERY_EFFECTIVE
++	db STEEL        , ELECTRIC     , NOT_VERY_EFFECTIVE
++	db STEEL        , ICE          , SUPER_EFFECTIVE
++	db STEEL        , ROCK         , SUPER_EFFECTIVE
++	db STEEL        , STEEL        , NOT_VERY_EFFECTIVE
++	db STEEL        , FAIRY        , SUPER_EFFECTIVE
++	db FAIRY        , BUG          , NOT_VERY_EFFECTIVE
++	db FAIRY        , DARK         , SUPER_EFFECTIVE
++	db FAIRY        , DRAGON       , SUPER_EFFECTIVE
++	db FAIRY        , FIGHTING     , SUPER_EFFECTIVE
++	db FAIRY        , GHOST        , SUPER_EFFECTIVE
++	db FAIRY        , POISON       , NOT_VERY_EFFECTIVE
++	db FAIRY        , STEEL        , NOT_VERY_EFFECTIVE
++	db FAIRY        , PSYCHIC_TYPE , NOT_VERY_EFFECTIVE
+ 
+ 	db -2 ; end (with Foresight)
+ 
+-; Foresight removes Ghost's immunities.
++; Foresight removes Ghost's Normal/Fighting immunities.
+ 	db NORMAL,       GHOST,        NO_EFFECT
+ 	db FIGHTING,     GHOST,        NO_EFFECT
+ 
+ 	db -1 ; end
++TypeMatchupsEnd:
+--- /dev/null
++++ b/engine/pokedex/pokedex_types.asm
+@@ -0,0 +1,1206 @@
++; Exclusive Type Matchups owner. Badge art and frame art are existing assets.
++DEF TYPES_STATE EQUS "wPokedexWRAM0Scratch"
++DEF TYPES_CURSOR EQUS "TYPES_STATE"
++DEF TYPES_ORDINAL EQUS "TYPES_STATE + 1"
++DEF TYPES_ROW EQUS "TYPES_STATE + 2"
++DEF TYPES_COLUMN EQUS "TYPES_STATE + 3"
++DEF TYPES_NEXT_SLOT EQUS "TYPES_STATE + 4"
++DEF TYPES_PHASE EQUS "TYPES_STATE + 5"
++DEF TYPES_FIRST_SLOT EQUS "TYPES_STATE + 6"
++DEF TYPES_I_COUNT EQUS "TYPES_STATE + 7"
++DEF TYPES_W_COUNT EQUS "TYPES_STATE + 8"
++DEF TYPES_R_COUNT EQUS "TYPES_STATE + 9"
++DEF TYPES_R_ROW EQUS "TYPES_STATE + 10"
++DEF TYPES_W_LIST EQUS "TYPES_STATE + 11"
++DEF TYPES_R_LIST EQUS "TYPES_STATE + 29"
++DEF TYPES_X EQUS "TYPES_STATE + 47"
++DEF TYPES_Y EQUS "TYPES_STATE + 48"
++DEF TYPES_PAL EQUS "TYPES_STATE + 49"
++DEF TYPES_PAGE EQUS "TYPES_STATE + 51"
++DEF TYPES_LIST_COUNT EQUS "TYPES_STATE + 52"
++DEF TYPES_LIST_ROW EQUS "TYPES_STATE + 53"
++DEF TYPES_LIST_POINTER EQUS "TYPES_STATE + 54"
++DEF TYPES_LIST_INDEX EQUS "TYPES_STATE + 56"
++DEF TYPES_BADGE EQUS "TYPES_STATE + $40"
++DEF TYPES_SHIFTED EQUS "TYPES_STATE + $80"
++DEF TYPES_RASTER EQUS "TYPES_STATE + $100"
++DEF TYPES_COLORS EQUS "TYPES_STATE + $1a0"
++DEF TYPES_TOP_SLOTS EQUS "TYPES_STATE + $280"
++DEF TYPES_I_LIST EQUS "TYPES_STATE + $2a0"
++DEF TYPES_EFFECTS EQUS "TYPES_STATE + $300"
++DEF TYPES_IDS EQUS "TYPES_STATE + $320"
++DEF TYPES_PAGE_A EQUS "HIGH(TYPES_STATE + $200)"
++DEF TYPES_PAGE_B EQUS "HIGH(TYPES_STATE + $400)"
++DEF TYPES_CORNER EQU $28
++DEF TYPES_SIDE EQU $29
++DEF TYPES_DIVIDER EQU $2a
++DEF TYPES_ARROW EQU $5a
++ASSERT LOW(TYPES_RASTER) == 0
++ASSERT LOW(TYPES_COLORS) == $a0
++ASSERT TYPES_I_LIST + NUM_TYPES <= TYPES_EFFECTS
++ASSERT TYPES_STATE + $460 <= POKEDEX_ORDER_SEEN_FLAGS
++ASSERT NUM_TYPES == 18
++ASSERT TypeMatchupsEnd - TypeMatchups <= 576
++
++PokedexTypes_Initialize::
++    farcall Pokedex_InitArrowCursor
++	xor a
++	ldh [hLCDCPointer], a
++	ldh [hVBlank], a
++	ldh [hBGMapMode], a
++	ldh [hCGBPalUpdate], a
++	ldh [hSCX], a
++	ldh [hSCY], a
++	ldh [hWY], a
++	ldh [hJoypadSum], a
++	ld [wPokedexSelectedState], a
++	ld [wPokedexOwnerTransition], a
++	ld a, $a7
++	ldh [hWX], a
++	farcall Pokedex_CancelAnimationPrefetch
++	call ClearSprites
++	ld hl, TYPES_STATE
++	ld bc, $460
++	xor a
++	call ByteFill
++	ld hl, .Alphabetical
++	ld de, TYPES_IDS
++	ld bc, NUM_TYPES
++	call CopyBytes
++	ld a, TYPES_PAGE_A
++	ld [TYPES_PAGE], a
++	ldh [hLYOverrideStart], a
++	call .RasterTable
++	call .LoadGraphics
++	call .LoadFrame
++	call .LoadPalettes
++	call .DrawShell
++	call .DrawTop
++	call PokedexTypes_DrawSelection
++	farcall Pokedex_StageOwnerTransitionMaps
++.near_vblank
++	ldh a, [rLY]
++	cp 140
++	jr c, .near_vblank
++	cp 144
++	jr nc, .near_vblank
++	di
++.vblank
++	ldh a, [rLY]
++	cp 144
++	jr c, .vblank
++	farcall PokedexResults_CommitBG
++	call .HardwarePalettes
++	call hTransferShadowOAM
++	xor a
++	ldh [hOAMUpdate], a
++	ld a, $ff
++	ldh [hLCDCPointer], a
++	ld a, DEXSTATE_TYPES_UPDATE
++	ld [wJumptableIndex], a
++	ei
++	ret
++
++.RasterTable:
++	ld hl, .EventLines
++	ld b, 11
++	ld c, 8
++.event
++	ld a, [hli]
++	push hl
++	ld l, a
++	ld h, HIGH(TYPES_RASTER)
++	ld [hl], c
++	pop hl
++	ld a, c
++	add 8
++	ld c, a
++	dec b
++	jr nz, .event
++	ret
++.EventLines:
++	db 7, 21, 35, 49, 63, 77, 95, 103, 111, 119, 127
++.Alphabetical:
++	db BUG, DARK, DRAGON, ELECTRIC, FAIRY, FIGHTING
++	db FIRE, FLYING, GHOST, GRASS, GROUND, ICE
++	db NORMAL, POISON, PSYCHIC_TYPE, ROCK, STEEL, WATER
++
++.LoadGraphics:
++	ld a, 1
++	ldh [rVBK], a
++	xor a
++	ld [TYPES_ORDINAL], a
++.base
++	call .LoadBadge
++	ld a, [TYPES_ORDINAL]
++	add a
++	add a
++	ld c, a
++	ld b, 4
++	ld hl, TYPES_BADGE
++	call .Upload
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_TOP_SLOTS
++	add hl, de
++	ld a, e
++	add a
++	add a
++	ld [hl], a
++	call .LoadAccent
++	ld hl, TYPES_ORDINAL
++	inc [hl]
++	ld a, [hl]
++	cp NUM_TYPES
++	jr c, .base
++	ld a, 72
++	ld [TYPES_NEXT_SLOT], a
++	xor a
++	ld [TYPES_ORDINAL], a
++.shift
++	call .OrdinalPosition
++	ld a, [TYPES_ROW]
++	ld e, a
++	ld d, 0
++	ld hl, .Phases
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_PHASE], a
++	and a
++	jr z, .next_shift
++	call .LoadBadge
++	call .ShiftBadge
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_TOP_SLOTS
++	add hl, de
++	ld a, [TYPES_NEXT_SLOT]
++	ld [hl], a
++	ld c, a
++	ld b, 8
++	ld hl, TYPES_SHIFTED
++	call .Upload
++	ld a, [TYPES_NEXT_SLOT]
++	add 8
++	ld [TYPES_NEXT_SLOT], a
++.next_shift
++	ld hl, TYPES_ORDINAL
++	inc [hl]
++	ld a, [hl]
++	cp NUM_TYPES
++	jr c, .shift
++	xor a
++	ldh [rVBK], a
++	ret
++.Phases:
++	db 0, 6, 4, 2, 0, 6
++.TileRows:
++	db 1, 2, 4, 6, 8, 9
++.PixelRows:
++	db 8, 22, 36, 50, 64, 78
++
++.LoadBadge:
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_IDS
++	add hl, de
++	ld a, [hl]
++	ld e, a
++	add a
++	add e
++	ld e, a
++	ld hl, CompactTypeIconGFXPointers
++	add hl, de
++	ld a, BANK(CompactTypeIconGFXPointers)
++	call GetFarByte
++	push af
++	inc hl
++	ld a, BANK(CompactTypeIconGFXPointers)
++	call GetFarWord
++	ld de, TYPES_BADGE
++	ld bc, 4 tiles
++	pop af
++	call FarCopyBytes
++	; BG corners are gray, not transparent: color index 1 in every badge palette.
++	ld hl, TYPES_BADGE
++	set 7, [hl]
++	ld hl, TYPES_BADGE + 14
++	set 7, [hl]
++	ld hl, TYPES_BADGE + 48
++	set 0, [hl]
++	ld hl, TYPES_BADGE + 62
++	set 0, [hl]
++	ret
++
++.LoadAccent:
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_IDS
++	add hl, de
++	ld a, [hl]
++	add a
++	ld e, a
++	ld hl, TypeIconPalettePointers
++	add hl, de
++	ld a, BANK(TypeIconPalettePointers)
++	call GetFarWord
++	ld de, 4
++	add hl, de
++	push hl
++	ld a, [TYPES_ORDINAL]
++	add a
++	add LOW(TYPES_COLORS)
++	ld e, a
++	ld d, HIGH(TYPES_COLORS)
++	pop hl
++	ld bc, 2
++	ld a, BANK(TypeIconPalettes)
++	jp FarCopyBytes
++
++.ShiftBadge:
++	ld hl, TYPES_SHIFTED
++	ld b, 64
++.gray
++	ld [hl], $ff
++	inc hl
++	ld [hl], 0
++	inc hl
++	dec b
++	jr nz, .gray
++	xor a
++	ld [TYPES_COLUMN], a
++	ld hl, TYPES_BADGE
++.column
++	ld a, [TYPES_COLUMN]
++	swap a
++	ld e, a
++	ld a, [TYPES_PHASE]
++	add a
++	add e
++	add LOW(TYPES_SHIFTED)
++	ld e, a
++	ld d, HIGH(TYPES_SHIFTED)
++	ld a, [TYPES_PHASE]
++	ld b, a
++	ld a, 8
++	sub b
++	add a
++	ld c, a
++	ld b, 0
++	call CopyBytes
++	ld a, [TYPES_COLUMN]
++	swap a
++	add LOW(TYPES_SHIFTED + 4 tiles)
++	ld e, a
++	ld d, HIGH(TYPES_SHIFTED + 4 tiles)
++	ld a, [TYPES_PHASE]
++	add a
++	ld c, a
++	ld b, 0
++	call CopyBytes
++	ld a, [TYPES_COLUMN]
++	inc a
++	ld [TYPES_COLUMN], a
++	cp 4
++	jr c, .column
++	ret
++
++.Upload:
++	push bc
++	push hl
++	ld a, c
++	call .TileID
++	ld c, a
++	swap a
++	and $f
++	ld d, a
++	ld a, $90
++	bit 7, c
++	jr z, .unsigned
++	ld a, $80
++.unsigned
++	add d
++	ld d, a
++	ld a, c
++	swap a
++	and $f0
++	ld e, a
++	pop hl
++	call .TransferTile
++	pop bc
++	inc c
++	dec b
++	jr nz, .Upload
++	ret
++
++.TransferTile:
++	push af
++.wait
++	ldh a, [rSTAT]
++	and 2
++	jr nz, .wait
++	di
++	ldh a, [rSTAT]
++	and 2
++	jr z, .transfer
++	ei
++	jr .wait
++.transfer
++	ld a, h
++	ldh [rVDMA_SRC_HIGH], a
++	ld a, l
++	ldh [rVDMA_SRC_LOW], a
++	ld a, d
++	and $1f
++	ldh [rVDMA_DEST_HIGH], a
++	ld a, e
++	ldh [rVDMA_DEST_LOW], a
++	xor a
++	ldh [rVDMA_LEN], a
++	ei
++	ld a, l
++	add 1 tiles
++	ld l, a
++	jr nc, .advanced
++	inc h
++.advanced
++	pop af
++	ret
++
++.TileID:
++	push hl
++	push de
++	ld e, a
++	ld d, 0
++	ld hl, .Slots
++	add hl, de
++	ld a, [hl]
++	pop de
++	pop hl
++	ret
++.Slots:
++FOR tile_id, $80, $b1
++	db tile_id
++ENDR
++FOR tile_id, $33, $64
++	db tile_id
++ENDR
++FOR tile_id, $d2, $fa
++	db tile_id
++ENDR
++FOR tile_id, $00, $28
++	db tile_id
++ENDR
++ASSERT @ - .Slots == 178
++
++.OrdinalPosition:
++	ld a, [TYPES_ORDINAL]
++	ld b, 0
++.divide
++	cp 3
++	jr c, .position
++	sub 3
++	inc b
++	jr .divide
++.position
++	ld [TYPES_COLUMN], a
++	ld a, b
++	ld [TYPES_ROW], a
++	ret
++
++.LoadFrame:
++	ld a, 1
++	ldh [rVBK], a
++	ld hl, PokedexMovesSearchLeftGFX
++	ld de, TYPES_BADGE
++	ld bc, 1 tiles
++	ld a, BANK(PokedexMovesSearchLeftGFX)
++	call FarCopyBytes
++	ld hl, TYPES_BADGE
++	; The shared junction's upper five rows sit outside this frame.
++	ld b, 5
++.corner_margin
++	ld a, $ff
++	ld [hli], a
++	xor a
++	ld [hli], a
++	dec b
++	jr nz, .corner_margin
++	ld hl, TYPES_BADGE
++	ld de, vTiles5 tile TYPES_CORNER
++	call .TransferTile
++	ld hl, TYPES_BADGE + 12
++	ld a, [hli]
++	ld c, a
++	ld b, [hl]
++	ld hl, TYPES_SHIFTED
++	ld d, 8
++.side
++	ld a, c
++	ld [hli], a
++	ld a, b
++	ld [hli], a
++	dec d
++	jr nz, .side
++	ld hl, TYPES_SHIFTED
++	ld de, vTiles5 tile TYPES_SIDE
++	call .TransferTile
++	ld hl, PokedexDescriptionGFX
++	ld de, TYPES_BADGE
++	ld bc, 1 tiles
++	ld a, BANK(PokedexDescriptionGFX)
++	call FarCopyBytes
++	ld hl, TYPES_BADGE
++	ld b, 16
++.border_phase
++	ld a, [hl]
++	ld c, a
++	rept 5
++	add a
++	endr
++	bit 0, c
++	jr z, .padding
++	or $1f
++.padding
++	ld [hli], a
++	dec b
++	jr nz, .border_phase
++	ld hl, TYPES_BADGE
++	ld de, vTiles5 tile TYPES_DIVIDER
++	call .TransferTile
++	ld hl, Font + ('▶' - $80) * 8
++	ld de, TYPES_BADGE
++	ld bc, 8
++	ld a, BANK(Font)
++	call FarCopyBytes
++	ld hl, TYPES_BADGE
++	ld de, TYPES_SHIFTED
++	ld b, 8
++.arrow
++	ld a, [hli]
++	ld [de], a
++	inc de
++	xor a
++	ld [de], a
++	inc de
++	dec b
++	jr nz, .arrow
++	ld hl, TYPES_SHIFTED
++	ld de, vTiles3 tile TYPES_ARROW
++	call .TransferTile
++	xor a
++	ldh [rVBK], a
++	ret
++
++.LoadPalettes:
++	ldh a, [rSVBK]
++	push af
++	ld a, BANK(wBGPals1)
++	ldh [rSVBK], a
++	ld hl, PokedexUIPalette
++	ld de, wBGPals1
++	ld bc, 1 palettes
++	ld a, BANK(PokedexUIPalette)
++	call FarCopyBytes
++	ld de, wBGPals1 palette 1
++	ld b, 4
++.badge_palette
++	push bc
++	ld hl, .BadgePalette
++	ld bc, 1 palettes
++	call CopyBytes
++	pop bc
++	dec b
++	jr nz, .badge_palette
++	ld hl, wBGPals1
++	ld de, wBGPals2
++	ld bc, 5 palettes
++	call CopyBytes
++	ld hl, .ArrowPalette
++	ld de, wOBPals1
++	ld bc, 1 palettes
++	call CopyBytes
++	ld hl, .ArrowPalette
++	ld de, wOBPals2
++	ld bc, 1 palettes
++	call CopyBytes
++	pop af
++	ldh [rSVBK], a
++	ret
++.BadgePalette:
++	RGB 31,31,31, 5,5,5, 0,0,0, 0,0,0
++.ArrowPalette:
++	RGB 0,0,0, 31,31,31, 31,31,31, 31,31,31
++
++.HardwarePalettes:
++	ldh a, [rSVBK]
++	push af
++	ld a, BANK(wBGPals1)
++	ldh [rSVBK], a
++	ld a, $80
++	ldh [rBCPS], a
++	ld hl, wBGPals1
++	ld b, 5 palettes
++.bg
++	ld a, [hli]
++	ldh [rBCPD], a
++	dec b
++	jr nz, .bg
++	ld a, $80
++	ldh [rOCPS], a
++	ld hl, wOBPals1
++	ld b, 1 palettes
++.obj
++	ld a, [hli]
++	ldh [rOCPD], a
++	dec b
++	jr nz, .obj
++	pop af
++	ldh [rSVBK], a
++	ret
++
++.DrawShell:
++	ld hl, wTilemap
++	ld a, $32
++	ld bc, SCREEN_AREA
++	call ByteFill
++	ld hl, wAttrmap
++	xor a
++	ld bc, SCREEN_AREA
++	call ByteFill
++	hlcoord 0, 0
++	ld a, $34
++	ld bc, SCREEN_WIDTH
++	call ByteFill
++	hlcoord 0, 11
++	ld a, $74
++	ld bc, SCREEN_WIDTH
++	call ByteFill
++	hlcoord 0, 17
++	ld a, $39
++	ld bc, SCREEN_WIDTH
++	call ByteFill
++	hlcoord 0, 0
++	ld [hl], TYPES_CORNER
++	hlcoord 19, 0
++	ld [hl], TYPES_CORNER
++	hlcoord 0, 17
++	ld [hl], TYPES_CORNER
++	hlcoord 19, 17
++	ld [hl], TYPES_CORNER
++	hlcoord 0, 0, wAttrmap
++	ld [hl], BG_BANK1
++	hlcoord 19, 0, wAttrmap
++	ld [hl], BG_BANK1 | BG_XFLIP
++	hlcoord 0, 17, wAttrmap
++	ld [hl], BG_BANK1 | BG_YFLIP
++	hlcoord 19, 17, wAttrmap
++	ld [hl], BG_BANK1 | BG_XFLIP | BG_YFLIP
++	ld b, 16
++	hlcoord 0, 1
++	decoord 0, 1, wAttrmap
++.sides
++	ld [hl], TYPES_SIDE
++	ld a, BG_BANK1
++	ld [de], a
++	push hl
++	push de
++	ld a, l
++	add 19
++	ld l, a
++	jr nc, .map_carry
++	inc h
++.map_carry
++	ld a, e
++	add 19
++	ld e, a
++	jr nc, .attr_carry
++	inc d
++.attr_carry
++	ld [hl], TYPES_SIDE
++	ld a, BG_BANK1 | BG_XFLIP
++	ld [de], a
++	pop de
++	pop hl
++	push bc
++	ld bc, SCREEN_WIDTH
++	add hl, bc
++	ld a, e
++	add SCREEN_WIDTH
++	ld e, a
++	jr nc, .next_side
++	inc d
++.next_side
++	pop bc
++	dec b
++	jr nz, .sides
++	hlcoord 0, 11
++	ld [hl], TYPES_DIVIDER
++	hlcoord 19, 11
++	ld [hl], TYPES_DIVIDER
++	ret
++
++.DrawTop:
++	xor a
++	ld [TYPES_ORDINAL], a
++.top
++	call .OrdinalPosition
++	ld a, [TYPES_ROW]
++	ld e, a
++	ld d, 0
++	ld hl, .TileRows
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_Y], a
++	ld hl, .Phases
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_PHASE], a
++	ld a, [TYPES_COLUMN]
++	inc a
++	ld [TYPES_PAL], a
++	dec a
++	add a
++	ld b, a
++	add a
++	add b
++	add 2
++	ld [TYPES_X], a
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_TOP_SLOTS
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_FIRST_SLOT], a
++	call .PlaceFour
++	ld a, [TYPES_PHASE]
++	and a
++	jr z, .next_top
++	ld hl, TYPES_Y
++	inc [hl]
++	ld a, [TYPES_FIRST_SLOT]
++	add 4
++	ld [TYPES_FIRST_SLOT], a
++	call .PlaceFour
++.next_top
++	ld hl, TYPES_ORDINAL
++	inc [hl]
++	ld a, [hl]
++	cp NUM_TYPES
++	jr c, .top
++	ret
++
++.PlaceFour:
++	ld a, [TYPES_Y]
++	ld l, a
++	ld h, 0
++	add hl, hl
++	add hl, hl
++	ld e, l
++	ld d, h
++	add hl, hl
++	add hl, hl
++	add hl, de
++	ld a, [TYPES_X]
++	ld e, a
++	ld d, 0
++	add hl, de
++	ld de, wTilemap
++	add hl, de
++	push hl
++	ld de, wAttrmap - wTilemap
++	add hl, de
++	ld e, l
++	ld d, h
++	pop hl
++	ld a, [TYPES_FIRST_SLOT]
++	ld c, a
++	ld b, 4
++.cell
++	ld a, c
++	call .TileID
++	ld [hli], a
++	ld a, [TYPES_PAL]
++	or BG_BANK1
++	ld [de], a
++	inc de
++	inc c
++	dec b
++	jr nz, .cell
++	ret
++
++PokedexTypes_DrawSelection::
++	call PokedexTypes_BuildMatchups
++	call PokedexTypes_StageColours
++	ld a, $32
++	hlcoord 1, 12
++	lb bc, 5, 18
++	call .ClearLower
++	xor a
++	hlcoord 1, 12, wAttrmap
++	lb bc, 5, 18
++	call .ClearLower
++	ld a, 'W'
++	ld b, 12
++	call .Label
++	ld a, [TYPES_R_ROW]
++	ld b, a
++	ld a, 'R'
++	call .Label
++	ld a, [TYPES_I_COUNT]
++	and a
++	jr z, .lists
++	ld a, 'I'
++	ld b, 16
++	call .Label
++.lists
++	ld hl, TYPES_W_LIST
++	ld a, [TYPES_W_COUNT]
++	ld c, a
++	ld b, 12
++	call .DrawList
++	ld hl, TYPES_R_LIST
++	ld a, [TYPES_R_COUNT]
++	ld c, a
++	ld a, [TYPES_R_ROW]
++	ld b, a
++	call .DrawList
++	ld hl, TYPES_I_LIST
++	ld a, [TYPES_I_COUNT]
++	ld c, a
++	ld b, 16
++	call .DrawList
++	jp .Cursor
++
++.Label:
++	push af
++	hlcoord 1, 0
++	ld de, SCREEN_WIDTH
++.label_row
++	add hl, de
++	dec b
++	jr nz, .label_row
++	pop af
++	ld [hli], a
++	ld [hl], ':'
++	ret
++
++.ClearLower:
++	push af
++	push bc
++	push hl
++	ld b, 0
++	call ByteFill
++	pop hl
++	ld de, SCREEN_WIDTH
++	add hl, de
++	pop bc
++	pop af
++	dec b
++	jr nz, .ClearLower
++	ret
++
++.DrawList:
++	ld a, c
++	ld [TYPES_LIST_COUNT], a
++	and a
++	ret z
++	ld a, b
++	ld [TYPES_LIST_ROW], a
++	ld a, l
++	ld [TYPES_LIST_POINTER], a
++	ld a, h
++	ld [TYPES_LIST_POINTER + 1], a
++	xor a
++	ld [TYPES_LIST_INDEX], a
++.list
++	ld a, [TYPES_LIST_INDEX]
++	ld e, a
++	ld d, 0
++	ld a, [TYPES_LIST_POINTER]
++	ld l, a
++	ld a, [TYPES_LIST_POINTER + 1]
++	ld h, a
++	add hl, de
++	ld a, [hl]
++	ld [TYPES_ORDINAL], a
++	add a
++	add a
++	ld [TYPES_FIRST_SLOT], a
++	ld a, [TYPES_LIST_INDEX]
++	and 3
++	ld [TYPES_COLUMN], a
++	inc a
++	ld [TYPES_PAL], a
++	dec a
++	add a
++	add a
++	add 3
++	ld [TYPES_X], a
++	ld a, [TYPES_LIST_INDEX]
++	srl a
++	srl a
++	ld b, a
++	ld a, [TYPES_LIST_ROW]
++	add b
++	ld [TYPES_Y], a
++	call PokedexTypes_Initialize.PlaceFour
++	ld a, [TYPES_Y]
++	sub 5
++	ld c, a
++	ld a, [TYPES_COLUMN]
++	ld d, a
++	ld a, [TYPES_ORDINAL]
++	call PokedexTypes_StoreColour
++	ld hl, TYPES_LIST_INDEX
++	inc [hl]
++	ld a, [TYPES_LIST_COUNT]
++	cp [hl]
++	jr nz, .list
++	ret
++
++.Cursor:
++	ld a, [TYPES_CURSOR]
++	ld [TYPES_ORDINAL], a
++	call PokedexTypes_Initialize.OrdinalPosition
++	ld a, [TYPES_ROW]
++	ld e, a
++	ld d, 0
++	ld hl, PokedexTypes_Initialize.PixelRows
++	add hl, de
++	ld a, [hl]
++	add 16
++	ld [wShadowOAM], a
++	ld a, [TYPES_COLUMN]
++	ld b, a
++	add a
++	add b
++	swap a
++	add 16
++	ld [wShadowOAM + 1], a
++	ld a, TYPES_ARROW
++	ld [wShadowOAM + 2], a
++	ld a, OAM_BANK1
++	ld [wShadowOAM + 3], a
++	ret
++
++; Build one defensive result from the canonical battle chart, including records
++; after the Foresight divider. Battle-only modifiers are deliberately excluded.
++PokedexTypes_BuildMatchups::
++	ld hl, TYPES_EFFECTS
++	ld bc, 29
++	ld a, EFFECTIVE
++	call ByteFill
++	ldh a, [rSVBK]
++	push af
++	ld a, BANK(wPokedexInfoGFX)
++	ldh [rSVBK], a
++	ld hl, TypeMatchups
++	ld de, wPokedexInfoGFX
++	ld bc, TypeMatchupsEnd - TypeMatchups
++	ld a, BANK(TypeMatchups)
++	call FarCopyBytes
++	ld a, [TYPES_CURSOR]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_IDS
++	add hl, de
++	ld d, [hl]
++	ld hl, wPokedexInfoGFX
++.record
++	ld a, [hli]
++	cp -1
++	jr z, .lists
++	cp -2
++	jr z, .record
++	ld b, a
++	ld a, [hli]
++	ld c, a
++	ld a, [hli]
++	ld e, a
++	ld a, c
++	cp d
++	jr nz, .record
++	push hl
++	ld l, b
++	ld h, HIGH(TYPES_EFFECTS)
++	ld [hl], e
++	pop hl
++	jr .record
++.lists
++	pop af
++	ldh [rSVBK], a
++	xor a
++	ld [TYPES_I_COUNT], a
++	ld [TYPES_W_COUNT], a
++	ld [TYPES_R_COUNT], a
++	ld [TYPES_ORDINAL], a
++.type
++	ld a, [TYPES_ORDINAL]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_IDS
++	add hl, de
++	ld l, [hl]
++	ld h, HIGH(TYPES_EFFECTS)
++	ld a, [hl]
++	cp SUPER_EFFECTIVE
++	jr z, .weak
++	cp EFFECTIVE
++	jr nc, .next
++	and a
++	jr nz, .resist
++	; Steel keeps its compact combined resistance/immunity list.
++	ld a, [TYPES_CURSOR]
++	ld e, a
++	ld d, 0
++	ld hl, TYPES_IDS
++	add hl, de
++	ld a, [hl]
++	cp STEEL
++	jr z, .resist
++	ld hl, TYPES_I_COUNT
++	ld de, TYPES_I_LIST
++	jr .append
++.resist
++	ld hl, TYPES_R_COUNT
++	ld de, TYPES_R_LIST
++	jr .append
++.weak
++	ld hl, TYPES_W_COUNT
++	ld de, TYPES_W_LIST
++.append
++	ld a, [hl]
++	inc [hl]
++	ld l, a
++	ld h, 0
++	add hl, de
++	ld a, [TYPES_ORDINAL]
++	ld [hl], a
++.next
++	ld hl, TYPES_ORDINAL
++	inc [hl]
++	ld a, [hl]
++	cp NUM_TYPES
++	jr c, .type
++	ld a, [TYPES_W_COUNT]
++	cp 5
++	ld a, 14
++	jr c, .r_row
++	inc a
++.r_row
++	ld [TYPES_R_ROW], a
++	ret
++
++PokedexTypes_StageColours::
++	ld a, [TYPES_PAGE]
++	ld h, a
++	ld l, 0
++	ld bc, 96
++	xor a
++	call ByteFill
++	xor a
++	ld [TYPES_ORDINAL], a
++.top
++	call PokedexTypes_Initialize.OrdinalPosition
++	ld a, [TYPES_ROW]
++	inc a
++	ld c, a
++	ld a, [TYPES_COLUMN]
++	ld d, a
++	ld a, [TYPES_ORDINAL]
++	call PokedexTypes_StoreColour
++	ld hl, TYPES_ORDINAL
++	inc [hl]
++	ld a, [hl]
++	cp NUM_TYPES
++	jr c, .top
++	ret
++
++PokedexTypes_StoreColour::
++	push bc
++	push de
++	push hl
++	add a
++	add LOW(TYPES_COLORS)
++	ld l, a
++	ld h, HIGH(TYPES_COLORS)
++	ld b, [hl]
++	inc hl
++	ld e, [hl]
++	ld a, d
++	add a
++	ld d, a
++	ld a, c
++	add a
++	add a
++	add a
++	add d
++	ld l, a
++	ld a, [TYPES_PAGE]
++	ld h, a
++	ld [hl], b
++	inc hl
++	ld [hl], e
++	pop hl
++	pop de
++	pop bc
++	ret
++
++PokedexTypes_Update::
++	call PokedexTypes_BlinkCursor
++	; Only VBlank accumulates edges, so this short exchange cannot delay a
++	; raster palette write beyond HBlank's available time.
++	di
++	ldh a, [hJoypadSum]
++	ld b, a
++	xor a
++	ldh [hJoypadSum], a
++	ei
++	ldh a, [hJoyPressed]
++	or b
++	and PAD_B | PAD_SELECT
++	jp nz, PokedexTypes_Leave
++	ld a, b
++	and PAD_CTRL_PAD
++	jr nz, .direction
++	ldh a, [hJoyLast]
++	and PAD_CTRL_PAD
++	ret z
++.direction
++	ld c, a
++	ld a, [TYPES_CURSOR]
++	ld [TYPES_ORDINAL], a
++	call PokedexTypes_Initialize.OrdinalPosition
++	bit B_PAD_UP, c
++	jr nz, .up
++	bit B_PAD_DOWN, c
++	jr nz, .down
++	bit B_PAD_LEFT, c
++	jr nz, .left
++	ld hl, TYPES_COLUMN
++	inc [hl]
++	ld a, [hl]
++	cp 3
++	jr c, .move
++	ld [hl], 0
++	jr .move
++.left
++	ld hl, TYPES_COLUMN
++	ld a, [hl]
++	and a
++	jr nz, .left_step
++	ld [hl], 3
++.left_step
++	dec [hl]
++	jr .move
++.up
++	ld hl, TYPES_ROW
++	ld a, [hl]
++	and a
++	jr nz, .up_step
++	ld [hl], 6
++.up_step
++	dec [hl]
++	jr .move
++.down
++	ld hl, TYPES_ROW
++	inc [hl]
++	ld a, [hl]
++	cp 6
++	jr c, .move
++	ld [hl], 0
++.move
++	farcall Pokedex_ResetArrowCursorBlink
++	ld a, [TYPES_ROW]
++	ld b, a
++	add a
++	add b
++	ld b, a
++	ld a, [TYPES_COLUMN]
++	add b
++	ld [TYPES_CURSOR], a
++	ld a, TRUE
++	ldh [hOAMUpdate], a
++	ldh a, [hLYOverrideStart]
++	xor TYPES_PAGE_A ^ TYPES_PAGE_B
++	ld [TYPES_PAGE], a
++	call PokedexTypes_DrawSelection
++	farcall Pokedex_StageOwnerTransitionMaps
++.near_vblank
++	ldh a, [rLY]
++	cp 140
++	jr c, .near_vblank
++	cp 144
++	jr nc, .near_vblank
++	di
++.vblank
++	ldh a, [rLY]
++	cp 144
++	jr c, .vblank
++	call PokedexTypes_CommitLower
++	ld a, [TYPES_PAGE]
++	ldh [hLYOverrideStart], a
++	call hTransferShadowOAM
++	xor a
++	ldh [hOAMUpdate], a
++	ei
++	ret
++
++PokedexTypes_BlinkCursor:
++	farcall Pokedex_AdvanceArrowCursorBlink
++	jr z, .visible
++	xor a
++	ld [wShadowOAM], a
++	ret
++.visible
++	jp PokedexTypes_DrawSelection.Cursor
++
++PokedexTypes_CommitLower:
++	ldh a, [rSVBK]
++	push af
++	ldh a, [rVBK]
++	push af
++	ld a, BANK(wPokedexOwnerTilemapBuffer)
++	ldh [rSVBK], a
++	ld a, 1
++	ldh [rVBK], a
++	ld hl, wPokedexOwnerAttrmapBuffer + 12 * TILEMAP_WIDTH
++	call .Transfer
++	xor a
++	ldh [rVBK], a
++	ld hl, wPokedexOwnerTilemapBuffer + 12 * TILEMAP_WIDTH
++	call .Transfer
++	pop af
++	ldh [rVBK], a
++	pop af
++	ldh [rSVBK], a
++	ret
++.Transfer:
++	ld a, h
++	ldh [rVDMA_SRC_HIGH], a
++	ld a, l
++	ldh [rVDMA_SRC_LOW], a
++	ld a, HIGH(vBGMap0 + 12 * TILEMAP_WIDTH) & $1f
++	ldh [rVDMA_DEST_HIGH], a
++	ld a, LOW(vBGMap0 + 12 * TILEMAP_WIDTH)
++	ldh [rVDMA_DEST_LOW], a
++	ld a, 2 * 5 - 1
++	ldh [rVDMA_LEN], a
++	ret
++PokedexTypes_Leave:
++	xor a
++	ldh [hLCDCPointer], a
++	ldh [hLYOverrideStart], a
++	farcall Pokedex_InitGridCacheState
++	farcall PokedexListing_BeginMenuTransition
++	ld a, DEXSELECT_STATE_TYPES_RETURN
++	ld [wPokedexSelectedState], a
++	ld a, DEXSTATE_OPTION_SCR
++	ld [wJumptableIndex], a
++	ret
+--- a/engine/pokedex/pokedex_popover.asm
++++ b/engine/pokedex/pokedex_popover.asm
+@@ -13,6 +13,7 @@
+ DEF wPopGlyphRows EQU $dc0c
+ DEF wPopGlyphColumn EQU $dc0d
+ DEF wPopPreviousGlyph EQU $dc0e
++DEF wPopArrowVisible EQU $dc0f
+ DEF wPopSavedOAM EQU $dc10
+ DEF wPopBorderGFX EQU $dcb0
+ DEF wPopRightEdgeGFX EQU $dd30
+@@ -78,6 +79,7 @@
+     call Pokedex_HDMATransferCacheGFX
+     pop af
+     ldh [rVBK], a
++    call PokedexPopover_ResetBlink
+     call PokedexPopover_ReadRightEdge
+     call PokedexPopover_Draw
+     call PokedexPopover_Publish
+@@ -90,6 +92,7 @@
+     push af
+     ld a, 3
+     ldh [rSVBK], a
++    call PokedexPopover_BlinkCursor
+ ; Preserve physical command edges received during a staged redraw. The normal
+ ; input mirror can miss a release/repress while this local owner is busy.
+     di
+@@ -112,7 +115,7 @@
+     jr nz, .up
+     bit D_DOWN_F, a
+     jr nz, .down
+-    jr .done
++    jp .done
+ .up
+     ld hl, wPopCursor
+     ld a, [hl]
+@@ -134,10 +137,12 @@
+     xor a
+     ld [hl], a
+ .cursor_changed
++    call PokedexPopover_ResetBlink
+     call PokedexPopover_MoveCursor
+     call PokedexPopover_Publish
+     jr .done
+ .redraw
++    call PokedexPopover_ResetBlink
+     call PokedexPopover_Draw
+     call PokedexPopover_Publish
+     jr .done
+@@ -219,6 +224,9 @@
+     dec b
+     jr nz, .clear
+     pop hl
++    ld a, [wPopArrowVisible]
++    and a
++    ret z
+     ld a, [wPopCursor]
+ .row
+     and a
+@@ -228,6 +236,31 @@
+     jr .row
+ .place
+     ld [hl], "▶"
++    ret
++
++PokedexPopover_ResetBlink:
++    farcall Pokedex_ResetArrowCursorBlink
++    ld a, 1
++    ld [wPopArrowVisible], a
++    ret
++
++PokedexPopover_BlinkCursor:
++    farcall Pokedex_AdvanceArrowCursorBlink
++    ld b, 1
++    jr z, .phase
++    dec b
++.phase
++    ld a, [wPopArrowVisible]
++    cp b
++    ret z
++    ld a, b
++    ld [wPopArrowVisible], a
++    ; Publish at the next normal VBlank, without adding a blocking frame.
++    di
++    call PokedexPopover_MoveCursor
++    ld a, 1
++    ld [wPopPending], a
++    ei
+     ret
+ 
+ PokedexPopover_DrawBase:
+@@ -672,6 +705,9 @@
+         ld [hl], 0
+         add hl, de
+     ENDR
++    ld a, [wPopArrowVisible]
++    and a
++    ret z
+     ld a, [wPopCursor]
+     ld b, a
+     ld hl, wPokedexOwnerTilemapBuffer + 7 * TILEMAP_WIDTH + 1
+--- a/engine/pokedex/pokedex_moves_mode.asm
++++ b/engine/pokedex/pokedex_moves_mode.asm
+@@ -13,6 +13,9 @@
+ DEF wMovesModeTextRow    EQUS "wPokedexInfoGFX + 16"
+ DEF wMovesModeTextColumn EQUS "wPokedexInfoGFX + 17"
+ DEF wMovesModePalettes   EQUS "wPokedexInfoGFX + 18"
++DEF wMovesCursorPending EQUS "wPokedexInfoGFX + 34"
++DEF wMovesCursorTile    EQUS "wPokedexInfoGFX + 35"
++DEF wMovesCursorAddress EQUS "wPokedexInfoGFX + 36"
+ DEF wMovesModeBorderGFX  EQUS "wPokedexInfoGFX + 3 tiles"
+ DEF wMovesModeSeenSnapshot EQUS "wPokedexInfoGFX + 36 tiles"
+ ASSERT wMovesModeBorderGFX + 21 tiles <= wMovesModeSeenSnapshot
+@@ -81,6 +84,7 @@
+     ld a, BANK(wPokedexInfoGFX)
+     ldh [rSVBK], a
+     call PokedexMovesMode_ReadInput
++    call PokedexMovesMode_BlinkCursor
+     ldh a, [hJoyPressed]
+     and PAD_SELECT
+     jp nz, .leave
+@@ -221,6 +225,7 @@
+     ld a, BANK(wPokedexInfoGFX)
+     ldh [rSVBK], a
+     call PokedexMovesMode_ReadInput
++    call PokedexMovesMode_BlinkCursor
+     ldh a, [hJoyPressed]
+     and PAD_B | PAD_START
+     jr nz, .close
+@@ -441,6 +446,7 @@
+     ret
+ 
+ PokedexMovesMode_Draw:
++    farcall Pokedex_ResetArrowCursorBlink
+     ld a, TRUE
+     ldh [hOAMUpdate], a
+     xor a
+@@ -532,6 +538,66 @@
+     add hl, de
+     dec a
+     jr nz, .row
++    ret
++
++PokedexMovesMode_BlinkCursor:
++    ld a, VBLANK_POKEDEX
++    ldh [hVBlank], a
++    farcall Pokedex_AdvanceArrowCursorBlink
++    ld c, MOVES_MODE_CURSOR_TILE
++    jr z, .position
++    ld c, $32
++.position
++    ld a, [wJumptableIndex]
++    cp DEXSTATE_MOVES_MODE_UPDATE
++    jr nz, .popup
++    ld a, [wMovesModeSelected]
++    ld b, a
++    ld a, [wMovesModeSelected + 1]
++    or b
++    ret z
++    hlcoord 6, 1
++    debgcoord 6, 1
++    ld a, [wMovesModeCursor]
++    ld b, a
++.row
++    ld a, b
++    and a
++    jr z, .tile
++    push bc
++    ld bc, SCREEN_WIDTH
++    add hl, bc
++    ld a, e
++    add TILEMAP_WIDTH
++    ld e, a
++    jr nc, .next
++    inc d
++.next
++    pop bc
++    dec b
++    jr .row
++.popup
++    hlcoord 7, 3
++    debgcoord 7, 3
++    ld a, [wDexArrowCursorPosIndex]
++    and a
++    jr z, .tile
++    hlcoord 7, 5
++    debgcoord 7, 5
++.tile
++    ld a, c
++    cp [hl]
++    ret z
++    di
++    ld [hl], a
++    ld [wMovesCursorTile], a
++    ld a, e
++    ld [wMovesCursorAddress], a
++    ld a, d
++    ld [wMovesCursorAddress + 1], a
++    ld a, 1
++    ld [wMovesCursorPending], a
++    ei
+     ret
+ 
+ PokedexMovesMode_DrawShell:
+@@ -1050,6 +1116,7 @@
+     ret
+ 
+ PokedexMovesMode_DrawSortRows:
++    farcall Pokedex_ResetArrowCursorBlink
+     hlcoord 7, 4
+     ld a, $32
+     ld bc, 11
+@@ -1080,6 +1147,8 @@
+     db "Alphabet@"
+ 
+ PokedexMovesMode_Publish:
++    xor a
++    ld [wMovesCursorPending], a
+     farcall Pokedex_StageOwnerTransitionMaps
+     call PokedexMovesMode_StageRightEdge
+     ld hl, wMovesModePalettes
+@@ -1145,6 +1214,36 @@
+ PokedexMovesModeScrollbarGFX:
+ INCBIN "gfx/pokedex/pokedex_moves_scroll_bar_and_borders.2bpp"
+ ASSERT @ - PokedexMovesModeScrollbarGFX == 6 tiles
++
++PUSHS
++SECTION FRAGMENT "bank77", ROMX
++PokedexMovesCursor_VBlank:
++    ldh a, [rSVBK]
++    push af
++    ld a, BANK(wPokedexInfoGFX)
++    ldh [rSVBK], a
++    ld a, [wMovesCursorPending]
++    and a
++    jr z, .done
++    ldh a, [rVBK]
++    push af
++    xor a
++    ldh [rVBK], a
++    ld a, [wMovesCursorAddress]
++    ld l, a
++    ld a, [wMovesCursorAddress + 1]
++    ld h, a
++    ld a, [wMovesCursorTile]
++    ld [hl], a
++    xor a
++    ld [wMovesCursorPending], a
++    pop af
++    ldh [rVBK], a
++.done
++    pop af
++    ldh [rSVBK], a
++    ret
++POPS
+ 
+ INCLUDE "build/dex-moves-mode-assets/tables.asm"
+ 
+@@ -1264,6 +1363,7 @@
+     ret
+ 
+ PokedexMovesSearch_DrawOptions:
++    farcall Pokedex_ResetArrowCursorBlink
+     hlcoord 7, 4
+     ld a, $32
+     ld bc, 11
+@@ -1300,6 +1400,7 @@
+     ld a, 3
+     ldh [rSVBK], a
+     call PokedexMovesMode_ReadInput
++    call PokedexMovesMode_BlinkCursor
+     ldh a, [hJoyPressed]
+     and PAD_B | PAD_START
+     jr nz, .close
+@@ -1469,8 +1570,7 @@
+     ld [hl], $32
+     hlcoord 2, 15
+     ld [hl], $32
+-    xor a
+-    ld [wDexArrowCursorBlinkCounter], a
++    farcall Pokedex_ResetArrowCursorBlink
+     ld a, [wMovesSearchRow]
+     ld [wDexArrowCursorPosIndex], a
+ PokedexMovesSearch_BlinkCursor:
+--- a/engine/pokedex/pokedex_3.asm
++++ b/engine/pokedex/pokedex_3.asm
+@@ -1305,6 +1305,14 @@
+     scf
+     ret
+ .not_search
++    ld a, [wJumptableIndex]
++    sub DEXSTATE_MOVES_MODE_UPDATE
++    cp DEXSTATE_MOVES_SEARCH - DEXSTATE_MOVES_MODE_UPDATE
++    jr nc, .not_moves_list
++    call PokedexMovesCursor_VBlank
++    scf
++    ret
++.not_moves_list
+     ld a, [wJumptableIndex]
+     cp DEXSTATE_POPOVER
+     jr nz, .ordinary

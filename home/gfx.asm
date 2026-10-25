@@ -13,6 +13,18 @@ Get2bppViaHDMAToVRAMBank1::
 	homecall HDMATransfer2bppToVRAMBank1
 	ret
 
+Pokedex_HDMATransferSelectionGFX::
+Pokedex_HDMATransferFrontpic::
+; This ROM0 wrapper preserves the prepared graphics pointer in hl while
+; safely switching from the Pokedex bank to the HDMA implementation bank.
+	homecall HDMATransfer_WaitForScanline128
+	ret
+
+Pokedex_HDMATransferCacheGFX::
+Pokedex_HDMATransferAnimationGFX::
+	homecall HDMATransfer_Exact_NoDI_Arbitrary
+	ret
+
 BattleMenuGraphic_ClearForText_Home::
 	farcall BattleMenuGraphic_ClearForText
 	ret

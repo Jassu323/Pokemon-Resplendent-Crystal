@@ -45,8 +45,15 @@ RGBGFXFLAGS  ?= -Weverything
 
 ### Build targets
 
+.DEFAULT_GOAL := all
+
 .SUFFIXES:
 .SECONDEXPANSION:
+
+engine/pokedex/pokedex_types_audio.asm: audio/engine.asm tools/pokedex_type_audio.py
+	python3 tools/pokedex_type_audio.py --output $@
+
+audio.o: engine/pokedex/pokedex_types_audio.asm
 .PRECIOUS:
 .SECONDARY:
 .PHONY: \
@@ -54,7 +61,8 @@ RGBGFXFLAGS  ?= -Weverything
 	crystal \
 	clean \
 	tidy \
-	tools
+	tools \
+	verify-sampled-cries
 
 all: crystal
 crystal:    pokecrystal.gbc
@@ -71,6 +79,9 @@ clean: tidy
 	     ! -path "gfx/pokemon/unown/*" \
 	     \( -name "bitmask.asm" \
 	        -o -name "frames.asm" \
+	        -o -name "front.dexanim" \
+	        -o -name "front.dextimeline" \
+	        -o -name "front.dexschedule" \
 	        -o -name "front.animated.tilemap" \
 	        -o -name "front.dimensions" \) \
 	     -delete
@@ -91,6 +102,20 @@ tidy:
 
 tools:
 	$(MAKE) -C tools/
+
+verify-sampled-cries: pokecrystal.gbc
+	python3 -B tools/verify_sampled_cry_lookup.py \
+		--rom pokecrystal.gbc \
+		--sym pokecrystal.sym \
+		--assets audio/sampled_cries
+
+# Opt-in host diagnostics. These targets do not alter or instrument the ROM.
+.PHONY: test-dex-timing verify-dex-timing
+test-dex-timing:
+	python3 -B -m unittest discover -s tools -p 'test_dex_timing.py' -v
+
+verify-dex-timing: pokecrystal.gbc
+	python3 -B tools/verify_dex_timing.py audit
 
 
 RGBASMFLAGS += -Q8 -P includes.asm
@@ -118,6 +143,33 @@ $(info $(shell $(MAKE) -C tools))
 # As a side effect, they're evaluated immediately instead of when the rule is invoked.
 # It doesn't look like $(shell) can be deferred so there might not be a better way.
 preinclude_deps := includes.asm $(shell tools/scan_includes includes.asm)
+info_asset_inputs := tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/item_constants.asm constants/charmap.asm data/pokemon/names.asm data/items/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font.1bpp gfx/font/font_battle_extra.2bpp gfx/pokedex/dex_stat_bar.2bpp
+move_asset_inputs := tools/pokedex_moves_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/move_constants.asm constants/item_constants.asm data/moves/names.asm $(wildcard data/pokemon/evos_attacks_*.asm) $(wildcard data/pokemon/egg_moves_*.asm) $(wildcard data/pokemon/base_stats/*.asm) gfx/font/font_battle_extra.2bpp
+area_asset_inputs := tools/pokedex_area_assets.py tools/pokedex_info_assets.py constants/pokemon_constants.asm constants/map_constants.asm constants/landmark_constants.asm data/maps/maps.asm $(wildcard data/wild/*_grass.asm) $(wildcard data/wild/*_water.asm) gfx/pokegear/town_map_palette_map.asm
+sort_asset_inputs := tools/pokedex_sort_assets.py constants/pokemon_constants.asm data/pokemon/names.asm data/pokemon/dex_order_new.asm
+moves_mode_asset_inputs := tools/pokedex_moves_mode_assets.py tools/pokedex_info_assets.py constants/move_constants.asm data/moves/names.asm data/moves/moves.asm
+build/dex-sort-assets/tables.asm: $(sort_asset_inputs)
+	python3 -B tools/pokedex_sort_assets.py --output build/dex-sort-assets
+build/dex-moves-mode-assets/tables.asm: $(moves_mode_asset_inputs)
+	python3 -B tools/pokedex_moves_mode_assets.py
+build/dex-area-assets/tables.asm: $(area_asset_inputs)
+	python3 -B tools/pokedex_area_assets.py
+build/dex-area-assets/town-pals.bin: build/dex-area-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_area_assets.py
+build/dex-moves-assets/tables.asm: $(move_asset_inputs)
+	python3 -B tools/pokedex_moves_assets.py
+build/dex-moves-assets/level.2bpp: build/dex-moves-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_moves_assets.py
+build/dex-moves-assets/evos_exports.asm build/dex-moves-assets/egg_exports.asm: build/dex-moves-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_moves_assets.py
+build/dex-info-assets/tables.asm: $(info_asset_inputs)
+	python3 -B tools/pokedex_info_assets.py --ancestors
+build/dex-info-assets/tiles.2bpp: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
+build/dex-info-assets/numbers.asm: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
+build/dex-info-assets/titles.2bpp: build/dex-info-assets/tables.asm
+	@test -f $@ || python3 -B tools/pokedex_info_assets.py --ancestors
 define DEP
 $1: $2 $$(shell tools/scan_includes $2) $(preinclude_deps) | rgbdscheck.o
 	$$(RGBASM) $$(RGBASMFLAGS) -o $$@ $$<
@@ -141,6 +193,9 @@ pokecrystal11_vc.gbc: RGBFIXFLAGS += -i BYTE -n 1
 
 ### LZ compression rules
 
+gfx/pokemon/%/front.animated.2bpp.lz: gfx/pokemon/%/front.animated.2bpp gfx/pokemon/%/front.dimensions tools/frontpic_lz
+	tools/frontpic_lz $(word 1,$^) $(word 2,$^) $@
+
 %.lz: %
 	tools/lzcomp -- $< $@
 
@@ -155,6 +210,17 @@ gfx/pokemon/%/bitmask.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/fr
 	tools/pokemon_animation -b $^ > $@
 gfx/pokemon/%/frames.asm: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions
 	tools/pokemon_animation -f $^ > $@
+gfx/pokemon/%/front.dexanim: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions tools/pokemon_animation
+	tools/pokemon_animation --dex-plan $@ $(word 1,$^) $(word 2,$^)
+gfx/pokemon/%/front.dextimeline: gfx/pokemon/%/front.animated.tilemap gfx/pokemon/%/front.dimensions gfx/pokemon/%/anim.asm gfx/pokemon/%/anim_idle.asm tools/pokemon_animation
+	tools/pokemon_animation --dex-timeline $@ $(word 1,$^) $(word 2,$^) $(word 3,$^) $(word 4,$^)
+
+pokemon_anim_scripts := $(filter-out gfx/pokemon/unown/anim.asm,$(wildcard gfx/pokemon/*/anim.asm))
+pokemon_dex_timelines := $(pokemon_anim_scripts:/anim.asm=/front.dextimeline)
+
+.PHONY: verify-dex-animations
+verify-dex-animations: $(pokemon_dex_timelines)
+	@echo "Verified $(words $(pokemon_dex_timelines)) Dex timeline structures; timing requires linked-code replay."
 
 
 ### Pokemon and trainer sprite rules
@@ -216,9 +282,16 @@ gfx/mail/flower_mail_border.1bpp: tools/gfx += --remove-whitespace
 gfx/mail/litebluemail_border.1bpp: tools/gfx += --remove-whitespace
 
 gfx/pokedex/pokedex.2bpp: tools/gfx += --trim-whitespace
-gfx/pokedex/pokedex_sgb.2bpp: tools/gfx += --trim-whitespace
+# Preserve the original 64-cell UI load; appended Legacy cells load separately.
+gfx/pokedex/pokedex_core.2bpp: gfx/pokedex/pokedex.2bpp
+	dd if=$< of=$@ bs=16 count=64
+
+gfx/pokedex/pokedex_page_numbers.2bpp: RGBGFXFLAGS += --columns
+gfx/pokedex/pokedex_page_numbers_double_digits.2bpp: RGBGFXFLAGS += --columns
 gfx/pokedex/question_mark.2bpp: RGBGFXFLAGS += --columns
-gfx/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
+gfx/archived/pokedex/slowpoke.2bpp: tools/gfx += --trim-whitespace
+gfx/pokedex/slowpoke_dex.2bpp: gfx/archived/pokedex/slowpoke.2bpp
+	dd if=$< of=$@ bs=16 count=48
 
 gfx/pokegear/pokegear.2bpp: RGBGFXFLAGS += --trim-end 2
 gfx/pokegear/pokegear_sprites.2bpp: tools/gfx += --trim-whitespace

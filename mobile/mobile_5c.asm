@@ -298,14 +298,8 @@ INCBIN "gfx/mobile/electro_ball.2bpp.lz"
 PichuBorderMobileGFX:
 INCBIN "gfx/mobile/pichu_border.2bpp"
 
+; Retired mobile-center screen; live Tower helpers below remain. See docs/battle_tower_regression_suite.md.
 Function1719c8:
-	ldh a, [hInMenu]
-	push af
-	ld a, $1
-	ldh [hInMenu], a
-	call Function1719d6
-	pop af
-	ldh [hInMenu], a
 	ret
 
 Function1719d6:
@@ -657,9 +651,6 @@ Function171c87:
 	ld de, vTiles2 tile $00
 	ld bc, $6e tiles
 	call CopyBytes
-	ld hl, PasswordSlowpokeLZ
-	ld de, vTiles0 tile $00
-	call Decompress
 	call EnableLCD
 	ld hl, PasswordTopTilemap
 	decoord 0, 0
@@ -729,9 +720,6 @@ Function171d2b:
 	ld de, vTiles2 tile $00
 	ld bc, $6e tiles
 	call CopyBytes
-	ld hl, PasswordSlowpokeLZ
-	ld de, vTiles0 tile $00
-	call Decompress
 	call EnableLCD
 	ld hl, ChooseMobileCenterTilemap
 	decoord 0, 0
@@ -773,8 +761,6 @@ INCBIN "gfx/mobile/password.attrmap"
 ChooseMobileCenterAttrmap:
 INCBIN "gfx/mobile/mobile_center.attrmap"
 
-PasswordSlowpokeLZ:
-INCBIN "gfx/pokedex/slowpoke.2bpp.lz"
 
 String_172e31:
 	db "パスワード<WO>いれてください@"

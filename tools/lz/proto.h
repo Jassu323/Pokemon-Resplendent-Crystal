@@ -75,6 +75,7 @@ noreturn list_compressors(void);
 void write_commands_to_textfile(const char *, const struct command *, unsigned, const unsigned char *, unsigned char);
 void write_commands_and_padding_to_textfile(const char *, const struct command *, unsigned, const unsigned char *, unsigned, unsigned);
 void write_command_to_textfile(FILE *, struct command, const unsigned char *);
+unsigned write_commands_to_stream(FILE *, const struct command *, unsigned, const unsigned char *);
 void write_commands_to_file(const char *, const struct command *, unsigned, const unsigned char *, unsigned char);
 void write_command_to_file(FILE *, struct command, const unsigned char *);
 void write_raw_data_to_file(const char *, const void *, unsigned);

@@ -1,0 +1,44 @@
+{
+  "scope": "Two debugger observations from the same run as SameBoy slot 10; intermediate stops were not captured by the user",
+  "rom_sha256": "7f4f64cbaeaa958aef31fa3700a75ff1188cc0047fbb732dfb495a1672921c4f",
+  "sym_sha256": "1f791264f9ef3d8bc87a430a6333d3bea24c465017c10bb51e257303cbc6ded5",
+  "state_sha256": "796c336535dff7525e5e47003832e3c54b21271f060277072d0108e092a02c42",
+  "initial_ticks_before_reset": {
+    "t_cycles": 26404208,
+    "m_cycles": 6601052,
+    "absolute_8mhz_ticks": 52808416
+  },
+  "final_ticks_keep": {
+    "t_cycles": 2004944,
+    "m_cycles": 501236,
+    "absolute_8mhz_ticks": 4009888
+  },
+  "initial": {
+    "t": 0,
+    "pc": 24229,
+    "bank": 119,
+    "af": 192,
+    "bc": 25600,
+    "de": 7,
+    "hl": 50991,
+    "sp": 49327,
+    "ime": 0,
+    "ly": 145,
+    "mode": 1,
+    "remain": 300
+  },
+  "final": {
+    "t": 2004944,
+    "pc": 26620,
+    "bank": 160,
+    "af": 33424,
+    "bc": 33024,
+    "de": 39471,
+    "hl": 50991,
+    "sp": 49337,
+    "ime": 1,
+    "ly": 76,
+    "mode": 2,
+    "oam_index": 31
+  }
+}

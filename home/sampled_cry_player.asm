@@ -1,55 +1,6 @@
-InitSampledCryMinMax2BitLevels::
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wSampledCryMinMax2BitLevels)
-	ldh [rSVBK], a
-	ld a, BANK(MinMax2BitLevels)
-	ld hl, MinMax2BitLevels
-	ld de, wSampledCryMinMax2BitLevels
-	ld bc, SAMPLED_CRY_MINMAX2_BIT_LEVELS_SIZE
-	call FarCopyBytes
-	pop af
-	ldh [rSVBK], a
-	ret
-
 StartSampledCryAsync::
 ; Start a minmax2-compressed sampled cry on CH3 and return immediately.
 ; input: a = sample bank, de = sample header in that bank, c = timer/CH3 block period
-	ld b, a
-	ld a, [wBattleMode]
-	and a
-	jr z, .normal_start
-	ldh a, [hSampledCryTimer]
-	and a
-	jr nz, .clear_prepared
-	ld a, [wPreparedSampledCryState]
-	and a
-	jr z, .normal_start
-	ld a, [wPreparedSampledCryBank]
-	cp b
-	jr nz, .clear_prepared
-	ld a, [wPreparedSampledCryHeader]
-	cp e
-	jr nz, .clear_prepared
-	ld a, [wPreparedSampledCryHeader + 1]
-	cp d
-	jr nz, .clear_prepared
-	ld a, [wPreparedSampledCryPeriod]
-	cp c
-	jr nz, .clear_prepared
-	di
-	ld a, b
-	ldh [hSampledCryBank], a
-	call SampledCry_ArmCachedPlayback
-	call ClearBattlePreparedSampledCry
-	ei
-	ret
-
-.clear_prepared
-	call ClearBattlePreparedSampledCry
-
-.normal_start
-	ld a, b
 	di
 	ld b, SAMPLED_CRY_STARTUP_PREFILL_BLOCKS
 	call SampledCry_PrepareCacheFromHeader
@@ -57,103 +8,6 @@ StartSampledCryAsync::
 	call SampledCry_ArmCachedPlayback
 .done
 	ei
-	ret
-
-PrepareBattleSampledCry::
-; Prepare a sampled cry cache for battle intro/send-out animations.
-; input: a = species
-	push hl
-	push de
-	push bc
-	push af
-	call LoadCry
-	jr nc, .clear
-	and a
-	jr z, .clear
-	ldh a, [hSampledCryAddress]
-	ld e, a
-	ldh a, [hSampledCryAddress + 1]
-	ld d, a
-	ldh a, [hSampledCryBank]
-	ld c, SAMPLED_CRY_BLOCK_PERIOD_NORMAL
-	call PrepareSampledCryForBattleAsync
-	jr .done
-
-.clear
-	call ClearBattlePreparedSampledCry
-
-.done
-	pop af
-	pop bc
-	pop de
-	pop hl
-	ret
-
-PrepareSampledCryForBattleAsync:
-; input: a = sample bank, de = sample header, c = timer/CH3 block period
-	ld [wPreparedSampledCryBank], a
-	ld a, e
-	ld [wPreparedSampledCryHeader], a
-	ld a, d
-	ld [wPreparedSampledCryHeader + 1], a
-	ld a, c
-	ld [wPreparedSampledCryPeriod], a
-	xor a
-	ld [wPreparedSampledCryFrameCounter], a
-	di
-	ld b, SAMPLED_CRY_BATTLE_PREFILL_BLOCKS
-	ld a, [wPreparedSampledCryBank]
-	call SampledCry_PrepareCacheFromHeader
-	jr nc, .failed
-	ld a, 1
-	ld [wPreparedSampledCryState], a
-	ei
-	ret
-
-.failed
-	call ClearBattlePreparedSampledCry
-	ei
-	ret
-
-ClearBattlePreparedSampledCry::
-	xor a
-	ld [wPreparedSampledCryState], a
-	ret
-
-ServicePreparedBattleSampledCryAsync::
-	ld a, [wBattleMode]
-	and a
-	ret z
-	ld a, [wPreparedSampledCryState]
-	and a
-	ret z
-	ldh a, [hSampledCryTimer]
-	and a
-	ret nz
-	ld hl, wPreparedSampledCryFrameCounter
-	inc [hl]
-	ld a, [hl]
-	cp SAMPLED_CRY_PREPARED_REFILL_FRAMES
-	ret c
-	xor a
-	ld [hl], a
-
-	ldh a, [hROMBank]
-	push af
-	ld a, [wPreparedSampledCryBank]
-	rst Bankswitch
-
-	ldh a, [rSVBK]
-	push af
-	ld a, BANK(wSampledCryDecodedBuffer)
-	ldh [rSVBK], a
-	ld b, SAMPLED_CRY_CACHE_REFILL_BLOCKS
-	call SampledCry_FillRollingCache
-	pop af
-	ldh [rSVBK], a
-
-	pop af
-	rst Bankswitch
 	ret
 
 SampledCry_PrepareCacheFromHeader:
@@ -265,6 +119,17 @@ SampledCry_ArmCachedPlayback:
 	ldh [rSVBK], a
 	ret
 
+; Only double-speed odd-period cries need the extra timer reload work.
+SampledCry_AsyncTimerTickAlternating::
+	ldh a, [rSVBK]
+	push af
+	ld a, BANK(wSampledCryCacheCount)
+	ldh [rSVBK], a
+	call SampledCry_AlternateBlockTimer
+	pop af
+	ldh [rSVBK], a
+	jp SampledCry_AsyncTimerTick
+
 SampledCry_AsyncTimerTick::
 	ldh a, [rSVBK]
 	push af
@@ -279,7 +144,7 @@ SampledCry_AsyncTimerTick::
 	jr nz, .has_remaining_block
 	pop af
 	ldh [rSVBK], a
-	jp StopSampledCryAsync_NoInterruptControl
+	jp StopSampledCryAsync_FromTimer
 
 .has_remaining_block
 	ld a, [wSampledCryCacheCount]
@@ -287,7 +152,7 @@ SampledCry_AsyncTimerTick::
 	jr nz, .has_decoded_block
 	pop af
 	ldh [rSVBK], a
-	jp StopSampledCryAsync_NoInterruptControl
+	jp StopSampledCryAsync_FromTimer
 
 .has_decoded_block
 	call SampledCry_CopyNextCachedBlock
@@ -377,140 +242,88 @@ SampledCry_FillRollingCache::
 	ld a, b
 	and a
 	ret z
+	ld [wSampledCryFillBlocksRemaining], a
 
-.fill_loop
-	call SampledCry_CanFillRollingCache
+.next_batch
+	ld a, [wSampledCryFillBlocksRemaining]
+	and a
 	ret z
-	push bc
-	call SampledCry_DecodeOneRollingCacheBlock
-	pop bc
-	dec b
-	jr nz, .fill_loop
-	ret
+	cp SAMPLED_CRY_PAIR_STAGE_BLOCKS + 1
+	jr c, .requested_count_ready
+	ld a, SAMPLED_CRY_PAIR_STAGE_BLOCKS
+.requested_count_ready
+	ld c, a
 
-SampledCry_DecodeOneRollingCacheBlock:
+	ld a, [wSampledCryCompressedBlocks + 1]
+	and a
+	jr nz, .check_cache_space
+	ld a, [wSampledCryCompressedBlocks]
+	cp c
+	jr nc, .check_cache_space
+	ld c, a
+
+.check_cache_space
+	ld a, [wSampledCryCacheCount]
+	ld b, a
+	ld a, SAMPLED_CRY_MAX_DECODED_BLOCKS
+	sub b
+	cp c
+	jr nc, .batch_count_ready
+	ld c, a
+.batch_count_ready
+	ld a, c
+	and a
+	ret z
+	ld [wSampledCryStagedBlocks], a
+
 	ld a, [wSampledCryCompressedAddress]
 	ld l, a
 	ld a, [wSampledCryCompressedAddress + 1]
 	ld h, a
-
-	ld a, [wSampledCryCacheWriteAddress]
-	ld e, a
-	ld a, [wSampledCryCacheWriteAddress + 1]
-	ld d, a
-
-	call SampledCry_DecodeMinMax2BlockToDE
+	ld de, wSampledCryCompressedStaging
+	ld a, [wSampledCryStagedBlocks]
+	ld b, a
+.stage_block
+	push bc
+	ld c, SAMPLED_CRY_COMPRESSED_BLOCK_SIZE
+.stage_byte
+	ld a, [hli]
+	ld [de], a
+	inc de
+	dec c
+	jr nz, .stage_byte
+	pop bc
+	dec b
+	jr nz, .stage_block
 
 	ld a, l
 	ld [wSampledCryCompressedAddress], a
 	ld a, h
 	ld [wSampledCryCompressedAddress + 1], a
 
-	ld a, e
-	cp LOW(wSampledCryDecodedBufferEnd)
-	jr nz, .store_write_pointer
-	ld a, d
-	cp HIGH(wSampledCryDecodedBufferEnd)
-	jr nz, .store_write_pointer
-	ld de, wSampledCryDecodedBuffer
-
-.store_write_pointer
-	ld a, e
-	ld [wSampledCryCacheWriteAddress], a
-	ld a, d
-	ld [wSampledCryCacheWriteAddress + 1], a
-
+	ld a, [wSampledCryStagedBlocks]
+	ld c, a
 	ld hl, wSampledCryCompressedBlocks
 	ld a, [hl]
-	sub 1
+	sub c
 	ld [hli], a
-	jr nc, .increment_cache_count
+	jr nc, .subtract_requested
 	dec [hl]
 
-.increment_cache_count
-	ld hl, wSampledCryCacheCount
-	inc [hl]
-	ret
+.subtract_requested
+	ld hl, wSampledCryFillBlocksRemaining
+	ld a, [hl]
+	sub c
+	ld [hl], a
 
-SampledCry_DecodeMinMax2BlockToDE::
-	ld a, [hli]
-	push hl
-	push de
-	ld c, a
-	ld b, 0
-	sla c
-	rl b
-	sla c
-	rl b
-	ld hl, wSampledCryMinMax2BitLevels
-	add hl, bc
-	ld a, [hli]
-	ld [wSampledCryLevel0], a
-	ld a, [hli]
-	ld [wSampledCryLevel1], a
-	ld a, [hli]
-	ld [wSampledCryLevel2], a
-	ld a, [hli]
-	ld [wSampledCryLevel3], a
-	pop de
-	pop hl
-
-rept 8
-	ld a, [hli]
-	ld c, a
-
-	ld a, c
-	and %11000000
-	rlca
-	rlca
-	call SampledCry_GetMinMax2Level
-	swap a
-	ld b, a
-	ld a, c
-	and %00110000
-	swap a
-	call SampledCry_GetMinMax2Level
-	or b
-	ld [de], a
-	inc de
-
-	ld a, c
-	and %00001100
-	rrca
-	rrca
-	call SampledCry_GetMinMax2Level
-	swap a
-	ld b, a
-	ld a, c
-	and %00000011
-	call SampledCry_GetMinMax2Level
-	or b
-	ld [de], a
-	inc de
-endr
-	ret
-
-SampledCry_GetMinMax2Level:
-	and %00000011
-	jr z, .level0
-	dec a
-	jr z, .level1
-	dec a
-	jr z, .level2
-	ld a, [wSampledCryLevel3]
-	ret
-
-.level0
-	ld a, [wSampledCryLevel0]
-	ret
-
-.level1
-	ld a, [wSampledCryLevel1]
-	ret
-
-.level2
-	ld a, [wSampledCryLevel2]
-	ret
+	ldh a, [hROMBank]
+	push af
+	ld a, BANK(SampledCryMinMax2PairLookup)
+	rst Bankswitch
+	call SampledCry_DecodePairBatch
+	pop af
+	rst Bankswitch
+	jr .next_batch
 
 SampledCry_RestartCH3::
 ; WRAMX bank 4 must be selected.
@@ -532,17 +345,6 @@ SampledCry_RestartCH3::
 
 SECTION "Sampled Cry ROM0 Gap", ROM0[$0063]
 
-SampledCry_CanFillRollingCache:
-	ld a, [wSampledCryCompressedBlocks]
-	ld c, a
-	ld a, [wSampledCryCompressedBlocks + 1]
-	or c
-	ret z
-
-	ld a, [wSampledCryCacheCount]
-	cp SAMPLED_CRY_MAX_DECODED_BLOCKS
-	ret
-
 StopSampledCryAsync_NoInterruptControl::
 	xor a
 	ldh [hSampledCryTimer], a
@@ -552,6 +354,7 @@ StopSampledCryAsync_NoInterruptControl::
 	ldh [rAUD3ENA], a
 	call SampledCry_ClearTimerFlag
 
+.restore_timer
 	ldh a, [hSampledCrySavedTIMA]
 	ldh [rTIMA], a
 	ldh a, [hSampledCrySavedTMA]
@@ -577,6 +380,17 @@ StopSampledCryAsync_NoInterruptControl::
 	ldh [rAUDVOL], a
 	ret
 
+StopSampledCryAsync_FromTimer::
+; The timer IRQ already acknowledged IF_TIMER. Do not read/modify/write IF:
+; a VBlank request arriving between the read and write would be discarded.
+	xor a
+	ldh [hSampledCryTimer], a
+	ldh [hSampledCryBlocks], a
+	ldh [hSampledCryBlocks + 1], a
+	ldh [rTAC], a
+	ldh [rAUD3ENA], a
+	jp StopSampledCryAsync_NoInterruptControl.restore_timer
+
 SampledCry_DecrementRemainingBlocks::
 	ldh a, [hSampledCryBlocks]
 	ld c, a
@@ -595,18 +409,24 @@ SampledCry_DecrementCacheCount::
 	ret
 
 SampledCry_StartBlockTimer::
-; WRAMX bank 4 must be selected.
-	xor a
-	ldh [rTAC], a
-	ld a, [wSampledCryBlockPeriod]
+	farcall SampledCry_StartBlockTimerROMX
+	ret
+
+; Odd periods alternate floor/ceil reloads. TIMA already loaded the previous
+; TMA at IRQ entry, so this write selects the following interval's reload.
+; Standard cries take only the zero-step path; no ROMX call occurs in the IRQ.
+SampledCry_AlternateBlockTimer:
+	ld a, [wSampledCryTimerStep]
+	and a
+	ret z
 	ld c, a
-	xor a
-	sub c
+	ldh a, [rTMA]
+	add c
 	ldh [rTMA], a
-	ldh [rTIMA], a
-	call SampledCry_ClearTimerFlag
-	ld a, TAC_START | TAC_65KHZ
-	ldh [rTAC], a
+	ld a, c
+	cpl
+	inc a
+	ld [wSampledCryTimerStep], a
 	ret
 
 SampledCry_ClearTimerFlag::

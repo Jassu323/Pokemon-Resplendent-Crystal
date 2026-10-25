@@ -380,8 +380,14 @@ DEF NUM_UNLOCKED_UNOWN_SETS EQU const_value
 	const VBLANK_SERIAL       ; 4
 	const VBLANK_CREDITS      ; 5
 	const VBLANK_DMA_TRANSFER ; 6
-	const VBLANK_UNUSED       ; 7
+	const VBLANK_POKEDEX      ; 7
 DEF NUM_VBLANK_HANDLERS EQU const_value
+; High bit is a Dex quiet-viewport ownership tag.
+; Handler dispatch still uses only the low three bits.
+DEF VBLANK_DEX_QUIET_F EQU 7
+; Registration uses the normal handler, with bit 3 distinguishing its owner.
+DEF VBLANK_NEW_DEX_ENTRY EQU (1 << VBLANK_DEX_QUIET_F) | (1 << 3) | VBLANK_NORMAL
+ASSERT NUM_VBLANK_HANDLERS == 8
 
 ; rRAMB::
 DEF NUM_SRAM_BANKS EQU 4

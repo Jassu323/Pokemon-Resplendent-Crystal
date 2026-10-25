@@ -435,6 +435,8 @@ TogepiEvosAttacks:
 	db 0 ; no more level-up moves
 
 TogeticEvosAttacks:
+	; TEST ONLY: Sun Stone replaces unavailable Shiny Stone.
+	dbbw EVOLVE_ITEM, SUN_STONE, TOGEKISS
 	db 0 ; no more evolutions
 	dbw 1, GROWL
 	dbw 1, CHARM
@@ -617,6 +619,8 @@ JumpluffEvosAttacks:
 	db 0 ; no more level-up moves
 
 AipomEvosAttacks:
+	; TEST ONLY: level 32 replaces knowing Double Hit.
+	dbbw EVOLVE_LEVEL, 32, AMBIPOM
 	db 0 ; no more evolutions
 	dbw 1, SCRATCH
 	dbw 1, TAIL_WHIP
@@ -651,6 +655,8 @@ SunfloraEvosAttacks:
 	db 0 ; no more level-up moves
 
 YanmaEvosAttacks:
+	; TEST ONLY: level 33 replaces knowing AncientPower.
+	dbbw EVOLVE_LEVEL, 33, YANMEGA
 	db 0 ; no more evolutions
 	dbw 1, TACKLE
 	dbw 1, FORESIGHT
@@ -717,6 +723,8 @@ UmbreonEvosAttacks:
 	db 0 ; no more level-up moves
 
 MurkrowEvosAttacks:
+	; TEST ONLY: Moon Stone replaces unavailable Dusk Stone.
+	dbbw EVOLVE_ITEM, MOON_STONE, HONCHKROW
 	db 0 ; no more evolutions
 	dbw 1, PECK
 	dbw 11, PURSUIT
@@ -740,6 +748,8 @@ SlowkingEvosAttacks:
 	db 0 ; no more level-up moves
 
 MisdreavusEvosAttacks:
+	; TEST ONLY: Moon Stone replaces unavailable Dusk Stone.
+	dbbw EVOLVE_ITEM, MOON_STONE, MISMAGIUS
 	db 0 ; no more evolutions
 	dbw 1, GROWL
 	dbw 1, PSYWAVE
@@ -818,6 +828,8 @@ DunsparceEvosAttacks:
 	db 0 ; no more level-up moves
 
 GligarEvosAttacks:
+	; TEST ONLY: level 40 replaces held Razor Fang + nighttime level-up.
+	dbbw EVOLVE_LEVEL, 40, GLISCOR
 	db 0 ; no more evolutions
 	dbw 1, POISON_STING
 	dbw 6, SAND_ATTACK
@@ -921,6 +933,8 @@ HeracrossEvosAttacks:
 	db 0 ; no more level-up moves
 
 SneaselEvosAttacks:
+	; TEST ONLY: level 40 replaces held Razor Claw + nighttime level-up.
+	dbbw EVOLVE_LEVEL, 40, WEAVILE
 	db 0 ; no more evolutions
 	dbw 1, SCRATCH
 	dbw 1, LEER
@@ -1003,6 +1017,8 @@ SwinubEvosAttacks:
 	db 0 ; no more level-up moves
 
 PiloswineEvosAttacks:
+	; TEST ONLY: level 40 replaces knowing AncientPower.
+	dbbw EVOLVE_LEVEL, 40, MAMOSWINE
 	db 0 ; no more evolutions
 	dbw 1, HORN_ATTACK
 	dbw 1, POWDER_SNOW
@@ -1147,6 +1163,8 @@ DonphanEvosAttacks:
 	db 0 ; no more level-up moves
 
 Porygon2EvosAttacks:
+	; TEST ONLY: a second held Up-Grade replaces unavailable Dubious Disc.
+	dbbw EVOLVE_TRADE, UP_GRADE, PORYGON_Z
 	db 0 ; no more evolutions
 	dbw 1, CONVERSION2
 	dbw 1, TACKLE
